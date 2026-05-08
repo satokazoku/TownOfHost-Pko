@@ -178,6 +178,7 @@ namespace TownOfHost
                         case CustomRoles.Water: sb.Append(Water.SubRoleMark); break;
                         case CustomRoles.Slacker: sb.Append(Slacker.SubRoleMark); break;
                         case CustomRoles.Stamina: sb.Append(Stamina.SubRoleMark); break;
+                        case CustomRoles.Jumbo: sb.Append(Jumbo.SubRoleMark); break;
                         case CustomRoles.Clumsy: sb.Append(Clumsy.SubRoleMark); break;
                         case CustomRoles.Elector: sb.Append(Elector.SubRoleMark); break;
                         case CustomRoles.InfoPoor: sb.Append(InfoPoor.SubRoleMark); break;
@@ -235,6 +236,7 @@ namespace TownOfHost
                         if (data.GiveClumsy.GetBool()) Subrole.Add(CustomRoles.Clumsy);
                         if (data.GiveSlacker.GetBool()) Subrole.Add(CustomRoles.Slacker);
                         if (data.GiveStamina.GetBool()) Subrole.Add(CustomRoles.Stamina);
+                        if (data.GiveJumbo.GetBool()) Subrole.Add(CustomRoles.Jumbo);
                         if (data.GiveSunglasses.GetBool()) Subrole.Add(CustomRoles.Sunglasses);
                     }
                     if (state.SubRoles.Any(x => x is CustomRoles.LastImpostor))
@@ -576,6 +578,7 @@ namespace TownOfHost
                             if (data.GiveClumsy.GetBool()) Subrole.Add(CustomRoles.Clumsy);
                             if (data.GiveSlacker.GetBool()) Subrole.Add(CustomRoles.Slacker);
                             if (data.GiveStamina.GetBool()) Subrole.Add(CustomRoles.Stamina);
+                            if (data.GiveJumbo.GetBool()) Subrole.Add(CustomRoles.Jumbo);
                             if (data.GiveSunglasses.GetBool()) Subrole.Add(CustomRoles.Sunglasses);
                         }
                         if (state.SubRoles.Any(x => x is CustomRoles.LastImpostor))

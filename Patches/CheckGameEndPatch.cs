@@ -168,6 +168,24 @@ namespace TownOfHost
                     // ★ 神の勝利チェック
                     foreach (var pc in PlayerCatch.AllAlivePlayerControls.Where(p => p.Is(CustomRoles.God)))
                     {
+                        if (TownOfHost.Roles.Neutral.God.RequireTasksToWinOpt?.GetBool() == true)
+                        {
+                            var taskState = PlayerState.GetByPlayerId(pc.PlayerId)?.GetTaskState();
+                            if (taskState == null) continue;
+                            if (!UtilsTask.HasTasks(pc.Data, false)) continue;
+
+                            var required = TownOfHost.Roles.Neutral.God.TaskCountOpt?.GetInt() ?? 0;
+                            if (required > 0)
+                            {
+                                if (taskState.CompletedTasksCount < required) continue;
+                            }
+                            else
+                            {
+                                if (taskState.AllTasksCount <= 0) continue;
+                                if (!taskState.IsTaskFinished) continue;
+                            }
+                        }
+
                         if (CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.God, byte.MaxValue))
                         {
                             CustomWinnerHolder.WinnerIds.Add(pc.PlayerId);

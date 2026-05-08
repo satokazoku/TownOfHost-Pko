@@ -543,6 +543,7 @@ public static class CustomRoleManager
                 case CustomRoles.Clumsy: Clumsy.Add(pc.PlayerId); break;
                 case CustomRoles.Slacker: Slacker.Add(pc.PlayerId); break;
                 case CustomRoles.Stamina: Stamina.Add(pc.PlayerId); break;
+                case CustomRoles.Jumbo: Jumbo.Add(pc.PlayerId); break;
                 case CustomRoles.Elector: Elector.Add(pc.PlayerId); break;
                 case CustomRoles.Amnesia: Amnesia.Add(pc.PlayerId); break;
                 case CustomRoles.News: News.Add(pc.PlayerId); break;
@@ -946,6 +947,7 @@ public enum CustomRoles
     NiceGuesser,
     Pukupuku,
     Medium,
+    SheriffHadouHo,
     //DEBUG only Crewmate
     Analyzer,
     //Neutral
@@ -959,6 +961,7 @@ public enum CustomRoles
     Executioner,
     Jackal,
     JackalHadouHo,
+    JackalSeer,
     Tama,
     Freeter,
     God,
@@ -1062,6 +1065,7 @@ public enum CustomRoles
     News,
     Sunglasses,
     Stamina,
+    Jumbo,
 
     //GhostRoles
 

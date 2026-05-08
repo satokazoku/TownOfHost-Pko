@@ -84,6 +84,8 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
     float extraCooldownRate;
     float eatCooldownTimer;
     float swallowCooldownTimer;
+    bool pendingDisplayActive;
+    float pendingDisplayTimer;
     bool usedAbilityThisRound;
     PendingSwallowInfo pendingSwallow;
 
@@ -100,6 +102,8 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
         extraCooldownRate = 0f;
         eatCooldownTimer = 0f;
         swallowCooldownTimer = 0f;
+        pendingDisplayActive = false;
+        pendingDisplayTimer = 0f;
         usedAbilityThisRound = false;
         pendingSwallow = null;
     }
@@ -151,6 +155,8 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
             extraCooldownRate = 0f;
             eatCooldownTimer = GetBaseEatCooldown();
             swallowCooldownTimer = GetBaseSwallowCooldown();
+            pendingDisplayActive = false;
+            pendingDisplayTimer = 0f;
             usedAbilityThisRound = false;
             pendingSwallow = null;
             deadBodyPositions.Clear();
@@ -165,6 +171,7 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
         if (AmongUsClient.Instance.AmHost && initialState)
         {
             Player.SetKillCooldown(GetCurrentKillCooldownTimer(), force: true, delay: true);
+            SyncCooldownStateToClients();
         }
     }
 
@@ -203,8 +210,23 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
 
     float GetEatCooldownRemaining() => Mathf.Max(0f, eatCooldownTimer);
     float GetSwallowCooldownRemaining() => Mathf.Max(0f, swallowCooldownTimer);
-    float GetPendingRemaining() => pendingSwallow == null ? 0f : Mathf.Max(0f, pendingSwallow.Required - pendingSwallow.Elapsed);
-    float GetCurrentKillCooldownTimer() => pendingSwallow != null ? GetPendingRemaining() : GetSwallowCooldownRemaining();
+    float GetPendingRemaining()
+    {
+        if (AmongUsClient.Instance.AmHost)
+            return pendingSwallow == null ? 0f : Mathf.Max(0f, pendingSwallow.Required - pendingSwallow.Elapsed);
+
+        return pendingDisplayActive ? Mathf.Max(0f, pendingDisplayTimer) : 0f;
+    }
+    float GetCurrentKillCooldownTimer() => GetPendingRemaining() > 0f ? GetPendingRemaining() : GetSwallowCooldownRemaining();
+    void ApplyLocalPlayerCooldownOverride()
+    {
+        if (PlayerControl.LocalPlayer == null || Player.PlayerId != PlayerControl.LocalPlayer.PlayerId) return;
+        if (!Player.IsAlive()) return;
+
+        var timer = GetCurrentKillCooldownTimer();
+        if (timer > 0f)
+            Player.SetKillTimer(Mathf.Max(timer, 0.01f));
+    }
 
     float GetConfiguredSwallowRange()
     {
@@ -216,6 +238,11 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
     {
         if (eatCooldownTimer > 0f) eatCooldownTimer = Mathf.Max(0f, eatCooldownTimer - dt);
         if (swallowCooldownTimer > 0f) swallowCooldownTimer = Mathf.Max(0f, swallowCooldownTimer - dt);
+        if (pendingDisplayActive && pendingDisplayTimer > 0f)
+        {
+            pendingDisplayTimer = Mathf.Max(0f, pendingDisplayTimer - dt);
+            if (pendingDisplayTimer <= 0f) pendingDisplayActive = false;
+        }
     }
 
     void RefreshKillCooldown(bool sync = true)
@@ -233,6 +260,7 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
             swallowCooldownTimer = cooldown;
             Player.SetKillCooldown(cooldown, force: true, delay: true);
         }
+        SyncCooldownStateToClients();
     }
 
     void StartSwallowCooldown()
@@ -244,6 +272,7 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
             eatCooldownTimer = cooldown;
         }
         Player.SetKillCooldown(cooldown, force: true, delay: true);
+        SyncCooldownStateToClients();
     }
 
     void AddEatPenalty()
@@ -334,6 +363,17 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
         sender.Writer.WritePacked((int)RPCType.ClearDeadBodyArrows);
     }
 
+    void SyncCooldownStateToClients()
+    {
+        if (!AmongUsClient.Instance.AmHost) return;
+        using var sender = CreateSender();
+        sender.Writer.WritePacked((int)RPCType.SyncCooldownState);
+        sender.Writer.Write(eatCooldownTimer);
+        sender.Writer.Write(swallowCooldownTimer);
+        var pendingRemaining = pendingSwallow == null ? 0f : Mathf.Max(0f, pendingSwallow.Required - pendingSwallow.Elapsed);
+        sender.Writer.Write(pendingRemaining);
+    }
+
     public override void ReceiveRPC(MessageReader reader)
     {
         switch ((RPCType)reader.ReadPackedInt32())
@@ -349,6 +389,12 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
             case RPCType.ClearDeadBodyArrows:
                 ClearAllBodyArrows(sync: false);
                 break;
+            case RPCType.SyncCooldownState:
+                eatCooldownTimer = reader.ReadSingle();
+                swallowCooldownTimer = reader.ReadSingle();
+                pendingDisplayTimer = reader.ReadSingle();
+                pendingDisplayActive = pendingDisplayTimer > 0f;
+                break;
         }
     }
 
@@ -356,7 +402,8 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
     {
         AddDeadBodyArrow,
         RemoveDeadBodyArrow,
-        ClearDeadBodyArrows
+        ClearDeadBodyArrows,
+        SyncCooldownState
     }
 
     void BeginSwallow(PlayerControl target)
@@ -364,6 +411,7 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
         var required = GetCurrentSwallowCastTime();
         pendingSwallow = new PendingSwallowInfo(target.PlayerId, required);
         Player.SetKillCooldown(required, target: target, force: true, delay: true);
+        SyncCooldownStateToClients();
         UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
     }
 
@@ -379,6 +427,7 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
         if (pendingSwallow == null) return;
         pendingSwallow = null;
         RefreshKillCooldown();
+        SyncCooldownStateToClients();
         UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
     }
 
@@ -387,6 +436,7 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
         if (pendingSwallow == null) return;
         pendingSwallow = null;
         Player.SetKillCooldown(0.1f, force: true, delay: true);
+        SyncCooldownStateToClients();
         UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
     }
 
@@ -537,6 +587,7 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
             eatCooldownTimer = 0f;
             swallowCooldownTimer = 0f;
             RefreshKillCooldown();
+            SyncCooldownStateToClients();
         }
     }
 
@@ -557,6 +608,7 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
             eatCooldownTimer = 0f;
             swallowCooldownTimer = 0f;
             RefreshKillCooldown();
+            SyncCooldownStateToClients();
         }
     }
 
@@ -572,26 +624,38 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
 
     public override void OnFixedUpdate(PlayerControl player)
     {
-        if (!AmongUsClient.Instance.AmHost) return;
+        if (!AmongUsClient.Instance.AmHost)
+        {
+            TickCooldown(Time.fixedDeltaTime);
+            ApplyLocalPlayerCooldownOverride();
+            return;
+        }
         if (!Player.IsAlive())
         {
             pendingSwallow = null;
+            ApplyLocalPlayerCooldownOverride();
             return;
         }
 
         TickCooldown(Time.fixedDeltaTime);
 
-        if (pendingSwallow == null) return;
+        if (pendingSwallow == null)
+        {
+            ApplyLocalPlayerCooldownOverride();
+            return;
+        }
 
         var target = PlayerCatch.GetPlayerById(pendingSwallow.TargetId);
         if (target == null || !target.IsAlive())
         {
             CancelPendingSwallow();
+            ApplyLocalPlayerCooldownOverride();
             return;
         }
         if (!IsWithinSwallowRange(target))
         {
             CancelPendingSwallowByDistance();
+            ApplyLocalPlayerCooldownOverride();
             return;
         }
 
@@ -599,7 +663,11 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
         if (pendingSwallow.Elapsed >= pendingSwallow.Required)
         {
             CompleteSwallow();
+            ApplyLocalPlayerCooldownOverride();
+            return;
         }
+
+        ApplyLocalPlayerCooldownOverride();
     }
 
     bool? IKillFlashSeeable.CheckKillFlash(MurderInfo info)

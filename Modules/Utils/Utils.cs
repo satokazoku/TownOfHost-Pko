@@ -447,10 +447,6 @@ namespace TownOfHost
             var name = Main.nickName == string.Empty ? DataManager.player.Customization.Name : Main.nickName;
             Main.MessagesToSend.Add((text, byte.MaxValue, name));
         }
-
-        /// <summary>
-        /// バニラサーバーのUIを偽装し、強制的にチャットボタンを出現させる（EHR完全移植）
-        /// </summary>
         public static void SetChatVisible(this PlayerControl pc, bool visible = true)
         {
             if (!AmongUsClient.Instance.AmHost) return;

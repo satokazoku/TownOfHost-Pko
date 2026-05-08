@@ -56,7 +56,7 @@ namespace TownOfHost
         public static ConfigEntry<string> DebugKeyInput { get; private set; }
         public static ConfigEntry<string> ExplosionKeyInput { get; private set; }
 
-        public const string PluginGuid = "com.kymario.TownOfHost-Pko";
+        public const string PluginGuid = "com.satokazoku.TownOfHost-Pko";
         public const string PluginVersion = "4.26.13.50";//ほんとはx.y.z表記にしたかったけどx.y.z.km.ks表記だと警告だされる
         public const string PluginShowVersion = "4.26.13.50";
         public const string ModVersion = ".1.1";//リリースver用バージョン変更
@@ -325,6 +325,7 @@ namespace TownOfHost
                     {CustomRoles.Clumsy,"#942343"},
                     {CustomRoles.Slacker,"#980098"},
                     {CustomRoles.Stamina, "#88ccff" },
+                    {CustomRoles.Jumbo, "#ffcc00" },
                     {CustomRoles.Elector,"#544a47"},
                     {CustomRoles.Transparent,"#7b7c7d"},
                     {CustomRoles.Amnesia,"#4682b4"},

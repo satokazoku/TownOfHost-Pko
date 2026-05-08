@@ -1360,30 +1360,27 @@ namespace TownOfHost
 
             OptionGameChatNormalChat = BooleanOptionItem.Create(1_300_360, "GameChatNormalChat", false, TabGroup.MainSettings, true)
                 　　　.SetParent(OptionGameChatSetting)
-                      .SetHeader(true)
                       .SetColorcode("#00c1ff")
                       .SetOptionName(() => "通常チャットを有効にする");
 
             OptionGameChatNormalNearChat = BooleanOptionItem.Create(1_300_370, "GameChatNormalNearChat", false, TabGroup.MainSettings, true)
-                .SetParent(OptionGameChatNormalChat)
-                      .SetHeader(true)
+                      .SetParent(OptionGameChatNormalChat)
                       .SetColorcode("#00c1ff")
                       .SetOptionName(() => "近チャを有効にする");
 
             OptionGameChatNormalNearChatRange = IntegerOptionItem.Create(1_300_380, "GameChatNormalNearChatRange", new(1, 100, 1), 10, TabGroup.MainSettings, true)
-                .SetParent(OptionGameChatNormalNearChat)
-                .SetColorcode("#00c1ff")
-                .SetOptionName(() => "近チャの範囲");
-
+                      .SetParent(OptionGameChatNormalNearChat)
+                      .SetColorcode("#00c1ff")
+                      .SetOptionName(() => "近チャの範囲");
+              
             OptionGameChatHideChat = BooleanOptionItem.Create(1_300_390, "GameChatHideChat", false, TabGroup.MainSettings, true)
-                .SetParent(OptionGameChatSetting)
+                      .SetParent(OptionGameChatSetting)
                       .SetHeader(true)
                       .SetColorcode("#00c1ff")
                       .SetOptionName(() => "秘匿チャットを有効にする");
 
             OptionGameChatHideNearChat = BooleanOptionItem.Create(1_300_400, "GameChatHideNearChat", false, TabGroup.MainSettings, true)
-                .SetParent(OptionGameChatHideChat)
-                      .SetHeader(true)
+                      .SetParent(OptionGameChatHideChat)
                       .SetColorcode("#00c1ff")
                       .SetOptionName(() => "近チャを有効にする");
 

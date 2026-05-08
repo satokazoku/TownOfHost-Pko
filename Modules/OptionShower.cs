@@ -275,6 +275,7 @@ namespace TownOfHost
                         case "GiveClumsy": continue;
                         case "GiveSlacker": continue;
                         case "GiveStamina": continue;
+                        case "GiveJumbo": continue;
                         case "GiveSunglasses": continue;
                         case "GievPowerful": continue;
                     }
@@ -371,6 +372,7 @@ namespace TownOfHost
                     case "GiveClumsy": return false;
                     case "GiveSlacker": return false;
                     case "GiveStamina": return false;
+                    case "GiveJumbo": return false;
                     case "GiveSunglasses": return false;
                     case "GievPowerful": return false;
                 }

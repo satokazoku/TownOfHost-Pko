@@ -1,4 +1,4 @@
-/*using System.Collections.Generic;
+using System.Collections.Generic;
 using AmongUs.GameOptions;
 using Hazel;
 using TownOfHost.Modules;
@@ -28,9 +28,12 @@ public sealed class Nimrod : RoleBase
         : base(RoleInfo, player)
     {
         ExecutionMeetingPlayerId = byte.MaxValue;
+        PendingExecutionMeetingPlayerId = byte.MaxValue;
+        KillImpostor = OptionKillImpostor.GetBool();
     }
 
     static byte ExecutionMeetingPlayerId = byte.MaxValue;
+    static byte PendingExecutionMeetingPlayerId = byte.MaxValue;
 
     static OptionItem OptionKillImpostor;
     static bool KillImpostor;
@@ -49,26 +52,33 @@ public sealed class Nimrod : RoleBase
 
     public override bool VotingResults(ref NetworkedPlayerInfo Exiled, ref bool IsTie, Dictionary<byte, int> vote, byte[] mostVotedPlayers, bool ClearAndExile)
     {
+        if (!AmongUsClient.Instance.AmHost) return false;
         if (Exiled == null) return false;
         if (Exiled.PlayerId != Player.PlayerId) return false;
         if (!Player.IsAlive()) return false;
+        if (IsExecutionMeeting()) return false;
+        if (PendingExecutionMeetingPlayerId != byte.MaxValue) return false;
 
         var exiledId = Exiled.PlayerId;
+        PendingExecutionMeetingPlayerId = exiledId;
 
         _ = new LateTask(() =>
         {
+            if (PendingExecutionMeetingPlayerId != exiledId) return;
+            PendingExecutionMeetingPlayerId = byte.MaxValue;
+
             var exiledPlayer = GetPlayerById(exiledId);
             if (exiledPlayer == null || !exiledPlayer.IsAlive()) return;
 
             ExecutionMeetingPlayerId = exiledId;
-            Logger.Info($"{exiledPlayer.GetNameWithRole()} : ニムロッド会議開始", "Nimrod");
+            Logger.Info($"{exiledPlayer.GetNameWithRole()} : start Nimrod execution meeting", "Nimrod");
             UtilsNotifyRoles.NotifyRoles(ForceLoop: true);
-            exiledPlayer.ReportDeadBody(exiledPlayer.Data);
+            global::TownOfHost.ReportDeadBodyPatch.ExReportDeadBody(exiledPlayer, null, Cancelcheck: false);
             SendRPC();
         }, 14.5f, "NimrodExiled", true);
 
-        // ★ 追放をキャンセル
         Exiled = null;
+        IsTie = false;
         return true;
     }
 
@@ -88,7 +98,7 @@ public sealed class Nimrod : RoleBase
 
                 target.SetRealKiller(Player);
                 PlayerState.GetByPlayerId(sourceVotedForId).DeathReason = CustomDeathReason.Execution;
-                Logger.Info($"{Player.GetNameWithRole()} : ニムロッド追放→{target.GetNameWithRole()}", "Nimrod");
+                Logger.Info($"{Player.GetNameWithRole()} : exile {target.GetNameWithRole()} by Nimrod", "Nimrod");
             }
         }
 
@@ -98,7 +108,11 @@ public sealed class Nimrod : RoleBase
 
     public override void OnStartMeeting()
     {
-        if (!IsExecutionMeeting()) return;
+        if (!IsExecutionMeeting() || ExecutionMeetingPlayerId != Player.PlayerId) return;
+        if (AmongUsClient.Instance.AmHost)
+        {
+            Utils.SendMessage("Nimrod 会議");
+        }
         Utils.SendMessage(
             GetString("IsNimrodMeetingText"),
             title: $"<color={RoleInfo.RoleColorCode}>{GetString("IsNimrodMeetingTitle")}</color>"
@@ -112,6 +126,7 @@ public sealed class Nimrod : RoleBase
 
         MeetingHudPatch.TryAddAfterMeetingDeathPlayers(CustomDeathReason.Vote, ExecutionMeetingPlayerId);
         ExecutionMeetingPlayerId = byte.MaxValue;
+        PendingExecutionMeetingPlayerId = byte.MaxValue;
         SendRPC();
     }
 
@@ -132,7 +147,12 @@ public sealed class Nimrod : RoleBase
         seen ??= seer;
         if (!Is(seer) || seer.PlayerId != seen.PlayerId || !Player.IsAlive()) return "";
         if (IsExecutionMeeting() && ExecutionMeetingPlayerId == Player.PlayerId)
-            return $"{(isForHud ? "" : "<size=60%>")}<color={RoleInfo.RoleColorCode}>道連れ会議中！誰かに投票して道連れにしよう</color>";
+        {
+            var prefix = isForHud ? "" : "<size=60%>";
+            var suffix = isForHud ? "" : "</size>";
+            return $"{prefix}<color={RoleInfo.RoleColorCode}>{GetString("IsNimrodMeetingText")}</color>{suffix}";
+        }
+
         return "";
     }
-}*/
+}

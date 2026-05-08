@@ -169,7 +169,6 @@ public sealed class Seer : RoleBase, IKillFlashSeeable
         if (!Player.IsAlive()) return;
         if (target == null) return;
 
-        // 全ての死体を霊魂に
         foreach (var deadBody in UnityEngine.Object.FindObjectsOfType<DeadBody>())
         {
             var deadPlayer = GetPlayerById(deadBody.ParentId);
@@ -204,7 +203,6 @@ public sealed class Seer : RoleBase, IKillFlashSeeable
 
         if (PendingDeadBodies.Count == 0) return;
 
-        // ★ 複数霊魂を0.6秒ずつずらしてスポーン（キュー競合防止）
         for (int i = 0; i < PendingDeadBodies.Count; i++)
         {
             var (_, pos, colorId, playerName) = PendingDeadBodies[i];
@@ -307,16 +305,18 @@ public sealed class SoulObject : CustomNetObject
             ? ColorCodes[_colorId]
             : "#ffffff";
 
-        // ★ Shapeshiftを使わずRpcSetColorのみで色を設定（競合防止）
         if (PlayerControl != null)
             PlayerControl.RpcSetColor((byte)_colorId);
 
         SetName($"<color={color}>霊魂\n<size=70%>({_playerName})</size></color>");
         SnapToPosition(_spawnPos);
 
-        // シーア以外を非表示
+        // ★ notRealPlayer（他のダミーPC＝既存の霊魂）はスキップする
+        //    理由：soul #2 が soul #1 を Hide すると
+        //          soul #1 の NameText_TMP が deactivate されて霊魂名が消えるバグを防ぐ
         foreach (var pc in AllPlayerControls)
         {
+            if (pc.notRealPlayer) continue; // ★ 他のダミーはスキップ
             if (_seer == null || pc.PlayerId != _seer.PlayerId)
                 Hide(pc);
         }
