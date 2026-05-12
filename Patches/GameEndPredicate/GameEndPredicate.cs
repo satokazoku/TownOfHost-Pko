@@ -54,6 +54,7 @@ public abstract class GameEndPredicate
                     case CustomRoles.JackalMafia:
                     case CustomRoles.JackalAlien:
                     case CustomRoles.JackalHadouHo:
+                    case CustomRoles.JackalWolf:
                         CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Jackal, byte.MaxValue);
                         CustomWinnerHolder.WinnerRoles.Add(CustomRoles.Jackal);
                         CustomWinnerHolder.WinnerRoles.Add(CustomRoles.JackalMafia);
@@ -61,27 +62,69 @@ public abstract class GameEndPredicate
                         CustomWinnerHolder.WinnerRoles.Add(CustomRoles.Jackaldoll);
                         CustomWinnerHolder.WinnerRoles.Add(CustomRoles.JackalHadouHo);
                         CustomWinnerHolder.WinnerRoles.Add(CustomRoles.Tama);
+                        CustomWinnerHolder.WinnerRoles.Add(CustomRoles.JackalWolf);
+                        if (Options.OptionSabotageFinAllKill.GetBool())
+                            PlayerCatch.AllAlivePlayerControls.Do(pc =>
+                            {
+                                if (pc.Is(CountTypes.Jackal) is false)
+                                {
+                                    pc.GetPlayerState().DeathReason = CustomDeathReason.Kill;
+                                    pc.RpcMurderPlayer(pc);
+                                }
+                            });
                         break;
                     case CustomRoles.GrimReaper:
                         CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.GrimReaper, byte.MaxValue);
                         CustomWinnerHolder.WinnerRoles.Add(CustomRoles.GrimReaper);
-                        CustomWinnerHolder.NeutralWinnerIds.Add(PlayerCatch.AllPlayerControls
-                            .Where(pc => pc.GetCustomRole() is CustomRoles.GrimReaper).FirstOrDefault()?.PlayerId ?? byte.MaxValue);
+                        CustomWinnerHolder.NeutralWinnerIds.Add(PlayerCatch.AllPlayerControls.FirstOrDefault(pc => pc.GetCustomRole() is CustomRoles.GrimReaper)?.PlayerId ?? byte.MaxValue);
+                        if (Options.OptionSabotageFinAllKill.GetBool())
+                            PlayerCatch.AllAlivePlayerControls.Do(pc =>
+                                {
+                                    if (pc.Is(CountTypes.GrimReaper) is false)
+                                    {
+                                        pc.GetPlayerState().DeathReason = CustomDeathReason.Kill;
+                                        pc.RpcMurderPlayer(pc);
+                                    }
+                                });
                         break;
                     case CustomRoles.Egoist:
                         CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Egoist, byte.MaxValue);
                         CustomWinnerHolder.WinnerRoles.Add(CustomRoles.Egoist);
-                        CustomWinnerHolder.NeutralWinnerIds.Add(PlayerCatch.AllPlayerControls
-                            .Where(pc => pc.GetCustomRole() is CustomRoles.Egoist).FirstOrDefault()?.PlayerId ?? byte.MaxValue);
-                        break;
+                        CustomWinnerHolder.NeutralWinnerIds.Add(PlayerCatch.AllPlayerControls.FirstOrDefault(pc => pc.GetCustomRole() is CustomRoles.Egoist)?.PlayerId ?? byte.MaxValue);
+                        if (Options.OptionSabotageFinAllKill.GetBool())
+                            PlayerCatch.AllAlivePlayerControls.Do(pc =>
+                            {
+                                if (pc.Is(CustomRoles.Egoist) is false)
+                                {
+                                    pc.GetPlayerState().DeathReason = CustomDeathReason.Kill;
+                                    pc.RpcMurderPlayer(pc);
+                                }
+                            }); break;
                     case CustomRoles.MadBetrayer:
                         CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.MadBetrayer, byte.MaxValue);
                         CustomWinnerHolder.WinnerRoles.Add(CustomRoles.MadBetrayer);
-                        CustomWinnerHolder.NeutralWinnerIds.Add(PlayerCatch.AllPlayerControls
-                            .Where(pc => pc.GetCustomRole() is CustomRoles.MadBetrayer).FirstOrDefault()?.PlayerId ?? byte.MaxValue);
+                        CustomWinnerHolder.NeutralWinnerIds.Add(PlayerCatch.AllPlayerControls.FirstOrDefault(pc => pc.GetCustomRole() is CustomRoles.MadBetrayer)?.PlayerId ?? byte.MaxValue);
+                        if (Options.OptionSabotageFinAllKill.GetBool())
+                            PlayerCatch.AllAlivePlayerControls.Do(pc =>
+                            {
+                                if (pc.Is(CustomRoles.MadBetrayer) is false)
+                                {
+                                    pc.GetPlayerState().DeathReason = CustomDeathReason.Kill;
+                                    pc.RpcMurderPlayer(pc);
+                                }
+                            });
                         break;
                     default:
                         CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Impostor, byte.MaxValue);
+                        if (Options.OptionSabotageFinAllKill.GetBool())
+                            PlayerCatch.AllAlivePlayerControls.Do(pc =>
+                            {
+                                if (pc.Is(CustomRoleTypes.Impostor) is false)
+                                {
+                                    pc.GetPlayerState().DeathReason = CustomDeathReason.Kill;
+                                    pc.RpcMurderPlayer(pc);
+                                }
+                            });
                         break;
                 }
                 reason = GameOverReason.ImpostorsBySabotage;
@@ -126,6 +169,7 @@ public abstract class GameEndPredicate
                     case CustomRoles.JackalMafia:
                     case CustomRoles.JackalAlien:
                     case CustomRoles.JackalHadouHo:
+                    case CustomRoles.JackalWolf:
                         CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Jackal, byte.MaxValue);
                         CustomWinnerHolder.WinnerRoles.Add(CustomRoles.Jackal);
                         CustomWinnerHolder.WinnerRoles.Add(CustomRoles.JackalMafia);
@@ -133,27 +177,69 @@ public abstract class GameEndPredicate
                         CustomWinnerHolder.WinnerRoles.Add(CustomRoles.Jackaldoll);
                         CustomWinnerHolder.WinnerRoles.Add(CustomRoles.JackalHadouHo);
                         CustomWinnerHolder.WinnerRoles.Add(CustomRoles.Tama);
+                        CustomWinnerHolder.WinnerRoles.Add(CustomRoles.JackalWolf);
+                        if (Options.OptionSabotageFinAllKill.GetBool())
+                            PlayerCatch.AllAlivePlayerControls.Do(pc =>
+                            {
+                                if (pc.Is(CountTypes.Jackal) is false)
+                                {
+                                    pc.GetPlayerState().DeathReason = CustomDeathReason.Kill;
+                                    pc.RpcMurderPlayer(pc);
+                                }
+                            });
                         break;
                     case CustomRoles.GrimReaper:
                         CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.GrimReaper, byte.MaxValue);
                         CustomWinnerHolder.WinnerRoles.Add(CustomRoles.GrimReaper);
-                        CustomWinnerHolder.NeutralWinnerIds.Add(PlayerCatch.AllPlayerControls
-                            .Where(pc => pc.GetCustomRole() is CustomRoles.GrimReaper).FirstOrDefault()?.PlayerId ?? byte.MaxValue);
+                        CustomWinnerHolder.NeutralWinnerIds.Add(PlayerCatch.AllPlayerControls.FirstOrDefault(pc => pc.GetCustomRole() is CustomRoles.GrimReaper)?.PlayerId ?? byte.MaxValue);
+                        if (Options.OptionSabotageFinAllKill.GetBool())
+                            PlayerCatch.AllAlivePlayerControls.Do(pc =>
+                            {
+                                if (pc.Is(CountTypes.GrimReaper) is false)
+                                {
+                                    pc.GetPlayerState().DeathReason = CustomDeathReason.Kill;
+                                    pc.RpcMurderPlayer(pc);
+                                }
+                            });
                         break;
                     case CustomRoles.Egoist:
                         CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Egoist, byte.MaxValue);
                         CustomWinnerHolder.WinnerRoles.Add(CustomRoles.Egoist);
-                        CustomWinnerHolder.NeutralWinnerIds.Add(PlayerCatch.AllPlayerControls
-                            .Where(pc => pc.GetCustomRole() is CustomRoles.Egoist).FirstOrDefault()?.PlayerId ?? byte.MaxValue);
+                        CustomWinnerHolder.NeutralWinnerIds.Add(PlayerCatch.AllPlayerControls.FirstOrDefault(pc => pc.GetCustomRole() is CustomRoles.Egoist)?.PlayerId ?? byte.MaxValue);
+                        if (Options.OptionSabotageFinAllKill.GetBool())
+                            PlayerCatch.AllAlivePlayerControls.Do(pc =>
+                            {
+                                if (pc.Is(CustomRoles.Egoist) is false)
+                                {
+                                    pc.GetPlayerState().DeathReason = CustomDeathReason.Kill;
+                                    pc.RpcMurderPlayer(pc);
+                                }
+                            });
                         break;
                     case CustomRoles.MadBetrayer:
                         CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.MadBetrayer, byte.MaxValue);
                         CustomWinnerHolder.WinnerRoles.Add(CustomRoles.MadBetrayer);
-                        CustomWinnerHolder.NeutralWinnerIds.Add(PlayerCatch.AllPlayerControls
-                            .Where(pc => pc.GetCustomRole() is CustomRoles.MadBetrayer).FirstOrDefault()?.PlayerId ?? byte.MaxValue);
-                        break;
+                        CustomWinnerHolder.NeutralWinnerIds.Add(PlayerCatch.AllPlayerControls.FirstOrDefault(pc => pc.GetCustomRole() is CustomRoles.MadBetrayer)?.PlayerId ?? byte.MaxValue);
+                        if (Options.OptionSabotageFinAllKill.GetBool())
+                            PlayerCatch.AllAlivePlayerControls.Do(pc =>
+                            {
+                                if (pc.Is(CustomRoles.MadBetrayer) is false)
+                                {
+                                    pc.GetPlayerState().DeathReason = CustomDeathReason.Kill;
+                                    pc.RpcMurderPlayer(pc);
+                                }
+                            }); break;
                     default:
                         CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Impostor, byte.MaxValue);
+                        if (Options.OptionSabotageFinAllKill.GetBool())
+                            PlayerCatch.AllAlivePlayerControls.Do(pc =>
+                            {
+                                if (pc.Is(CustomRoleTypes.Impostor) is false)
+                                {
+                                    pc.GetPlayerState().DeathReason = CustomDeathReason.Kill;
+                                    pc.RpcMurderPlayer(pc);
+                                }
+                            });
                         break;
                 }
                 Main.IsActiveSabotage = false;

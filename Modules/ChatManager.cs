@@ -238,14 +238,14 @@ namespace TownOfHost.Modules.ChatManager
         {
             if (PlayerControl.LocalPlayer.IsAlive() && !ChatUpdatePatch.DoBlockChat)
             {
-                if (Main.MessagesToSend.Where(x => x.Item2 is not byte.MaxValue).Count() > 0)
+                if (Main.MessagesToSend.Count(x => x.Item2 is not byte.MaxValue) > 0)
                 {
                     if (Utils.IsRestriction())
                     {
                         SendMessageInGame(null);
                         return;
                     }
-                    (string msg, byte sendTo, string title) = Main.MessagesToSend.Where(x => x.Item2 is not byte.MaxValue).FirstOrDefault();
+                    (string msg, byte sendTo, string title) = Main.MessagesToSend.FirstOrDefault(x => x.Item2 is not byte.MaxValue);
                     if (sendTo is not byte.MaxValue && Main.MegCount < 50)
                     {
                         Main.MessagesToSend.Remove((msg, sendTo, title));
@@ -289,7 +289,7 @@ namespace TownOfHost.Modules.ChatManager
             var SendToPlayerControl = PlayerCatch.GetPlayerById(sendTo);
             int clientId = sendTo == byte.MaxValue ? -1 : SendToPlayerControl.GetClientId();
 
-            if (clientId is not -1 && SendToPlayerControl is null)
+            if (sendTo != byte.MaxValue && SendToPlayerControl is null)
             {
                 Main.MessagesToSend.RemoveAt(0);
                 Logger.Error($"{sendTo}がnullの為弾きます。", "SendMassage");
@@ -325,7 +325,7 @@ namespace TownOfHost.Modules.ChatManager
                             var seerclientid = seer.GetClientId();
 
                             GameDataSerializePatch.SerializeMessageCount++;
-                            var Nwriter = CustomRpcSender.Create("MessagesToSend", SendOption.None);
+                            var Nwriter = CustomRpcSender.Create("MessagesToSend", SendOption.Reliable);
                             Nwriter.StartMessage(seerclientid);
                             if (seer.IsAlive())
                             {
@@ -399,7 +399,7 @@ namespace TownOfHost.Modules.ChatManager
                         if (chatController is not null)
                             chatController.timeSinceLastMessage = 0;
                     }
-                    var Nwriter = CustomRpcSender.Create("MessagesToSend", SendOption.None);
+                    var Nwriter = CustomRpcSender.Create("MessagesToSend", SendOption.Reliable);
                     Nwriter.StartMessage(clientId);
                     Nwriter.StartRpc(senderplayer.NetId, (byte)RpcCalls.SetName)
                     .Write(senderplayer.Data.NetId)
@@ -577,6 +577,9 @@ namespace TownOfHost.Modules.ChatManager
             if (senderplayer == PlayerControl.LocalPlayer)
                 _ = new LateTask(() =>
                 { if (PlayerControl.LocalPlayer is not null) Utils.ApplySuffix(null, true); }, 0.24f, "", true);
+
+            if (Utils.IsRestriction() && senderplayer.PlayerId != PlayerControl.LocalPlayer.PlayerId)
+                return;
 
             Main.MessagesToSend.RemoveAt(0);
 

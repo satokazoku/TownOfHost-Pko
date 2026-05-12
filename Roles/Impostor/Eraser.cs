@@ -36,6 +36,7 @@ public sealed class Eraser : RoleBase, IImpostor, IUsePhantomButton
         CanDelSheriffRole = OptionCanDelSheriffRole.GetBool();
         CanDelMad = OptionCanDelMadmate.GetBool();
         CanDelNeu = OptionCanDelNeutral.GetBool();
+        CanDelAddon = OptionCanDelAddon.GetBool();
         DeltimingAfterMeeting = OptionDeltimingAfterMeeting.GetBool();
 
         UseCount = 0;
@@ -51,6 +52,7 @@ public sealed class Eraser : RoleBase, IImpostor, IUsePhantomButton
     static OptionItem OptionCanDelSheriffRole; static bool CanDelSheriffRole;
     static OptionItem OptionCanDelMadmate; static bool CanDelMad;
     static OptionItem OptionCanDelNeutral; static bool CanDelNeu;
+    static OptionItem OptionCanDelAddon; static bool CanDelAddon;
 
     static OptionItem OptionDeltimingAfterMeeting; static bool DeltimingAfterMeeting;
 
@@ -69,7 +71,8 @@ public sealed class Eraser : RoleBase, IImpostor, IUsePhantomButton
         EraserCanDelCrewmate,
         EraserCanDelSheriffRole,
         EraserCanDelMadmate,
-        EraserCanDelNeutral
+        EraserCanDelNeutral,
+        EraserCanDelAddon
     }
 
     private static void SetupOptionItem()
@@ -79,6 +82,7 @@ public sealed class Eraser : RoleBase, IImpostor, IUsePhantomButton
         OptionAbilityCoolDown = FloatOptionItem.Create(RoleInfo, 11, GeneralOption.Cooldown, OptionBaseCoolTime, 20f, false)
                 .SetValueFormat(OptionFormat.Seconds);
         OptionUseCount = IntegerOptionItem.Create(RoleInfo, 12, GeneralOption.OptionCount, new(1, 20, 1), 2, false).SetValueFormat(OptionFormat.Times);
+        OptionCanDelAddon = BooleanOptionItem.Create(RoleInfo, 18, OptionName.EraserCanDelAddon, false, false);
         OptionDeltimingAfterMeeting = BooleanOptionItem.Create(RoleInfo, 13, OptionName.EraserDelTimingAfterMeeting, false, false);
         OptionCanDelCrewmate = BooleanOptionItem.Create(RoleInfo, 14, OptionName.EraserCanDelCrewmate, true, false);
         OptionCanDelSheriffRole = BooleanOptionItem.Create(RoleInfo, 15, OptionName.EraserCanDelSheriffRole, true, false);
@@ -124,7 +128,7 @@ public sealed class Eraser : RoleBase, IImpostor, IUsePhantomButton
 
             var role = player.GetCustomRole();
             //インポスターならキャンセル
-            if (role.IsImpostor() && !SuddenDeathMode.NowSuddenDeathMode) continue;
+            if (player.IsTeammate(Player) && !SuddenDeathMode.NowSuddenDeathMode) continue;
             if (player.IsAlive() is false) continue;//既に死んでたら役職を消さない。
 
             //消したと思ってるリスト
@@ -145,10 +149,12 @@ public sealed class Eraser : RoleBase, IImpostor, IUsePhantomButton
             if (AmongUsClient.Instance.AmHost)
             {
                 Erasedtargets.Add(player.PlayerId);
-                player.RpcSetCustomRole(SuddenDeathMode.NowSuddenDeathMode ? CustomRoles.Impostor : CustomRoles.Crewmate, true, null);
+                player.RpcSetCustomRole(SuddenDeathMode.NowSuddenDeathMode || Player.Is(CustomRoles.JackalWolf) ? CustomRoles.Impostor : CustomRoles.Crewmate, true, null);
                 Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);
                 if (role.IsNeutral()) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[1]);
             }
+            var addons = player.GetPlayerState().SubRoles;
+            if (CanDelAddon) addons.Do(x => player.GetPlayerState().RemoveSubRole(x));
         }
         EraseTargets.Clear();
     }

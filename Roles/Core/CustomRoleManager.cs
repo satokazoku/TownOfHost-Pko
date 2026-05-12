@@ -1009,6 +1009,7 @@ public enum CustomRoles
     Missioneer,
     Strawdoll,
     Fool,
+    JackalWolf,
     TaskPlayerB,
     //TOH-P
     Chatter,

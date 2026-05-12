@@ -571,7 +571,7 @@ namespace TownOfHost
                 if (Options.firstturnmeeting)
                 {
                     _ = new LateTask(() =>
-                        ReportDeadBodyPatch.ExReportDeadBody(PlayerControl.LocalPlayer, PlayerControl.LocalPlayer.Data, false, "Firstmeetinginfo", "#23dbc0"), 1.7f + Main.LagTime, "", true);
+                        ReportDeadBodyPatch.ExReportDeadBody(PlayerControl.LocalPlayer, PlayerControl.LocalPlayer.Data, false, "Firstmeetinginfo", "#23dbc0"), 0.7f + Main.LagTime, "", true);
                 }
                 else
                 {
@@ -582,6 +582,13 @@ namespace TownOfHost
                             UtilsNotifyRoles.NotifyRoles(OnlyMeName: true);
                     }, 15f, "Intro", true);
                 }
+
+                GameStates.AnyShapeShifter = PlayerCatch.AllPlayerControls.Any(pc =>
+                {
+                    if ((pc.GetCustomRole().GetRoleInfo()?.BaseRoleType?.Invoke() ?? RoleTypes.Crewmate) is RoleTypes.Shapeshifter) return true;
+
+                    return ((pc.GetRoleClass()?.HaveAddRole() ?? CustomRoles.NotAssigned).GetRoleInfo()?.BaseRoleType?.Invoke() ?? RoleTypes.Crewmate) is RoleTypes.Shapeshifter;
+                });
             }
             else
             {

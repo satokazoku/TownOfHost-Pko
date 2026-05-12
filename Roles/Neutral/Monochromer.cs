@@ -107,7 +107,7 @@ public sealed class Monochromer : RoleBase
         }
         UtilsNotifyRoles.NotifyRoles(SpecifySeer: Player);
     }
-    public override void OnReportDeadBody(PlayerControl _, NetworkedPlayerInfo __)
+    /*public override void OnReportDeadBody(PlayerControl _, NetworkedPlayerInfo __)
     {
         foreach (var pc in PlayerCatch.AllPlayerControls)
         {
@@ -115,7 +115,7 @@ public sealed class Monochromer : RoleBase
             pc.SetColor(id);
             Camouflage.RpcSetSkin(pc, RevertToDefault: true, force: true);
         }
-    }
+    }*/
     public static bool CheckWin(GameOverReason reason)
     {
         foreach (var pc in PlayerCatch.AllAlivePlayerControls)

@@ -168,7 +168,7 @@ namespace TownOfHost
 
             //実行
             var state = PlayerState.GetByPlayerId(player.PlayerId);
-            if (!force) state.IsBlackOut = true; //ブラックアウト
+            if (!force && !GameStates.CalledMeeting) state.IsBlackOut = true; //ブラックアウト
             if (player.PlayerId == 0 && !force)
             {
                 FlashColor(new(1f, 0f, 0f, 0.5f));
@@ -178,7 +178,7 @@ namespace TownOfHost
             player.MarkDirtySettings();
             _ = new LateTask(() =>
             {
-                state.IsBlackOut = false; //ブラックアウト解除
+                if (!GameStates.CalledMeeting) state.IsBlackOut = false; //ブラックアウト解除
                 player.MarkDirtySettings();
             }, Options.KillFlashDuration.GetFloat(), "RemoveKillFlash");
         }
@@ -436,7 +436,7 @@ namespace TownOfHost
                 Main.MessagesToSend.Add(($"{fir}{text}", sendTo, $"{fir}{title}"));
             if (towsend is not "")
             {
-                SendMessage(towsend, sendTo, "NonTitle", true, isTowSend: true);
+                SendMessage(towsend, sendTo, IsRestriction() ? "NonTitle" : title, true, isTowSend: true);
             }
         }
 
