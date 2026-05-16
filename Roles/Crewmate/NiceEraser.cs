@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
@@ -18,11 +18,11 @@ public sealed class NiceEraser : RoleBase, ISelfVoter
             CustomRoles.NiceEraser,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            97242,
+            97240,
             SetupOptionItem,
             "nicer",
             "#d0ff00",
-            (0, 0)
+            (8, 8)
         );
 
     private static OptionItem OptionMaxUseCount;

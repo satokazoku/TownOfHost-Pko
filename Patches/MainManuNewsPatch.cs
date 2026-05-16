@@ -50,6 +50,32 @@ public class ModNewsHistory
             {
                 var news = new ModNews
                 {
+                    Number = 100071,
+                    Title = "中間テスト早く終わらねえかなあ～",
+                    SubTitle = "<color=#FF9631>Town Of Host-Pko v4.28.14.58</color>",
+                    ShortTitle = "<color=#FF9631>●TOH-Pko v4.28.14.58</color>",
+                    Text = "・ナイストラッパーの追加 From:Nebula on the Ship\n"
+                    + "・ムービングの追加 From:SuperNewRoles\n"
+                    + "。新役職　ナイスイレイサーの追加\n"
+                    + "・TOHKのアプデに対応\n"
+                    + "・ダブルキラーをちょい修正\n"
+                    + "・賢者をちょい修正\r\n\n"
+                    + "・役職ガイドボタンの削除\n"
+                    + "・画像の変更\n"
+                    + "・ヒッチハイカー　本来降りれない場所で降り立った場合自殺するように変更。\n"
+                    + "・妖狐の仕様変更\n"
+                    + "・バットガールの仕様変更\n"
+                    + "・陰陽師がジャッカルウルフを見れないバグ修正\n"
+                    + "・ロケット一旦削除\n"
+                    + "・波動砲シェリフ未完成のため削除\n"
+                    ,
+                    Date = "2026-5-16"
+                };
+                AllModNews.Add(news);
+            }
+            {
+                var news = new ModNews
+                {
                     Number = 100070,
                     Title = "波動砲シェリフ？なんだそりゃ　まだ完成してねえよ!!!",
                     SubTitle = "<color=#FF9631>Town Of Host-Pko v3.27.13.51</color>",
