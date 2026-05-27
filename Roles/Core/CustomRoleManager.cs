@@ -818,6 +818,7 @@ public enum CustomRoles
     EvilMoving,
     Teleporter,
     EvilTrapper,
+    Minimalist,
     //TOH-K
     Bomber,
     TeleportKiller,

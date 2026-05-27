@@ -210,6 +210,7 @@ namespace TownOfHost
             ModUnloaderScreen.Hide();
             SoundSettingsScreen.Hide();
             StreamerHopeMenu.Hide();
+            TownOfHost.Modules.MatchmakingWordManager.HideEditor();
         }
     }
     [HarmonyPatch(typeof(OptionsMenuBehaviour), nameof(OptionsMenuBehaviour.Open))]

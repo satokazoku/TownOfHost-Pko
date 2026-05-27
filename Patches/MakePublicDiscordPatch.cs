@@ -405,6 +405,12 @@ namespace TownOfHost
             var nowUtc = DateTime.UtcNow.ToString("o");
             var stateLabel = GetStateLabel(state);
             var content = BuildRecruitmentContent(hostName, roomCode, stateLabel, players, maxPlayers);
+            var threadComment = TownOfHost.Modules.MatchmakingWordManager.GetCurrentWord();
+            if (threadComment.Length > TownOfHost.Modules.MatchmakingWordManager.MaxCommentLength)
+                threadComment = threadComment[..TownOfHost.Modules.MatchmakingWordManager.MaxCommentLength];
+            var requestThread = action.Equals("upsert", StringComparison.OrdinalIgnoreCase)
+                                && string.IsNullOrWhiteSpace(messageId)
+                                && !string.IsNullOrWhiteSpace(threadComment);
             return "{"
                 + $"\"action\":\"{EscapeJson(action ?? "upsert")}\","
                 + $"\"hostName\":\"{EscapeJson(hostName)}\","
@@ -416,6 +422,8 @@ namespace TownOfHost
                 + $"\"content\":\"{EscapeJson(content)}\","
                 + $"\"messageId\":\"{EscapeJson(messageId ?? "")}\","
                 + $"\"reason\":\"{EscapeJson(reason ?? "")}\","
+                + $"\"threadRequested\":{(requestThread ? "true" : "false")},"
+                + $"\"threadComment\":\"{EscapeJson(threadComment)}\","
                 + $"\"mod\":\"{EscapeJson(Main.ModName)}\","
                 + $"\"forkId\":\"{EscapeJson(Main.ForkId)}\","
                 + $"\"sentAtUtc\":\"{EscapeJson(nowUtc)}\""
@@ -439,13 +447,13 @@ namespace TownOfHost
 
         private static string GetStateLabel(string state)
         {
-            if (string.IsNullOrWhiteSpace(state)) return "不明";
+            if (string.IsNullOrWhiteSpace(state)) return "Unknown";
 
             return state switch
             {
-                "Lobby" => "ロビー",
-                "InGame" => "ゲーム中",
-                "Closed" => "終了",
+                "Lobby" => "Lobby",
+                "InGame" => "In Game",
+                "Closed" => "Closed",
                 _ => state
             };
         }

@@ -89,6 +89,7 @@
 "EvilTrapper","EvilTrapper","イビルトラッパー"
 "Teleporter","Teleporter","テレポーター"
 "EvilLinker","EvilLinker","イビルリンカー"
+"Minimalist","Minimalist","ミニマリスト","极简主义者","極簡主義者","Минималист","Minimalista","Minimalista"
 "Evilk","",""
 "#ImpostorName"
 
@@ -441,6 +442,7 @@
 "EvilTrapperInfo","",""
 "TeleporterInfo","","みんなを集めよう"
 "EvilLinkerInfo","","犯行現場からの逃走に使おう！"
+"MinimalistInfo","","不必要なものを捨て、効率よくキルしよう"
 "#ImpostorInfo"
 
 "# マッドメイト系役職"
@@ -752,6 +754,7 @@
 "EvilMovingInfoLong","","ペットを撫でることで1試合で1回だけワープ先を設定出来る。設定後はペットを撫でることでワープ先にワープ出来る。\nクールタイムはファントムのクールタイムでわかります。"
 "EvilLinkerInfoLong","","ペットを撫でることでダミーを設置できる。設置したダミーは次のターンから全員に見えるようになる。\nダミーは２つで1組で組同士のダミーに触れることでその間をワープすることができる。"
 "TeleporterInfoLong","","ペットを撫でることで皆をランダムなプレイヤーのところにワープさせる。"
+"MinimalistInfoLong","","ベントとサボタージュが使用できない代わりに、キルクールが短い。"
 "#ImpostorInfoLong"
 
 "# マッドメイト系役職"

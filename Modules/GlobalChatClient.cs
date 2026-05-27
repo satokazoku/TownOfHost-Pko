@@ -91,7 +91,7 @@ public static class GlobalChatManager
         }
 
         //[Global](ホスト名)-(プレイヤー名) (フレコ)
-        string title = $"<size=80%>[Global]</size> <size=80%>({hostName}村)-{playerName}</size> <size=50%>({friendCode})</size>";
+        string title = $"<size=70%>[Global]</size> <size=70%>({hostName}村)-{playerName}</size> <size=40%>({friendCode})</size>";
 
         bool isInGame = AmongUsClient.Instance != null
             && AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started;

@@ -20,6 +20,8 @@ namespace TownOfHost
         }
         public static void Postfix(ChatController __instance)
         {
+            if (Modules.MatchmakingWordManager.TryHandleEditorHotkeys()) return;
+
             if (!__instance.freeChatField.textArea.hasFocus) return;
             if ((Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)) && Input.GetKeyDown(KeyCode.C))
                 ClipboardHelper.PutClipboardString(__instance.freeChatField.textArea.text);

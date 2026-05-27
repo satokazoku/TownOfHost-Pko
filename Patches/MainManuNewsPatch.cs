@@ -399,8 +399,39 @@ public class ModNewsHistory
                     + "・村長のバグ修正\n"
                     + "・ナイステレポーターの仕様変更\n"
                     + "・テレポーターの仕様変更\n"
+                    + "・ミニマリストの追加 From:SuperNewRoles\n"
                     ,
                     Date = "2026-5-25"
+                };
+                AllModNews.Add(news);
+            }
+            {
+                var news = new ModNews
+                {
+                    Number = 100085,
+                    Title = "皆でチャットしようぜ！",
+                    SubTitle = "<color=#FF9631>Town Of Host-Pko v4.31.14.65</color>",
+                    ShortTitle = "<color=#FF9631>●TOH-Pko v4.31.14.65</color>",
+                    Text = "・新機能　グローバルチャットのテスト実装\n"
+                    + "・バットガールのバグ修正\n"
+                    + "・自殺願望者のバグ修正\n"
+                    + "・スタンドマスターのバグ修正\n"
+                    + "・マッチメイキング修正\n"
+                    ,
+                    Date = "2026-5-27"
+                };
+                AllModNews.Add(news);
+            }
+            {
+                var news = new ModNews
+                {
+                    Number = 100086,
+                    Title = "'-'",
+                    SubTitle = "<color=#FF9631>Town Of Host-Pko v4.31.14.66</color>",
+                    ShortTitle = "<color=#FF9631>●TOH-Pko v4.31.14.66</color>",
+                    Text = "・ちょっとした修正\n"
+                    ,
+                    Date = "2026-5-27"
                 };
                 AllModNews.Add(news);
             }
