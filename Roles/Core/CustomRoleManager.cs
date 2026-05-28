@@ -961,6 +961,7 @@ public enum CustomRoles
     Hitchhiker,
     NiceLinker,
     StepDancer,
+    Apprentice,
     //DEBUG only Crewmate
     Analyzer,
     //Neutral

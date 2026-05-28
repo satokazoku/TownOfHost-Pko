@@ -1,4 +1,4 @@
-/*using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
@@ -440,4 +440,4 @@ public sealed class TrapNetObject : CustomNetObject
     }
 
     public override void OnMeeting() { }
-}*/
+}

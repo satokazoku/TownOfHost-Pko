@@ -1,4 +1,4 @@
-/*using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
@@ -19,7 +19,7 @@ public sealed class EvilLinker : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.EvilLinker,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            126600,
+            126700,
             SetupOptionItem,
             "el",
             OptionSort: (2, 11)
@@ -375,4 +375,4 @@ public sealed class EvilLinkerDummy : CustomNetObject
     }
 
     public override void OnMeeting() { }
-}*/
+}

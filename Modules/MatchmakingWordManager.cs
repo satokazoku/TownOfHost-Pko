@@ -32,6 +32,11 @@ public static class MatchmakingWordManager
     private static readonly List<string> undoStack = new();
     private static readonly List<string> redoStack = new();
     private static bool suppressHistoryEvent;
+    private static bool chatUiRefreshEnabled;
+    private static float nextChatUiRefreshTime;
+    private static float chatUiRefreshExpireTime;
+    private const float ChatUiRefreshInterval = 3f;
+    private const float ChatUiRefreshDuration = 20f;
 
     public static string GetCurrentWord()
     {
@@ -64,8 +69,9 @@ public static class MatchmakingWordManager
         {
             try
             {
-                hud.Chat.SetVisible(false);
+                // Close the chat panel, but keep ChatUI itself visible.
                 hud.Chat.ForceClosed();
+                ScheduleChatUiRefresh(ChatUiRefreshDuration, 0.1f);
             }
             catch (Exception e)
             {
@@ -111,6 +117,22 @@ public static class MatchmakingWordManager
     {
         if (popup != null)
             popup.gameObject.SetActive(false);
+
+        TryRestoreChatUiNow();
+        ScheduleChatUiRefresh(8f, 0f);
+    }
+
+    public static void TickChatUiRefresh()
+    {
+        if (!chatUiRefreshEnabled) return;
+        if (Time.time < nextChatUiRefreshTime) return;
+
+        TryRestoreChatUiNow();
+        nextChatUiRefreshTime = Time.time + ChatUiRefreshInterval;
+
+        var popupOpen = popup != null && popup.gameObject.activeInHierarchy;
+        if (!popupOpen && Time.time >= chatUiRefreshExpireTime)
+            chatUiRefreshEnabled = false;
     }
 
     public static bool TryHandleEditorHotkeys()
@@ -528,6 +550,36 @@ public static class MatchmakingWordManager
         catch
         {
             return false;
+        }
+    }
+
+    private static void ScheduleChatUiRefresh(float duration, float startDelay)
+    {
+        chatUiRefreshEnabled = true;
+        nextChatUiRefreshTime = Time.time + Mathf.Max(0f, startDelay);
+        chatUiRefreshExpireTime = Time.time + Mathf.Max(duration, ChatUiRefreshInterval);
+    }
+
+    private static void TryRestoreChatUiNow()
+    {
+        var hud = DestroyableSingleton<HudManager>.Instance;
+        var chat = hud?.Chat;
+        if (chat == null) return;
+
+        try
+        {
+            var chatButtonObject = chat.chatButton?.gameObject;
+            if (chatButtonObject != null && chatButtonObject.activeSelf && chatButtonObject.activeInHierarchy)
+                return;
+
+            chat.SetVisible(true);
+            if (chatButtonObject != null)
+                chatButtonObject.SetActive(true);
+            chat.HideBanButton();
+        }
+        catch (Exception e)
+        {
+            Logger.Exception(e, nameof(MatchmakingWordManager));
         }
     }
 }
