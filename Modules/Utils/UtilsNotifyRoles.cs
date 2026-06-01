@@ -361,7 +361,7 @@ namespace TownOfHost
 
                             if (((IsActive(SystemTypes.Comms) && Options.CommsCamouflage.GetBool())
                             || (role is CustomRoles.Monochromer && seerisAlive)
-                            || Camouflager.NowUse
+                            //|| Camouflager.NowUse
                             || (SuddenDeathMode.SuddenCannotSeeName && !TemporaryName))
                             && (!((targetrole as Jumper)?.Jumping == true)))
                             {
@@ -438,11 +438,11 @@ namespace TownOfHost
             if (CustomWinnerHolder.WinnerTeam != CustomWinner.Default && !Main.DontGameSet) return;
 
             /* 会議拡張の奴 */
-            var Minfo = $"<voffset=20><line-height=0><{Main.ModColor}><size=85%>TownOfHost-P</size>\t\t \n \t\t</color><size=70%><#ffffff>v{Main.PluginShowVersion}</color></size></voffset>";
-            Minfo += $"<voffset=17.5>\n<#fc9003>Day.{UtilsGameLog.day}</color>" + Bakery.BakeryMark() + $"<voffset=15>\n{ExtendedMeetingText}</voffset>";
+            var secondpcMinfo = $"<voffset=20><line-height=0><{Main.ModColor}><size=85%>TownOfHost-P</size>\t\t \n \t\t</color><size=70%><#ffffff>v{Main.PluginShowVersion}</color></size></voffset>";
+            var Minfo = $"\n<line-height=0><voffset=17.5><#fc9003>Day.{UtilsGameLog.day}</color>" + Bakery.BakeryMark() + $"<voffset=15>\n{ExtendedMeetingText}";
             if (CustomRolesHelper.CheckGuesser() || PlayerCatch.AllPlayerControls.Any(pc => pc.Is(CustomRoles.Guesser)))
             {
-                Minfo += $"<voffset=12.5>\n<#999900><size=60%>{Translator.GetString("GuessInfoForVanilla").RemoveColorTags()}</voffset></size>";
+                secondpcMinfo += $"<voffset=17.5>\n<#999900><size=60%>{Translator.GetString("GuessInfoForVanilla").RemoveColorTags()}</size>";
             }
             //seer:ここで行われた変更を見ることができるプレイヤー
             //target:seerが見ることができる変更の対象となるプレイヤー
@@ -482,12 +482,15 @@ namespace TownOfHost
                     var list = aliveplayer.ToArray().AddRangeToArray(deadplayer.ToArray());
 
                     bool isMeMinfo = false;
-                    if (Assassin.NowUse) isMeMinfo = false;
                     if (list[0] is not null)
                     {
                         if (list[0] == seer) isMeMinfo = true;
                     }
-
+                    if (Assassin.NowUse)
+                    {
+                        list = PlayerCatch.AllPlayerControls.ToArray();
+                        isMeMinfo = false;
+                    }
                     //名前の後ろに付けるマーカー
                     SelfMark.Clear();
 
@@ -550,12 +553,23 @@ namespace TownOfHost
                     if (isMeMinfo && !Assassin.NowUse)
                     {
                         var Name = SelfName;
-                        SelfName = Minfo + $"<voffset=10>\n<line-height=85%>{Name.RemoveDeltext("</?line-height[^>]*?>", "")}{(SelfSuffix.ToString().RemoveHtmlTags() == "" ? "\r\n " : "")}</line-height></voffset>";
+                        SelfName = Minfo + $"<voffset=10>\n<line-height=85%>{Name.RemoveDeltext("</?line-height[^>]*?>", "")}{(SelfSuffix.ToString().RemoveHtmlTags() == "" ? "\r\n " : "")}";
                     }
                     else
                     {
-                        var Name = (SelfSuffix.ToString() == "" ? "" : (SelfSuffix.ToString().RemoveText() + line + " \r\n " + "</line-height>")) + SelfName;
-                        SelfName = Name;
+                        if (list.Length > 1)
+                        {
+                            if (list[1] == seer)
+                            {
+                                var Name = SelfName;
+                                SelfName = secondpcMinfo + $"<voffset=10>\n<line-height=85%>{Name.RemoveDeltext("</?line-height[^>]*?>", "")}{(SelfSuffix.ToString().RemoveHtmlTags() == "" ? "\r\n " : "")}";
+                            }
+                            else
+                            {
+                                var Name = (SelfSuffix.ToString() == "" ? "" : (SelfSuffix.ToString().RemoveText() + line + " \r\n " + "</line-height>")) + SelfName;
+                                SelfName = Name;
+                            }
+                        }
                     }
 
                     if (list.LastOrDefault() != null)
@@ -608,15 +622,24 @@ namespace TownOfHost
                             var deadplayer = PlayerCatch.AllPlayerControls.Where(x => !x.IsAlive()).OrderBy(x => x.PlayerId);
                             var list = aliveplayer.ToArray().AddRangeToArray(deadplayer.ToArray());
                             bool tageismeI = false;
+                            bool tageismodinfo = false;
 
-                            if (Assassin.NowUse) tageismeI = target.PlayerId == PlayerControl.LocalPlayer.PlayerId;
-
+                            if (Assassin.NowUse)
+                            {
+                                tageismeI = target.PlayerId == PlayerControl.LocalPlayer.PlayerId;
+                                list = PlayerCatch.AllPlayerControls.ToArray();
+                            }
                             if (list[0] != null && !Assassin.NowUse)
                             {
                                 if (list[0] == target)
                                 {
                                     tageismeI = true;
                                 }
+                            }
+                            if (list.Length > 1)
+                            {
+                                if (list[1] == target)
+                                    tageismodinfo = true;
                             }
                             var targetrole = target.GetRoleClass();
                             //名前の後ろに付けるマーカー
@@ -725,7 +748,7 @@ namespace TownOfHost
                             {
                                 if (seerisAlive && targetisalive)
                                 {
-                                    TargetPlayerName = ColorString(Color.yellow, target.PlayerId.ToString()) + " " + TargetPlayerName;
+                                    TargetPlayerName = target.PlayerId.ToString() + " " + TargetPlayerName;
                                 }
                             }
 
@@ -740,7 +763,12 @@ namespace TownOfHost
                             if (tageismeI)
                             {
                                 var Name = TargetName;
-                                TargetName = Minfo + $"\n<voffset=10>{Name}{(HasData ? "" : "\r\n ")}</line-height></voffset>";
+                                TargetName = Minfo + $"\n<voffset=10>{Name}{(HasData ? "" : "\r\n ")}";
+                            }
+                            if (tageismodinfo)
+                            {
+                                var Name = TargetName;
+                                TargetName = secondpcMinfo + $"\n<voffset=10>{Name}{(HasData ? "" : "\r\n ")}";
                             }
                             if (list.LastOrDefault() != null)
                                 if (list.LastOrDefault() == target)

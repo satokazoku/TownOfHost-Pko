@@ -1,37 +1,61 @@
 using AmongUs.GameOptions;
-
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using UnityEngine;
 
 namespace TownOfHost.Roles.Neutral;
 
-public sealed class Opportunist : RoleBase, IAdditionalWinner
+public sealed class Opportunist : RoleBase, IAdditionalWinner, IKiller
 {
     public static readonly SimpleRoleInfo RoleInfo =
         SimpleRoleInfo.Create(
             typeof(Opportunist),
             player => new Opportunist(player),
             CustomRoles.Opportunist,
-            () => RoleTypes.Crewmate,
+            () => OptionHasKillButton?.GetBool() == true ? RoleTypes.Impostor : RoleTypes.Crewmate,
             CustomRoleTypes.Neutral,
             15200,
-            null,
+            SetupOptionItem,
             "op",
             "#00ff00",
             (6, 2),
             from: From.TOR_GM_Edition
         );
+
     public Opportunist(PlayerControl player)
-    : base(
-        RoleInfo,
-        player
-    )
+        : base(RoleInfo, player)
     {
         timer = 0;
         pos = new(0, 0);
     }
-    float timer; Vector2 pos;
+
+    static OptionItem OptionHasKillButton;
+    static OptionItem OptionKillCooldown;
+
+    enum OptionName
+    {
+        OpportunistHasKillButton,
+        KillCooldown,
+    }
+
+    static void SetupOptionItem()
+    {
+        OptionHasKillButton = BooleanOptionItem.Create(RoleInfo, 10, OptionName.OpportunistHasKillButton, false, false);
+        OptionKillCooldown = FloatOptionItem.Create(RoleInfo, 11, OptionName.KillCooldown,
+            new(0f, 180f, 0.5f), 30f, false, OptionHasKillButton)
+            .SetValueFormat(OptionFormat.Seconds);
+    }
+
+    float timer;
+    Vector2 pos;
+
+    public float CalculateKillCooldown() => OptionKillCooldown.GetFloat();
+    public bool CanUseKillButton() => Player.IsAlive() && OptionHasKillButton.GetBool();
+    public bool CanUseImpostorVentButton() => false;
+    public bool CanUseSabotageButton() => false;
+
+    public void OnCheckMurderAsKiller(MurderInfo info) { }
+
     public bool CheckWin(ref CustomRoles winnerRole)
     {
         if (Player.IsAlive())
@@ -44,25 +68,26 @@ public sealed class Opportunist : RoleBase, IAdditionalWinner
         }
         return false;
     }
+
     public override void OnFixedUpdate(PlayerControl player)
     {
         if (AmongUsClient.Instance.AmHost)
         {
             var nowpos = player.GetTruePosition();
-            if (nowpos == pos)
-            {
-                timer += Time.fixedDeltaTime;
-            }
+            if (nowpos == pos) timer += Time.fixedDeltaTime;
             pos = nowpos;
         }
     }
+
     public override string GetMark(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
     {
         seen ??= seer;
-        if ((seen == seer) && Player.IsAlive()) return Utils.AdditionalAliveWinnerMark;
+        if (seen == seer && Player.IsAlive()) return Utils.AdditionalAliveWinnerMark;
         return "";
     }
+
     public static System.Collections.Generic.Dictionary<int, Achievement> achievements = new();
+
     [Attributes.PluginModuleInitializer]
     public static void Load()
     {

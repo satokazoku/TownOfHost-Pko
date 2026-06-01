@@ -124,19 +124,10 @@ public sealed class Cupid : RoleBase, IKiller, IAdditionalWinner
     {
         seen ??= seer;
 
-        // --- ① Cupid視点：CupidLovers の名前に ♥ を追加 ---
-        if (Is(seer) && IsCupidLoverPlayer(seen.PlayerId))
-        {
-            // 名前をピンク色にし、右側に赤いハートを表示
-            name = $"<color=#ff66cc>{seen.Data.PlayerName}</color> <color=#ff0000>♥</color>";
-            return true;
-        }
-
-        // --- ② CupidLovers視点：Cupid の名前に [キューピッド] 表示 ---
         if (IsCupidLoverPlayer(seer.PlayerId)
-            && seen.PlayerId == Player.PlayerId) // Cupid本人
+            && seen.PlayerId == Player.PlayerId)
         {
-            name = $"{seen.Data.PlayerName} <color={RoleInfo.RoleColorCode}>\nキューピッド</color>";
+            name = $"<color={RoleInfo.RoleColorCode}>キューピッド</color>\n{seen.Data.PlayerName}";
             return true;
         }
 
@@ -149,7 +140,7 @@ public sealed class Cupid : RoleBase, IKiller, IAdditionalWinner
         if (!Player.IsAlive()) return "";
         if (seer.PlayerId == seen.PlayerId) return "";
         if (!IsCupidLoverPlayer(seen.PlayerId)) return "";
-        return $"<color=#ff0000>♥</color>";
+        return $"<color=#f09199>♥</color>";
     }
 
     private static bool IsCupidLoverPlayer(byte playerId)

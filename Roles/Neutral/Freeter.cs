@@ -36,7 +36,9 @@ public sealed class Freeter : RoleBase, IKiller, IAdditionalWinner
     static OptionItem OptBetCooldown;
 
     byte BetTargetId;
+    public byte GetBetTargetId => BetTargetId;
     CustomRoles lastBetTargetRole;
+
     enum OptionName
     {
         FreeterBetCooldown,
@@ -45,13 +47,8 @@ public sealed class Freeter : RoleBase, IKiller, IAdditionalWinner
     private static void SetupOptionItem()
     {
         OptBetCooldown = FloatOptionItem.Create(
-                RoleInfo,
-                10,
-                OptionName.FreeterBetCooldown,
-                new(0f, 60f, 2.5f),
-                25f,
-                false
-            )
+                RoleInfo, 10, OptionName.FreeterBetCooldown,
+                new(0f, 60f, 2.5f), 25f, false)
             .SetValueFormat(OptionFormat.Seconds);
     }
 
@@ -60,16 +57,9 @@ public sealed class Freeter : RoleBase, IKiller, IAdditionalWinner
         opt.SetVision(false);
     }
 
-    // ============================
-    //     IKiller（キルボタン）
-    // ============================
-
-    public bool CanUseKillButton()
-        => Player.IsAlive() && BetTargetId == byte.MaxValue;
-
+    public bool CanUseKillButton() => Player.IsAlive() && BetTargetId == byte.MaxValue;
     public bool CanUseImpostorVentButton() => false;
     public bool CanUseSabotageButton() => false;
-
     public float CalculateKillCooldown() => OptBetCooldown.GetFloat();
 
     public bool OverrideKillButtonText(out string text)
@@ -77,20 +67,37 @@ public sealed class Freeter : RoleBase, IKiller, IAdditionalWinner
         text = BetTargetId == byte.MaxValue ? "就職" : "就職済み";
         return true;
     }
-
     public bool OverrideKillButton(out string text)
     {
         text = "Freeter_Job";
         return true;
     }
 
+    public override void OverrideDisplayRoleNameAsSeer(
+        PlayerControl seen,
+        ref bool enabled,
+        ref Color roleColor,
+        ref string roleText,
+        ref bool addon)
+    {
+        if (BetTargetId == byte.MaxValue) return;
+        if (seen.PlayerId != BetTargetId) return;
+
+        var role = seen.GetCustomRole();
+        enabled = true;
+        roleText = UtilsRoleText.GetRoleName(role);
+        if (ColorUtility.TryParseHtmlString(UtilsRoleText.GetRoleColorCode(role), out var color))
+            roleColor = color;
+        addon = true;
+    }
+
     public void OnCheckMurderAsKiller(MurderInfo info)
     {
-        var (Freeter, target) = info.AttemptTuple;
+        var (freeter, target) = info.AttemptTuple;
         info.DoKill = false;
 
         if (BetTargetId != byte.MaxValue) return;
-        if (target.PlayerId == Freeter.PlayerId) return;
+        if (target.PlayerId == freeter.PlayerId) return;
 
         var closest = GetClosestPlayerInRange();
         closest ??= target;
@@ -106,13 +113,9 @@ public sealed class Freeter : RoleBase, IKiller, IAdditionalWinner
         SendRPC();
         _ = new LateTask(() => UtilsNotifyRoles.NotifyRoles(SpecifySeer: Player), 0.2f, "Freeter Bet");
 
-        Freeter.ResetKillCooldown();
-        Freeter.SetKillCooldown();
+        freeter.ResetKillCooldown();
+        freeter.SetKillCooldown();
     }
-
-    // ============================
-    //     賭け相手死亡 → リセット
-    // ============================
 
     public override void OnFixedUpdate(PlayerControl player)
     {
@@ -134,7 +137,6 @@ public sealed class Freeter : RoleBase, IKiller, IAdditionalWinner
             return;
         }
 
-        // ★ 就職先の役職が変わっていたら色を付け直す
         var currentRole = target.GetCustomRole();
         if (currentRole != lastBetTargetRole)
         {
@@ -144,20 +146,33 @@ public sealed class Freeter : RoleBase, IKiller, IAdditionalWinner
         }
     }
 
-    // ============================
-    //     会議後に再デシンク（重要）
-    // ============================
+    public override void OnStartMeeting()
+    {
+        if (BetTargetId == byte.MaxValue) return;
+        NameColorManager.Add(BetTargetId, Player.PlayerId, "#32cd32");
+    }
+
+    public override void AfterMeetingTasks()
+    {
+        if (!AmongUsClient.Instance.AmHost) return;
+        if (BetTargetId == byte.MaxValue) return;
+
+        _ = new LateTask(() =>
+        {
+            if (BetTargetId == byte.MaxValue) return;
+            NameColorManager.Add(BetTargetId, Player.PlayerId, "#32cd32");
+            UtilsNotifyRoles.NotifyRoles(SpecifySeer: Player);
+        }, 0.3f, "Freeter.ColorRefresh", true);
+    }
 
     public override void ChengeRoleAdd()
     {
         base.ChengeRoleAdd();
-
         if (BetTargetId == byte.MaxValue) return;
 
         var target = GetPlayerById(BetTargetId);
         if (target == null) return;
 
-        // デシンク処理はそのまま
         var role = target.GetCustomRole();
         if (role.IsImpostor())
             target.RpcSetRoleDesync(RoleTypes.Impostor, target.GetClientId());
@@ -165,38 +180,27 @@ public sealed class Freeter : RoleBase, IKiller, IAdditionalWinner
             target.RpcSetRoleDesync(RoleTypes.Crewmate, target.GetClientId());
     }
 
-    // ============================
-    //     名前下に役職表示
-    // ============================
-
-    public override string GetSuffix(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
-    {
-        seen ??= seer;
-        if (seer.PlayerId != Player.PlayerId) return "";
-        if (BetTargetId == byte.MaxValue) return "";
-        if (seen.PlayerId != BetTargetId) return "";
-
-        var role = seen.GetCustomRole();
-        return $"<color={UtilsRoleText.GetRoleColorCode(role)}>{UtilsRoleText.GetRoleName(role)}</color>";
-    }
-
-    // ============================
-    //     勝利条件（追加勝利）
-    // ============================
-
     public bool CheckWin(ref CustomRoles winnerRole)
     {
         if (BetTargetId == byte.MaxValue) return false;
-        return CustomWinnerHolder.WinnerIds.Contains(BetTargetId);
-    }
 
-    // ============================
-    //     RPC
-    // ============================
+        if (CustomWinnerHolder.WinnerIds.Contains(BetTargetId)) return true;
+
+        var target = GetPlayerById(BetTargetId);
+        if (target == null) return false;
+
+        var winTeam = CustomWinnerHolder.WinnerTeam;
+        var role = target.GetCustomRole();
+
+        if (winTeam == CustomWinner.Crewmate && role.IsCrewmate()) return true;
+        if (winTeam == CustomWinner.Impostor && role.IsImpostor()) return true;
+
+        return false;
+    }
 
     private PlayerControl GetClosestPlayerInRange()
     {
-        float maxDist = 1f;
+        const float maxDist = 1f;
         PlayerControl closest = null;
         float minDist = float.MaxValue;
 

@@ -40,6 +40,7 @@
     },
     "4.27.13.57": {
         "Unavailable": true,
-        "NotAvailableOnline": false
+        "NotAvailableOnline": false,
+        "AnnounceText": "Test Text"
     }
 }

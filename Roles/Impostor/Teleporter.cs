@@ -59,7 +59,7 @@ public sealed class Teleporter : RoleBase, IImpostor, IUsePhantomButton
     static void SetupOptionItem()
     {
         OptionAbilityCooldown = FloatOptionItem.Create(RoleInfo, 10, OptionName.TeleporterAbilityCooldown,
-            new(5f, 120f, 5f), 45f, false).SetValueFormat(OptionFormat.Seconds);
+            new(5f, 120f, 2.5f), 45f, false).SetValueFormat(OptionFormat.Seconds);
         OptionWaitingTime = FloatOptionItem.Create(RoleInfo, 11, OptionName.TeleporterWaitingTime,
             new(0f, 10f, 1f), 3f, false).SetValueFormat(OptionFormat.Seconds);
     }

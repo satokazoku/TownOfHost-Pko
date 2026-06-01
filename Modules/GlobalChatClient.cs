@@ -55,11 +55,6 @@ public static class GlobalChatManager
                 }
             }
             catch (OperationCanceledException) { break; }
-            catch (Exception e)
-            {
-                Logger.Warn($"GlobalChat 切断: {e.Message} → 5秒後に再接続", "GlobalChatManager");
-                _socket = null;
-            }
 
             try { await Task.Delay(5000, ct); } catch { break; }
         }

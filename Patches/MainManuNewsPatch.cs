@@ -435,6 +435,21 @@ public class ModNewsHistory
                 };
                 AllModNews.Add(news);
             }
+            {
+                var news = new ModNews
+                {
+                    Number = 100087,
+                    Title = "悲報:ついっちくんしす",
+                    SubTitle = "<color=#FF9631>Town Of Host-Pko v4.31.15.67</color>",
+                    ShortTitle = "<color=#FF9631>●TOH-Pko v4.31.15.67</color>",
+                    Text = "・TOHKのアプデに対応\n"
+                    + "・ペット自動付与機能を一旦削除\n"
+                    + "・新役職:子方テストリリース\n"
+                    ,
+                    Date = "2026-5-27"
+                };
+                AllModNews.Add(news);
+            }
             AnnouncementPopUp.UpdateState = AnnouncementPopUp.AnnounceState.NotStarted;
         }
     }

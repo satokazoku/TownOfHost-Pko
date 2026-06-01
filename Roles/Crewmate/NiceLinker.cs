@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+/*using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
@@ -182,7 +182,7 @@ public sealed class NiceLinker : RoleBase
                 warpCooldowns.Remove(pid);
         }
 
-        const float warpRange = 0.1f;
+        const float warpRange = 0.2f;
 
         foreach (var pair in linkPairs)
         {
@@ -368,4 +368,4 @@ public sealed class LinkerDummy : CustomNetObject
     }
 
     public override void OnMeeting() { }
-}
+}*/

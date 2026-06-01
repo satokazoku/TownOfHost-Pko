@@ -19,7 +19,7 @@ public sealed class Apprentice : RoleBase
             SetupOptionItem,
             "ap",
             "#c8a46e",
-            (2, 1),
+            (5, 5),
             introSound: () => GetIntroSound(RoleTypes.Crewmate)
         );
 
@@ -35,33 +35,36 @@ public sealed class Apprentice : RoleBase
     static OptionItem OptionCanVent;
     static OptionItem OptionVentCooldown;
     static OptionItem OptionVentMaxTime;
+    static OptionItem OptionRequiredTaskCount;
     static OverrideTasksData Tasks;
 
     enum OptionName
     {
-        ApprenticeCanVent,
-        ApprenticeVentCooldown,
-        ApprenticeVentMaxTime,
+        CanVent,
+        VentCooldown,
+        ApprenticeInVentMaxTime,
+        ApprenticeRequiredTaskCount,
     }
 
     static void SetupOptionItem()
     {
-        OptionCanVent = BooleanOptionItem.Create(RoleInfo, 10, OptionName.ApprenticeCanVent, false, false);
-        OptionVentCooldown = FloatOptionItem.Create(RoleInfo, 11, OptionName.ApprenticeVentCooldown,
+        OptionCanVent = BooleanOptionItem.Create(RoleInfo, 10, OptionName.CanVent, false, false);
+        OptionVentCooldown = FloatOptionItem.Create(RoleInfo, 11, OptionName.VentCooldown,
             new(0f, 180f, 0.5f), 15f, false, OptionCanVent)
             .SetValueFormat(OptionFormat.Seconds);
-        OptionVentMaxTime = FloatOptionItem.Create(RoleInfo, 12, OptionName.ApprenticeVentMaxTime,
+        OptionVentMaxTime = FloatOptionItem.Create(RoleInfo, 12, OptionName.ApprenticeInVentMaxTime,
             new(0.5f, 180f, 0.5f), 5f, false, OptionCanVent)
             .SetZeroNotation(OptionZeroNotation.Infinity)
             .SetValueFormat(OptionFormat.Seconds);
+        OptionRequiredTaskCount = IntegerOptionItem.Create(RoleInfo, 13, OptionName.ApprenticeRequiredTaskCount,
+            new(0, 20, 1), 0, false)
+            .SetValueFormat(OptionFormat.Times);
         Tasks = OverrideTasksData.Create(RoleInfo, 20);
     }
 
-    // ★ 親方情報
     byte masterPlayerId;
     CustomRoles masterOriginalRole;
 
-    // ★ 継承条件フラグ
     bool hasInherited;
     bool isTaskComplete;
 
@@ -84,7 +87,6 @@ public sealed class Apprentice : RoleBase
         masterPlayerId = byte.MaxValue;
         masterOriginalRole = CustomRoles.NotAssigned;
 
-        // ★ 弟子入り：ゲーム開始時にクルー陣営からランダムに親方を決める（自分以外）
         _ = new LateTask(() =>
         {
             if (!AmongUsClient.Instance.AmHost) return;
@@ -111,8 +113,13 @@ public sealed class Apprentice : RoleBase
         if (!AmongUsClient.Instance.AmHost) return true;
         if (hasInherited) return true;
 
-        // ★ タスク完了条件チェック
-        if (MyTaskState.IsTaskFinished)
+        int required = OptionRequiredTaskCount.GetInt();
+
+        bool conditionMet = required <= 0
+            ? MyTaskState.IsTaskFinished
+            : MyTaskState.CompletedTasksCount >= required;
+
+        if (conditionMet && !isTaskComplete)
         {
             isTaskComplete = true;
             SendRpc();
@@ -128,7 +135,6 @@ public sealed class Apprentice : RoleBase
         if (masterPlayerId == byte.MaxValue) return;
         if (!GameStates.IsInTask) return;
 
-        // ★ 親方が死亡しているかチェック
         var master = PlayerCatch.GetPlayerById(masterPlayerId);
         if (master != null && !master.IsAlive())
             TryInherit();
@@ -140,19 +146,15 @@ public sealed class Apprentice : RoleBase
         if (!isTaskComplete) return;
 
         var master = PlayerCatch.GetPlayerById(masterPlayerId);
-        // 親方が死亡していれば継承
         if (master != null && master.IsAlive()) return;
 
         hasInherited = true;
 
-        // ★ 親方の元の役職（サイドキックなどで変わる前のクルー役）を継承
         var inheritRole = masterOriginalRole;
 
-        // ★ 念のため継承役職がクルー陣営かチェック
         if (inheritRole == CustomRoles.NotAssigned
             || inheritRole.GetCustomRoleTypes() != CustomRoleTypes.Crewmate)
         {
-            // フォールバック: 通常クルー
             inheritRole = CustomRoles.Crewmate;
         }
 
@@ -190,12 +192,15 @@ public sealed class Apprentice : RoleBase
 
     public override string GetProgressText(bool comms = false, bool GameLog = false)
     {
-        if (!Player.IsAlive()) return "";
-        if (hasInherited) return "";
+        if (!Player.IsAlive() || hasInherited) return "";
 
-        // ★ 条件達成状況をアイコンで表示（親方が誰かは表示しない）
-        string taskIcon = isTaskComplete ? "<color=#00ff88>①✓</color>" : "<color=#888888>①</color>";
-        // 親方死亡条件は外から見えないので常にグレー
+        int required = OptionRequiredTaskCount.GetInt();
+        int completed = MyTaskState.CompletedTasksCount;
+        int total = required <= 0 ? MyTaskState.AllTasksCount : required;
+
+        string taskIcon = isTaskComplete
+            ? "<color=#00ff88>①✓</color>"
+            : $"<color=#888888>①{completed}/{total}</color>";
         string masterIcon = "<color=#888888>②</color>";
         return $"<color={RoleInfo.RoleColorCode}>{taskIcon}{masterIcon}</color>";
     }
@@ -210,8 +215,12 @@ public sealed class Apprentice : RoleBase
         string size = isForHud ? "" : "<size=60%>";
         string color = RoleInfo.RoleColorCode;
 
+        int required = OptionRequiredTaskCount.GetInt();
+        int completed = MyTaskState.CompletedTasksCount;
+        int total = required <= 0 ? MyTaskState.AllTasksCount : required;
+
         if (!isTaskComplete)
-            return $"{size}<color={color}>①タスクを完了させよう</color>";
+            return $"{size}<color={color}>①タスクを完了させよう ({completed}/{total})</color>";
         return $"{size}<color={color}>①完了！②親方の死を待て…</color>";
     }
 }

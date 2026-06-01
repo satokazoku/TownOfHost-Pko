@@ -3,28 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-
+using AmongUs.GameOptions;
+using Assets.CoreScripts;
+using HarmonyLib;
 using Hazel;
 using InnerNet;
-using HarmonyLib;
-using UnityEngine;
-using Assets.CoreScripts;
-using AmongUs.GameOptions;
-
 using TownOfHost.Modules;
 using TownOfHost.Modules.ChatManager;
-using TownOfHost.Roles.Core;
-using TownOfHost.Roles.Impostor;
-using static TownOfHost.Utils;
-using static TownOfHost.UtilsGameLog;
-using static TownOfHost.UtilsShowOption;
-using static TownOfHost.UtilsRoleText;
-using static TownOfHost.UtilsRoleInfo;
-using static TownOfHost.Translator;
-using static TownOfHost.PlayerCatch;
-using TownOfHost.Roles.Core.Descriptions;
 using TownOfHost.Patches;
 using TownOfHost.Roles.AddOns.Common;
+using TownOfHost.Roles.Core;
+using TownOfHost.Roles.Core.Descriptions;
+using TownOfHost.Roles.Impostor;
+using TownOfHost.Roles.Neutral;
+using UnityEngine;
+using static TownOfHost.PlayerCatch;
+using static TownOfHost.Translator;
+using static TownOfHost.Utils;
+using static TownOfHost.UtilsGameLog;
+using static TownOfHost.UtilsRoleInfo;
+using static TownOfHost.UtilsRoleText;
+using static TownOfHost.UtilsShowOption;
 
 namespace TownOfHost
 {
@@ -165,6 +164,36 @@ namespace TownOfHost
             string subArgs = "";
             var canceled = false;
             var cancelVal = "";
+
+            // ★ 追加：ゴミ箱レイヤーの通常チャット（/なし）を秘匿チャット化して送信
+            if (GameStates.InGame && !GameStates.IsMeeting && !text.StartsWith("/") && TownOfHost.Roles.Neutral.Monika.MonikaTrashLayer.Contains(PlayerControl.LocalPlayer.PlayerId) && !PlayerControl.LocalPlayer.Is(CustomRoles.Monika))
+            {
+                Logger.Info($"{PlayerControl.LocalPlayer.Data.GetLogPlayerName()} : {text}", "TrashChat");
+
+                foreach (var target in PlayerCatch.AllPlayerControls)
+                {
+                    if (target == null) continue;
+
+                    if (target.Is(CustomRoles.Monika)) continue;
+
+                    bool isTrash = TownOfHost.Roles.Neutral.Monika.MonikaTrashLayer.Contains(target.PlayerId);
+                    bool isDead = !target.IsAlive();
+
+                    if (isTrash || isDead)
+                    {
+                        var clientid = target.GetClientId();
+                        if (clientid == -1) continue;
+
+                        SendMessage(text.Mark(GetRoleColor(CustomRoles.Monika)), target.PlayerId,
+                            ColorString(GetRoleColor(CustomRoles.Monika), $"×{PlayerControl.LocalPlayer.GetPlayerColor()}×"));
+                    }
+                }
+
+                __instance.freeChatField.textArea.Clear();
+                return false;
+            }
+            // ══════════════════════════════════════════════════════════════
+
             Logger.Info(text, "SendChat");
             ChatManager.SendMessage(PlayerControl.LocalPlayer, text);
 
@@ -995,9 +1024,9 @@ namespace TownOfHost
                     case "/lc":
                         if (Assassin.NowUse) break;
                         canceled = true;
-                        if (GameStates.InGame && Options.LoversHideChat.GetBool() && PlayerControl.LocalPlayer.IsAlive() && PlayerControl.LocalPlayer.IsLovers())
+                        if (GameStates.InGame && Options.LoversHideChat.GetBool() && PlayerControl.LocalPlayer.IsAlive() && (PlayerControl.LocalPlayer.IsLovers() || (Options.CupidHideChat.GetBool() && PlayerControl.LocalPlayer.Is(CustomRoles.Cupid))))
                         {
-                            var loverrole = PlayerControl.LocalPlayer.GetLoverRole();
+                            var loverrole = PlayerControl.LocalPlayer.Is(CustomRoles.Cupid) ? CustomRoles.CupidLovers : PlayerControl.LocalPlayer.GetLoverRole();
 
                             if (loverrole is CustomRoles.NotAssigned or CustomRoles.OneLove || !loverrole.IsLovers()) break;
 
@@ -1011,7 +1040,7 @@ namespace TownOfHost
                             Logger.Info($"{PlayerControl.LocalPlayer.Data.GetLogPlayerName()} : {send}", "loversChat");
                             foreach (var lover in AllPlayerControls)
                             {
-                                if (lover && (lover.GetLoverRole() == loverrole || !lover.IsAlive()))
+                                if (lover && (lover.GetLoverRole() == loverrole || !lover.IsAlive() || (Options.CupidHideChat.GetBool() && lover.Is(CustomRoles.Cupid))))
                                 {
                                     var clientid = lover.GetClientId();
                                     if (clientid == -1) continue;
@@ -1118,6 +1147,140 @@ namespace TownOfHost
                             }
                         }
                         break;
+                    case "/pavlovchat":
+                    case "/pc":
+                        if (Assassin.NowUse) break;
+                        canceled = true;
+                        if (GameStates.InGame && Options.PavlovHideChat.GetBool() && PlayerControl.LocalPlayer.IsAlive() && PlayerControl.LocalPlayer.GetCustomRole() is CustomRoles.PavlovOwner or CustomRoles.PavlovDog)
+                        {
+                            var send = "";
+                            foreach (var ag in args)
+                            {
+                                if (ag.StartsWith("/")) continue;
+                                send += ag;
+                            }
+
+                            Logger.Info($"{PlayerControl.LocalPlayer.Data.GetLogPlayerName()} : {send}", "PavlovChat");
+                            foreach (var Pav in PlayerCatch.AllPlayerControls)
+                            {
+                                if (Pav && ((Pav?.GetCustomRole() is CustomRoles.PavlovOwner or CustomRoles.PavlovDog) || !Pav.IsAlive()))
+                                {
+                                    SendMessage(send.Mark(ModColors.PavlovColor), Pav.PlayerId,
+                                    ColorString(ModColors.PavlovColor, $"${PlayerControl.LocalPlayer.GetPlayerColor()}$"));
+                                }
+                            }
+                        }
+                        break;
+                    case "/standchat":
+                    case "/sc":
+                        if (Assassin.NowUse) break;
+                        canceled = true;
+                        if (GameStates.InGame && Options.StandHideChat.GetBool() && PlayerControl.LocalPlayer.IsAlive() && PlayerControl.LocalPlayer.GetCustomRole() is CustomRoles.Stand or CustomRoles.StandMaster)
+                        {
+                            var send = "";
+                            foreach (var ag in args)
+                            {
+                                if (ag.StartsWith("/")) continue;
+                                send += ag;
+                            }
+
+                            Logger.Info($"{PlayerControl.LocalPlayer.Data.GetLogPlayerName()} : {send}", "StandChat");
+                            foreach (var Stand in PlayerCatch.AllPlayerControls)
+                            {
+                                if (Stand && ((Stand?.GetCustomRole() is CustomRoles.Stand or CustomRoles.StandMaster) || !Stand.IsAlive()))
+                                {
+                                    SendMessage(send.Mark(ModColors.StandColor), Stand.PlayerId,
+                                    ColorString(ModColors.StandColor, $"%{PlayerControl.LocalPlayer.GetPlayerColor()}%"));
+                                }
+                            }
+                        }
+                        break;
+                    case "/freeterchat":
+                    case "/fc":
+                        if (Assassin.NowUse) break;
+                        canceled = true;
+                        if (GameStates.InGame && PlayerControl.LocalPlayer.IsAlive())
+                        {
+                            System.Collections.Generic.List<PlayerControl> sendplayers = new();
+
+                            foreach (var pc in AllPlayerControls)
+                            {
+                                if (pc != null && !pc.IsAlive()) sendplayers.Add(pc);
+                            }
+
+                            // 2. 自分が「フリーター本人」の場合
+                            if (PlayerControl.LocalPlayer.GetCustomRole() == CustomRoles.Freeter)
+                            {
+                                if (PlayerControl.LocalPlayer.GetRoleClass() is Freeter myFreeter)
+                                {
+                                    byte targetId = myFreeter.GetBetTargetId; // ステップ1で追加したプロパティ
+                                    sendplayers.Add(PlayerControl.LocalPlayer); // 自分を追加
+
+                                    // 生存している就職先プレイヤーを探して追加
+                                    foreach (var pc in AllPlayerControls)
+                                    {
+                                        if (pc != null && pc.PlayerId == targetId && pc.IsAlive())
+                                        {
+                                           sendplayers.Add(pc);
+                                           break;
+                                        }
+                                    }
+                                }
+                            }
+                            // 3. 自分が「誰かのフリーターの就職先」の場合
+                            else
+                            {
+                                bool amIJobTarget = false;
+                                foreach (var p in AllPlayerControls)
+                                {
+                                    if (p == null || p.GetCustomRole() != CustomRoles.Freeter) continue;
+                                    if (p.GetRoleClass() is not Freeter fRole) continue;
+
+                                    // 自分に就職しているフリーターがいるかチェック
+                                    if (fRole.GetBetTargetId == PlayerControl.LocalPlayer.PlayerId)
+                                    {
+                                        amIJobTarget = true;
+                                        if (p.IsAlive()) sendplayers.Add(p); // 自分に就職している生存フリーターを送信先に追加
+                                    }
+                                }
+                                // 自分が誰かの就職先だったなら、自分自身も送信先に加える
+                                if (amIJobTarget)
+                                {
+                                    sendplayers.Add(PlayerControl.LocalPlayer);
+                                }
+                            }
+
+                            // 自分が「就職していないフリーター」か「関係のない一般プレイヤー」の場合、
+                            // sendplayersの中に生存している自分が含まれないため、ここで処理を終了する
+                            if (!sendplayers.Contains(PlayerControl.LocalPlayer))
+                            {
+                                break;
+                            }
+
+                            // メッセージ
+                            var send = "";
+                            foreach (var ag in args)
+                            {
+                                if (ag.StartsWith("/")) continue;
+                                send += ag;
+                            }
+
+                            Logger.Info($"{PlayerControl.LocalPlayer.Data.GetLogPlayerName()} : {send}", "FreeterChat");
+
+                            // 重複を削除
+                            sendplayers = System.Linq.Enumerable.ToList(System.Linq.Enumerable.Distinct(sendplayers));
+
+                            // フリーターの役職色を取得
+                            var freeterColor = GetRoleColor(CustomRoles.Freeter);
+
+                            foreach (var sendplayer in sendplayers)
+                            {
+                                SendMessage(send.Mark(freeterColor), sendplayer.PlayerId,
+                                ColorString(freeterColor, $"#{PlayerControl.LocalPlayer.GetPlayerColor()}#"));
+                            }
+                        }
+                        break;
+
 
                     case "/t":
                     case "/template":
@@ -1701,6 +1864,51 @@ namespace TownOfHost
             string[] args = text.Split(' ');
             string subArgs = "";
             if (text.IsSystemMessage() || player.Data.PlayerName.IsSystemMessage()) return;//システムメッセージなら処理しない
+
+            // ★ モニカ用ゴミ箱レイヤー専用の秘匿チャット（通常のチャット入力を傍受）
+            if (!text.StartsWith("/") && TownOfHost.Roles.Neutral.Monika.MonikaTrashLayer.Contains(player.PlayerId) && !player.Is(CustomRoles.Monika))
+            {
+                canceled = true;
+
+                Logger.Info($"{player.Data.GetLogPlayerName()} : {text}", "TrashChat");
+
+                List<PlayerControl> sendplayers = new();
+                foreach (var target in PlayerControl.AllPlayerControls)
+                {
+                    if (target == null) continue;
+
+                    if (target.Is(CustomRoles.Monika)) continue;
+
+                    bool isTrash = TownOfHost.Roles.Neutral.Monika.MonikaTrashLayer.Contains(target.PlayerId);
+                    bool isDead = !target.IsAlive();
+
+                    if (isTrash || isDead)
+                    {
+                        sendplayers.Add(target);
+                    }
+                }
+
+                foreach (var target in sendplayers)
+                {
+                    if (target.PlayerId == player.PlayerId && !Isclient) continue;
+
+                    if (AmongUsClient.Instance.AmHost)
+                    {
+                        var clientid = target.GetClientId();
+                        if (clientid == -1) continue;
+
+                        string title = $"<#e5a497>×{player.GetPlayerColor()}×</line-height>";
+
+                        string sendtext = text.Mark(GetRoleColor(CustomRoles.Monika));
+
+                        SendMessage(sendtext, target.PlayerId, title);
+                    }
+                }
+
+                return;
+            }
+            // ══════════════════════════════════════════════════════════════
+
             if (player.PlayerId != 0)
             {
                 ChatManager.SendMessage(player, text);
@@ -2186,9 +2394,9 @@ namespace TownOfHost
                 case "/loverchat":
                 case "/lc":
                     if (Assassin.NowUse) break;
-                    if (GameStates.InGame && Options.LoversHideChat.GetBool() && player.IsAlive() && player.IsLovers())
+                    if (GameStates.InGame && Options.LoversHideChat.GetBool() && player.IsAlive() && (player.IsLovers() || (Options.CupidHideChat.GetBool() && player.Is(CustomRoles.Cupid))))
                     {
-                        var loverrole = player.GetLoverRole();
+                        var loverrole = player.Is(CustomRoles.Cupid) ? CustomRoles.CupidLovers : player.GetLoverRole();
                         if (GameStates.ExiledAnimate)
                         {
                             canceled = true;
@@ -2204,7 +2412,7 @@ namespace TownOfHost
                         Logger.Info($"{player.Data.GetLogPlayerName()} : {send}", "LoversChat");
                         foreach (var lover in AllPlayerControls)
                         {
-                            if (lover && (lover.GetLoverRole() == loverrole || (!lover.IsAlive())))
+                            if (lover && (lover.GetLoverRole() == loverrole || (!lover.IsAlive()) || (Options.CupidHideChat.GetBool() && lover.Is(CustomRoles.Cupid))))
                             {
                                 if (lover.PlayerId == player.PlayerId && !Isclient) continue;
                                 if (AmongUsClient.Instance.AmHost)
@@ -2232,7 +2440,7 @@ namespace TownOfHost
                         Logger.Info($"{player.Data.GetLogPlayerName()} : {send}", "TwinsChat");
                         foreach (var twins in AllPlayerControls)
                         {
-                            if (twins && (twins.PlayerId == twinsid || (!twins.IsAlive())) && (twins.PlayerId != player.PlayerId && !Isclient))
+                            if (twins && (twins.PlayerId == twinsid || (!twins.IsAlive())))
                             {
                                 if (twins.PlayerId == player.PlayerId && !Isclient) continue;
                                 if (AmongUsClient.Instance.AmHost)
@@ -2298,6 +2506,135 @@ namespace TownOfHost
                                 string title = ColorString(GetRoleColor(CustomRoles.Onmyoji), $"O{senderName}O</line-height>");
                                 string sendtext = send.Mark(GetRoleColor(CustomRoles.Onmyoji));
                                 SendMessage(sendtext, target.PlayerId, title);
+                            }
+                        }
+                        player.RpcProtectedMurderPlayer();
+                    }
+                    canceled = true;
+                    break;
+                case "/pavlovchat":
+                case "/pc":
+                    if (Assassin.NowUse) break;
+                    if (GameStates.InGame && Options.PavlovHideChat.GetBool() && player.IsAlive() && player.GetCustomRole() is CustomRoles.PavlovDog or CustomRoles.PavlovOwner)
+                    {
+                        string send = "";
+                        if (GetHideSendText(ref canceled, ref send) is false) return;
+                        Logger.Info($"{player.Data.GetLogPlayerName()} : {send}", "PavlovChat");
+                        foreach (var pav in AllPlayerControls)
+                        {
+                            if (pav && ((pav.GetCustomRole() is CustomRoles.PavlovDog or CustomRoles.PavlovOwner) || (!pav.IsAlive())))
+                            {
+                                if (pav.PlayerId == player.PlayerId && !Isclient) continue;
+                                if (AmongUsClient.Instance.AmHost)
+                                {
+                                    var clientid = pav.GetClientId();
+                                    if (clientid == -1) continue;
+                                    string title = $"<#F4A96A>${player.GetPlayerColor()}$</line-height>";
+                                    string sendtext = send.Mark(ModColors.PavlovColor);
+                                    SendMessage(sendtext, pav.PlayerId, title);
+                                }
+                            }
+                        }
+                        player.RpcProtectedMurderPlayer();
+                    }
+                    canceled = true;
+                    break;
+                case "/standchat":
+                case "/sc":
+                    if (Assassin.NowUse) break;
+                    if (GameStates.InGame && Options.StandHideChat.GetBool() && player.IsAlive() && player.GetCustomRole() is CustomRoles.Stand or CustomRoles.StandMaster)
+                    {
+                        string send = "";
+                        if (GetHideSendText(ref canceled, ref send) is false) return;
+                        Logger.Info($"{player.Data.GetLogPlayerName()} : {send}", "StandChat");
+                        foreach (var pav in AllPlayerControls)
+                        {
+                            if (pav && ((pav.GetCustomRole() is CustomRoles.Stand or CustomRoles.StandMaster) || (!pav.IsAlive())))
+                            {
+                                if (pav.PlayerId == player.PlayerId && !Isclient) continue;
+                                if (AmongUsClient.Instance.AmHost)
+                                {
+                                    var clientid = pav.GetClientId();
+                                    if (clientid == -1) continue;
+                                    string title = $"<#8B4513>%{player.GetPlayerColor()}%</line-height>";
+                                    string sendtext = send.Mark(ModColors.StandColor);
+                                    SendMessage(sendtext, pav.PlayerId, title);
+                                }
+                            }
+                        }
+                        player.RpcProtectedMurderPlayer();
+                    }
+                    canceled = true;
+                    break;
+                case "/freeterchat":
+                case "/fc":
+                    if (Assassin.NowUse) break;
+
+                    // 1. 発言者がチャットを使える権利があるかを判定
+                    bool canFreeterChat = false;
+                    byte myTargetId = byte.MaxValue;
+
+                    if (player.GetCustomRole() == CustomRoles.Freeter && player.GetRoleClass() is Freeter myFreeter)
+                    {
+                        myTargetId = myFreeter.GetBetTargetId; // ステップ1で追加したプロパティ
+                        if (myTargetId != byte.MaxValue) canFreeterChat = true; // 就職済みのフリーターならOK
+                    }
+                    else
+                    {
+                        // 自分が「生存している、誰かのフリーターの就職先」であるかチェック
+                        foreach (var p in AllPlayerControls)
+                        {
+                            if (p && p.GetCustomRole() == CustomRoles.Freeter && p.GetRoleClass() is Freeter f && f.GetBetTargetId == player.PlayerId)
+                            {
+                                canFreeterChat = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    // 2. チャット送信のメイン処理
+                    if (GameStates.InGame && Options.FreeterHideChat.GetBool() && player.IsAlive() && canFreeterChat)
+                    {
+                        string send = "";
+                        if (GetHideSendText(ref canceled, ref send) is false) return;
+                        Logger.Info($"{player.Data.GetLogPlayerName()} : {send}", "FreeterChat");
+
+                        foreach (var target in AllPlayerControls)
+                        {
+                            if (target)
+                            {
+                                bool isSendTarget = false;
+
+                                // A. 死者には全員届く
+                                if (!target.IsAlive()) isSendTarget = true;
+
+                                // B. 発言者がフリーター本人の場合：自分自身、または自分の就職先
+                                else if (player.GetCustomRole() == CustomRoles.Freeter)
+                                {
+                                    if (target.PlayerId == player.PlayerId || target.PlayerId == myTargetId) isSendTarget = true;
+                                }
+
+                                // C. 発言者が就職先の場合：自分自身、または自分に就職しているフリーター
+                                else
+                                {
+                                    if (target.PlayerId == player.PlayerId) isSendTarget = true;
+                                    else if (target.GetCustomRole() == CustomRoles.Freeter && target.GetRoleClass() is Freeter f && f.GetBetTargetId == player.PlayerId) isSendTarget = true;
+                                }
+
+                                // 送信対象であればパケットを送る
+                                if (isSendTarget)
+                                {
+                                    if (target.PlayerId == player.PlayerId && !Isclient) continue;
+                                    if (AmongUsClient.Instance.AmHost)
+                                    {
+                                        var clientid = target.GetClientId();
+                                        if (clientid == -1) continue;
+
+                                        string title = $"<#32cd32>#{player.GetPlayerColor()}#</line-height>";
+                                        string sendtext = send.Mark(GetRoleColor(CustomRoles.Freeter));
+                                        SendMessage(sendtext, target.PlayerId, title);
+                                    }
+                                }
                             }
                         }
                         player.RpcProtectedMurderPlayer();
@@ -2413,7 +2750,7 @@ namespace TownOfHost
         public static void Postfix(ChatController __instance)
         {
             var timer = Main.MessageWait.Value < 0.2f ? 0.2f : Main.MessageWait.Value;
-            if (!AmongUsClient.Instance.AmHost || Main.MessagesToSend.Count < 1 || ((Main.MessagesToSend[0].Item2 == byte.MaxValue || !Options.ExRpcWeightR.GetBool()) && timer > __instance.timeSinceLastMessage)) return;
+            if (!AmongUsClient.Instance.AmHost || Main.MessagesToSend.Count < 1 || ((Main.MessagesToSend[0].Item2 == byte.MaxValue) && timer > __instance.timeSinceLastMessage)) return;
             if (DoBlockChat) return;
 
             if (GameStates.IsLobby) ChatManager.SendmessageInLobby(__instance);

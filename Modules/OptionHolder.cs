@@ -539,10 +539,14 @@ namespace TownOfHost
         public static OptionItem TeamHideChat;
         public static OptionItem ImpostorHideChat;
         public static OptionItem LoversHideChat;
+        public static OptionItem CupidHideChat;
         public static OptionItem JackalHideChat;
         public static OptionItem TwinsHideChat;
         public static OptionItem ConnectingHideChat;
         public static OptionItem OnmyojiHideChat;
+        public static OptionItem PavlovHideChat;
+        public static OptionItem StandHideChat;
+        public static OptionItem FreeterHideChat;
 
         public static OptionItem DisableTaskWin;
 
@@ -704,6 +708,9 @@ namespace TownOfHost
             LoversHideChat = BooleanOptionItem.Create(105006, "LoversHideChat", false, TabGroup.MainSettings, false)
                 .SetTag(CustomOptionTags.Standard)
                 .SetColor(UtilsRoleText.GetRoleColor(CustomRoles.Lovers)).SetParent(TeamHideChat);
+            CupidHideChat = BooleanOptionItem.Create(125006, "CupidHideChat", false, TabGroup.MainSettings, false)
+                .SetTag(CustomOptionTags.Standard)
+                .SetColor(UtilsRoleText.GetRoleColor(CustomRoles.Cupid)).SetParent(LoversHideChat);
             TwinsHideChat = BooleanOptionItem.Create(105007, "TwinsCanUseHideChet", false, TabGroup.MainSettings, false)
                 .SetTag(CustomOptionTags.Standard)
                 .SetColor(UtilsRoleText.GetRoleColor(CustomRoles.Twins)).SetParent(TeamHideChat);
@@ -713,6 +720,15 @@ namespace TownOfHost
             OnmyojiHideChat = BooleanOptionItem.Create(105013, "OnmyojiHideChat", false, TabGroup.MainSettings, false)
                 .SetTag(CustomOptionTags.Standard)
                 .SetColor(UtilsRoleText.GetRoleColor(CustomRoles.Onmyoji)).SetParent(TeamHideChat);
+            PavlovHideChat = BooleanOptionItem.Create(155014, "PavlovHideChat", false, TabGroup.MainSettings, false)
+                .SetTag(CustomOptionTags.Standard)
+                .SetColor(UtilsRoleText.GetRoleColor(CustomRoles.PavlovDog)).SetParent(TeamHideChat);
+            StandHideChat = BooleanOptionItem.Create(155015, "StandHideChat", false, TabGroup.MainSettings, false)
+                .SetTag(CustomOptionTags.Standard)
+                .SetColor(UtilsRoleText.GetRoleColor(CustomRoles.StandMaster)).SetParent(TeamHideChat);
+            FreeterHideChat = BooleanOptionItem.Create(155016, "FreeterHideChat", false, TabGroup.MainSettings, false)
+                .SetTag(CustomOptionTags.Standard)
+                .SetColor(UtilsRoleText.GetRoleColor(CustomRoles.Freeter)).SetParent(TeamHideChat);
             ExRpcWeightR = BooleanOptionItem.Create(105009, "ExRpcWeightR", false, TabGroup.MainSettings, false).SetParent(ExperimentalMode);
             ExCallMeetingBlackout = BooleanOptionItem.Create(105012, "ExCallMeetingBlackout", false, TabGroup.MainSettings, false)
                 .SetParent(ExperimentalMode)
@@ -1014,7 +1030,7 @@ namespace TownOfHost
             CommsDonttouch = BooleanOptionItem.Create(108104, "CommsDonttouch", false, TabGroup.MainSettings, false).SetParent(CommsSpecialSettings);
             CommsDonttouchTime = FloatOptionItem.Create(108105, "CommsDonttouchTime", new(0f, 180f, 0.5f), 3.0f, TabGroup.MainSettings, false).SetParent(CommsDonttouch)
                 .SetValueFormat(OptionFormat.Seconds);
-            CommsCamouflage = BooleanOptionItem.Create(108106, "CommsCamouflage", false, TabGroup.MainSettings, false).SetParent(CommsSpecialSettings);
+            CommsCamouflage = BooleanOptionItem.Create(108106, "CommsCamouflage", false, TabGroup.MainSettings, false).SetParent(CommsSpecialSettings).SetEnabled(() => false);
 
             // 停電の特殊設定
             LightsOutSpecialSettings = BooleanOptionItem.Create(108107, "LightsOutSpecialSettings", false, TabGroup.MainSettings, false).SetParent(Sabotage)

@@ -101,6 +101,9 @@ Modが使えなくなるよ!<br>
 [Town Of Host For E](https://github.com/AsumuAkaguma/TownOfHost_ForE) <br>
 　機能やコメント取得一部処理の参考にさせて頂きました！<br>
 
+[Endless Host Roles](https://github.com/Gurge44/EndlessHostRoles) <br>
+　ペットの自動付与、タスクターン中のチャット表示を参考にさせて頂きました！<br>
+
 [Revolutionary Host Roles](https://github.com/sansaaaaai/Revolutionary-host-roles)<br>
 　カスタムボタンの参考、リローダー、スタッフ、インセンダーを移行させていただきました！<br>
 

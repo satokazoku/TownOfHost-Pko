@@ -3,6 +3,7 @@ using AmongUs.GameOptions;
 using Hazel;
 using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
+using static TownOfHost.Modules.MeetingTimeManager;
 using static TownOfHost.PlayerCatch;
 using static TownOfHost.Translator;
 
@@ -48,23 +49,7 @@ public sealed class Nimrod : RoleBase
         if (IsExecutionMeeting()) return false;
         if (PendingExecutionMeetingPlayerId != byte.MaxValue) return false;
 
-        var exiledId = Exiled.PlayerId;
-        PendingExecutionMeetingPlayerId = exiledId;
-
-        _ = new LateTask(() =>
-        {
-            if (PendingExecutionMeetingPlayerId != exiledId) return;
-            PendingExecutionMeetingPlayerId = byte.MaxValue;
-
-            var exiledPlayer = GetPlayerById(exiledId);
-            if (exiledPlayer == null || !exiledPlayer.IsAlive()) return;
-
-            ExecutionMeetingPlayerId = exiledId;
-            Logger.Info($"{exiledPlayer.GetNameWithRole()} : start Nimrod execution meeting", "Nimrod");
-            UtilsNotifyRoles.NotifyRoles(ForceLoop: true);
-            global::TownOfHost.ReportDeadBodyPatch.ExReportDeadBody(exiledPlayer, null, Cancelcheck: false);
-            SendRPC();
-        }, 14.5f, "NimrodExiled", true);
+        PendingExecutionMeetingPlayerId = Exiled.PlayerId;
 
         Exiled = null;
         IsTie = false;
@@ -94,25 +79,71 @@ public sealed class Nimrod : RoleBase
 
     public override void OnStartMeeting()
     {
-        if (!IsExecutionMeeting() || ExecutionMeetingPlayerId != Player.PlayerId) return;
-        if (AmongUsClient.Instance.AmHost)
-        {
-            Utils.SendMessage("Nimrod 会議");
-        }
-        Utils.SendMessage(
-            GetString("IsNimrodMeetingText"),
-            title: $"<color={RoleInfo.RoleColorCode}>{GetString("IsNimrodMeetingTitle")}</color>"
-        );
+    }
+
+    public override string MeetingAddMessage()
+    {
+        if (!Player.IsAlive()) return "";
+        if (!IsExecutionMeeting() || ExecutionMeetingPlayerId != Player.PlayerId) return "";
+
+        string c = RoleInfo.RoleColorCode;
+        return $"<{c}><size=90%>☆ {GetString("IsNimrodMeetingTitle")} ☆</size></color>\n" +
+               $"<size=70%>{GetString("IsNimrodMeetingText")}</size>\n";
     }
 
     public override void AfterMeetingTasks()
     {
         if (!AmongUsClient.Instance.AmHost) return;
-        if (!IsExecutionMeeting()) return;
 
-        MeetingHudPatch.TryAddAfterMeetingDeathPlayers(CustomDeathReason.Vote, ExecutionMeetingPlayerId);
-        ExecutionMeetingPlayerId = byte.MaxValue;
-        PendingExecutionMeetingPlayerId = byte.MaxValue;
+        if (IsExecutionMeeting() && ExecutionMeetingPlayerId == Player.PlayerId)
+        {
+            var execPc = GetPlayerById(ExecutionMeetingPlayerId);
+            if (execPc != null && Main.AllPlayerNames.ContainsKey(ExecutionMeetingPlayerId))
+                execPc.RpcSetName(Main.AllPlayerNames[ExecutionMeetingPlayerId]);
+
+            MeetingHudPatch.TryAddAfterMeetingDeathPlayers(CustomDeathReason.Vote, ExecutionMeetingPlayerId);
+
+            ExecutionMeetingPlayerId = byte.MaxValue;
+            PendingExecutionMeetingPlayerId = byte.MaxValue;
+            SendRPC();
+
+            _ = new LateTask(() =>
+                UtilsNotifyRoles.NotifyRoles(ForceLoop: true, NoCache: true),
+                Main.LagTime, "Nimrod.NotifyAfter");
+            return;
+        }
+
+        if (PendingExecutionMeetingPlayerId == byte.MaxValue) return;
+
+        var exiledId = PendingExecutionMeetingPlayerId;
+        var exiledPlayer = GetPlayerById(exiledId);
+        if (exiledPlayer == null || !exiledPlayer.IsAlive())
+        {
+            PendingExecutionMeetingPlayerId = byte.MaxValue;
+            return;
+        }
+
+        ExecutionMeetingPlayerId = exiledId;
+
+        exiledPlayer.RpcSetName(
+            $"<{RoleInfo.RoleColorCode}><b>★ {Main.AllPlayerNames[exiledId]} ★</b></color>");
+
+        _ = new LateTask(() =>
+        {
+            _ = new LateTask(() => Utils.AllPlayerKillFlash(), 1f, "Nimrod.KillFlash", true);
+            ReportDeadBodyPatch.ExReportDeadBody(
+                exiledPlayer, null, false,
+                "Nimrod.meeting",
+                RoleInfo.RoleColorCode);
+        }, 2f, "Nimrod.Meeting");
+
+        _ = new LateTask(() =>
+        {
+            exiledPlayer.RpcSetName(Main.AllPlayerNames[exiledId]);
+            UtilsGameLog.AddGameLog("Meeting",
+                $"ニムロッド処刑会議: {UtilsName.GetPlayerColor(exiledPlayer, true)}");
+        }, 2.8f, "Nimrod.RestoreName");
+
         SendRPC();
     }
 
@@ -134,11 +165,9 @@ public sealed class Nimrod : RoleBase
         if (!Is(seer) || seer.PlayerId != seen.PlayerId || !Player.IsAlive()) return "";
         if (IsExecutionMeeting() && ExecutionMeetingPlayerId == Player.PlayerId)
         {
-            var prefix = isForHud ? "" : "<size=60%>";
-            var suffix = isForHud ? "" : "</size>";
-            return $"{prefix}<color={RoleInfo.RoleColorCode}>{GetString("IsNimrodMeetingText")}</color>{suffix}";
+            string prefix = isForHud ? "" : "<size=60%>";
+            return $"{prefix}<color={RoleInfo.RoleColorCode}>{GetString("IsNimrodMeetingText")}</color>";
         }
-
         return "";
     }
 }

@@ -193,18 +193,6 @@ class StandardIntro
         }
         void Intoro()
         {
-            bool IsPlayerSkinShuffleMode = Options.AllPlayerSkinShuffle.GetBool() && (Event.April || Event.Special);
-            if (IsPlayerSkinShuffleMode)
-            {
-                PlayerCatch.AllPlayerControls.Do(pc =>
-                {
-                    Camouflage.RpcSetSkin(pc);
-                    if (!Camouflage.PlayerSkins.TryGetValue(pc.PlayerId, out var outfit)) return;
-
-                    if (Options.ColorNameMode.GetBool()) pc.RpcSetName(Palette.GetColorName(outfit.ColorId));
-                    else pc.RpcSetName(outfit.PlayerName);
-                });
-            }
             foreach (var pc in PlayerCatch.AllPlayerControls)
             {
                 if (pc.PlayerId == PlayerControl.LocalPlayer.PlayerId) continue;
@@ -395,7 +383,7 @@ class StandardIntro
 
                 if (GameModeManager.IsStandardClass())
                     _ = new LateTask(() =>
-                    {
+                    {/*
                         foreach (var Player in PlayerCatch.AllPlayerControls)
                         {
                             if (Player.PlayerId == PlayerControl.LocalPlayer.PlayerId && Options.EnableGM.GetBool()) continue;
@@ -407,9 +395,9 @@ class StandardIntro
 
                                 if (outfit == null) return;
 
-                                if (Player.IsAlive()) Player.RpcSetPet(outfit.pet);
+                                if (Player.IsAlive()) Player.RpcSetPet("");
                             }
-                        }
+                        }*/
                         UtilsNotifyRoles.NotifyRoles(ForceLoop: true);
                     }, 0.2f, "Use On click Shepe", true);
             }, 2.0f, "Roleset", false);

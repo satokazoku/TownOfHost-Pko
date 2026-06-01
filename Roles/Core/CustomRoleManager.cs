@@ -962,6 +962,8 @@ public enum CustomRoles
     NiceLinker,
     StepDancer,
     Apprentice,
+    Milkman,
+    Police,
     //DEBUG only Crewmate
     Analyzer,
     //Neutral
@@ -1030,6 +1032,7 @@ public enum CustomRoles
     Shyboy,
     SmokeMaker,
     Stand,
+    Villain,
     //DEBUG only Neutral.
     //HideAndSeek
     HASFox,
@@ -1049,6 +1052,7 @@ public enum CustomRoles
     Workhorse,
     Twins,
     OneWolf,
+    Chain,
     //第三属性
     Lovers, RedLovers, YellowLovers, BlueLovers, GreenLovers, WhiteLovers, PurpleLovers,
     MadonnaLovers, CupidLovers, OneLove, Amanojaku, Faction,

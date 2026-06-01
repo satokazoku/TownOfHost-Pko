@@ -329,9 +329,13 @@ namespace TownOfHost
             if (Options.ImpostorHideChat.GetBool()) text += $"\n/cmd ic - {GetString("Command.impchat")}";
             if (Options.JackalHideChat.GetBool()) text += $"\n/cmd jc - {GetString("Command.jacchat")}";
             if (Options.LoversHideChat.GetBool()) text += $"\n/cmd lc - {GetString("Command.LoverChat")}";
+            if (Options.CupidHideChat.GetBool()) text += $"\n/cmd lc - {GetString("Command.CupidChat")}";
             if (Options.ConnectingHideChat.GetBool()) text += $"\n/cmd cc - {GetString("Command.ConnectingChat")}";
             if (Options.TwinsHideChat.GetBool()) text += $"\n/cmd tc - {GetString("Command.TwinsChat")}";
             if (Options.OnmyojiHideChat.GetBool()) text += $"\n/cmd oc - {GetString("Command.OnmyojiChat")}";
+            if (Options.PavlovHideChat.GetBool()) text += $"\n/cmd pc - {GetString("Command.PavlovChat")}";
+            if (Options.StandHideChat.GetBool()) text += $"\n/cmd sc - {GetString("Command.StandChat")}";
+            if (Options.FreeterHideChat.GetBool()) text += $"\n/cmd fc - {GetString("Command.FreeterChat")}";
             if (GameStates.IsLobby)
             {
                 text += $"\n/cmd lastresult(l) - {GetString("Command.lastresult")}"
@@ -789,6 +793,8 @@ namespace TownOfHost
                     roleClass.AfterMeetingTasks();
                     roleClass.ChangeColor();
                 }
+
+                GameStates.ExiledAnimate = false;
             }
             else
             {

@@ -42,12 +42,13 @@ namespace TownOfHost
             var shapeshifter = __instance;
             var shapeshifting = shapeshifter.PlayerId != target.PlayerId;
             // 変身したとき一番近い人をマッドメイトにする処理
-            if (shapeshifter.CanMakeMadmate() && shapeshifting)
+            if ((shapeshifter.CanMakeMadmate() ||
+            (shapeshifter.Is(CustomRoles.JackalWolf) && JackalWolf.OptionHaveRole.GetRole().CanMakeMadmate() && (JackalDoll.GetSideKickCount() <= JackalDoll.NowSideKickCount)))
+            && shapeshifting)
             {
                 var sidekickable = roleclass as ISidekickable;
                 var targetRole = sidekickable?.SidekickTargetRole ?? CustomRoles.SKMadmate;
                 if (shapeshifter.Is(CustomRoles.JackalWolf)) targetRole = CustomRoles.Jackaldoll;
-
                 //var targetm = shapeshifter.GetKillTarget();
                 Vector2 shapeshifterPosition = shapeshifter.transform.position;//変身者の位置
                 Dictionary<PlayerControl, float> mpdistance = new();
@@ -158,7 +159,7 @@ namespace TownOfHost
                 logger.Info("キノコカオス中のため変身をキャンセルします");
                 return false;
             }
-            if (MeetingHud.Instance && animate)
+            if ((MeetingHud.Instance || GameStates.CalledMeeting) && animate)
             {
                 logger.Info("会議中のため変身をキャンセルします");
                 return false;
@@ -529,6 +530,11 @@ namespace TownOfHost
                 if (log) Logger.Info($"{pp.name}がベントに入ろうとしましたがベントが無効化されているので弾きます。", "OnenterVent");
                 return false;
             }
+            if (GameStates.IsMeeting || GameStates.CalledMeeting)
+            {
+                if (log) Logger.Info($"{pp.name}がベントに入ろうとしましたが、会議が発生しているので防ぎます", "OnEnterVent");
+                return false;
+            }
             return true;
         }
     }
@@ -567,6 +573,7 @@ namespace TownOfHost
 
             if (Camouflage.IsCamouflage)
             {
+                /* 
                 var sender = CustomRpcSender.Create(name: $"Camouflage.RpcSetSkin({player.Data.GetLogPlayerName()})");
                 byte color = (byte)ModColors.PlayerColor.Gray;
 
@@ -593,7 +600,7 @@ namespace TownOfHost
                     .Write("")
                     .Write(player.GetNextRpcSequenceId(RpcCalls.SetVisorStr))
                     .EndRpc();
-                sender.SendMessage();
+                sender.SendMessage();*/
             }
             else if (Camouflage.ventplayr.Contains(player.PlayerId))
                 Camouflage.RpcSetSkin(player, force: null);

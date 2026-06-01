@@ -338,7 +338,7 @@ namespace TownOfHost
                 return info.CanMakeMadmate;
             }
 
-            return false;
+            return role is CustomRoles.EvilMaker;
         }
         public static RoleTypes GetRoleTypes(this CustomRoles role)
         {
@@ -375,5 +375,6 @@ namespace TownOfHost
         Eater,
         Monika,
         StandMaster,
+        Villain
     }
 }
