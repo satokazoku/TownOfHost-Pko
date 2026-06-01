@@ -1033,6 +1033,7 @@ public enum CustomRoles
     SmokeMaker,
     Stand,
     Villain,
+    Scratcher,
     //DEBUG only Neutral.
     //HideAndSeek
     HASFox,
