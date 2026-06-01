@@ -450,6 +450,7 @@ namespace TownOfHost
         StandMaster = CustomRoles.StandMaster,
         Shyboy = CustomRoles.Shyboy,
         Villain = CustomRoles.Villain,
+        Scratcher = CustomRoles.Scratcher,
 
         HASTroll = CustomRoles.HASTroll,
         TaskPlayerB = CustomRoles.TaskPlayerB,
