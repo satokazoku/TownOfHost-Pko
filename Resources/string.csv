@@ -3317,7 +3317,7 @@
 
 "MagicalGirl","Magical Girl","魔法少女"
 "MagicalGirlInfo","☆ Revolution ☆","へ〜んしんっ☆"
-"MagicalGirlLongInfo","Complete the required tasks, then self-vote in a meeting to show transformable roles.\nVote a listed player to transform into the role shown for that player.\nThe transformation lasts for the configured number of turns, and a role you have already transformed into cannot be selected again.","一定タスク完了時に会議時に自投票をすると変身モードに入る\n変身モード中に指定されたプレイヤーに投票すると、\n設定された役職に一定ターン変化することができる。\nただし、オールラウンダー、さつまといも、子方、ウォーカー、マーリンには変身ができない。\n変身は役ごとに一回のみ可能で、クルーにのみ変身ができる。\n変身後の役職設定はその役の設定に依存します。\nぽんこつ占い師が占い師と錯覚する設定がONの場合、役選択時に占い師と表示されます。\nまた、ゲッサーでは変身先の役職/魔法少女で撃ち殺せる。"
+"MagicalGirlInfoLong","Complete the required tasks, then self-vote in a meeting to show transformable roles.\nVote a listed player to transform into the role shown for that player.\nThe transformation lasts for the configured number of turns, and a role you have already transformed into cannot be selected again","一定タスク完了時に会議時に自投票をすると変身モードに入る\n変身モード中に指定されたプレイヤーに投票すると、\n設定された役職に一定ターン変化することができる。\nただし、オールラウンダー、さつまといも、子方、ウォーカー、マーリンには変身ができない。\n変身は役ごとに一回のみ可能で、クルーにのみ変身ができる。\n変身後の役職設定はその役の設定に依存します。\nぽんこつ占い師が占い師と錯覚する設定がONの場合、役選択時に占い師と表示されます。\nまた、ゲッサーでは変身先の役職/魔法少女で撃ち殺せる。"
 "MagicalGirlRequiredTasks","Tasks Required to Transform","変身に必要なタスク数"
 "MagicalGirlTransformDuration","Transformation Duration","変身の有効ターン数"
 "MagicalGirlTransformRole1Mode","Transform Slot 1 Mode","変身候補1のモード"
