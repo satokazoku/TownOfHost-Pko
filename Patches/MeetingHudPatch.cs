@@ -200,6 +200,10 @@ public static class MeetingHudPatch
                 {
                     if (targetid == pc.PlayerId) roleTextMeeting.text = UtilsRoleText.GetRoleColorAndtext(CustomRoles.Twins) + roleTextMeeting.text;
                 }
+                if (Triplets.IsTripletWith(PlayerControl.LocalPlayer.PlayerId, pc.PlayerId))
+                {
+                    roleTextMeeting.text = UtilsRoleText.GetRoleColorAndtext(CustomRoles.Triplets) + roleTextMeeting.text;
+                }
 
                 var suffixTextMeeting = UnityEngine.Object.Instantiate(pva.NameText);
                 suffixTextMeeting.transform.SetParent(pva.PlayerIcon.transform);

@@ -211,6 +211,7 @@ namespace TownOfHost
                     roleclass?.CheckWinner(reason);
                 }
                 Twins.CheckAddWin();
+                Triplets.CheckAddWin();
                 Faction.CheckWin();
 
                 ShipStatus.Instance.enabled = false;

@@ -320,6 +320,10 @@ namespace TownOfHost
                             {
                                 if (targetid == target.PlayerId) TargetRoleText = GetRoleColorAndtext(CustomRoles.Twins) + TargetRoleText;
                             }
+                            if (Triplets.IsTripletWith(seer.PlayerId, target.PlayerId))
+                            {
+                                TargetRoleText = GetRoleColorAndtext(CustomRoles.Triplets) + TargetRoleText;
+                            }
 
                             TargetSuffix.Clear();
                             //seerに関わらず発動するLowerText
@@ -699,6 +703,12 @@ namespace TownOfHost
                                     if (TargetRoleText == "") TargetRoleText = $"<size={fontSize}>{GetRoleColorAndtext(CustomRoles.Twins)}</size>\r\n";
                                     else TargetRoleText = GetRoleColorAndtext(CustomRoles.Twins) + TargetRoleText;
                                 }
+                            }
+                            if (seerisAlive && Triplets.IsTripletWith(seer.PlayerId, target.PlayerId))
+                            {
+                                meetingageru |= true;
+                                if (TargetRoleText == "") TargetRoleText = $"<size={fontSize}>{GetRoleColorAndtext(CustomRoles.Triplets)}</size>\r\n";
+                                else TargetRoleText = GetRoleColorAndtext(CustomRoles.Triplets) + TargetRoleText;
                             }
 
                             if (TargetRoleText is "" && tageismeI)

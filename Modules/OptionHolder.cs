@@ -824,6 +824,7 @@ namespace TownOfHost
             ObjectOptionitem.Create(1_000_115, "Group-Addon", true, null, TabGroup.Combinations).SetOptionName(() => "Combi Add-on").SetColor(ModColors.AddonsColor).SetTag(CustomOptionTags.Role);
             Faction.SetUpOption();
             Twins.SetUpTwinsOptions();
+            Triplets.SetUpTripletsOptions();
             Lovers.SetLoversOptions();
             GhostRoleCore.SetupCustomOptionAddonAndIsGhostRole();
 

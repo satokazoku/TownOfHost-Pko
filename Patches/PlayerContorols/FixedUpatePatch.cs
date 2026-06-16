@@ -303,6 +303,10 @@ namespace TownOfHost
                     {
                         if (targetid == target.PlayerId) RoleText.text = UtilsRoleText.GetRoleColorAndtext(CustomRoles.Twins) + RoleText.text;
                     }
+                    if (seer.IsAlive() && Triplets.IsTripletWith(PlayerControl.LocalPlayer.PlayerId, target.PlayerId))
+                    {
+                        RoleText.text = UtilsRoleText.GetRoleColorAndtext(CustomRoles.Triplets) + RoleText.text;
+                    }
 
                     //名前を一時的に上書きするかのチェック
                     var TemporaryName = roleclass?.GetTemporaryName(ref name, ref nomarker, false, seer, target) ?? false;

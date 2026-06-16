@@ -344,6 +344,7 @@ namespace TownOfHost
 
             {
                 Twins.TwinsSuicide(true);
+                Triplets.TripletsSuicide(true);
                 if (CustomWinnerHolder.WinnerTeam is not CustomWinner.Default) return;
                 Player.RpcResetAbilityCooldown();
                 UtilsNotifyRoles.NotifyRoles(true, true, SpecifySeer: Player);

@@ -83,6 +83,7 @@ public sealed class Fortuner : RoleBase, IKiller
         CustomRoles.LastImpostor,
         CustomRoles.LastNeutral,
         CustomRoles.Twins,
+        CustomRoles.Triplets,
         CustomRoles.OneWolf,
         CustomRoles.Stack,
         CustomRoles.Connecting

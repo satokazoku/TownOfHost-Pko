@@ -1137,6 +1137,7 @@ public enum CustomRoles
     AsistingAngel,
     Securer,
     Sealer,
+    Triplets,
 }
 public enum CustomRoleTypes
 {

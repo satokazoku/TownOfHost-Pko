@@ -127,6 +127,9 @@ namespace TownOfHost
                         case CustomRoles.Twins:
                             roleText = GetRoleColorAndtext(CustomRoles.Twins) + roleText;
                             break;
+                        case CustomRoles.Triplets:
+                            roleText = GetRoleColorAndtext(CustomRoles.Triplets) + roleText;
+                            break;
                         case CustomRoles.Faction:
                             roleText = GetRoleColorAndtext(CustomRoles.Faction) + roleText;
                             break;
@@ -635,6 +638,9 @@ namespace TownOfHost
                     {
                         case CustomRoles.Twins:
                             sb.Append(GetRoleColorAndtext(CustomRoles.Twins));
+                            break;
+                        case CustomRoles.Triplets:
+                            sb.Append(GetRoleColorAndtext(CustomRoles.Triplets));
                             break;
                         case CustomRoles.Faction:
                             sb.Append(GetRoleColorAndtext(CustomRoles.Faction));

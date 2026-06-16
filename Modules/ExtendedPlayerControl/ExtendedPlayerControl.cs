@@ -576,7 +576,10 @@ namespace TownOfHost
                 Main.HostKill.TryAdd(target.PlayerId, State.DeathReason);
             }
             if (!(AntiBlackout.IsCached || GameStates.CalledMeeting || GameStates.ExiledAnimate))
+            {
                 Twins.TwinsSuicide();
+                Triplets.TripletsSuicide();
+            }
 
             if (Options.GhostIgnoreTasks.GetBool())
             {

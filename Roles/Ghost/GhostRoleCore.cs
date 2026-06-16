@@ -62,6 +62,7 @@ class GhostRoleCore
         Securer.Init();
         Sealer.Init();
         Twins.Init();
+        Triplets.Init();
         Stack.Init();
         Sunglasses.Init();
         Powerful.Init();
