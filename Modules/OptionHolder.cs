@@ -530,6 +530,8 @@ namespace TownOfHost
         public static OptionItem OptionAutoStartLimitAnother;
         public static OptionItem OptionAutoReturnRoom;
         public static OptionItem OptionAutoReturnRoomGM;
+        public static OptionItem OptionAutoForceEndOnDisconnect;
+        public static OptionItem OptionAutoForceEndDisconnectCount;
         public static OptionItem OptionStreamerSetting;
         public static OptionItem OptionGMAutoChat;
         public static OptionItem OptionGMAutoPossess;
@@ -1426,6 +1428,15 @@ namespace TownOfHost
                 .SetParent(OptionAutoReturnRoom)
                 .SetColorcode("#00c1ff")
                 .SetOptionName(() => "GMの場合のみ自動で部屋に戻る");
+
+            OptionAutoForceEndOnDisconnect = BooleanOptionItem.Create(1_300_261, "AutoForceEndOnDisconnect", false, TabGroup.MainSettings, true)
+                .SetParent(OptionAutoFunction)
+                .SetColorcode("#00c1ff");
+
+            OptionAutoForceEndDisconnectCount = IntegerOptionItem.Create(1_300_262, "AutoForceEndDisconnectCount", new(1, 14, 1), 1, TabGroup.MainSettings, true)
+                .SetParent(OptionAutoForceEndOnDisconnect)
+                .SetColorcode("#00c1ff")
+                .SetValueFormat(OptionFormat.Players);
 
             OptionStreamerSetting = BooleanOptionItem.Create(1_300_270, "StreamerSetting", false, TabGroup.MainSettings, true)
                 .SetParent(OptionAutoFunction)

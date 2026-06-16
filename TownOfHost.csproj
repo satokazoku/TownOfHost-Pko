@@ -12,6 +12,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<Compile Remove="Roles\Madmate\MadSheriff_Sample.cs" />
 		<Reference Include="$(AmongUs)\BepInEx\core\*.dll" />
 		<Reference Include="$(AmongUs)\BepInEx\interop\*.dll" />
 		<EmbeddedResource Include=".\Resources\**" />

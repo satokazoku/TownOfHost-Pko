@@ -15,6 +15,36 @@ using static TownOfHost.Translator;
 
 namespace TownOfHost
 {
+    static class AutoForceEndOnDisconnect
+    {
+        private static int AliveDisconnectedCount;
+
+        [Attributes.GameModuleInitializer]
+        public static void Reset()
+        {
+            AliveDisconnectedCount = 0;
+        }
+
+        public static void OnPlayerLeft(PlayerControl player, bool wasAlive)
+        {
+            if (!AmongUsClient.Instance.AmHost) return;
+            if (!GameStates.IsInGame) return;
+            if (!wasAlive) return;
+            if (!Options.OptionAutoForceEndOnDisconnect.GetBool()) return;
+            if (CustomWinnerHolder.WinnerTeam is not CustomWinner.Default) return;
+
+            AliveDisconnectedCount++;
+            var limit = Options.OptionAutoForceEndDisconnectCount.GetInt();
+            Logger.Info($"Alive disconnected players: {AliveDisconnectedCount}/{limit}", nameof(AutoForceEndOnDisconnect));
+
+            if (AliveDisconnectedCount < limit) return;
+
+            CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Draw);
+            GameManager.Instance.enabled = false;
+            GameManager.Instance.RpcEndGame(GameOverReason.ImpostorDisconnect, false);
+        }
+    }
+
     [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnGameJoined))]
     class OnGameJoinedPatch
     {
@@ -256,6 +286,7 @@ namespace TownOfHost
 
                         Lovers.LoverDisconnected(data.Character);
                         var state = PlayerState.GetByPlayerId(data.Character.PlayerId);
+                        var wasAlive = state != null && !state.IsDead;
                         if (state.DeathReason == CustomDeathReason.etc) //死因が設定されていなかったら
                         {
                             state.DeathReason = CustomDeathReason.Disconnected;
@@ -272,6 +303,7 @@ namespace TownOfHost
                         //PlayerCatch.AllPlayerControls.Do(pc => Camouflage.RpcSetSkin(pc, RevertToDefault: true, force: true));
                         UtilsNotifyRoles.NotifyRoles(NoCache: true);
                         ChatManager.OnDisconnectOrDeadPlayer(data.Character.PlayerId);
+                        AutoForceEndOnDisconnect.OnPlayerLeft(data.Character, wasAlive);
                     }
                     /*Croissant.diaries.Remove($"{data.Character.PlayerId}");
                     var diary = Croissant.diaries.Where(x => x.Value.day == data.Character.PlayerId).FirstOrDefault().Value;
