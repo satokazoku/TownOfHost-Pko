@@ -1,6 +1,7 @@
 using HarmonyLib;
 using Hazel;
 using TownOfHost.Modules;
+using TownOfHost.Roles.AddOns.Common;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 
@@ -31,6 +32,8 @@ public static class SabotageSystemTypeUpdateSystemPatch
         {
             return false;
         }
+        if (Securer.BlocksSabotage(player)) return false;
+
         var roleClass = player.GetRoleClass();
         if (roleClass is IKiller killer && !player.Is(CustomRoles.DemonicSupporter))
         {
@@ -64,6 +67,8 @@ public static class SabotageSystemTypeUpdateSystemPatch
         {
             return false;
         }
+        if (Securer.BlocksSabotage(player)) return false;
+
         if (AmongUsClient.Instance.AmHost)
         {
             if (!Main.IsActiveSabotage)

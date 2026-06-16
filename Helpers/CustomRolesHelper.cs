@@ -104,7 +104,9 @@ namespace TownOfHost
                 CustomRoles.SlowStarter or
                 CustomRoles.InfoPoor or
                 CustomRoles.News or
-                CustomRoles.Sunglasses
+                CustomRoles.Sunglasses or
+                CustomRoles.Securer or
+                CustomRoles.Sealer
                 ;
         }
         public static bool IsBuffAddon(this CustomRoles roles)
@@ -146,7 +148,9 @@ namespace TownOfHost
                 CustomRoles.SlowStarter or
                 CustomRoles.InfoPoor or
                 CustomRoles.News or
-                CustomRoles.Sunglasses
+                CustomRoles.Sunglasses or
+                CustomRoles.Securer or
+                CustomRoles.Sealer
                 ;
         }
         public static bool IsCombinationRole(this CustomRoles role) => role is

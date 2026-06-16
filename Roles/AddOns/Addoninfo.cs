@@ -43,6 +43,8 @@ class AddondataInfo
                 CustomRoles.Sunglasses => "Ｓ",
                 CustomRoles.Jumbo => "Ｊ",
                 CustomRoles.Stamina => "Ｓt",
+                CustomRoles.Securer => "Su",
+                CustomRoles.Sealer => "Se",
                 _ => ""
             };
         }
@@ -72,6 +74,8 @@ class AddondataInfo
                     {CustomRoles.Workhorse, "#00ffff"},
                     {CustomRoles.Twins, "#80cf48"},
                     {CustomRoles.OneWolf , "#ff1919"},
+                    {CustomRoles.Securer, "#ff1919" },
+                    {CustomRoles.Sealer, "#ff1919" },
 
                     { CustomRoles.Watching, "#800080"},
                     {CustomRoles.Speeding, "#33ccff"},

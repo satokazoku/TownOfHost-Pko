@@ -306,6 +306,8 @@ namespace TownOfHost
                         case "GiveStamina": continue;
                         case "GiveJumbo": continue;
                         case "GiveSunglasses": continue;
+                        case "GiveSecurer": continue;
+                        case "GiveSealer": continue;
                         case "GivePowerful": continue;
                     }
                 }
@@ -403,6 +405,8 @@ namespace TownOfHost
                     case "GiveStamina": return false;
                     case "GiveJumbo": return false;
                     case "GiveSunglasses": return false;
+                    case "GiveSecurer": return false;
+                    case "GiveSealer": return false;
                     case "GivePowerful": return false;
                 }
             }

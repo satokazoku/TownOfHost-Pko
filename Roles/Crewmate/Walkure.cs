@@ -24,7 +24,7 @@ public sealed class Walkure : RoleBase, ISelfVoter, IKiller
             SetupOptionItem,
             "wk",
             "#78d7ff",
-            (0, 1),
+             (3, 6),
             isDesyncImpostor: true
         );
 

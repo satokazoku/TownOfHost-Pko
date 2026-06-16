@@ -7,6 +7,7 @@ using UnityEngine;
 using AmongUs.GameOptions;
 
 using TownOfHost.Modules;
+using TownOfHost.Roles.AddOns.Common;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Madmate;
@@ -213,6 +214,8 @@ namespace TownOfHost
         {
             if (!AmongUsClient.Instance.AmHost || role < CustomRoles.NotAssigned) return;
             if (player is null) return;
+            if (!remove && role == CustomRoles.Securer && !Securer.CanBeAssigned(player)) return;
+            if (!remove && role == CustomRoles.Sealer && !Sealer.CanBeAssigned(player)) return;
 
             var state = PlayerState.GetByPlayerId(player.PlayerId);
             if (state is null) return;

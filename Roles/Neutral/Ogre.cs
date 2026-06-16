@@ -1,4 +1,4 @@
-/*using System.Linq;
+using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
 using TownOfHost.Roles.Core;
@@ -17,7 +17,7 @@ public sealed class Ogre : RoleBase, IKiller, IAdditionalWinner
             CustomRoles.Ogre,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Neutral,
-            285100,
+            55600,
             SetupOptionItem,
             "og",
             "#fe8b04",
@@ -151,4 +151,4 @@ public sealed class Ogre : RoleBase, IKiller, IAdditionalWinner
     public override void AfterMeetingTasks()
     {
     }
-}*/
+}

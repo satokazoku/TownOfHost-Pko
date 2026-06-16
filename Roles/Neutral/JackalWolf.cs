@@ -55,6 +55,8 @@ public sealed class JackalWolf : RoleBase, ILNKiller, IUsePhantomButton, IDouble
     public static FilterOptionItem OptionHaveRole; static CustomRoles haverole;
     RoleBase AddRole;
 
+    public static bool GetCanUseSabotageOption() => OptionCanUseSabotage?.GetBool() ?? false;
+
     static CustomRoles[] InvalidRoles()
     {
         List<CustomRoles> InvalidRoles = new();

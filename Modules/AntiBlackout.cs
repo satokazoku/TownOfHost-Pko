@@ -260,7 +260,7 @@ namespace TownOfHost
                     }
                     if (!isalive)
                     {
-                        role = customrole.IsImpostor() || ((pc.GetRoleClass() as IKiller)?.CanUseSabotageButton() ?? false) ?
+                        role = pc.CanUseSabotageButton() ?
                                 RoleTypes.ImpostorGhost : RoleTypes.CrewmateGhost;
                     }
 

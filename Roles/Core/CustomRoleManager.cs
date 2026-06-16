@@ -549,6 +549,8 @@ public static class CustomRoleManager
                 case CustomRoles.Amnesia: Amnesia.Add(pc.PlayerId); break;
                 case CustomRoles.News: News.Add(pc.PlayerId); break;
                 case CustomRoles.Sunglasses: Sunglasses.Add(pc.PlayerId); break;
+                case CustomRoles.Securer: Securer.Add(pc.PlayerId); break;
+                case CustomRoles.Sealer: Sealer.Add(pc.PlayerId); break;
 
                 case CustomRoles.Amanojaku: Amanojaku.Add(pc.PlayerId); break;
                 case CustomRoles.OneWolf: OneWolf.Add(pc.PlayerId); break;
@@ -918,6 +920,9 @@ public enum CustomRoles
     SatsumatoImoM,
     NiceTeleporter,
     NiceRedRidingHood,
+    MagicalGirl,
+    Walkure,
+    SuspiciousTeller,
     //TOH-K
     Gasp,
     VentMaster,
@@ -1064,9 +1069,6 @@ public enum CustomRoles
     Braid,
     Vega,
     Altair,
-    MagicalGirl,
-    Walkure,
-    SuspiciousTeller,
     // Sub-roll after 500
     NotAssigned = 500,
     LastImpostor,
@@ -1132,6 +1134,8 @@ public enum CustomRoles
     GhostRumour,
     //NeutralGhost
     AsistingAngel,
+    Securer,
+    Sealer,
 }
 public enum CustomRoleTypes
 {

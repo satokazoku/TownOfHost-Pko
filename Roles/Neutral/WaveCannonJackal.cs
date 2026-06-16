@@ -150,6 +150,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
     public static float GetTamaVentCooldown() => OptionTamaVentCooldown?.GetFloat() ?? 0f;
     public static float GetTamaVentMaxTime() => OptionTamaVentMaxTime?.GetFloat() ?? 0f;
     public static bool GetTamaCanVentMove() => OptionTamaCanVentMove?.GetBool() ?? false;
+    public static bool GetCanUseSabotageOption() => OptionCanSabotage?.GetBool() ?? false;
 
     public static void HideRoleOptions(CustomRoles role)
     {

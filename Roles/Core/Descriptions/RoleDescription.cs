@@ -212,7 +212,9 @@ public abstract class RoleDescription
                 case "GiveSlacker":
                 case "GiveStamina":
                 case "GiveJumbo":
-                case "GiveSunglasses": continue;
+                case "GiveSunglasses":
+                case "GiveSecurer":
+                case "GiveSealer": continue;
             }
 
             sb.Append("|");

@@ -272,6 +272,7 @@ namespace TownOfHost
         public static bool CanUseImpostorVentButton(this PlayerControl pc)
         {
             if (!pc.IsAlive()) return false;
+            if (Sealer.BlocksVent(pc)) return false;
 
             if (pc.Is(CustomRoles.Amnesia) && !pc.Is(CustomRoleTypes.Impostor)) return false;
 
@@ -283,6 +284,7 @@ namespace TownOfHost
         {
             if (Options.CurrentGameMode is CustomGameMode.SuddenDeath or CustomGameMode.MurderMystery) return false;
             if (pc.GetPlayerState() is null) return false;
+            if (Securer.BlocksSabotage(pc)) return false;
             if (pc.Is(CustomRoles.DemonicSupporter)) return true;
             if (pc.Is(CustomRoles.Amnesia) && !pc.Is(CustomRoleTypes.Impostor)) return false;
             if (GameStates.IsMeeting) return false;

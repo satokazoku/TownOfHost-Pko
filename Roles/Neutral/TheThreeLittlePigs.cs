@@ -45,7 +45,7 @@ public sealed class TheFirstLittlePig : RoleBase, IAdditionalWinner
             CustomRoles.TheFirstLittlePig,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Neutral,
-            570500,
+            55700,
             SetupOptionItem,
             "fp",
             "#ff637b",

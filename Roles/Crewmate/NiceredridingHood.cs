@@ -20,7 +20,7 @@ public sealed class NiceredridingHood : RoleBase
             CustomRoles.NiceRedRidingHood,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            362000,
+            37200,
             SetupOptionItem,
             "nrrh",
             "#fa8072",   // サーモン色

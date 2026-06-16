@@ -1,4 +1,4 @@
-/*using System.Linq;
+using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
 using TownOfHost.Roles.Core;
@@ -16,7 +16,7 @@ public sealed class Villain : RoleBase, ILNKiller
             CustomRoles.Villain,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Neutral,
-            184800,
+            55800,
             SetupOptionItem,
             "vln",
             "#8B0000",
@@ -255,4 +255,4 @@ public sealed class Villain : RoleBase, ILNKiller
         isVillain = reader.ReadBoolean();
         disguiseRole = (CustomRoles)reader.ReadInt32();
     }
-}*/
+}

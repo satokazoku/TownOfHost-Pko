@@ -1,4 +1,4 @@
-/*using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
@@ -19,7 +19,7 @@ public sealed class Police : RoleBase, IKiller, IUsePhantomButton
             CustomRoles.Police,
             () => RoleTypes.Engineer,
             CustomRoleTypes.Crewmate,
-            173600,
+            37300,
             SetupOptionItem,
             "pol",
             "#1a6bb5",
@@ -402,4 +402,4 @@ public static class HandcuffedKillBlockPatch
 
         return false; // ★ オリジナルをスキップ（Priority.High で先に実行されるため有効）
     }
-}*/
+}

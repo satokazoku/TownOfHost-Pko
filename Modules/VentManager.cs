@@ -5,6 +5,7 @@ using Hazel;
 
 using TownOfHost.Roles.Core;
 using TownOfHost.Patches.ISystemType;
+using TownOfHost.Roles.AddOns.Common;
 using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Attributes;
 
@@ -57,7 +58,7 @@ class VentManager
                     VentDuringDisabling.Remove(player.PlayerId);
                 }
             }
-            else if (minDist <= VentSqrThreshold && (((roleclass as IKiller)?.CanUseImpostorVentButton() is false) || (roleclass?.CanClickUseVentButton == false)))
+            else if (minDist <= VentSqrThreshold && (Sealer.BlocksVent(player) || ((roleclass as IKiller)?.CanUseImpostorVentButton() is false) || (roleclass?.CanClickUseVentButton == false)))
             {
                 RpcDesyncUpdateVent(player, minId, VentilationSystem.Operation.StartCleaning);
                 VentDuringDisabling[player.PlayerId] = minId;

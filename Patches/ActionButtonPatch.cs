@@ -12,7 +12,7 @@ public static class SabotageButtonDoClickPatch
 {
     public static bool Prefix()
     {
-        if (!PlayerControl.LocalPlayer.inVent && GameManager.Instance.SabotagesEnabled())
+        if (PlayerControl.LocalPlayer.CanUseSabotageButton() && !PlayerControl.LocalPlayer.inVent && GameManager.Instance.SabotagesEnabled())
         {
             DestroyableSingleton<HudManager>.Instance.ToggleMapVisible(new MapOptions
             {

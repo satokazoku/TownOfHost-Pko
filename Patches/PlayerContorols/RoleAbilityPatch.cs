@@ -528,6 +528,11 @@ namespace TownOfHost
             //役職処理はここで行ってしまうと色々とめんどくさくなるので上で。
             var user = pp.myPlayer;
 
+            if (Sealer.BlocksVent(user))
+            {
+                if (log) Logger.Info($"{pp.name} is sealed from using vents.", "OnenterVent");
+                return false;
+            }
             if (!(user.Data.Role.Role == RoleTypes.Engineer || user.GetCustomRole().GetRoleInfo()?.BaseRoleType.Invoke() == RoleTypes.Engineer))//エンジニアでなく
             {
                 if (!user.CanUseImpostorVentButton()) //インポスターベントも使えない
@@ -567,6 +572,11 @@ namespace TownOfHost
                     ReMove();
                     return false;
                 }
+            }
+            if (Sealer.BlocksVent(player))
+            {
+                ReMove();
+                return false;
             }
             if (!(player.Data.Role.Role == RoleTypes.Engineer || player.GetCustomRole().GetRoleInfo()?.BaseRoleType.Invoke() == RoleTypes.Engineer))//エンジニアでなく
             {

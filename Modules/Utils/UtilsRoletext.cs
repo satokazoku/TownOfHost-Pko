@@ -181,6 +181,8 @@ namespace TownOfHost
                         case CustomRoles.Water: sb.Append(Water.SubRoleMark); break;
                         case CustomRoles.Slacker: sb.Append(Slacker.SubRoleMark); break;
                         case CustomRoles.Stamina: sb.Append(Stamina.SubRoleMark); break;
+                        case CustomRoles.Securer: sb.Append(Securer.SubRoleMark); break;
+                        case CustomRoles.Sealer: sb.Append(Sealer.SubRoleMark); break;
                         case CustomRoles.Jumbo: sb.Append(Jumbo.SubRoleMark); break;
                         case CustomRoles.Clumsy: sb.Append(Clumsy.SubRoleMark); break;
                         case CustomRoles.Elector: sb.Append(Elector.SubRoleMark); break;
@@ -241,6 +243,8 @@ namespace TownOfHost
                         if (data.GiveStamina.GetBool()) Subrole.Add(CustomRoles.Stamina);
                         if (data.GiveJumbo.GetBool()) Subrole.Add(CustomRoles.Jumbo);
                         if (data.GiveSunglasses.GetBool()) Subrole.Add(CustomRoles.Sunglasses);
+                        if (data.GiveSecurer.GetBool() && Securer.CanBeAssigned(player)) Subrole.Add(CustomRoles.Securer);
+                        if (data.GiveSealer.GetBool() && Sealer.CanBeAssigned(player)) Subrole.Add(CustomRoles.Sealer);
                     }
                     if (state.SubRoles.Any(x => x is CustomRoles.LastImpostor))
                     {
@@ -583,6 +587,8 @@ namespace TownOfHost
                             if (data.GiveStamina.GetBool()) Subrole.Add(CustomRoles.Stamina);
                             if (data.GiveJumbo.GetBool()) Subrole.Add(CustomRoles.Jumbo);
                             if (data.GiveSunglasses.GetBool()) Subrole.Add(CustomRoles.Sunglasses);
+                            if (data.GiveSecurer.GetBool() && Securer.CanBeAssigned(player)) Subrole.Add(CustomRoles.Securer);
+                            if (data.GiveSealer.GetBool() && Sealer.CanBeAssigned(player)) Subrole.Add(CustomRoles.Sealer);
                         }
                         if (state.SubRoles.Any(x => x is CustomRoles.LastImpostor))
                         {

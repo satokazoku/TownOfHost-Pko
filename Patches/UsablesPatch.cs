@@ -2,6 +2,7 @@ using AmongUs.GameOptions;
 using HarmonyLib;
 using UnityEngine;
 using TownOfHost.Modules;
+using TownOfHost.Roles.AddOns.Common;
 using TownOfHost.Roles.Core;
 
 namespace TownOfHost
@@ -55,6 +56,7 @@ namespace TownOfHost
             // カスタムロールを元にベントを使えるか判定
             // エンジニアベースの役職は常にtrue
             couldUse = playerControl.CanUseImpostorVentButton() || pc.Role.Role == RoleTypes.Engineer;
+            if (Sealer.BlocksVent(playerControl)) couldUse = false;
             if (playerControl.GetRoleClass()?.CanClickUseVentButton == false) couldUse = false;
 
             canUse = couldUse;

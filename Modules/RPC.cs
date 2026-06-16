@@ -8,6 +8,7 @@ using BepInEx.Unity.IL2CPP.Utils.Collections;
 using HarmonyLib;
 using Hazel;
 using TownOfHost.Modules;
+using TownOfHost.Roles.AddOns.Common;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Crewmate;
 using TownOfHost.Roles.Impostor;
@@ -204,6 +205,8 @@ namespace TownOfHost
                     byte SubRoleTargetId = reader.ReadByte();
                     CustomRoles subRole = (CustomRoles)reader.ReadPackedInt32();
                     bool removeSubRole = reader.ReadBoolean();
+                    if (!removeSubRole && subRole == CustomRoles.Securer && !Securer.CanBeAssigned(PlayerCatch.GetPlayerById(SubRoleTargetId))) break;
+                    if (!removeSubRole && subRole == CustomRoles.Sealer && !Sealer.CanBeAssigned(PlayerCatch.GetPlayerById(SubRoleTargetId))) break;
                     var subRoleState = PlayerState.GetByPlayerId(SubRoleTargetId);
                     if (removeSubRole) subRoleState.RemoveSubRole(subRole);
                     else subRoleState.SetSubRole(subRole, true);
@@ -475,6 +478,8 @@ namespace TownOfHost
             }
             else if (role >= CustomRoles.NotAssigned)
             {
+                if (role == CustomRoles.Securer && !Securer.CanBeAssigned(PlayerCatch.GetPlayerById(targetId))) return;
+                if (role == CustomRoles.Sealer && !Sealer.CanBeAssigned(PlayerCatch.GetPlayerById(targetId))) return;
                 if (role.IsGhostRole()) PlayerState.GetByPlayerId(targetId).SetGhostRole(role);
                 else PlayerState.GetByPlayerId(targetId).SetSubRole(role);
             }
