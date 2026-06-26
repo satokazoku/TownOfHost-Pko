@@ -22,7 +22,7 @@ public sealed class Santa : RoleBase, IKiller
             CustomRoles.Santa,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            66100,
+            34600,
             SetupOptionItem,
             "st",
             "#f29c9f",
@@ -124,7 +124,7 @@ public sealed class Santa : RoleBase, IKiller
             false, false
         );
 
-        OverrideTasksData.Create(RoleInfo, 200);
+        OverrideTasksData.Create(RoleInfo, 20);
     }
 
     public override void Add()
@@ -323,6 +323,8 @@ public sealed class Santa : RoleBase, IKiller
 
         var role = RollGiftRole(giftRoles);
         var beforeRole = target.GetCustomRole();
+
+        if (Walkure.TryRejectRoleChange(Player, target, Walkure.RoleChangeSource.Crewmate)) return;
 
         if (role == CustomRoles.UltraStar && beforeRole != CustomRoles.UltraStar)
             RememberedColorByPlayerId[target.PlayerId] = target.Data.DefaultOutfit.ColorId;

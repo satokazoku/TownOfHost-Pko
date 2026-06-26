@@ -15,7 +15,7 @@ public sealed class Moving : RoleBase
             CustomRoles.Moving,
             () => RoleTypes.Engineer,
             CustomRoleTypes.Crewmate,
-            93500,
+            33100,
             SetupOptionItem,
             "mv",
             "#00FF00",

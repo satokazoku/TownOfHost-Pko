@@ -19,7 +19,7 @@ public sealed class Cupid : RoleBase, IKiller, IAdditionalWinner
             CustomRoles.Cupid,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Neutral,
-            30300,
+            50900,
             SetupOptionItem,
             "Cu",
             "#f09199",

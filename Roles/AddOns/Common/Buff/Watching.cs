@@ -7,7 +7,7 @@ namespace TownOfHost.Roles.AddOns.Common
 {
     public static class Watching
     {
-        private static readonly int Id = 18100;
+        private static readonly int Id = 73600;
         private static Color RoleColor = UtilsRoleText.GetRoleColor(CustomRoles.Watching);
         public static string SubRoleMark = Utils.ColorString(RoleColor, "∑");
         private static List<byte> playerIdList = new();

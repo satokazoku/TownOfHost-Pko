@@ -5,6 +5,7 @@ using TownOfHost.Roles.Core;
 using System;
 using static TownOfHost.Modules.SelfVoteManager;
 using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Madmate;
 
 namespace TownOfHost.Roles.Crewmate;
 
@@ -17,7 +18,7 @@ public sealed class ShrineMaiden : RoleBase, ISelfVoter
             CustomRoles.ShrineMaiden,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            9600,
+            35200,
             SetupOptionItem,
             "SM",
             "#b7282e",
@@ -163,8 +164,8 @@ public sealed class ShrineMaiden : RoleBase, ISelfVoter
         var t2 = role2.GetCustomRoleTypes();
         var madmate = Options.MadTellOpt().GetCustomRoleTypes();
         //マッドならimpにする
-        if (t1 == CustomRoleTypes.Madmate) t1 = madmate is CustomRoleTypes.Madmate ? CustomRoleTypes.Impostor : madmate;
-        if (t2 == CustomRoleTypes.Madmate) t2 = madmate is CustomRoleTypes.Madmate ? CustomRoleTypes.Impostor : madmate;
+        if (SatsumatoImo.UsesMadmateCommonSettings(role1) && t1 == CustomRoleTypes.Madmate) t1 = madmate is CustomRoleTypes.Madmate ? CustomRoleTypes.Impostor : madmate;
+        if (SatsumatoImo.UsesMadmateCommonSettings(role2) && t2 == CustomRoleTypes.Madmate) t2 = madmate is CustomRoleTypes.Madmate ? CustomRoleTypes.Impostor : madmate;
 
         if (t1 == t2)
         {

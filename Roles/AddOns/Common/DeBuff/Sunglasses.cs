@@ -7,7 +7,7 @@ namespace TownOfHost.Roles.AddOns.Common
 {
     public static class Sunglasses
     {
-        private static readonly int Id = 24200;
+        private static readonly int Id = 73300;
         private static Color RoleColor = UtilsRoleText.GetRoleColor(CustomRoles.Sunglasses);
         public static string SubRoleMark = Utils.ColorString(RoleColor, "Ｓ");
         public static List<byte> playerIdList = new();

@@ -6,6 +6,8 @@ namespace TownOfHost.Roles.Madmate;
 
 public sealed class SatsumatoImo : RoleBase
 {
+    public static OptionItem OptionCanSeeImpostor;
+
     internal static bool IsSpecialMeetingNoSwap()
     {
         if (Roles.Crewmate.Balancer.Id != byte.MaxValue
@@ -38,7 +40,7 @@ public sealed class SatsumatoImo : RoleBase
             CustomRoles.SatsumatoImo,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            70640,
+            34800,
             SetupOptionItem,
             "si",
             "#990044",
@@ -53,8 +55,34 @@ public sealed class SatsumatoImo : RoleBase
 
     static void SetupOptionItem()
     {
+        OptionCanSeeImpostor = BooleanOptionItem.Create(RoleInfo, 5, OptionName.SatsumatoImoCanSeeImpostor, false, false);
         HideRoleOptions(CustomRoles.SatsumatoImoC);
         HideRoleOptions(CustomRoles.SatsumatoImoM);
+    }
+
+    enum OptionName
+    {
+        SatsumatoImoCanSeeImpostor,
+    }
+
+    public static bool CanSeeImpostorNameColor(CustomRoles role)
+    {
+        if (role is CustomRoles.SatsumatoImoM)
+        {
+            return OptionCanSeeImpostor?.GetBool() ?? false;
+        }
+
+        return UsesMadmateCommonSettings(role) && Options.MadCanSeeImpostor.GetBool();
+    }
+
+    public static bool UsesMadmateCommonSettings(PlayerControl player)
+    {
+        return player != null && UsesMadmateCommonSettings(player.GetCustomRole());
+    }
+
+    public static bool UsesMadmateCommonSettings(CustomRoles role)
+    {
+        return role.IsMadmate() && role is not CustomRoles.SatsumatoImoM;
     }
 
     internal static void HideRoleOptions(CustomRoles role)
@@ -82,7 +110,7 @@ public sealed class SatsumatoImoC : RoleBase
             CustomRoles.SatsumatoImoC,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            70650,
+            34900,
             SetupOptionItem,
             "si",
             "#990044",

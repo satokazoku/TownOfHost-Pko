@@ -13,7 +13,7 @@ public sealed class Express : RoleBase
             CustomRoles.Express,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            22300,
+            31400,
             SetupOptionItem,
             "exp",
             "#00ffff",

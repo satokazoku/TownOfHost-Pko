@@ -17,7 +17,7 @@ namespace TownOfHost.Roles.Neutral
                 CustomRoles.GrimReaper,
                 () => RoleTypes.Impostor,
                 CustomRoleTypes.Neutral,
-                13500,
+                51800,
                 SetupOptionItem,
                 "gr",
                 "#4b0082",

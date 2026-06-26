@@ -14,7 +14,7 @@ public sealed class GuardMaster : RoleBase
             CustomRoles.GuardMaster,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            10800,
+            31800,
             SetupOptionItem,
             "gms",
             "#8FBC8B",

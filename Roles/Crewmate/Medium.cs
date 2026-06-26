@@ -19,7 +19,7 @@ public sealed class Medium : RoleBase
             CustomRoles.Medium,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            69610,
+            32600,
             SetupOptionItem,
             "sp",
             "#66a6ff",

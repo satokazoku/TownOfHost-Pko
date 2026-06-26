@@ -26,7 +26,7 @@ public sealed class Stealth : RoleBase, IImpostor, IUsePhantomButton
         CustomRoles.Stealth,
         () => optionAddDarkenRoom.GetBool() ? RoleTypes.Phantom : RoleTypes.Impostor,
         CustomRoleTypes.Impostor,
-        6100,
+        7300,
         SetupOptionItems,
         "st",
         OptionSort: (6, 6),

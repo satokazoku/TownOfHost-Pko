@@ -17,7 +17,7 @@ public sealed class CurseMaker : RoleBase, IKiller, IUsePhantomButton
             CustomRoles.CurseMaker,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Neutral,
-            14100,
+            51000,
             SetupOptionItem,
             "Cm",
             "#554d59",

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+/*using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
@@ -45,7 +45,7 @@ public sealed class TheFirstLittlePig : RoleBase, IAdditionalWinner
             CustomRoles.TheFirstLittlePig,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Neutral,
-            570500,
+            55700,
             SetupOptionItem,
             "fp",
             "#ff637b",
@@ -533,4 +533,4 @@ public sealed class TheThirdLittlePig : RoleBase, IAdditionalWinner
     {
         remainCounters = reader.ReadInt32();
     }
-}
+}*/

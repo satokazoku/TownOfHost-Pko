@@ -3195,7 +3195,7 @@
 "LastAdminInfo","Last-minute admin information","直前のアドミン情報","","","Актуальная информация администратора","Informações administrativas recentes",""
 "MurderNotify","Murder","キル発生","","","Убийство","Assassinato",""
 "Deadbody","DEAD","死体","","","Труп","MORTO",""
-"Message.AnnounceTOH-P","This room uses TOWNOFHOST-P v{0}.","この部屋はTOWNOFHOST-P v{0}を使用しています。","这个房间使用 TOWNOFHOST-P v{0}.","這個房間使用 TOWNOFHOST-P v{0}.","В этой комнате используется TOWNOFHOST-P v{0}.","Esta sala usa TOWNOFHOST-P v{0}.",""
+"Message.AnnounceTOH-P","This room uses TOWNOFHOST-PKO v{0}.","この部屋はTOWNOFHOST-PKO v{0}を使用しています。","这个房间使用 TOWNOFHOST-PKO v{0}.","這個房間使用 TOWNOFHOST-PKO v{0}.","В этой комнате используется TOWNOFHOST-PKO v{0}.","Esta sala usa TOWNOFHOST-PKO v{0}.",""
 "RoleInfoTitle","【Your role】","【あなたの役職】","【你的角色】","【你的角色】","【ваша роль】","【Seu papel】",""
 "AddonInfoTitle","【Your Addons】","【あなたの属性】","【你的角色】","【你的角色】","【ваша роль】","【Seu papel】",""
 "AddRoleInfoTitle","【Addtional Role】","【併せ持つ役職】"

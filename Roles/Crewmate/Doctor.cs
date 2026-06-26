@@ -14,7 +14,7 @@ public sealed class Doctor : RoleBase, IDeathReasonSeeable
             CustomRoles.Doctor,
             () => RoleTypes.Scientist,
             CustomRoleTypes.Crewmate,
-            11100,
+            31200,
             SetupOptionItem,
             "doc",
             "#80ffdd",

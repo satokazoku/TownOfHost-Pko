@@ -17,7 +17,7 @@ public sealed class Ogre : RoleBase, IKiller, IAdditionalWinner
             CustomRoles.Ogre,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Neutral,
-            285100,
+            55600,
             SetupOptionItem,
             "og",
             "#fe8b04",

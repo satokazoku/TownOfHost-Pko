@@ -13,7 +13,7 @@ public sealed class VentMaster : RoleBase
             CustomRoles.VentMaster,
             () => CanUseVent.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            12600,
+            36500,
             SetUpOptionItem,
             "vm",
             "#ff6666",
@@ -52,7 +52,7 @@ public sealed class VentMaster : RoleBase
                 {
                     if (seer.IsAlive() && GameStates.IsInTask)
                         seer.KillFlash();
-                    if (seer.GetRoleClass() is VentMaster ventMaster) ventMaster.callcount++;
+                    if (MagicalGirl.TryGetEffectiveRole<VentMaster>(seer, out var ventMaster)) ventMaster.callcount++;
                 }
             }
         }

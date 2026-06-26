@@ -3,6 +3,7 @@ using Hazel;
 using TownOfHost.Roles.AddOns.Common;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Madmate;
 using TownOfHost.Roles.Neutral;
 using UnityEngine;
 
@@ -31,7 +32,7 @@ public static class SwitchSystemUpdateSystemPatch
         }
         var roleclass = player.GetRoleClass();
         var isMadmate =
-            player.Is(CustomRoleTypes.Madmate) ||
+            SatsumatoImo.UsesMadmateCommonSettings(player) ||
             // マッド属性化時に削除
             (roleclass is SchrodingerCat schrodingerCat && schrodingerCat.AmMadmate);
         if ((isMadmate && !Options.MadmateCanFixLightsOut.GetBool())

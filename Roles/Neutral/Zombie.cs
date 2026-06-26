@@ -17,7 +17,7 @@ public sealed class Zombie : RoleBase
             CustomRoles.Zombie,
             () => RoleTypes.Engineer,
             CustomRoleTypes.Neutral,
-            30200,
+            55500,
             SetupOptionItem,
             "zb",
             "#6f8f4d",
@@ -131,12 +131,17 @@ public sealed class Zombie : RoleBase
         if (CustomWinnerHolder.WinnerTeam is not CustomWinner.Crewmate) return false;
         if (HasAliveKillerSide()) return false;
 
+        var aliveZombies = AllAlivePlayerControls
+            .Where(pc => pc != null && pc.Is(CustomRoles.Zombie) && pc.Data?.Disconnected != true)
+            .ToArray();
+        if (aliveZombies.Length == 0) return false;
+
         var zombies = AllPlayerControls
             .Where(pc => pc != null && pc.Is(CustomRoles.Zombie) && pc.Data?.Disconnected != true)
             .ToArray();
         if (zombies.Length == 0) return false;
 
-        if (!CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Zombie, zombies[0].PlayerId, true))
+        if (!CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Zombie, aliveZombies[0].PlayerId, true))
             return false;
 
         CustomWinnerHolder.WinnerRoles.Add(CustomRoles.Zombie);

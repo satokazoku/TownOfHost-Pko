@@ -16,7 +16,7 @@ public sealed class Rabbit : RoleBase
             CustomRoles.Rabbit,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            62000,
+            34300,
             SetupOptionItem,
             "rb",
             "#8fd0ff",

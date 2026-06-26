@@ -17,7 +17,7 @@ public sealed class Chef : RoleBase, IKiller, IAdditionalWinner
             CustomRoles.Chef,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Neutral,
-            13900,
+            50700,
             SetUpOptionItem,
             "ch",
             "#c79b2c",

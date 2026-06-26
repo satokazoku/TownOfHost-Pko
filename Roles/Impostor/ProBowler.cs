@@ -19,7 +19,7 @@ public sealed class ProBowler : RoleBase, IImpostor
             CustomRoles.ProBowler,
             () => RoleTypes.Shapeshifter,
             CustomRoleTypes.Impostor,
-            4200,
+            6100,
             SetupOptionItem,
             "Pb",
             OptionSort: (3, 4),

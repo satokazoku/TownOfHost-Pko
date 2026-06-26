@@ -18,7 +18,7 @@ public sealed class Hitchhiker : RoleBase
             CustomRoles.Hitchhiker,
             () => RoleTypes.Engineer,
             CustomRoleTypes.Crewmate,
-            90100,
+            31900,
             SetupOptionItem,
             "hi",
             "#A0522D",

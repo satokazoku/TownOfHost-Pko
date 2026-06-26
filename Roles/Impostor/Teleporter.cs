@@ -20,7 +20,7 @@ public sealed class Teleporter : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.Teleporter,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            226500,
+            7500,
             SetupOptionItem,
             "etp",
             OptionSort: (3, 16),

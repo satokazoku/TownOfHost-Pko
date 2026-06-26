@@ -1,4 +1,4 @@
-using System;
+/*using System;
 using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
@@ -20,7 +20,7 @@ public sealed class Moira : RoleBase, ISelfVoter
             CustomRoles.Moira,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Neutral,
-            70500,
+            53100,
             SetupOptionItem,
             "mo",
             "#c084fc",
@@ -358,3 +358,4 @@ public sealed class Moira : RoleBase, ISelfVoter
         }
     }
 }
+*/

@@ -19,7 +19,7 @@ public sealed class NiceTeleporter : RoleBase
             CustomRoles.NiceTeleporter,
             () => RoleTypes.Engineer,
             CustomRoleTypes.Crewmate,
-            112800,
+            33600,
             SetupOptionItem,
             "ntp",
             "#4169e1",

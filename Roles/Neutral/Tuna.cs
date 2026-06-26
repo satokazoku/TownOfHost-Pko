@@ -15,7 +15,7 @@ public sealed class Tuna : RoleBase
             CustomRoles.Tuna,
             () => OptionCanVent.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate,
             CustomRoleTypes.Neutral,
-            23030,
+            55100,
             SetupOptionItem,
             "tn",
             "#8cffff",

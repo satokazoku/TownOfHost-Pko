@@ -17,7 +17,7 @@ public sealed class God : RoleBase, ISystemTypeUpdateHook, IDeathReasonSeeable
             CustomRoles.God,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Neutral,
-            88000,
+            51700,
             SetupOptionItem,
             "god",
             "#ffd700",
@@ -60,34 +60,34 @@ public sealed class God : RoleBase, ISystemTypeUpdateHook, IDeathReasonSeeable
 
     private static void SetupOptionItem()
     {
-        SoloWinOption.Create(RoleInfo, 25007, defo: 5);
-        OverrideTasksData.Create(RoleInfo, 94);
+        SoloWinOption.Create(RoleInfo, 7, defo: 5);
+        OverrideTasksData.Create(RoleInfo, 20);
 
-        Bakuro = BooleanOptionItem.Create(RoleInfo, 25018, OptionName.GodBakuro, false, false)
+        Bakuro = BooleanOptionItem.Create(RoleInfo, 18, OptionName.GodBakuro, false, false)
             .SetParentRole(CustomRoles.God); //本当にキックする処理も暴露を検知する処理もありません。プレイヤーにルールを守らすために見せかけで作りました。口外しないでいただけると助かります。
 
-        SeeVotesOpt = BooleanOptionItem.Create(RoleInfo, 25010, OptionName.GodSeeVotes, true, false)
+        SeeVotesOpt = BooleanOptionItem.Create(RoleInfo, 10, OptionName.GodSeeVotes, true, false)
             .SetParentRole(CustomRoles.God);
 
-        CanSeeDeathReasonOpt = BooleanOptionItem.Create(RoleInfo, 25011, OptionName.GodCanSeeDeathReason, true, false)
+        CanSeeDeathReasonOpt = BooleanOptionItem.Create(RoleInfo, 11, OptionName.GodCanSeeDeathReason, true, false)
             .SetParentRole(CustomRoles.God);
 
-        RequireTasksToWinOpt = BooleanOptionItem.Create(RoleInfo, 25012, OptionName.GodRequireTasksToWin, false, false)
+        RequireTasksToWinOpt = BooleanOptionItem.Create(RoleInfo, 12, OptionName.GodRequireTasksToWin, false, false)
             .SetParentRole(CustomRoles.God);
 
-        TaskCountOpt = IntegerOptionItem.Create(RoleInfo, 25013, OptionName.GodTaskCount, new(0, 999, 1), 0, false)
+        TaskCountOpt = IntegerOptionItem.Create(RoleInfo, 13, OptionName.GodTaskCount, new(0, 999, 1), 0, false)
             .SetParentRole(CustomRoles.God);
 
-        CantFixReactorOpt = BooleanOptionItem.Create(RoleInfo, 25014, OptionName.GodCantFixReactor, false, false)
+        CantFixReactorOpt = BooleanOptionItem.Create(RoleInfo, 14, OptionName.GodCantFixReactor, false, false)
             .SetParentRole(CustomRoles.God);
 
-        CantFixLightsOutOpt = BooleanOptionItem.Create(RoleInfo, 25015, OptionName.GodCantFixLightsOut, false, false)
+        CantFixLightsOutOpt = BooleanOptionItem.Create(RoleInfo, 15, OptionName.GodCantFixLightsOut, false, false)
             .SetParentRole(CustomRoles.God);
 
-        CantFixHeliOpt = BooleanOptionItem.Create(RoleInfo, 25016, OptionName.GodCantFixHeli, false, false)
+        CantFixHeliOpt = BooleanOptionItem.Create(RoleInfo, 16, OptionName.GodCantFixHeli, false, false)
             .SetParentRole(CustomRoles.God);
 
-        CantFixCommsOpt = BooleanOptionItem.Create(RoleInfo, 25017, OptionName.GodCantFixComms, false, false)
+        CantFixCommsOpt = BooleanOptionItem.Create(RoleInfo, 17, OptionName.GodCantFixComms, false, false)
             .SetParentRole(CustomRoles.God);
     }
 

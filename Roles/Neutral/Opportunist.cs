@@ -14,7 +14,7 @@ public sealed class Opportunist : RoleBase, IAdditionalWinner, IKiller
             CustomRoles.Opportunist,
             () => OptionHasKillButton?.GetBool() == true ? RoleTypes.Impostor : RoleTypes.Crewmate,
             CustomRoleTypes.Neutral,
-            15200,
+            53400,
             SetupOptionItem,
             "op",
             "#00ff00",

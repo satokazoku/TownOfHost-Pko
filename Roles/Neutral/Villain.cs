@@ -16,7 +16,7 @@ public sealed class Villain : RoleBase, ILNKiller
             CustomRoles.Villain,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Neutral,
-            184800,
+            55800,
             SetupOptionItem,
             "vln",
             "#8B0000",

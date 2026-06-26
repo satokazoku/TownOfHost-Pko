@@ -15,7 +15,7 @@ public sealed class LoversBreaker : RoleBase, ILNKiller
             CustomRoles.LoversBreaker,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Neutral,
-            84650,
+            52700,
             SetupOptionItem,
             "lb",
             "#ff66cc",

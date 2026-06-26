@@ -20,7 +20,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
             CustomRoles.JackalHadouHo,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Neutral,
-            326400,
+            52300,
             SetUpOptionItem,
             "jhh",
             "#00b4eb",
@@ -150,6 +150,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
     public static float GetTamaVentCooldown() => OptionTamaVentCooldown?.GetFloat() ?? 0f;
     public static float GetTamaVentMaxTime() => OptionTamaVentMaxTime?.GetFloat() ?? 0f;
     public static bool GetTamaCanVentMove() => OptionTamaCanVentMove?.GetBool() ?? false;
+    public static bool GetCanUseSabotageOption() => OptionCanSabotage?.GetBool() ?? false;
 
     public static void HideRoleOptions(CustomRoles role)
     {
@@ -942,7 +943,7 @@ public sealed class Tama : RoleBase, IKiller
             CustomRoles.Tama,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Neutral,
-            326600,
+            54900,
             SetupOptionItem,
             "tm",
             "#00b4eb",

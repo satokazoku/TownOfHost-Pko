@@ -246,7 +246,7 @@ public sealed class Pursuer : RoleBase, IAdditionalWinner
             "#daa520",
             (4, 7),
             introSound: () => GetIntroSound(RoleTypes.Impostor),
-            from: From.TownOfHost_Pko
+            from: From.TownOfHost_Y
         );
 
     public Pursuer(PlayerControl player) : base(RoleInfo, player, () => HasTask.False)

@@ -14,7 +14,7 @@ public sealed class Spelunker : RoleBase, ISystemTypeUpdateHook
             CustomRoles.Spelunker,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Neutral,
-            55660,
+            54400,
             SetupOptionItem,
             "sp",
             "#f8cd46",

@@ -549,6 +549,8 @@ public static class CustomRoleManager
                 case CustomRoles.Amnesia: Amnesia.Add(pc.PlayerId); break;
                 case CustomRoles.News: News.Add(pc.PlayerId); break;
                 case CustomRoles.Sunglasses: Sunglasses.Add(pc.PlayerId); break;
+                case CustomRoles.Securer: Securer.Add(pc.PlayerId); break;
+                case CustomRoles.Sealer: Sealer.Add(pc.PlayerId); break;
 
                 case CustomRoles.Amanojaku: Amanojaku.Add(pc.PlayerId); break;
                 case CustomRoles.OneWolf: OneWolf.Add(pc.PlayerId); break;
@@ -867,6 +869,7 @@ public enum CustomRoles
     Reverser,
     EvilSanta,
     EvilLinker,
+    MassMurder,
     //DEBUG only Impostor
     //Madmate
     MadGuardian,
@@ -886,6 +889,7 @@ public enum CustomRoles
     MadBetrayer,
     Nue,
     MadHacker,
+    MadSheriff,
     //DEBUG only Madmate
     //Crewmate(Vanilla)
     Engineer,
@@ -918,6 +922,9 @@ public enum CustomRoles
     SatsumatoImoM,
     NiceTeleporter,
     NiceRedRidingHood,
+    MagicalGirl,
+    Walkure,
+    SuspiciousTeller,
     //TOH-K
     Gasp,
     VentMaster,
@@ -1129,6 +1136,9 @@ public enum CustomRoles
     GhostRumour,
     //NeutralGhost
     AsistingAngel,
+    Securer,
+    Sealer,
+    Triplets,
 }
 public enum CustomRoleTypes
 {

@@ -15,7 +15,7 @@ public sealed class SabotageMaster : RoleBase, ISystemTypeUpdateHook
             CustomRoles.SabotageMaster,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            11800,
+            34400,
             SetupOptionItem,
             "sa",
             "#0000ff",

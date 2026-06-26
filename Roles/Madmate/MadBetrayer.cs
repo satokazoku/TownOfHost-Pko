@@ -15,7 +15,7 @@ public sealed class MadBetrayer : RoleBase, IKiller, ISchrodingerCatOwner
             CustomRoles.MadBetrayer,
             () => OptionCanVent.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate,
             CustomRoleTypes.Madmate,
-            22800,
+            20200,
             SetupOptionItem,
             "MBet",
             "#8b2551",

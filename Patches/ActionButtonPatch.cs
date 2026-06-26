@@ -12,7 +12,7 @@ public static class SabotageButtonDoClickPatch
 {
     public static bool Prefix()
     {
-        if (!PlayerControl.LocalPlayer.inVent && GameManager.Instance.SabotagesEnabled())
+        if (PlayerControl.LocalPlayer.CanUseSabotageButton() && !PlayerControl.LocalPlayer.inVent && GameManager.Instance.SabotagesEnabled())
         {
             DestroyableSingleton<HudManager>.Instance.ToggleMapVisible(new MapOptions
             {
@@ -81,31 +81,31 @@ public static class AbilityButtonDoClickPatch
             return false;
         }
         else
-        if (roleInfo?.IsDesyncImpostor == true && roleInfo.BaseRoleType.Invoke() == RoleTypes.Shapeshifter)
-        {
-            if (!(roleclass?.CanUseAbilityButton() ?? false)) return false;
-            foreach (var pc in PlayerCatch.AllPlayerControls)
+            if (roleInfo?.IsDesyncImpostor == true && roleInfo.BaseRoleType.Invoke() == RoleTypes.Shapeshifter)
             {
-                pc.Data.Role.NameColor = Color.white;
+                if (!(roleclass?.CanUseAbilityButton() ?? false)) return false;
+                foreach (var pc in PlayerCatch.AllPlayerControls)
+                {
+                    pc.Data.Role.NameColor = Color.white;
+                }
+                player.Data.Role.Cast<ShapeshifterRole>().UseAbility();
+                foreach (var pc in PlayerCatch.AllPlayerControls)
+                {
+                    pc.Data.Role.NameColor = Color.white;
+                }
+                return true;
             }
-            player.Data.Role.Cast<ShapeshifterRole>().UseAbility();
-            foreach (var pc in PlayerCatch.AllPlayerControls)
-            {
-                pc.Data.Role.NameColor = Color.white;
-            }
-            return true;
-        }
-        else
-        if (roleInfo?.IsDesyncImpostor == true && roleInfo?.BaseRoleType.Invoke() == RoleTypes.Phantom)
-        {
-            if (!(roleclass?.CanUseAbilityButton() ?? false)) return false;
-            foreach (var pc in PlayerCatch.AllPlayerControls)
-            {
-                pc.Data.Role.NameColor = Color.white;
-            }
-            player.Data.Role.Cast<PhantomRole>().UseAbility();
-            return true;
-        }
+            else
+                if (roleInfo?.IsDesyncImpostor == true && roleInfo?.BaseRoleType.Invoke() == RoleTypes.Phantom)
+                {
+                    if (!(roleclass?.CanUseAbilityButton() ?? false)) return false;
+                    foreach (var pc in PlayerCatch.AllPlayerControls)
+                    {
+                        pc.Data.Role.NameColor = Color.white;
+                    }
+                    player.Data.Role.Cast<PhantomRole>().UseAbility();
+                    return true;
+                }
         return true;
     }
 }

@@ -17,7 +17,7 @@ public sealed class Chatter : RoleBase
             CustomRoles.Chatter,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Neutral,
-            80500,
+            50600,
             SetupOptionItem,
             "ct",
             "#FF66B2",

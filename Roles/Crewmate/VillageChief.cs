@@ -21,7 +21,7 @@ public sealed class VillageChief : RoleBase, IKiller, ISelfVoter
             CustomRoles.VillageChief,
             () => RoleTypes.Engineer,
             CustomRoleTypes.Crewmate,
-            160000,
+            36700,
             SetupOptionItem,
             "vc",
             "#f5a623",
@@ -249,6 +249,12 @@ public sealed class VillageChief : RoleBase, IKiller, ISelfVoter
         {
             PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = CustomDeathReason.Suicide;
             Player.RpcMurderPlayer(Player);
+            SendRPC();
+            return;
+        }
+
+        if (Walkure.TryRejectRoleChange(Player, target, Walkure.RoleChangeSource.Crewmate))
+        {
             SendRPC();
             return;
         }

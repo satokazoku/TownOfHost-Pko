@@ -496,6 +496,7 @@ namespace TownOfHost
                 AddOnsAssignDataTeamImp.AssignAddOnsFromList();
                 AddOnsAssignData.AssignAddOnsFromList();
                 Twins.AssingAndReset();
+                Triplets.AssingAndReset();
                 if (Amanojaku.AssingDay.GetInt() == 0) AmanojakuAssing.AssignAddOnsFromList();
                 Faction.AssingFaction();
 

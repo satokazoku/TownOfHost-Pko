@@ -9,7 +9,7 @@ namespace TownOfHost.Roles.AddOns.Common
 {
     public static class OneWolf
     {
-        private static readonly int Id = 22700;
+        private static readonly int Id = 72100;
         public static List<byte> playerIdList = new();
         public static OptionItem OptionImpostorkillMe;
         public static OptionItem OptionMeCanKillImpostor;

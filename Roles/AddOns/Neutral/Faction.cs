@@ -12,12 +12,12 @@ class Faction
     public static OptionItem CantKillFaction;
     public static void SetUpOption()
     {
-        Options.SetupRoleOptions(19600, TabGroup.Addons, CustomRoles.Faction, new(1, 1, 1), fromtext: UtilsOption.GetFrom(From.TownOfHost_K));
-        CanSeeFactionMate = BooleanOptionItem.Create(19611, "CanSeeFactionMate", false, TabGroup.Addons, false).SetSubRoleOptionItem(CustomRoles.Faction);
-        CantKillFaction = BooleanOptionItem.Create(19613, "CantKillFaction", false, TabGroup.Addons, false).SetSubRoleOptionItem(CustomRoles.Faction);
-        ObjectOptionitem.Create(19612, "AddonOption", true, "", TabGroup.Addons).SetOptionName(() => "Assign Option").SetSubRoleOptionItem(CustomRoles.Faction);
+        Options.SetupRoleOptions(70700, TabGroup.Addons, CustomRoles.Faction, new(1, 1, 1), fromtext: UtilsOption.GetFrom(From.TownOfHost_K));
+        CanSeeFactionMate = BooleanOptionItem.Create(70711, "CanSeeFactionMate", false, TabGroup.Addons, false).SetSubRoleOptionItem(CustomRoles.Faction);
+        CantKillFaction = BooleanOptionItem.Create(70713, "CantKillFaction", false, TabGroup.Addons, false).SetSubRoleOptionItem(CustomRoles.Faction);
+        ObjectOptionitem.Create(70712, "AddonOption", true, "", TabGroup.Addons).SetOptionName(() => "Assign Option").SetSubRoleOptionItem(CustomRoles.Faction);
 
-        var id = 19620;
+        var id = 70720;
         List<CustomRoles> AddWinners = [CustomRoles.Amanojaku];
         foreach (var role in EnumHelper.GetAllValues<CustomRoles>().Where(role => role.IsNeutral()).OrderBy(x => x.GetRoleInfo()?.ConfigId ?? 100000))
         {

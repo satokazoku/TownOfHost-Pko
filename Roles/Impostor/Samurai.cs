@@ -17,7 +17,7 @@ public sealed class Samurai : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.Samurai,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            87100,
+            6600,
             SetupOptionItem,
             "sam",
             "#ff1919",

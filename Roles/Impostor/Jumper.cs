@@ -18,7 +18,7 @@ public sealed class Jumper : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.Jumper,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            3000,
+            5100,
             SetupOptionItem,
             "Jm",
             OptionSort: (1, 1),
@@ -132,24 +132,24 @@ public sealed class Jumper : RoleBase, IImpostor, IUsePhantomButton
             else
             {
                 _ = new LateTask(() =>
+                {
+                    if (!GameStates.IsMeeting && player.IsAlive())
                     {
-                        if (!GameStates.IsMeeting && player.IsAlive())
+                        foreach (var target in PlayerCatch.AllAlivePlayerControls)
                         {
-                            foreach (var target in PlayerCatch.AllAlivePlayerControls)
-                            {
-                                if (target.Is(CustomRoles.King) || target.PlayerId == player.PlayerId) continue;
+                            if (target.Is(CustomRoles.King) || target.PlayerId == player.PlayerId) continue;
 
-                                float Distance = Vector2.Distance(player.transform.position, target.transform.position);
-                                if (Distance <= (junpdis.TryGetValue(Jumpdistance, out var dis) ? dis : 0))
+                            float Distance = Vector2.Distance(player.transform.position, target.transform.position);
+                            if (Distance <= (junpdis.TryGetValue(Jumpdistance, out var dis) ? dis : 0))
+                            {
+                                if (CustomRoleManager.OnCheckMurder(player, target, target, target, true, Killpower: 3, deathReason: CustomDeathReason.Bombed))
                                 {
-                                    if (CustomRoleManager.OnCheckMurder(player, target, target, target, true, Killpower: 3, deathReason: CustomDeathReason.Bombed))
-                                    {
-                                        sp1count++;
-                                    }
+                                    sp1count++;
                                 }
                             }
                         }
-                    }, Jumpdis - 0.19f, "abo-n", null);
+                    }
+                }, Jumpdis - 0.19f, "abo-n", null);
             }
             NowJumpcount++;
             timer = 0;

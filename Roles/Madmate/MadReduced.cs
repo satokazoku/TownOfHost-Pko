@@ -15,7 +15,7 @@ public sealed class MadReduced : RoleBase, IKillFlashSeeable, IDeathReasonSeeabl
             CustomRoles.MadReduced,
             () => OptionCanVent.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate,
             CustomRoleTypes.Madmate,
-            20900,
+            20800,
             SetupOptionItem,
             "mre",
             OptionSort: (3, 1),

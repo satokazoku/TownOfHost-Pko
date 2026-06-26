@@ -14,7 +14,7 @@ public sealed class Efficient : RoleBase
             CustomRoles.Efficient,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            11700,
+            31300,
             SetupOptionItem,
             "ef",
             "#a68b96",

@@ -19,7 +19,7 @@ public sealed class Milkman : RoleBase, IKiller
             CustomRoles.Milkman,
             () => RoleTypes.Engineer,
             CustomRoleTypes.Crewmate,
-            173500,
+            32900,
             SetupOptionItem,
             "mlk",
             "#f0f0e0",

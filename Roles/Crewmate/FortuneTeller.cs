@@ -19,7 +19,7 @@ public sealed class FortuneTeller : RoleBase, ISelfVoter
             CustomRoles.FortuneTeller,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            9200,
+            31600,
             SetupOptionItem,
             "fo",
             "#6b3ec3",

@@ -16,7 +16,7 @@ public sealed class Dictator : RoleBase, ISelfVoter
             CustomRoles.Dictator,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            9800,
+            31100,
             SetupOptionItem,
             "dic",
             "#df9b00",

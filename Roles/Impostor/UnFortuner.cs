@@ -21,7 +21,7 @@ public sealed class UnFortuner : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.UnFortuner,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            24500,
+            7900,
             SetupOptionItem,
             "Uf",
             OptionSort: (6, 11),
@@ -115,7 +115,7 @@ public sealed class UnFortuner : RoleBase, IImpostor, IUsePhantomButton
             var roletext = "";
             if (player.IsAlive())
             {
-                var giveadd = GiveAddons.Where(add => add is not CustomRoles.Amanojaku || player.Is(CustomRoleTypes.Crewmate) || player.Is(CustomRoleTypes.Neutral)).OrderBy(x => Guid.NewGuid()).ToList();
+                var giveadd = GiveAddons.Where(add => CanGiveAddon(player, add)).OrderBy(x => Guid.NewGuid()).ToList();
                 if (giveadd.Count <= 0)
                 {
                     role = Fortuner.DefaltAddon[IRandom.Instance.Next(Fortuner.DefaltAddon.Count())];
@@ -139,7 +139,7 @@ public sealed class UnFortuner : RoleBase, IImpostor, IUsePhantomButton
                 {
                     foreach (var addon in GiveAddons)
                     {
-                        if (addon is CustomRoles.Amanojaku && !player.Is(CustomRoleTypes.Crewmate) && !player.Is(CustomRoleTypes.Neutral)) continue;
+                        if (!CanGiveAddon(player, addon)) continue;
                         roletext += UtilsRoleText.GetRoleColorAndtext(addon);
                         player.RpcSetCustomRole(addon);
                         role = addon;
@@ -190,6 +190,15 @@ public sealed class UnFortuner : RoleBase, IImpostor, IUsePhantomButton
             }
         }
     }
+
+    static bool CanGiveAddon(PlayerControl player, CustomRoles addon)
+    {
+        if (addon is CustomRoles.Amanojaku && !player.Is(CustomRoleTypes.Crewmate) && !player.Is(CustomRoleTypes.Neutral)) return false;
+        if (addon is CustomRoles.Securer && !Securer.CanBeAssigned(player)) return false;
+        if (addon is CustomRoles.Sealer && !Sealer.CanBeAssigned(player)) return false;
+        return true;
+    }
+
     void SendRpc()
     {
         using var sender = CreateSender();

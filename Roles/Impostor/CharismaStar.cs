@@ -19,7 +19,7 @@ public sealed class CharismaStar : RoleBase, IImpostor, IUsePhantomButton, IDoub
             CustomRoles.CharismaStar,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            22400,
+            2900,
             SetUpOptionItem,
             "chs",
             OptionSort: (6, 9),

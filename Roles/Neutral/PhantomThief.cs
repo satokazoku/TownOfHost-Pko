@@ -16,7 +16,7 @@ public sealed class PhantomThief : RoleBase, IKiller, IKillFlashSeeable, IRoomTa
             CustomRoles.PhantomThief,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Neutral,
-            15300,
+            53600,
             SetupOptionItem,
             "PT",
             "#3c1f56",

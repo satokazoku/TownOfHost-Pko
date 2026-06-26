@@ -7,7 +7,7 @@ namespace TownOfHost.Roles.AddOns.Common
 {
     public static class Speeding
     {
-        private static readonly int Id = 17900;
+        private static readonly int Id = 73000;
         private static Color RoleColor = UtilsRoleText.GetRoleColor(CustomRoles.Speeding);
         public static string SubRoleMark = Utils.ColorString(RoleColor, "∈");
         public static List<byte> playerIdList = new();

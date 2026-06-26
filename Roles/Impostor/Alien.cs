@@ -645,7 +645,7 @@ public sealed class Alien : RoleBase, IMeetingTimeAlterable, IImpostor, INekomat
         if (InsiderCansee.Contains(seen.PlayerId))
             enabled = true;
     }
-    #endregion    
+    #endregion
     #region Vent
     public override bool OnEnterVent(PlayerPhysics physics, int ventId)
     {

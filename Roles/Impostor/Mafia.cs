@@ -3,6 +3,7 @@ using Hazel;
 using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Crewmate;
 
 namespace TownOfHost.Roles.Impostor;
 
@@ -15,7 +16,7 @@ public sealed class Mafia : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.Mafia,
             () => CanmakeSidekickMadMate.GetBool() && Options.CanMakeMadmateCount.GetInt() != 0 ? RoleTypes.Phantom : RoleTypes.Impostor,
             CustomRoleTypes.Impostor,
-            6400,
+            5300,
             SetupCustomOption,
             "mf",
             OptionSort: (6, 8),
@@ -77,6 +78,8 @@ public sealed class Mafia : RoleBase, IImpostor, IUsePhantomButton
         if (!SKMad || Options.CanMakeMadmateCount.GetInt() <= PlayerCatch.SKMadmateNowCount) return;
         var target = Player.GetKillTarget(true);
         if (target == null || target.GetCustomRole() is CustomRoles.King or CustomRoles.Merlin || (target.IsTeammate(Player) && !SuddenDeathMode.NowSuddenDeathTemeMode)) return;
+        var source = Player.Is(CustomRoles.JackalWolf) ? Walkure.RoleChangeSource.Jackal : Walkure.RoleChangeSource.Impostor;
+        if (Walkure.TryRejectRoleChange(Player, target, source)) return;
 
         SKMad = false;
         SendRPC();

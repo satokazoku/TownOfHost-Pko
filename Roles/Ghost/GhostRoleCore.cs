@@ -59,7 +59,10 @@ class GhostRoleCore
         Transparent.Init();
         Clumsy.Init();
         OneWolf.Init();
+        Securer.Init();
+        Sealer.Init();
         Twins.Init();
+        Triplets.Init();
         Stack.Init();
         Sunglasses.Init();
         Powerful.Init();
@@ -100,6 +103,8 @@ class GhostRoleCore
         Amnesia.SetupCustomOption();
         News.SetupCustomOption();
         OneWolf.SetupCustomOption();
+        Securer.SetupCustomOption();
+        Sealer.SetupCustomOption();
         SlowStarter.SetupCustomOption();
         Notvoter.SetupCustomOption();
         Elector.SetupCustomOption();

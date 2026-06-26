@@ -14,7 +14,7 @@ public sealed class ShapeKiller : RoleBase, IImpostor, ISidekickable
             CustomRoles.ShapeKiller,
             () => RoleTypes.Shapeshifter,
             CustomRoleTypes.Impostor,
-            22500,
+            6900,
             SetUpOptionItem,
             "shk",
             OptionSort: (6, 5),

@@ -18,7 +18,7 @@ public sealed class EvilGuesser : RoleBase, IImpostor
             CustomRoles.EvilGuesser,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Impostor,
-            73001,
+            4000,
             SetupOptionItem,
             "eg",
             "#ff1919",
@@ -52,14 +52,14 @@ public sealed class EvilGuesser : RoleBase, IImpostor
 
     private static void SetupOptionItem()
     {
-        CanGuessTime = IntegerOptionItem.Create(RoleInfo, 110, OptionName.CanGuessTime, new(1, 15, 1), 3, false)
+        CanGuessTime = IntegerOptionItem.Create(RoleInfo, 10, OptionName.CanGuessTime, new(1, 15, 1), 3, false)
             .SetValueFormat(OptionFormat.Times);
-        OwnCanGuessTime = IntegerOptionItem.Create(RoleInfo, 111, OptionName.OwnCanGuessTime, new(1, 15, 1), 1, false)
+        OwnCanGuessTime = IntegerOptionItem.Create(RoleInfo, 11, OptionName.OwnCanGuessTime, new(1, 15, 1), 1, false)
             .SetValueFormat(OptionFormat.Times);
-        CanGuessVanilla = BooleanOptionItem.Create(RoleInfo, 112, OptionName.CanGuessVanilla, true, false);
-        CanGuessNakama = BooleanOptionItem.Create(RoleInfo, 131, OptionName.CanGuessNakama, true, false);
-        CanGuessTaskDoneSnitch = BooleanOptionItem.Create(RoleInfo, 114, OptionName.CanGuessTaskDoneSnitch, false, false);
-        CanGuessWhiteCrew = BooleanOptionItem.Create(RoleInfo, 115, OptionName.CanWhiteCrew, false, false);
+        CanGuessVanilla = BooleanOptionItem.Create(RoleInfo, 12, OptionName.CanGuessVanilla, true, false);
+        CanGuessNakama = BooleanOptionItem.Create(RoleInfo, 13, OptionName.CanGuessNakama, true, false);
+        CanGuessTaskDoneSnitch = BooleanOptionItem.Create(RoleInfo, 14, OptionName.CanGuessTaskDoneSnitch, false, false);
+        CanGuessWhiteCrew = BooleanOptionItem.Create(RoleInfo, 15, OptionName.CanWhiteCrew, false, false);
     }
 
     private static bool IsBtCommand(string msg)

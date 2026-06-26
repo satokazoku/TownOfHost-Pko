@@ -7,7 +7,7 @@ namespace TownOfHost.Roles.AddOns.Common
 {
     public static class SlowStarter
     {
-        private static readonly int Id = 19500;
+        private static readonly int Id = 72900;
         private static Color RoleColor = UtilsRoleText.GetRoleColor(CustomRoles.SlowStarter);
         public static string SubRoleMark = Utils.ColorString(RoleColor, "Ｓs");
         public static List<byte> playerIdList = new();

@@ -17,7 +17,7 @@ public sealed class DoppelGanger : RoleBase, ILNKiller, ISchrodingerCatOwner, IA
             CustomRoles.DoppelGanger,
             () => RoleTypes.Shapeshifter,
             CustomRoleTypes.Neutral,
-            13400,
+            51100,
             SetupOptionItem,
             "dg",
             "#47266e",

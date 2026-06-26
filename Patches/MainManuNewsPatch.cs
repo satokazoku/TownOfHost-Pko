@@ -55,7 +55,7 @@ public class ModNewsHistory
                     SubTitle = "<color=#FF9631>Town Of Host-Pko v4.28.14.60</color>",
                     ShortTitle = "<color=#FF9631>●TOH-Pko v4.28.14.60</color>",
                     Text = "・未完成の役職の削除\n"
-                    +"・新役職スモークメーカーの追加\n"
+                    + "・新役職スモークメーカーの追加\n"
                     ,
                     Date = "2026-5-17"
                 };
@@ -529,6 +529,28 @@ public class ModNewsHistory
                     Date = "2026-6-09"
                 };
                 AllModNews.Add(news);
+            }
+            {
+                var news = new ModNews
+                {
+
+                    Number = 100093,
+                    Title = "でばっぐばん",
+                    SubTitle = "<color=#FF9631>●TOH-Pko v4.32.17.73</color>",
+                    ShortTitle = "<color=#FF9631>●TOH-Pko v4.32.17.72</color>",
+                    Text = "<size=3.2>【はじめてのデバッグ版配布】</size>\n"
+                    + "<size=150%>【新役職】</size>\n"
+                    + "・© ワルキューレ\n"
+                    + "・© 魔法少女\n"
+                    + "<size=150%>【バグ修正】</size>\n"
+                    + "イビルムービングでKCDが増加するバグの応急処置<sub>(多分増えません)</sub>\n"
+                    + "・ジャッカルウルフとアサシンで併せ持つ役職がダブルキラーの場合\nキルボタンでキルするとファントムクールがリセットされる問題の修正\n"
+
+                    ,
+                    Date = "2026-6-11"
+                };
+                AllModNews.Add(news);
+
             }
             AnnouncementPopUp.UpdateState = AnnouncementPopUp.AnnounceState.NotStarted;
         }

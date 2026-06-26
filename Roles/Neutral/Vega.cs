@@ -17,7 +17,7 @@ public sealed class Vega : RoleBase, IKiller, IAdditionalWinner
             CustomRoles.Vega,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Neutral,
-            22100,
+            78000,
             SetupOptionItems,
             "vg",
             "#f1d9d9",

@@ -17,11 +17,12 @@ public sealed class Merlin : RoleBase, IRoomTasker
             CustomRoles.Merlin,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            15900,
+            76800,
             null,
             "mer",
             "#8cc2ff",
             (2, 1),
+            tab: TabGroup.Combinations,
             combination: CombinationRoles.AssassinandMerlin
         );
     public Merlin(PlayerControl player)

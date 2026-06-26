@@ -94,7 +94,7 @@ namespace TownOfHost
                 {
                     if (!SuddenDeathMode.NowSuddenDeathMode && __instance.PlayerId != PlayerControl.LocalPlayer.PlayerId)//サボ可能役職のみインポスターゴーストにする
                     {
-                        if (__instance.GetCustomRole().IsImpostor() || ((__instance.GetRoleClass() as IKiller)?.CanUseSabotageButton() ?? false))
+                        if (__instance.CanUseSabotageButton())
                             _ = new LateTask(() =>
                             {
                                 if (!GameStates.CalledMeeting)

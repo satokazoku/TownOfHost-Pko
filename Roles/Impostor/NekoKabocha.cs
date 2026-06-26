@@ -15,7 +15,7 @@ public sealed class NekoKabocha : RoleBase, IImpostor, INekomata
             CustomRoles.NekoKabocha,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Impostor,
-            6300,
+            5800,
             SetupOptionItems,
             "nk",
             OptionSort: (6, 7),

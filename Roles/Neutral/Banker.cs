@@ -16,7 +16,7 @@ public sealed class Banker : RoleBase, IKiller, IAdditionalWinner
             CustomRoles.Banker,
             () => RoleTypes.Engineer,
             CustomRoleTypes.Neutral,
-            14900,
+            50300,
             SetUpOptionItem,
             "bu",
             "#489972",

@@ -9,6 +9,7 @@ using UnityEngine;
 using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Impostor;
+using TownOfHost.Roles.Madmate;
 using static TownOfHost.Translator;
 
 namespace TownOfHost
@@ -485,7 +486,7 @@ namespace TownOfHost
                         PlayerCatch.AllPlayerControls.DoIf(pl => pl != pc, pl => NameColorManager.Add(pc.PlayerId, pl.PlayerId, Main.PlayerColors[pl.PlayerId].ColorCode()));
                     }
                     //マッドメイトの最初からの内通
-                    if (role.IsMadmate() && Options.MadCanSeeImpostor.GetBool())
+                    if (SatsumatoImo.CanSeeImpostorNameColor(role))
                     {
                         if (PlayerCatch.AllPlayerFirstTypes.Where(x => x.Value is CustomRoleTypes.Impostor).Any())
                             foreach (var imp in PlayerCatch.AllPlayerFirstTypes.Where(x => x.Value is CustomRoleTypes.Impostor))

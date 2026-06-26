@@ -7,7 +7,7 @@ namespace TownOfHost.Roles.AddOns.Common
 {
     public static class Guarding
     {
-        private static readonly int Id = 16800;
+        private static readonly int Id = 70800;
         private static Color RoleColor = UtilsRoleText.GetRoleColor(CustomRoles.Guarding);
         public static string SubRoleMark = Utils.ColorString(RoleColor, "ζ");
         public static List<byte> playerIdList = new();

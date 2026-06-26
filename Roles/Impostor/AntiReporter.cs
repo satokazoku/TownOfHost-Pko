@@ -18,7 +18,7 @@ public sealed class AntiReporter : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.AntiReporter,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            5500,
+            2300,
             SetupOptionItem,
             "anr",
             OptionSort: (6, 2),

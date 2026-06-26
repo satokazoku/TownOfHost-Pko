@@ -20,7 +20,7 @@ public sealed class Evolver : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.Evolver,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            386200,
+            4700,
             SetupOptionItem,
             "ev",
             OptionSort: (4, 5),

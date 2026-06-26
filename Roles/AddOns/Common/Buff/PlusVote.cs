@@ -7,7 +7,7 @@ namespace TownOfHost.Roles.AddOns.Common
 {
     public static class PlusVote
     {
-        private static readonly int Id = 17500;
+        private static readonly int Id = 72300;
         private static Color RoleColor = UtilsRoleText.GetRoleColor(CustomRoles.PlusVote);
         public static string SubRoleMark = Utils.ColorString(RoleColor, "р");
         public static List<byte> playerIdList = new();

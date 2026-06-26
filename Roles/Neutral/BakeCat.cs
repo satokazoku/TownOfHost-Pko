@@ -20,7 +20,7 @@ namespace TownOfHost.Roles.Neutral
                 CustomRoles.BakeCat,
                 () => RoleTypes.Crewmate,
                 CustomRoleTypes.Neutral,
-                15700,
+                50200,
                 SetupOptionItem,
                 "bk",
                 "#ededc7",
@@ -106,7 +106,7 @@ namespace TownOfHost.Roles.Neutral
 
             //自殺ならスルー
             if (info.IsSuicide) return true;
-            if (killer.GetRoleClass() is not ISchrodingerCatOwner) return true;
+            if (!MagicalGirl.TryGetEffectiveRole<ISchrodingerCatOwner>(killer, out _)) return true;
 
             if (killer.Is(CustomRoles.GrimReaper) || killer.Is(CustomRoles.BakeCat))
                 return true;
@@ -128,7 +128,7 @@ namespace TownOfHost.Roles.Neutral
         {
             killer.RpcProtectedMurderPlayer(Player);
             Killer = killer;
-            if (killer.GetRoleClass() is ISchrodingerCatOwner catOwner)
+            if (MagicalGirl.TryGetEffectiveRole<ISchrodingerCatOwner>(killer, out var catOwner))
             {
                 catOwner.OnBakeCatKill(this);
                 RpcSetTeam((TeamType)catOwner.SchrodingerCatChangeTo);

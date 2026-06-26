@@ -21,7 +21,7 @@ public sealed class BatGirl : RoleBase, ISelfVoter, IUsePhantomButton, IAddition
             CustomRoles.BatGirl,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Neutral,
-            70620,
+            50400,
             SetupOptionItem,
             "bg",
             "#ff4f8f",

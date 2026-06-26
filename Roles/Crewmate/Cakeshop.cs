@@ -20,7 +20,7 @@ public sealed class Cakeshop : RoleBase, INekomata
             CustomRoles.Cakeshop,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            21200,
+            30800,
             null,
             "cs",
             "#aacbff",
@@ -84,7 +84,7 @@ public sealed class Cakeshop : RoleBase, INekomata
                 if (pc == null) return;
                 var addons = GetAddons(pc.GetCustomRole().GetCustomRoleTypes());
                 if (addons == null) return;
-                var addon = addons.Where(x => !pc.GetCustomSubRoles().Contains(x) && x is not CustomRoles.Amnesia and not CustomRoles.Amanojaku)
+                var addon = addons.Where(x => CanGiveAddon(pc, x))
                                 .OrderBy(x => Guid.NewGuid())
                                 .FirstOrDefault();
                 Addedaddons[pc.PlayerId] = addon;
@@ -114,6 +114,15 @@ public sealed class Cakeshop : RoleBase, INekomata
             CustomRoleTypes.Neutral => AddOns.Common.AddOnsAssignData.AllData.Values.Where(x => x.NeutralMaximum != null).Select(x => x.Role).ToArray(),
             _ => null,
         };
+    }
+
+    static bool CanGiveAddon(PlayerControl player, CustomRoles addon)
+    {
+        if (player.GetCustomSubRoles().Contains(addon)) return false;
+        if (addon is CustomRoles.Amnesia or CustomRoles.Amanojaku) return false;
+        if (addon is CustomRoles.Securer && !Securer.CanBeAssigned(player)) return false;
+        if (addon is CustomRoles.Sealer && !Sealer.CanBeAssigned(player)) return false;
+        return true;
     }
 
     public string GetLowerTextOthers(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)

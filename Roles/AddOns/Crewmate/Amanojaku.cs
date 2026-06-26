@@ -9,7 +9,7 @@ namespace TownOfHost.Roles.AddOns.Common
 {
     public static class Amanojaku
     {
-        private static readonly int Id = 19100;
+        private static readonly int Id = 70000;
         public static List<byte> playerIdList = new();
         public static OptionItem AssingDay;
         public static OptionItem SurvivetoWin;

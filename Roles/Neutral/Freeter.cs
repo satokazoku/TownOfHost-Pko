@@ -19,7 +19,7 @@ public sealed class Freeter : RoleBase, IKiller, IAdditionalWinner
             CustomRoles.Freeter,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Neutral,
-            30000,
+            51600,
             SetupOptionItem,
             "tt",
             "#32cd32",

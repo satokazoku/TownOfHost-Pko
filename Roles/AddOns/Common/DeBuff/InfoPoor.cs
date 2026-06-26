@@ -7,7 +7,7 @@ namespace TownOfHost.Roles.AddOns.Common
 {
     public static class InfoPoor
     {
-        private static readonly int Id = 18500;
+        private static readonly int Id = 71000;
         private static Color RoleColor = UtilsRoleText.GetRoleColor(CustomRoles.InfoPoor);
         public static string SubRoleMark = Utils.ColorString(RoleColor, "Ｉ");
         public static List<byte> playerIdList = new();

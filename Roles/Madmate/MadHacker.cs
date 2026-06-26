@@ -15,11 +15,12 @@ public sealed class MadHacker : RoleBase, IKiller, IKillFlashSeeable, IDeathReas
             CustomRoles.MadHacker,
             () => RoleTypes.Shapeshifter,
             CustomRoleTypes.Madmate,
-            24800,
+            20500,
             SetupOptionItem,
             "mh",
             OptionSort: (2, 5),
             isDesyncImpostor: true,
+            from: From.TownOfHost_K,
             introSound: () => GetIntroSound(RoleTypes.Tracker)
         );
     public MadHacker(PlayerControl player)

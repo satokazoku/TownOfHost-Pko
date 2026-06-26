@@ -14,7 +14,7 @@ public sealed class MadChanger : RoleBase, IKiller, IKillFlashSeeable, IDeathRea
             CustomRoles.MadChanger,
             () => RoleTypes.Shapeshifter,
             CustomRoleTypes.Madmate,
-            7900,
+            20300,
             SetupOptionItem,
             "Mc",
             OptionSort: (2, 3),

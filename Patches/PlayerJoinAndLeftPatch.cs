@@ -15,6 +15,36 @@ using static TownOfHost.Translator;
 
 namespace TownOfHost
 {
+    static class AutoForceEndOnDisconnect
+    {
+        private static int AliveDisconnectedCount;
+
+        [Attributes.GameModuleInitializer]
+        public static void Reset()
+        {
+            AliveDisconnectedCount = 0;
+        }
+
+        public static void OnPlayerLeft(PlayerControl player, bool wasAlive)
+        {
+            if (!AmongUsClient.Instance.AmHost) return;
+            if (!GameStates.IsInGame) return;
+            if (!wasAlive) return;
+            if (!Options.OptionAutoForceEndOnDisconnect.GetBool()) return;
+            if (CustomWinnerHolder.WinnerTeam is not CustomWinner.Default) return;
+
+            AliveDisconnectedCount++;
+            var limit = Options.OptionAutoForceEndDisconnectCount.GetInt();
+            Logger.Info($"Alive disconnected players: {AliveDisconnectedCount}/{limit}", nameof(AutoForceEndOnDisconnect));
+
+            if (AliveDisconnectedCount < limit) return;
+
+            CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Draw);
+            GameManager.Instance.enabled = false;
+            GameManager.Instance.RpcEndGame(GameOverReason.ImpostorDisconnect, false);
+        }
+    }
+
     [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnGameJoined))]
     class OnGameJoinedPatch
     {
@@ -256,6 +286,7 @@ namespace TownOfHost
 
                         Lovers.LoverDisconnected(data.Character);
                         var state = PlayerState.GetByPlayerId(data.Character.PlayerId);
+                        var wasAlive = state != null && !state.IsDead;
                         if (state.DeathReason == CustomDeathReason.etc) //死因が設定されていなかったら
                         {
                             state.DeathReason = CustomDeathReason.Disconnected;
@@ -266,12 +297,14 @@ namespace TownOfHost
                             role?.OnLeftPlayer(data.Character);
                         }
                         Twins.TwinsReset(data.Character.PlayerId);
+                        Triplets.TripletsReset(data.Character.PlayerId);
                         state.SetDead();
                         AntiBlackout.OnDisconnect(data.Character.Data);
                         PlayerGameOptionsSender.RemoveSender(data.Character);
                         //PlayerCatch.AllPlayerControls.Do(pc => Camouflage.RpcSetSkin(pc, RevertToDefault: true, force: true));
                         UtilsNotifyRoles.NotifyRoles(NoCache: true);
                         ChatManager.OnDisconnectOrDeadPlayer(data.Character.PlayerId);
+                        AutoForceEndOnDisconnect.OnPlayerLeft(data.Character, wasAlive);
                     }
                     /*Croissant.diaries.Remove($"{data.Character.PlayerId}");
                     var diary = Croissant.diaries.Where(x => x.Value.day == data.Character.PlayerId).FirstOrDefault().Value;
@@ -375,9 +408,9 @@ namespace TownOfHost
             if (Main.DebugVersion)
             {
                 if (Main.UseingJapanese)
-                    Utils.SendMessage($"<size=120%>☆これはデバッグ版です☆</size>\n<line-height=80%><size=70%>\n・正式リリース版ではありません。\n・バグが発生する場合があります。\nバグが発生した場合はTOH-KのDiscordで報告すること!", Sendto, "<#ff1919>【=====　これはデバッグ版です　=====】</color>");
+                    Utils.SendMessage($"<size=120%>☆これはデバッグ版です☆</size>\n<line-height=80%><size=70%>\n・正式リリース版ではありません。\n・バグが発生する場合があります。\nバグが発生した場合はTOH-PkoのDiscordで報告すること!", Sendto, "<#ff1919>【=====　これはデバッグ版です　=====】</color>");
                 else
-                    Utils.SendMessage($"<size=120%>☆This is a debug version☆</size=120%>\n<line-height=80%><size=70%>This is not an official release version. \n If you encounter a bug, report it on TOH-K Discord!", Sendto, "<#ff1919>【==　This is Debug version　==】</color>");
+                    Utils.SendMessage($"<size=120%>☆This is a debug version☆</size=120%>\n<line-height=80%><size=70%>This is not an official release version. \n If you encounter a bug, report it on TOH-Pko Discord!", Sendto, "<#ff1919>【==　This is Debug version　==】</color>");
             }
         }
     }

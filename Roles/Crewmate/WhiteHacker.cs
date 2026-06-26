@@ -16,7 +16,7 @@ public sealed class WhiteHacker : RoleBase
             CustomRoles.WhiteHacker,
             () => CanUseTrackAbility.GetBool() && !OptAwakening.GetBool() ? RoleTypes.Tracker : RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            10100,
+            37000,
             SetupOptionItem,
             "WH",
             "#efefef",

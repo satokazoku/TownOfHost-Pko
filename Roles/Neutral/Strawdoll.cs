@@ -18,7 +18,7 @@ public sealed class Strawdoll : RoleBase, IKiller, IUsePhantomButton
             CustomRoles.Strawdoll,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Neutral,
-            22900,
+            54700,
             SetupOptionItem,
             "St",
             "#7b4122",

@@ -21,7 +21,7 @@ public sealed class StandMaster : RoleBase, ILNKiller, IUsePhantomButton
             CustomRoles.StandMaster,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Neutral,
-            184710,
+            54600,
             SetupOptionItem,
             "stm",
             "#8B4513",

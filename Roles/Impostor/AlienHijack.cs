@@ -24,7 +24,7 @@ public sealed class AlienHijack : RoleBase, IMeetingTimeAlterable, IImpostor, IN
                 CustomRoles.AlienHijack,
                 () => RoleTypes.Impostor,
                 CustomRoleTypes.Impostor,
-                2300,
+                2100,
                 null,
                 "HAl",
                 OptionSort: (1, 1),

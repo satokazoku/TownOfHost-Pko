@@ -15,7 +15,7 @@ public sealed class Egoist : RoleBase, ISidekickable, ILNKiller, ISchrodingerCat
             CustomRoles.Egoist,
             () => RoleTypes.Shapeshifter,
             CustomRoleTypes.Neutral,
-            13700,
+            51300,
             SetupOptionItem,
             "eg",
             "#5600ff",

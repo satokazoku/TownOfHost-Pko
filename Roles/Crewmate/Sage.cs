@@ -18,7 +18,7 @@ public sealed class Sage : RoleBase
             CustomRoles.Sage,
             () => RoleTypes.Engineer,
             CustomRoleTypes.Crewmate,
-            60100,
+            34500,
             SetupOptionItem,
             "sg",
             "#aaddff",

@@ -27,7 +27,7 @@ public sealed class FireWorks : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.FireWorks,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            4400,
+            4800,
             SetupCustomOption,
             "fw",
             OptionSort: (3, 6),

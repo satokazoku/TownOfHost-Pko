@@ -17,7 +17,7 @@ public sealed class Amnesiac : RoleBase, IImpostor
             CustomRoles.Amnesiac,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Impostor,
-            7200,
+            2200,
             SetupCustomOption,
             "am",
             "#f8cd46",

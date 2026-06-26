@@ -9,6 +9,7 @@ using Hazel;
 using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Crewmate;
 using static TownOfHost.Roles.Impostor.Alien;
 
 namespace TownOfHost.Roles.Neutral;
@@ -22,7 +23,7 @@ public sealed class JackalAlien : RoleBase, IMeetingTimeAlterable, ILNKiller, IS
                 CustomRoles.JackalAlien,
                 () => OptionCanMakeSidekick.GetBool() ? RoleTypes.Phantom : RoleTypes.Impostor,
                 CustomRoleTypes.Neutral,
-                13000,
+                52000,
                 SetupOptionItem,
                 "JA",
                 "#00b4eb",
@@ -852,6 +853,7 @@ public sealed class JackalAlien : RoleBase, IMeetingTimeAlterable, ILNKiller, IS
             ResetCooldown = false;
             return;
         }
+        if (Walkure.TryRejectRoleChange(Player, target, Walkure.RoleChangeSource.Jackal)) return;
         if (SuddenDeathMode.NowSuddenDeathTemeMode)
         {
             target.SideKickChangeTeam(Player);

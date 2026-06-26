@@ -14,7 +14,7 @@ public sealed class MadTracker : RoleBase, IKillFlashSeeable, IDeathReasonSeeabl
             CustomRoles.MadTracker,
             () => RoleTypes.Tracker,
             CustomRoleTypes.Madmate,
-            7800,
+            21200,
             SetupOptionItem,
             "mt",
             OptionSort: (2, 2),

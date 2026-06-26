@@ -337,7 +337,7 @@ public sealed class Seer : RoleBase, IKillFlashSeeable
             CustomRoles.Seer,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            11000,
+            35000,
             SetupOptionItem,
             "se",
             "#61b26c",

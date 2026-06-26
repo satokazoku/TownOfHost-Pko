@@ -18,7 +18,7 @@ public sealed class Turncoat : RoleBase, IKiller
             CustomRoles.Turncoat,
             () => OptionCanShapeShift.GetBool() ? RoleTypes.Shapeshifter : RoleTypes.Crewmate,
             CustomRoleTypes.Neutral,
-            15500,
+            55200,
             SetupOptionItem,
             "Tu",
             "#371a1a",

@@ -20,7 +20,7 @@ public sealed class NiceGuesser : RoleBase
             CustomRoles.NiceGuesser,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            70330,
+            33400,
             SetupOptionItem,
             "ng",
             "#dcf500",

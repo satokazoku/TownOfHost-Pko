@@ -20,7 +20,7 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
             CustomRoles.Eater,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Neutral,
-            50230,
+            51200,
             SetupOptionItem,
             "Ea",
             "#662B2C",

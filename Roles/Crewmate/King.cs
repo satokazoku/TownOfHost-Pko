@@ -15,7 +15,7 @@ public sealed class King : RoleBase
             CustomRoles.King,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            21100,
+            32200,
             SetupOptionItem,
             "k",
             "#FFD700",

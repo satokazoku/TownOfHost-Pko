@@ -18,7 +18,7 @@ public sealed class Scratcher : RoleBase, IAdditionalWinner
             CustomRoles.Scratcher,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Neutral,
-            285000,
+            54200,
             SetupOptionItem,
             "scr",
             "#d4af37",

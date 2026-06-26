@@ -15,7 +15,7 @@ public sealed class MadGuardian : RoleBase, IKillFlashSeeable, IDeathReasonSeeab
             CustomRoles.MadGuardian,
             () => OptionCanUseVent.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate,
             CustomRoleTypes.Madmate,
-            7600,
+            20400,
             SetupOptionItem,
             "mg",
             OptionSort: (2, 0),

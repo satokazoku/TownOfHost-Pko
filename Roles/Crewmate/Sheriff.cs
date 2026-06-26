@@ -20,9 +20,9 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
             typeof(Sheriff),
             player => new Sheriff(player),
             CustomRoles.Sheriff,
-            () => RoleTypes.Crewmate,
+            () => RequiresTasks ? RoleTypes.Crewmate : RoleTypes.Impostor,
             CustomRoleTypes.Crewmate,
-            8800,
+            35100,
             SetupOptionItem,
             "sh",
             "#f8cd46",
@@ -156,7 +156,8 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
         PetActionManager.Register(Player.PlayerId, OnPetUsed);
         if (!RequiresTasks)
         {
-            LastCooltime = (int)CurrentKillCooldown;
+            nowcool = 0f;
+            LastCooltime = 0;
             ModeSwitching(false);
             SendRPC();
         }
@@ -219,7 +220,7 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
     {
         if (Is(info.AttemptKiller) && !info.IsSuicide)
         {
-            if (LastCooltime > 0)
+            if (RequiresTasks && LastCooltime > 0)
             {
                 info.DoKill = false;
                 return;
@@ -313,6 +314,7 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
     public override void AfterMeetingTasks()
     {
         if (!Player.IsAlive()) return;
+        if (!RequiresTasks) return;
         _ = new LateTask(() => nowcool = CurrentKillCooldown, Main.LagTime, "Reset-Sheriff");
     }
 
@@ -340,6 +342,7 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
         if (!AmongUsClient.Instance.AmHost) return;
         if (GameStates.CalledMeeting || GameStates.Intro) return;
         if (!player.IsAlive()) return;
+        if (!RequiresTasks) return;
 
         if (nowcool > 0)
             nowcool -= Time.fixedDeltaTime;
@@ -361,24 +364,37 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
         if (!RequiresTasks) taskMode = false;
         Taskmode = taskMode ?? !Taskmode;
 
-        if (Player.IsAlive())
+        var clientId = Player.GetClientId();
+        if (Player.IsAlive() && clientId != -1)
         {
             foreach (var pc in PlayerCatch.AllAlivePlayerControls)
             {
                 var role = pc.GetCustomRole();
                 if (role.IsImpostor())
-                    pc.RpcSetRoleDesync(Taskmode ? role.GetRoleTypes() : RoleTypes.Scientist, Player.GetClientId());
+                    SetRoleForSheriffClient(pc, Taskmode ? role.GetRoleTypes() : RoleTypes.Scientist, clientId);
                 if (Is(pc))
-                    pc.RpcSetRoleDesync(Taskmode ? RoleTypes.Crewmate : RoleTypes.Impostor, Player.GetClientId());
+                    SetRoleForSheriffClient(pc, Taskmode ? RoleTypes.Crewmate : RoleTypes.Impostor, clientId);
             }
         }
 
         if (!Taskmode)
         {
-            Player.SetKillCooldown(Mathf.Max(LastCooltime, 0.1f), delay: true);
+            var cooldown = RequiresTasks ? Mathf.Max(LastCooltime, 0.1f) : CurrentKillCooldown;
+            Player.SetKillCooldown(cooldown, delay: true);
         }
         UpdateLocalHud();
         return Taskmode;
+    }
+
+    private void SetRoleForSheriffClient(PlayerControl target, RoleTypes role, int clientId)
+    {
+        if (target == PlayerControl.LocalPlayer && Is(PlayerControl.LocalPlayer))
+        {
+            RoleManager.Instance.SetRole(PlayerControl.LocalPlayer, role);
+            return;
+        }
+
+        target.RpcSetRoleDesync(role, clientId);
     }
 
     private void UpdateLocalHud()
@@ -386,6 +402,7 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
         if (!Is(PlayerControl.LocalPlayer) || !HudManager.InstanceExists) return;
 
         var hud = HudManager.Instance;
+        hud.SetHudActive(true);
         hud.KillButton.ToggleVisible(Player.CanUseKillButton());
         hud.ImpostorVentButton.ToggleVisible(Player.CanUseImpostorVentButton());
         hud.SabotageButton.ToggleVisible(Player.CanUseSabotageButton());

@@ -8,8 +8,10 @@ using TownOfHost.Patches.ISystemType;
 using TownOfHost.Roles.AddOns.Common;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Crewmate;
 using TownOfHost.Roles.Ghost;
 using TownOfHost.Roles.Impostor;
+using TownOfHost.Roles.Madmate;
 using UnityEngine;
 
 using TownOfHost.Roles.Neutral;
@@ -70,6 +72,15 @@ namespace TownOfHost
                     PlayerControl targetm = min.Key;
                     if (!targetm.Is(CustomRoles.King) && !targetm.Is(CustomRoles.Merlin))
                     {
+                        var source = shapeshifter.Is(CustomRoles.Egoist) || targetRole is CustomRoles.Jackaldoll
+                            ? Walkure.RoleChangeSource.Jackal
+                            : Walkure.RoleChangeSource.Impostor;
+                        if (Walkure.TryRejectRoleChange(shapeshifter, targetm, source))
+                        {
+                            shapeshifter.RpcRejectShapeshift();
+                            return false;
+                        }
+
                         if (SuddenDeathMode.NowSuddenDeathTemeMode)
                         {
                             targetm.SideKickChangeTeam(shapeshifter);
@@ -486,7 +497,7 @@ namespace TownOfHost
 
                 //マッドでベント移動できない設定なら矢印を消す
                 if ((!roleClass?.CanVentMoving(__instance, id) ?? false) ||
-                    (user.GetCustomRole().IsMadmate() && !Options.MadmateCanMovedByVent.GetBool()))
+                    (SatsumatoImo.UsesMadmateCommonSettings(user) && !Options.MadmateCanMovedByVent.GetBool()))
                 {
                     if (!MadBool && user.PlayerId == PlayerControl.LocalPlayer.PlayerId)
                         MadBool = true;
@@ -517,6 +528,11 @@ namespace TownOfHost
             //役職処理はここで行ってしまうと色々とめんどくさくなるので上で。
             var user = pp.myPlayer;
 
+            if (Sealer.BlocksVent(user))
+            {
+                if (log) Logger.Info($"{pp.name} is sealed from using vents.", "OnenterVent");
+                return false;
+            }
             if (!(user.Data.Role.Role == RoleTypes.Engineer || user.GetCustomRole().GetRoleInfo()?.BaseRoleType.Invoke() == RoleTypes.Engineer))//エンジニアでなく
             {
                 if (!user.CanUseImpostorVentButton()) //インポスターベントも使えない
@@ -556,6 +572,11 @@ namespace TownOfHost
                     ReMove();
                     return false;
                 }
+            }
+            if (Sealer.BlocksVent(player))
+            {
+                ReMove();
+                return false;
             }
             if (!(player.Data.Role.Role == RoleTypes.Engineer || player.GetCustomRole().GetRoleInfo()?.BaseRoleType.Invoke() == RoleTypes.Engineer))//エンジニアでなく
             {

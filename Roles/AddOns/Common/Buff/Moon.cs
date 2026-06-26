@@ -7,7 +7,7 @@ namespace TownOfHost.Roles.AddOns.Common
 {
     public static class Moon
     {
-        private static readonly int Id = 17300;
+        private static readonly int Id = 71700;
         private static Color RoleColor = UtilsRoleText.GetRoleColor(CustomRoles.Moon);
         public static string SubRoleMark = Utils.ColorString(RoleColor, "э");
         public static List<byte> playerIdList = new();

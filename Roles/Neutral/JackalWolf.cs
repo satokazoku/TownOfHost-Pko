@@ -18,7 +18,7 @@ public sealed class JackalWolf : RoleBase, ILNKiller, IUsePhantomButton, IDouble
             CustomRoles.JackalWolf,
             () => OptionHaveRole.GetRole().GetRoleInfo()?.BaseRoleType?.Invoke() ?? RoleTypes.Impostor,
             CustomRoleTypes.Neutral,
-            24700,
+            52500,
             SetupOptionItem,
             "Jaw",
             "#00b4eb",
@@ -54,6 +54,8 @@ public sealed class JackalWolf : RoleBase, ILNKiller, IUsePhantomButton, IDouble
     public static bool CanUseSabotage;
     public static FilterOptionItem OptionHaveRole; static CustomRoles haverole;
     RoleBase AddRole;
+
+    public static bool GetCanUseSabotageOption() => OptionCanUseSabotage?.GetBool() ?? false;
 
     static CustomRoles[] InvalidRoles()
     {

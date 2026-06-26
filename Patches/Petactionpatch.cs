@@ -1,4 +1,4 @@
-/*using System;
+using System;
 using System.Collections.Generic;
 using AmongUs.GameOptions;
 using HarmonyLib;
@@ -205,8 +205,8 @@ internal static class AfterMeetingPetAssignPatch
                 PetActionManager.EnsureDefaultPet(pc.PlayerId);
         }, 1.5f, "AfterMeetingPetAssign", true);
     }
-}*/
-using System;
+}
+/*using System;
 using System.Collections.Generic;
 using AmongUs.GameOptions;
 using HarmonyLib;
@@ -334,4 +334,4 @@ public static class PetActionManager
     {
         Handlers.Clear();
     }
-}
+}*/

@@ -15,10 +15,11 @@ public sealed class Braid : RoleBase, IKillFlashSeeable, IDeathReasonSeeable
             CustomRoles.Braid,
             () => OptionBraidCanUseVent.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate,
             CustomRoleTypes.Madmate,
-            16100,
+            76300,
             null,
             "br",
             OptionSort: (0, 1),
+            tab: TabGroup.Combinations,
             introSound: () => GetIntroSound(RoleTypes.Impostor),
             combination: CombinationRoles.DriverandBraid
         );

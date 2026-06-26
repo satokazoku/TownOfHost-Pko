@@ -16,7 +16,7 @@ public sealed class MadSnitch : RoleBase, IKillFlashSeeable, IDeathReasonSeeable
             CustomRoles.MadSnitch,
             () => OptionCanVent.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate,
             CustomRoleTypes.Madmate,
-            7500,
+            20900,
             SetupOptionItem,
             "msn",
             OptionSort: (1, 1),

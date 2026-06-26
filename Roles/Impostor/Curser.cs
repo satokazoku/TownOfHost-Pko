@@ -15,7 +15,7 @@ public sealed class Curser : RoleBase, IImpostor
             CustomRoles.Curser,
             () => RoleTypes.Shapeshifter,
             CustomRoleTypes.Impostor,
-            6600,
+            3200,
             SetupCustomOption,
             "cs",
             OptionSort: (7, 2),

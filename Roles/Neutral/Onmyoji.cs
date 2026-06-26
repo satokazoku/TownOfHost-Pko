@@ -6,6 +6,7 @@ using UnityEngine;
 
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Crewmate;
 using TownOfHost.Patches;
 using static TownOfHost.PlayerCatch;
 using static TownOfHost.Utils;
@@ -23,7 +24,7 @@ public sealed class Onmyoji : RoleBase, IKiller, ISelfVoter
             CustomRoles.Onmyoji,
             () => (OptionCanUseVent?.GetBool() ?? true) ? RoleTypes.Engineer : RoleTypes.Crewmate,
             CustomRoleTypes.Neutral,
-            80200,
+            53300,
             SetupOptionItem,
             "oy",
             "#9b59b6",
@@ -405,6 +406,7 @@ public sealed class Onmyoji : RoleBase, IKiller, ISelfVoter
     {
         if (ShikigamiIds.Count >= 1) return;
         if (!IsValidShikigamiTarget(target)) return;
+        if (Walkure.TryRejectRoleChange(Player, target, Walkure.RoleChangeSource.Jackal)) return;
 
         ShikigamiIds.Add(target.PlayerId);
         TargetArrow.Add(Player.PlayerId, target.PlayerId);
@@ -637,7 +639,7 @@ public sealed class Shikigami : RoleBase, IUsePhantomButton, IKillFlashSeeable
             CustomRoles.Shikigami,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Neutral,
-            30100,
+            54300,
             SetupOptionItem,
             "sk",
             "#9b59b6",

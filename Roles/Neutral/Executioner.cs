@@ -17,7 +17,7 @@ public sealed class Executioner : RoleBase, IAdditionalWinner
             CustomRoles.Executioner,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Neutral,
-            14300,
+            51400,
             SetupOptionItem,
             "exe",
             "#611c3a",

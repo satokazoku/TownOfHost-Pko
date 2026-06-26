@@ -14,7 +14,7 @@ public sealed class Suicider : RoleBase
             CustomRoles.Suicider,
             () => RoleTypes.Engineer,
             CustomRoleTypes.Neutral,
-            84700,
+            54800,
             SetupOptionItem,
             "sc",
             "#696969",

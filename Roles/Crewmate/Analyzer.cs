@@ -17,7 +17,7 @@ public sealed class Analyzer : RoleBase
             CustomRoles.Analyzer,
             () => OptionAwakening.GetBool() ? RoleTypes.Crewmate : RoleTypes.Engineer,
             CustomRoleTypes.Crewmate,
-            24400,
+            30200,
             SetupOptionItem,
             "NC",
             "#9da6ee",

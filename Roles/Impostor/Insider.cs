@@ -17,7 +17,7 @@ namespace TownOfHost.Roles.Impostor
                 CustomRoles.Insider,
                 () => RoleTypes.Impostor,
                 CustomRoleTypes.Impostor,
-                5400,
+                5000,
                 SetupOptionItem,
                 "ins",
                 OptionSort: (5, 2),

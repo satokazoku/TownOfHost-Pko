@@ -17,7 +17,7 @@ public sealed class EvilMoving : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.EvilMoving,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            126500,
+            4300,
             SetupOptionItem,
             "emv",
             OptionSort: (2, 10),
@@ -47,10 +47,7 @@ public sealed class EvilMoving : RoleBase, IImpostor, IUsePhantomButton
             new(2.5f, 120f, 2.5f), 30f, false).SetValueFormat(OptionFormat.Seconds);
     }
 
-    public float CalculateKillCooldown()
-        => GameOptionsManager.Instance?.CurrentGameOptions?.GetFloat(FloatOptionNames.KillCooldown)
-           ?? Main.NormalOptions.KillCooldown;
-
+    public float CalculateKillCooldown() => Main.NormalOptions.KillCooldown;
     public bool CanUseSabotageButton() => true;
     public bool CanUseImpostorVentButton() => true;
 

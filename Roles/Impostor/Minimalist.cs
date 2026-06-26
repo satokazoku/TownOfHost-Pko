@@ -13,7 +13,7 @@ public sealed class Minimalist : RoleBase, IImpostor
             CustomRoles.Minimalist,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Impostor,
-            126600,
+            5600,
             SetupOptionItem,
             "mml",
             OptionSort: (2, 11),

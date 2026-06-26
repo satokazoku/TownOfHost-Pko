@@ -19,7 +19,7 @@ public sealed class SantaClaus : RoleBase, IAdditionalWinner
             CustomRoles.SantaClaus,
             () => RoleTypes.Engineer,
             CustomRoleTypes.Neutral,
-            14800,
+            54000,
             SetupOptionItem,
             "Sac",
             "#e05050",

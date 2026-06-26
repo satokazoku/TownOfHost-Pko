@@ -4,6 +4,7 @@ using UnityEngine;
 using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Crewmate;
 using Hazel;
 using System.Linq;
 
@@ -18,7 +19,7 @@ namespace TownOfHost.Roles.Neutral
                 CustomRoles.JackalMafia,
                 () => OptionCanMakeSidekick.GetBool() ? RoleTypes.Phantom : RoleTypes.Impostor,
                 CustomRoleTypes.Neutral,
-                21400,
+                52400,
                 SetupOptionItem,
                 "jm",
                 "#00b4eb",
@@ -141,6 +142,7 @@ namespace TownOfHost.Roles.Neutral
                 ResetCooldown = false;
                 return;
             }
+            if (Walkure.TryRejectRoleChange(Player, target, Walkure.RoleChangeSource.Jackal)) return;
             if (SuddenDeathMode.NowSuddenDeathTemeMode)
             {
                 target.SideKickChangeTeam(Player);

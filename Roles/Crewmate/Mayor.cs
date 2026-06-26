@@ -14,7 +14,7 @@ public sealed class Mayor : RoleBase
             CustomRoles.Mayor,
             () => OptionHasPortableButton.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            9500,
+            32500,
             SetupOptionItem,
             "my",
             "#204d42",

@@ -13,7 +13,7 @@ namespace TownOfHost.Roles.AddOns.Common
 {
     public static class Stamina
     {
-        private static readonly int Id = 50900;
+        private static readonly int Id = 73200;
         private static Color RoleColor = UtilsRoleText.GetRoleColor(CustomRoles.Stamina);
         public static string SubRoleMark = Utils.ColorString(RoleColor, "ST");
         public static List<byte> playerIdList = new();

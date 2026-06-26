@@ -123,6 +123,8 @@ namespace TownOfHost.Roles.AddOns.Common
         ///</summary>
         private static List<PlayerControl> AssignTargetList(AddOnsAssignData data)
         {
+            if (data.Role == CustomRoles.Sealer) return Sealer.AssignTargetList();
+
             var rnd = IRandom.Instance;
             var candidates = new List<PlayerControl>();
             var validPlayers = PlayerCatch.AllPlayerControls.Where(pc =>
@@ -132,6 +134,7 @@ namespace TownOfHost.Roles.AddOns.Common
 
                 // Guesser付与時のみ、指定役職を候補から除外
                 if (data.Role == CustomRoles.Guesser && GuesserDenyRoles.Contains(role)) return false;
+                if (data.Role == CustomRoles.Securer && !Securer.CanBeAssigned(pc)) return false;
 
                 return true;
             });
@@ -175,6 +178,14 @@ namespace TownOfHost.Roles.AddOns.Common
                         impostors.Remove(selectedImpostor);
                     }
                 }
+            }
+
+            if (data.Role == CustomRoles.Securer)
+            {
+                var jackals = validPlayers
+                    .Where(pc => Securer.ShouldAssignToJackalRole(pc.GetCustomRole()))
+                    .Where(pc => !candidates.Contains(pc));
+                candidates.AddRange(jackals);
             }
 
             if (data.MadmateMaximum != null)

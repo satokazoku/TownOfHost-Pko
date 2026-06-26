@@ -16,7 +16,7 @@ public sealed class MadBait : RoleBase, IKillFlashSeeable, IDeathReasonSeeable
             CustomRoles.MadBait,
             () => OptionCanVent.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate,
             CustomRoleTypes.Madmate,
-            8000,
+            20100,
             SetupOptionItem,
             "mb",
             OptionSort: (2, 4),

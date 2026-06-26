@@ -18,7 +18,7 @@ public sealed class Arsonist : RoleBase, IKiller, IUsePhantomButton
             CustomRoles.Arsonist,
             () => Optionfire.GetBool() ? RoleTypes.Phantom : RoleTypes.Impostor,
             CustomRoleTypes.Neutral,
-            13800,
+            50100,
             SetupOptionItem,
             "ar",
             "#ff6633",

@@ -13,7 +13,7 @@ public sealed class NiceWorkaholic : RoleBase
             CustomRoles.NiceWorkaholic,
             () => OptionCanVent.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            174500,
+            33700,
             SetupOptionItem,
             "nwh",
             "#008b8b",

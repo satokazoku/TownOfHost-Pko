@@ -20,7 +20,7 @@ public sealed class Fortuner : RoleBase, IKiller
             CustomRoles.Fortuner,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            24100,
+            31500,
             SetUpOptionItem,
             "fo",
             "#34f098",
@@ -83,9 +83,10 @@ public sealed class Fortuner : RoleBase, IKiller
         CustomRoles.LastImpostor,
         CustomRoles.LastNeutral,
         CustomRoles.Twins,
+        CustomRoles.Triplets,
         CustomRoles.OneWolf,
         CustomRoles.Stack,
-        CustomRoles.Connecting,
+        CustomRoles.Connecting
     ];
 
     public static void SetUpOptionItem()
@@ -154,7 +155,7 @@ public sealed class Fortuner : RoleBase, IKiller
             var roletext = "";
             if (player.IsAlive())
             {
-                var giveadd = GiveAddons.Where(add => add is not CustomRoles.Amanojaku || player.Is(CustomRoleTypes.Crewmate) || player.Is(CustomRoleTypes.Neutral)).OrderBy(x => Guid.NewGuid()).ToList();
+                var giveadd = GiveAddons.Where(add => CanGiveAddon(player, add)).OrderBy(x => Guid.NewGuid()).ToList();
                 if (giveadd.Count <= 0)
                 {
                     role = DefaltAddon[IRandom.Instance.Next(DefaltAddon.Count())];
@@ -178,7 +179,7 @@ public sealed class Fortuner : RoleBase, IKiller
                 {
                     foreach (var addon in GiveAddons)
                     {
-                        if (addon is CustomRoles.Amanojaku && !player.Is(CustomRoleTypes.Crewmate) && !player.Is(CustomRoleTypes.Neutral)) continue;
+                        if (!CanGiveAddon(player, addon)) continue;
                         roletext += UtilsRoleText.GetRoleColorAndtext(addon);
                         player.RpcSetCustomRole(addon);
                         role = addon;
@@ -229,6 +230,15 @@ public sealed class Fortuner : RoleBase, IKiller
             }
         }
     }
+
+    static bool CanGiveAddon(PlayerControl player, CustomRoles addon)
+    {
+        if (addon is CustomRoles.Amanojaku && !player.Is(CustomRoleTypes.Crewmate) && !player.Is(CustomRoleTypes.Neutral)) return false;
+        if (addon is CustomRoles.Securer && !Securer.CanBeAssigned(player)) return false;
+        if (addon is CustomRoles.Sealer && !Sealer.CanBeAssigned(player)) return false;
+        return true;
+    }
+
     void SendRpc()
     {
         using var sender = CreateSender();

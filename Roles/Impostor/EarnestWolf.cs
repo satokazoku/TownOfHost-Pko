@@ -16,7 +16,7 @@ public sealed class EarnestWolf : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.EarnestWolf,
             () => OptionOverKillCanCount.GetBool() ? RoleTypes.Phantom : RoleTypes.Impostor,
             CustomRoleTypes.Impostor,
-            4600,
+            3500,
             SetupOptionItem,
             "EW",
             OptionSort: (3, 8),

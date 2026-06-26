@@ -14,7 +14,7 @@ public sealed class Notifier : RoleBase, IImpostor
             CustomRoles.Notifier,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Impostor,
-            7100,
+            5900,
             SetupOptionItems,
             "nt",
             OptionSort: (7, 6),

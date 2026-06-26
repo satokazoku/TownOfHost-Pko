@@ -18,7 +18,7 @@ public sealed class Oblivion : RoleBase, IKillFlashSeeable
             CustomRoles.Oblivion,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Neutral,
-            30400,
+            53200,
             SetUpOptionItem,
             "ob",
             "#808080",

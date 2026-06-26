@@ -7,7 +7,7 @@ namespace TownOfHost.Roles.AddOns.Common
 {
     public static class Stack
     {
-        private static readonly int Id = 23700;
+        private static readonly int Id = 73100;
         private static List<byte> playerIdList = new();
         static AssignOptionItem AssignAddon;
 

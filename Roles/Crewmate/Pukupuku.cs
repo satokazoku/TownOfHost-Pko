@@ -13,7 +13,7 @@ namespace TownOfHost.Roles.Crewmate
                 CustomRoles.Pukupuku,
                 () => RoleTypes.Crewmate,
                 CustomRoleTypes.Crewmate,
-                65000,
+                34200,
                 SetupOptionItem,
                 "Pukupuku",
                 "#55ccff",

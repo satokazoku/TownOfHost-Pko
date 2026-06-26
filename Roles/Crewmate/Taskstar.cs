@@ -14,7 +14,7 @@ public sealed class TaskStar : RoleBase
             CustomRoles.TaskStar,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            10000,
+            35900,
             SetupOptionItem,
             "ts",
             "#FFD700",

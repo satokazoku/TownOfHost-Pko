@@ -18,7 +18,7 @@ public sealed class TimeSleeper : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.TimeSleeper,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            25000,
+            7700,
             SetUpOptionItem,
             "ts",
             OptionSort: (6, 14),

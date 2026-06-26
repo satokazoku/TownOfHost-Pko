@@ -1065,7 +1065,10 @@ namespace TownOfHost
                     case "/twinschet":
                     case "/tc":
                         if (Assassin.NowUse) break;
-                        if (GameStates.InGame && Options.TwinsHideChat.GetBool() && PlayerControl.LocalPlayer.IsAlive() && Twins.TwinsList.TryGetValue(PlayerControl.LocalPlayer.PlayerId, out var twinsid))
+                        var localPlayer = PlayerControl.LocalPlayer;
+                        var isTwinsChat = Twins.TwinsList.TryGetValue(localPlayer.PlayerId, out var twinsid);
+                        var isTripletsChat = Triplets.TryGetMembers(localPlayer.PlayerId, out _);
+                        if (GameStates.InGame && Options.TwinsHideChat.GetBool() && localPlayer.IsAlive() && (isTwinsChat || isTripletsChat))
                         {
                             if (GameStates.ExiledAnimate)
                             {
@@ -1080,17 +1083,22 @@ namespace TownOfHost
                                 send += ag;
                             }
 
-                            Logger.Info($"{PlayerControl.LocalPlayer.Data.GetLogPlayerName()} : {send}", "TwinsChat");
-                            foreach (var twins in AllPlayerControls)
+                            var chatRole = isTwinsChat ? CustomRoles.Twins : CustomRoles.Triplets;
+                            Logger.Info($"{localPlayer.Data.GetLogPlayerName()} : {send}", $"{chatRole}Chat");
+                            foreach (var target in AllPlayerControls)
                             {
-                                if (twins && (twins.PlayerId == twinsid || twins.PlayerId == PlayerControl.LocalPlayer.PlayerId || !twins.IsAlive()))
+                                if (!target) continue;
+                                var shouldSend = isTwinsChat
+                                    ? target.PlayerId == twinsid || target.PlayerId == localPlayer.PlayerId || !target.IsAlive()
+                                    : Triplets.ShouldSendChatTo(localPlayer.PlayerId, target, includeSender: true);
+                                if (shouldSend)
                                 {
                                     if (AmongUsClient.Instance.AmHost)
                                     {
-                                        var clientid = twins.GetClientId();
+                                        var clientid = target.GetClientId();
                                         if (clientid == -1) continue;
-                                        SendMessage(send.Mark(GetRoleColor(CustomRoles.Twins)), twins.PlayerId,
-                                        ColorString(GetRoleColor(CustomRoles.Twins), $"∈{PlayerControl.LocalPlayer.GetPlayerColor()}∈"));
+                                        SendMessage(send.Mark(GetRoleColor(chatRole)), target.PlayerId,
+                                        ColorString(GetRoleColor(chatRole), $"\u2208{localPlayer.GetPlayerColor()}\u2208"));
                                     }
                                 }
                             }
@@ -2509,23 +2517,30 @@ namespace TownOfHost
                 case "/twinschet":
                 case "/tc":
                     if (Assassin.NowUse) break;
-                    if (GameStates.InGame && Options.TwinsHideChat.GetBool() && player.IsAlive() && Twins.TwinsList.TryGetValue(player.PlayerId, out var twinsid))
+                    var isTwinsChat = Twins.TwinsList.TryGetValue(player.PlayerId, out var twinsid);
+                    var isTripletsChat = Triplets.TryGetMembers(player.PlayerId, out _);
+                    if (GameStates.InGame && Options.TwinsHideChat.GetBool() && player.IsAlive() && (isTwinsChat || isTripletsChat))
                     {
                         string send = "";
                         if (GetHideSendText(ref canceled, ref send) is false) return;
-                        Logger.Info($"{player.Data.GetLogPlayerName()} : {send}", "TwinsChat");
-                        foreach (var twins in AllPlayerControls)
+                        var chatRole = isTwinsChat ? CustomRoles.Twins : CustomRoles.Triplets;
+                        Logger.Info($"{player.Data.GetLogPlayerName()} : {send}", $"{chatRole}Chat");
+                        foreach (var target in AllPlayerControls)
                         {
-                            if (twins && (twins.PlayerId == twinsid || (!twins.IsAlive())))
+                            if (!target) continue;
+                            var shouldSend = isTwinsChat
+                                ? target.PlayerId == twinsid || !target.IsAlive()
+                                : Triplets.ShouldSendChatTo(player.PlayerId, target, includeSender: Isclient);
+                            if (shouldSend)
                             {
-                                if (twins.PlayerId == player.PlayerId && !Isclient) continue;
+                                if (target.PlayerId == player.PlayerId && !Isclient) continue;
                                 if (AmongUsClient.Instance.AmHost)
                                 {
-                                    var clientid = twins.GetClientId();
+                                    var clientid = target.GetClientId();
                                     if (clientid == -1) continue;
-                                    string title = ColorString(GetRoleColor(CustomRoles.Twins), $"∈{player.GetPlayerColor()}∋</line-height>");
-                                    string sendtext = send.Mark(GetRoleColor(CustomRoles.Twins));
-                                    SendMessage(sendtext, twins.PlayerId, title);
+                                    string title = ColorString(GetRoleColor(chatRole), $"\u2208{player.GetPlayerColor()}\u220B</line-height>");
+                                    string sendtext = send.Mark(GetRoleColor(chatRole));
+                                    SendMessage(sendtext, target.PlayerId, title);
                                 }
                             }
                         }

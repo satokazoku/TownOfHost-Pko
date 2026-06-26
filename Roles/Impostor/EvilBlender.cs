@@ -20,7 +20,7 @@ public sealed class EvilBlender : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.EvilBlender,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            24300,
+            3800,
             SetupOptionItem,
             "Eb",
             OptionSort: (2, 7),
@@ -49,7 +49,7 @@ public sealed class EvilBlender : RoleBase, IImpostor, IUsePhantomButton
     }
     static byte UseingId;//誰かが仕様中か(全員/Id)
     bool IsUsed;//使用済みか否か(個人)
-    static bool IsLeft; static EvilBlender evilBlender;//途中で落ちたか 
+    static bool IsLeft; static EvilBlender evilBlender;//途中で落ちたか
     float limittimer; float sendtimer; float flashtimer;
     static Dictionary<byte, SystemTypes?> PlayerRooms = new();
     static OptionItem OptionKillCoolDown; static float KillCooldown;

@@ -18,7 +18,7 @@ public sealed class Nimrod : RoleBase
             CustomRoles.Nimrod,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            63000,
+            33800,
             SetUpOptionItem,
             "nm",
             "#9fcc5b",

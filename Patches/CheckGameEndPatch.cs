@@ -88,7 +88,7 @@ namespace TownOfHost
                             PlayerCatch.AllPlayerControls
                                 .Where(pc => pc.Is(CustomRoleTypes.Crewmate) && !pc.GetCustomRole().IsLovers()
                                 && !pc.Is(CustomRoles.Amanojaku) && !pc.Is(CustomRoles.Jackaldoll) && !pc.Is(CustomRoles.SKMadmate) && !pc.Is(CustomRoles.Tama)
-                                && ((pc.Is(CustomRoles.Staff) && (pc.GetRoleClass() as Staff).EndedTaskInAlive) || !pc.Is(CustomRoles.Staff)))
+                                && MagicalGirl.CanWinAsCrewmateStaff(pc))
                                 .Do(pc => CustomWinnerHolder.WinnerIds.Add(pc.PlayerId));
                             //if (Monochromer.CheckWin(reason)) break;
                             foreach (var pc in PlayerCatch.AllPlayerControls)
@@ -211,6 +211,7 @@ namespace TownOfHost
                     roleclass?.CheckWinner(reason);
                 }
                 Twins.CheckAddWin();
+                Triplets.CheckAddWin();
                 Faction.CheckWin();
 
                 ShipStatus.Instance.enabled = false;

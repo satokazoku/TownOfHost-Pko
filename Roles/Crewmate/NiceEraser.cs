@@ -18,7 +18,7 @@ public sealed class NiceEraser : RoleBase, ISelfVoter
             CustomRoles.NiceEraser,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            97240,
+            33300,
             SetupOptionItem,
             "nicer",
             "#d0ff00",
@@ -116,6 +116,8 @@ public sealed class NiceEraser : RoleBase, ISelfVoter
 
             var beforeRole = target.GetCustomRole();
             if (beforeRole == CustomRoles.Crewmate) continue;
+
+            if (Walkure.TryRejectRoleChange(Player, target, Walkure.RoleChangeSource.Crewmate)) break;
 
             target.RpcSetCustomRole(CustomRoles.Crewmate, true, null);
             UtilsGameLog.AddGameLog("NiceEraser", string.Format(GetString("NiceEraserReformLog"), UtilsName.GetPlayerColor(Player), UtilsName.GetPlayerColor(target)));

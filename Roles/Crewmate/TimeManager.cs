@@ -14,7 +14,7 @@ namespace TownOfHost.Roles.Crewmate
                 CustomRoles.TimeManager,
                 () => RoleTypes.Crewmate,
                 CustomRoleTypes.Crewmate,
-                11600,
+                36000,
                 SetupOptionItem,
                 "tm",
                 "#6495ed",

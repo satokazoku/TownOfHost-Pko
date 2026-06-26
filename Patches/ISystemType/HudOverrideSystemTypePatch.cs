@@ -3,6 +3,7 @@ using Hazel;
 using TownOfHost.Roles.AddOns.Common;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Madmate;
 using TownOfHost.Roles.Neutral;
 
 namespace TownOfHost.Patches.ISystemType;
@@ -29,7 +30,7 @@ public static class HudOverrideSystemTypeUpdateSystemPatch
         var tags = (HqHudSystemType.Tags)(amount & HqHudSystemType.TagMask);
         var playerRole = player.GetRoleClass();
         var isMadmate =
-            player.Is(CustomRoleTypes.Madmate) ||
+            SatsumatoImo.UsesMadmateCommonSettings(player) ||
             // マッド属性化時に削除
             (playerRole is SchrodingerCat schrodingerCat && schrodingerCat.AmMadmate);
 

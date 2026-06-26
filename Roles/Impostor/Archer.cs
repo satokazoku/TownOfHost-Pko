@@ -19,7 +19,7 @@ public sealed class Archer : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.Archer,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            23800,
+            2400,
             SetUpOptionItem,
             "ar",
             OptionSort: (3, 11),

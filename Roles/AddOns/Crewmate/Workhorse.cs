@@ -10,7 +10,7 @@ namespace TownOfHost.Roles.AddOns.Crewmate
 {
     public static class Workhorse
     {
-        private static readonly int Id = 19300;
+        private static readonly int Id = 73800;
         public static Color RoleColor = UtilsRoleText.GetRoleColor(CustomRoles.Workhorse);
         public static List<byte> playerIdList = new();
         private static OptionItem OptionAssignOnlyToCrewmate;

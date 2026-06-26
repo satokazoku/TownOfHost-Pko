@@ -7,7 +7,7 @@ namespace TownOfHost.Roles.AddOns.Common
 {
     public static class MagicHand
     {
-        private static readonly int Id = 17100;
+        private static readonly int Id = 71500;
         private static Color RoleColor = UtilsRoleText.GetRoleColor(CustomRoles.MagicHand);
         public static string SubRoleMark = Utils.ColorString(RoleColor, "ж");
         public static List<byte> playerIdList = new();

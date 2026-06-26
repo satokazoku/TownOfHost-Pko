@@ -6,7 +6,7 @@ namespace TownOfHost.Roles.AddOns.Impostor
 {
     public static class LastImpostor
     {
-        private static readonly int Id = 19400;
+        private static readonly int Id = 71200;
         public static byte currentId = byte.MaxValue;
         public static OptionItem KillCooldown;
         public static OptionItem GiveKillCooldown;

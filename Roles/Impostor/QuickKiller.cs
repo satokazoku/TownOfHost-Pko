@@ -15,7 +15,7 @@ public sealed class QuickKiller : RoleBase, IImpostor
             CustomRoles.QuickKiller,
             () => RoleTypes.Shapeshifter,
             CustomRoleTypes.Impostor,
-            7000,
+            6400,
             SetupOptionItem,
             "qk",
             OptionSort: (7, 5),

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
@@ -9,7 +9,7 @@ namespace TownOfHost.Roles.AddOns.Common
 {
     public static class Damudo
     {
-        private static readonly int Id = 24700;
+        private static readonly int Id = 70500;
         private static readonly Color RoleColor = UtilsRoleText.GetRoleColor(CustomRoles.Damudo);
         public static readonly string SubRoleMark = "";
 

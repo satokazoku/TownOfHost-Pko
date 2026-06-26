@@ -19,7 +19,7 @@ public sealed class EvilSatellite : RoleBase, IImpostor
             CustomRoles.EvilSatellite,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Impostor,
-            3400,
+            4400,
             SetupOptionItem,
             "Es",
             OptionSort: (2, 3),

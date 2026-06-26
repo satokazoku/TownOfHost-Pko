@@ -79,6 +79,8 @@ namespace TownOfHost
         // サングラス
         public OptionItem GiveSunglasses;
         public OptionItem SunglassesVisionmagnification;
+        public OptionItem GiveSecurer;
+        public OptionItem GiveSealer;
         public RoleAddAddons(int idStart, TabGroup tab, CustomRoles role, CustomRoles RoleName = CustomRoles.NotAssigned, bool NeutralKiller = false, bool MadMate = false, bool DefaaultOn = false)
         {
             this.IsImpostor = role.IsImpostor();
@@ -140,6 +142,8 @@ namespace TownOfHost
             GiveSunglasses = BooleanOptionItem.Create(idStart++, "GiveSunglasses", false, tab, false).SetParentRole(role).SetParent(GiveAddons);
             SunglassesVisionmagnification = FloatOptionItem.Create(idStart++, "SunglassesVisionmagnification", new(1f, 100f, 1f), 75, tab, false).SetParent(GiveSunglasses).SetParentRole(role).SetValueFormat(OptionFormat.Percent)
                     .SetTooltip(() => string.Format(Translator.GetString("SunglassesVisionmagnification_Info"), Main.NormalOptions.CrewLightMod, Main.NormalOptions.CrewLightMod * SunglassesVisionmagnification.GetFloat() * 0.01f, Main.NormalOptions.ImpostorLightMod, Main.NormalOptions.ImpostorLightMod * SunglassesVisionmagnification.GetFloat() * 0.01f));
+            GiveSecurer = BooleanOptionItem.Create(idStart++, "GiveSecurer", false, tab, false).SetParentRole(role).SetParent(GiveAddons);
+            GiveSealer = BooleanOptionItem.Create(idStart++, "GiveSealer", false, tab, false).SetParentRole(role).SetParent(GiveAddons);
 
             role = RoleName == CustomRoles.NotAssigned ? role : RoleName;
 
@@ -174,7 +178,7 @@ namespace TownOfHost
             {
                 case CustomRoles.Stolener:
                     if (player == null && AllData.TryGetValue(role, out data)) haveaddon = true;
-                    else if ((player.GetRoleClass() as Stolener)?.ICanUseaddon == true && AllData.TryGetValue(role, out data) && data?.GiveAddons.GetBool() == true)
+                    else if (MagicalGirl.TryGetEffectiveRole<Stolener>(player, out var stolener) && stolener.ICanUseaddon && AllData.TryGetValue(role, out data) && data?.GiveAddons.GetBool() == true)
                         haveaddon = true;
                     break;
                 default:
@@ -315,6 +319,8 @@ namespace TownOfHost
                                 olddata.SunglassesVisionmagnification = newdata.SunglassesVisionmagnification;
                             }
                             break;
+                        case CustomRoles.Securer: olddata.GiveSecurer = olddata.GiveSecurer.InfoGetBool() == false ? newdata.GiveSecurer : olddata.GiveSecurer; break;
+                        case CustomRoles.Sealer: olddata.GiveSealer = olddata.GiveSealer.InfoGetBool() == false ? newdata.GiveSealer : olddata.GiveSealer; break;
                         case CustomRoles.Watching: olddata.GiveWatching = olddata.GiveWatching.InfoGetBool() == false ? newdata.GiveWatching : olddata.GiveWatching; break;
                         case CustomRoles.Tiebreaker: olddata.GiveTiebreaker = olddata.GiveTiebreaker.InfoGetBool() == false ? newdata.GiveTiebreaker : olddata.GiveTiebreaker; break;
                         case CustomRoles.Opener: olddata.GiveOpener = olddata.GiveOpener.InfoGetBool() == false ? newdata.GiveOpener : olddata.GiveOpener; break;
@@ -352,6 +358,8 @@ namespace TownOfHost
                 olddata.GiveStamina = olddata.GiveStamina.InfoGetBool() == false ? newdata.GiveStamina : olddata.GiveStamina;
                 olddata.GiveJumbo = olddata.GiveJumbo.InfoGetBool() == false ? newdata.GiveJumbo : olddata.GiveJumbo;
                 olddata.GiveInfoPoor = olddata.GiveInfoPoor.InfoGetBool() == false ? newdata.GiveInfoPoor : olddata.GiveInfoPoor;
+                olddata.GiveSecurer = olddata.GiveSecurer.InfoGetBool() == false ? newdata.GiveSecurer : olddata.GiveSecurer;
+                olddata.GiveSealer = olddata.GiveSealer.InfoGetBool() == false ? newdata.GiveSealer : olddata.GiveSealer;
             }
         }
     }

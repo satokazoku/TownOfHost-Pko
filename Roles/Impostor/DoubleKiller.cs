@@ -16,7 +16,7 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.DoubleKiller,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            26300,
+            3400,
             SetUpOptionItem,
             "dk",
             OptionSort: (3, 13),
@@ -118,10 +118,23 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
         _ = new LateTask(() =>
         {
             if (!Player.IsAlive()) return;
-            Player.SetKillCooldown(savedKillTimer);
-            Main.AllPlayerKillCooldown[Player.PlayerId] = savedKillTimer;
-            Player.SyncSettings();
+            RestoreKillCooldown(savedKillTimer);
         }, 0.2f, "DoubleKillerRestoreCD", true);
+    }
+
+    private void RestoreKillCooldown(float cooldown)
+    {
+        cooldown = Mathf.Max(cooldown, 0f);
+        if (IUsePhantomButton.IPPlayerKillCooldown.ContainsKey(Player.PlayerId))
+            IUsePhantomButton.IPPlayerKillCooldown[Player.PlayerId] = 0f;
+
+        Main.AllPlayerKillCooldown[Player.PlayerId] = cooldown * 2f;
+        Player.SyncSettings();
+        Player.RpcProtectedMurderPlayer();
+
+        Player.killTimer = cooldown;
+        Player.ResetKillCooldown();
+        Player.SyncSettings();
     }
 
     private void SnapToPosition(Vector2 position)

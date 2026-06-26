@@ -14,7 +14,7 @@ public sealed class Jester : RoleBase, IKiller
             CustomRoles.Jester,
             () => CanUseVent.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate,
             CustomRoleTypes.Neutral,
-            44200,
+            52600,
             SetupOptionItem,
             "je",
             "#ec62a5",

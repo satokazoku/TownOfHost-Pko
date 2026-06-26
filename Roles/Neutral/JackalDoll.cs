@@ -18,7 +18,7 @@ public sealed class JackalDoll : RoleBase
             CustomRoles.Jackaldoll,
             () => CanVent.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate,
             CustomRoleTypes.Neutral,
-            13200,
+            52200,
             SetupOptionItem,
             "jacd",
             "#00b4eb",

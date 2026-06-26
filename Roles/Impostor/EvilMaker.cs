@@ -3,6 +3,7 @@ using Hazel;
 using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Crewmate;
 
 namespace TownOfHost.Roles.Impostor;
 
@@ -15,7 +16,7 @@ public sealed class EvilMaker : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.EvilMaker,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            3600,
+            4200,
             SetupOptionItem,
             "Em",
             OptionSort: (2, 5),
@@ -55,6 +56,8 @@ public sealed class EvilMaker : RoleBase, IImpostor, IUsePhantomButton
         var target = Player.GetKillTarget(true);
         if (target == null) return;
         if ((target.GetCustomRole() is CustomRoles.SKMadmate or CustomRoles.King or CustomRoles.Merlin || target.IsTeammate(Player)) && !SuddenDeathMode.NowSuddenDeathMode) return;
+        var source = Player.Is(CustomRoles.JackalWolf) ? Walkure.RoleChangeSource.Jackal : Walkure.RoleChangeSource.Impostor;
+        if (Walkure.TryRejectRoleChange(Player, target, source)) return;
 
         Used = true;
         AdjustKillCooldown = false;

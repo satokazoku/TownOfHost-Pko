@@ -18,7 +18,7 @@ public sealed class TeleportKiller : RoleBase, IImpostor
             CustomRoles.TeleportKiller,
             () => RoleTypes.Shapeshifter,
             CustomRoleTypes.Impostor,
-            4300,
+            7600,
             SetupOptionItem,
             "tk",
             OptionSort: (3, 5),

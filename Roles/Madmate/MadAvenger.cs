@@ -17,7 +17,7 @@ public sealed class MadAvenger : RoleBase, IKillFlashSeeable, IDeathReasonSeeabl
             CustomRoles.MadAvenger,
             () => RoleTypes.Engineer,
             CustomRoleTypes.Madmate,
-            8200,
+            20000,
             SetupOptionItem,
             "mAe",
             OptionSort: (4, 0),

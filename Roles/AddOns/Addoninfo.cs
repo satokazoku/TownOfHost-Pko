@@ -43,6 +43,9 @@ class AddondataInfo
                 CustomRoles.Sunglasses => "Ｓ",
                 CustomRoles.Jumbo => "Ｊ",
                 CustomRoles.Stamina => "Ｓt",
+                CustomRoles.Securer => "Su",
+                CustomRoles.Sealer => "Se",
+                CustomRoles.Triplets => "三",
                 _ => ""
             };
         }
@@ -71,7 +74,10 @@ class AddondataInfo
                     {CustomRoles.LastNeutral,"#cccccc"},
                     {CustomRoles.Workhorse, "#00ffff"},
                     {CustomRoles.Twins, "#80cf48"},
+                    {CustomRoles.Triplets, "#5fbf7a"},
                     {CustomRoles.OneWolf , "#ff1919"},
+                    {CustomRoles.Securer, "#ff1919" },
+                    {CustomRoles.Sealer, "#ff1919" },
 
                     { CustomRoles.Watching, "#800080"},
                     {CustomRoles.Speeding, "#33ccff"},

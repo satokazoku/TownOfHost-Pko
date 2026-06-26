@@ -18,7 +18,7 @@ namespace TownOfHost.Roles.Impostor
                 CustomRoles.Witch,
                 () => ((SwitchTrigger)OptionModeSwitchAction.GetValue() is SwitchTrigger.OnPhantom or SwitchTrigger.WitchOcButton) ? RoleTypes.Phantom : RoleTypes.Impostor,
                 CustomRoleTypes.Impostor,
-                5100,
+                8200,
                 SetupOptionItem,
                 "wi",
                 OptionSort: (3, 9),

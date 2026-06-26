@@ -15,7 +15,7 @@ public sealed class Apprentice : RoleBase
             CustomRoles.Apprentice,
             () => OptionCanVent.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            361000,
+            30400,
             SetupOptionItem,
             "ap",
             "#c8a46e",

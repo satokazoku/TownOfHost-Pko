@@ -15,7 +15,7 @@ public sealed class SpeedBooster : RoleBase
             CustomRoles.SpeedBooster,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            11500,
+            35500,
             SetupOptionItem,
             "sb",
             "#00ffff",

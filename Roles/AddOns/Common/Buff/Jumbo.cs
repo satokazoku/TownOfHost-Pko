@@ -12,7 +12,7 @@ namespace TownOfHost.Roles.AddOns.Common
 {
     public static class Jumbo
     {
-        private static readonly int Id = 51000;
+        private static readonly int Id = 71100;
         private static Color RoleColor = UtilsRoleText.GetRoleColor(CustomRoles.Jumbo);
         public static string SubRoleMark = Utils.ColorString(RoleColor, "J");
         public static List<byte> playerIdList = new();

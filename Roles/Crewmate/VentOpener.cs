@@ -16,7 +16,7 @@ public sealed class VentOpener : RoleBase
             CustomRoles.VentOpener,
             () => RoleTypes.Engineer,
             CustomRoleTypes.Crewmate,
-            12700,
+            36600,
             SetupOptionItem,
             "vo",
             "#fbe000",

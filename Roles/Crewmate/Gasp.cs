@@ -13,7 +13,7 @@ public sealed class Gasp : RoleBase
             CustomRoles.Gasp,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            10700,
+            31700,
             SetupOptionItem,
             "gp",
             "#ab9d44",

@@ -66,7 +66,8 @@ public abstract class RoleDescription
             else if (RoleInfo.RoleName is CustomRoles.Braid) UtilsShowOption.ShowChildrenSettings(Options.CustomRoleSpawnChances[CustomRoles.Driver], ref sb);
             else if (RoleInfo.RoleName is CustomRoles.Altair) UtilsShowOption.ShowChildrenSettings(Options.CustomRoleSpawnChances[CustomRoles.Vega], ref sb);
             else if (RoleInfo.RoleName is CustomRoles.Nue) UtilsShowOption.ShowChildrenSettings(Options.CustomRoleSpawnChances[CustomRoles.Nue], ref sb);
-            if (RoleInfo.CustomRoleType == CustomRoleTypes.Madmate)
+            var showsMadmateCommonSettings = RoleInfo.RoleName is not CustomRoles.SatsumatoImoM;
+            if (RoleInfo.CustomRoleType == CustomRoleTypes.Madmate && showsMadmateCommonSettings)
             {
                 string rule = "┣ ";
                 string ruleFooter = "┗ ";
@@ -211,7 +212,9 @@ public abstract class RoleDescription
                 case "GiveSlacker":
                 case "GiveStamina":
                 case "GiveJumbo":
-                case "GiveSunglasses": continue;
+                case "GiveSunglasses":
+                case "GiveSecurer":
+                case "GiveSealer": continue;
             }
 
             sb.Append("|");

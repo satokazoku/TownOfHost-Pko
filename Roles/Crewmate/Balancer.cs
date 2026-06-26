@@ -22,7 +22,7 @@ public sealed class Balancer : RoleBase, ISelfVoter
             CustomRoles.Balancer,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            10300,
+            30700,
             SetupOptionItem,
             "bal",
             "#cff100",

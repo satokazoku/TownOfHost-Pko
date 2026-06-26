@@ -14,7 +14,7 @@ public sealed class Observer : RoleBase
             CustomRoles.Observer,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            23300,
+            33900,
             SetupOptionItem,
             "Observer",
             "#8a99b7",

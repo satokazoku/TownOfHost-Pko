@@ -24,7 +24,7 @@ public sealed class SchrodingerCat : RoleBase, IAdditionalWinner, IDeathReasonSe
             CustomRoles.SchrodingerCat,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Neutral,
-            15600,
+            54100,
             SetupOptionItem,
             "sc",
             "#696969",
@@ -101,7 +101,7 @@ public sealed class SchrodingerCat : RoleBase, IAdditionalWinner, IDeathReasonSe
 
         //自殺ならスルー
         if (info.IsSuicide) return true;
-        if (killer.GetRoleClass() is not ISchrodingerCatOwner) return true;
+        if (!MagicalGirl.TryGetEffectiveRole<ISchrodingerCatOwner>(killer, out _)) return true;
 
         if (killer.Is(CustomRoles.GrimReaper) || killer.Is(CustomRoles.BakeCat))
         {
@@ -122,7 +122,7 @@ public sealed class SchrodingerCat : RoleBase, IAdditionalWinner, IDeathReasonSe
     public void ChangeTeamOnKill(PlayerControl killer)
     {
         killer.RpcProtectedMurderPlayer(Player);
-        if (killer.GetRoleClass() is ISchrodingerCatOwner catOwner)
+        if (MagicalGirl.TryGetEffectiveRole<ISchrodingerCatOwner>(killer, out var catOwner))
         {
             catOwner.OnSchrodingerCatKill(this);
             RpcSetTeam(catOwner.SchrodingerCatChangeTo);
