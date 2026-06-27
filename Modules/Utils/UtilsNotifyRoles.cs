@@ -444,10 +444,7 @@ namespace TownOfHost
             /* 会議拡張の奴 */
             var secondpcMinfo = $"<voffset=20><line-height=0><{Main.ModColor}><size=85%>TownOfHost-P</size>\t\t \n \t\t</color><size=70%><#ffffff>v{Main.PluginShowVersion}</color></size></voffset>";
             var Minfo = $"\n<line-height=0><voffset=17.5><#fc9003>Day.{UtilsGameLog.day}</color>" + Bakery.BakeryMark() + $"<voffset=15>\n{ExtendedMeetingText}";
-            if (CustomRolesHelper.CheckGuesser() || PlayerCatch.AllPlayerControls.Any(pc => pc.Is(CustomRoles.Guesser)))
-            {
-                secondpcMinfo += $"<voffset=17.5>\n<#999900><size=60%>{Translator.GetString("GuessInfoForVanilla").RemoveColorTags()}</size>";
-            }
+            secondpcMinfo += $"<voffset=17.5>\n<#999900><size=60%>{Translator.GetString("GuessInfoForVanilla").RemoveColorTags()}</size>";
             //seer:ここで行われた変更を見ることができるプレイヤー
             //target:seerが見ることができる変更の対象となるプレイヤー
             foreach (var seer in PlayerControl.AllPlayerControls)
