@@ -1,5 +1,4 @@
 using System.Linq;
-using UnityEngine;
 using AmongUs.GameOptions;
 
 using TownOfHost.Roles.Core;
@@ -58,15 +57,14 @@ public sealed class SelfBomber : RoleBase, IImpostor, IUsePhantomButton
         ResetCooldown = true;
 
         var explosionRadius = OptionExplosionRadius.GetFloat();
-        var playerPos = Player.GetTruePosition();
         var targets = PlayerCatch.AllAlivePlayerControls.ToArray();
 
         foreach (var target in targets)
         {
             if (target.PlayerId == Player.PlayerId) continue;
-            if (Vector2.Distance(playerPos, target.GetTruePosition()) > explosionRadius) continue;
+            if (!Ballooner.IsInExplosionRange(Player, target, explosionRadius)) continue;
 
-            CustomRoleManager.OnCheckMurder(Player, target, target, target, true, true, 2, CustomDeathReason.Bombed);
+            CustomRoleManager.OnCheckMurder(Player, target, target, target, true, false, 2, CustomDeathReason.Bombed);
         }
 
         MyState.DeathReason = CustomDeathReason.Suicide;
