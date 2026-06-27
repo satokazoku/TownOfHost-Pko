@@ -5,6 +5,8 @@ namespace TownOfHost.Patches
     [HarmonyPatch(typeof(EndGameManager), nameof(EndGameManager.ShowButtons))]
     public static class AutoReturnToRoomPatch
     {
+        private static bool ReturnScheduled;
+
         public static void Postfix(EndGameManager __instance)
         {
             // ホスト以外は実行しない
@@ -17,12 +19,17 @@ namespace TownOfHost.Patches
             if (Options.OptionAutoReturnRoomGM.GetBool() && !Options.EnableGM.GetBool())
                 return;
 
-            // EndGameNavigation は ShowButtons のタイミングで必ず存在する
-            var nav = DestroyableSingleton<EndGameNavigation>.Instance;
-            if (nav != null)
+            if (ReturnScheduled) return;
+            ReturnScheduled = true;
+
+            _ = new LateTask(() =>
             {
-                nav.NextGame(); // ★ 自動で部屋に戻る
-            }
+                ReturnScheduled = false;
+                if (!AmongUsClient.Instance.AmHost) return;
+
+                var nav = DestroyableSingleton<EndGameNavigation>.Instance;
+                nav?.NextGame();
+            }, 5f, "AutoReturnToRoom", true);
         }
     }
 }
