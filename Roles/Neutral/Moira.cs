@@ -1,4 +1,7 @@
-using System;
+//投票によりこの役職は一度封印。
+//今後調整等をして復活する場合もあります。
+
+/*using System;
 using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
@@ -358,3 +361,4 @@ public sealed class Moira : RoleBase, ISelfVoter
         }
     }
 }
+*/
