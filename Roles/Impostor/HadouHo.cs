@@ -272,7 +272,7 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
             var proj = dir * dot;
             var perp = toTarget - proj;
             if (perp.magnitude > 1.3f) continue;
-            CustomRoleManager.OnCheckMurder(Player, target, target, target, true, deathReason: CustomDeathReason.Hit);
+            CustomRoleManager.OnCheckMurder(Player, target, target, target, true, deathReason: CustomDeathReason.Evaporation);
             HasHit = true;
         }
     }
