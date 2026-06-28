@@ -127,7 +127,7 @@ namespace TownOfHost.Patches
             for (var index = 0; index < alloption.Count(); ++index)
             {
                 var option = alloption[index];
-                if (option.Tab != TabGroup.MainSettings || option.IsHiddenOn(Options.CurrentGameMode) || (!option?.Parent?.GetBool() ?? false) || option is ObjectOptionitem) continue;
+                if (option.Tab != TabGroup.MainSettings || option.IsHiddenOn(Options.CurrentGameMode) || !option.IsParentValueEnabledForDisplay() || option is ObjectOptionitem) continue;
 
                 bool hasChildren = option.Children.Count > 0;
 
@@ -163,7 +163,7 @@ namespace TownOfHost.Patches
                 for (var index = 0; index < subOptions.Count; ++index)
                 {
                     var option = subOptions[index];
-                    if (option.IsHiddenOn(Options.CurrentGameMode) || (!option?.Parent?.GetBool() ?? false)) continue;
+                    if (option.IsHiddenOn(Options.CurrentGameMode) || !option.IsParentValueEnabledForDisplay()) continue;
                     bool hasChildren = option.Children.Count > 0;
 
                     if (hasChildren && CheckChild(option))
