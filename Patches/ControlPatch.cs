@@ -158,19 +158,20 @@ namespace TownOfHost
             //即スタート
             if (Input.GetKeyDown(KeyCode.LeftShift) && GameStates.IsCountDown && !TaskBattle.IsAllMapMode)
             {
-                if (GameStartManager.Instance.countDownTimer < 1.5f) return;
+                var shortenedCountdown = DebugModeManager.IsDebugMode ? 0.2f : 1.5f;
+                if (GameStartManager.Instance.countDownTimer < shortenedCountdown) return;
                 if (!PlayerCatch.AllPlayerControls.Where(p => p.Data.DefaultOutfit.ColorId < 0 || Palette.PlayerColors.Length <= p.Data.DefaultOutfit.ColorId).Any())
                 {
-                    Logger.Info("CountDownTimer set to 0", "KeyCommand");
-                    GameStartManager.Instance.countDownTimer = 1.5f;
+                    Logger.Info($"CountDownTimer set to {shortenedCountdown}", "KeyCommand");
+                    GameStartManager.Instance.countDownTimer = shortenedCountdown;
                 }
                 else
                 {
                     //ホスト以外開始判定になるのを防ぐ
                     _ = new LateTask(() =>
                     {
-                        GameStartManager.Instance.countDownTimer = 1.5f;
-                    }, 0.5f, "CountDownTimer set to 0");
+                        GameStartManager.Instance.countDownTimer = shortenedCountdown;
+                    }, 0.5f, $"CountDownTimer set to {shortenedCountdown}");
                 }
             }
             //カウントダウンキャンセル
