@@ -1,5 +1,4 @@
 using System;
-using System.Reflection;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -12,23 +11,13 @@ namespace TownOfHost
     [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.MakePublic))]
     internal static class MakePublicDiscordBotPatch
     {
-        private static bool _allowPostfix;
-
         [HarmonyPrefix]
         [HarmonyPriority(Priority.Last)]
-        public static bool Prefix()
+        public static bool Prefix(GameStartManager __instance)
         {
-            // If this runs, earlier blockers did not prevent MakePublic.
-            _allowPostfix = true;
-            return true;
-        }
-
-        [HarmonyPostfix]
-        public static void Postfix()
-        {
-            if (!_allowPostfix) return;
-            _allowPostfix = false;
-            DiscordMatchmakingRelayService.NotifyMadePublic();
+            // バニラの公開状態は変更せず、同じボタンをMOD募集のON/OFFとして使用する。
+            DiscordMatchmakingRelayService.ToggleRecruitment(__instance);
+            return false;
         }
     }
 
@@ -80,38 +69,53 @@ namespace TownOfHost
         private static string _lastRoomCode = "";
         private static string _lastMessageId = "";
         private static string _lastSnapshot = "";
-        private static bool _lobbyPublicObserved;
-        private static long _privateDetectedAtMs;
         private static bool _activeRecruitment;
         private static bool _forceUpdateRequested;
         private static long _nextUpdateAtMs;
 
         private const int UpdateIntervalMs = 6000;
 
-        public static void NotifyMadePublic()
+        public static void ToggleRecruitment(GameStartManager gameStartManager)
+        {
+            if (!CanSend()) return;
+
+            bool enable;
+            lock (Sync)
+                enable = !_activeRecruitment;
+
+            if (enable)
+                enable = StartRecruitment();
+            else
+                TryDelete("RecruitmentDisabled");
+
+            UpdateRecruitmentButtons(gameStartManager, enable);
+            Logger.Info($"MODマッチメイキング募集: {(enable ? "ON" : "OFF")}（バニラ部屋は非公開のまま）", nameof(DiscordMatchmakingRelayService));
+        }
+
+        private static bool StartRecruitment()
         {
             try
             {
-                if (!CanSend()) return;
-                if (!TryCollectLobby(out var hostName, out var roomCode, out var state, out var players, out var maxPlayers)) return;
+                if (!CanSend()) return false;
+                if (!TryCollectLobby(out var hostName, out var roomCode, out var state, out var players, out var maxPlayers)) return false;
                 var snapshot = $"{hostName}|{roomCode}|{state}|{players}/{maxPlayers}";
                 var nowMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
                 lock (Sync)
                 {
                     _activeRecruitment = true;
-                    _lobbyPublicObserved = true;
-                    _privateDetectedAtMs = 0;
                     _forceUpdateRequested = false;
                     _nextUpdateAtMs = nowMs + UpdateIntervalMs;
                     _lastSnapshot = snapshot;
                 }
 
                 SendUpsert(hostName, roomCode, state, players, maxPlayers, "MakePublic");
+                return true;
             }
             catch (Exception e)
             {
                 Logger.Exception(e, nameof(DiscordMatchmakingRelayService));
+                return false;
             }
         }
 
@@ -124,12 +128,6 @@ namespace TownOfHost
                 lock (Sync)
                 {
                     if (!_activeRecruitment) return;
-                }
-
-                if (ShouldDeleteBecauseBecamePrivateInLobby())
-                {
-                    TryDelete("MadePrivate");
-                    return;
                 }
 
                 var nowMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
@@ -174,8 +172,6 @@ namespace TownOfHost
                 lock (Sync)
                 {
                     _activeRecruitment = false;
-                    _lobbyPublicObserved = false;
-                    _privateDetectedAtMs = 0;
                     _forceUpdateRequested = false;
                     _lastSnapshot = "";
                 }
@@ -291,102 +287,11 @@ namespace TownOfHost
             }
         }
 
-        private static bool ShouldDeleteBecauseBecamePrivateInLobby()
+        private static void UpdateRecruitmentButtons(GameStartManager gameStartManager, bool recruiting)
         {
-            if (AmongUsClient.Instance != null && AmongUsClient.Instance.IsGameStarted) return false;
-            if (!GameStates.IsLobby) return false;
-            if (GameStates.IsInGame) return false;
-            if (GameStates.IsCountDown) return false;
-            if (!GameStartManager.InstanceExists) return false;
-
-            if (!TryGetLobbyPublicState(out var isPublic)) return false;
-            var nowMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-            lock (Sync)
-            {
-                if (isPublic)
-                {
-                    _lobbyPublicObserved = true;
-                    _privateDetectedAtMs = 0;
-                    return false;
-                }
-
-                if (!_lobbyPublicObserved) return false;
-                if (_privateDetectedAtMs == 0)
-                {
-                    _privateDetectedAtMs = nowMs;
-                    return false;
-                }
-
-                if (nowMs - _privateDetectedAtMs < 1500)
-                    return false;
-
-                _lobbyPublicObserved = false;
-                _privateDetectedAtMs = 0;
-                return true;
-            }
-        }
-
-        private static bool TryGetLobbyPublicState(out bool isPublic)
-        {
-            isPublic = false;
-
-            var client = AmongUsClient.Instance;
-            if (client != null && TryReadPublicFlag(client, out isPublic))
-                return true;
-
-            var gsm = GameStartManager.Instance;
-            if (gsm != null && TryReadPublicFlag(gsm, out isPublic))
-                return true;
-
-            return false;
-        }
-
-        private static bool TryReadPublicFlag(object target, out bool value)
-        {
-            value = false;
-            if (target == null) return false;
-
-            const BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-            var type = target.GetType();
-            var candidateNames = new[]
-            {
-                "IsGamePublic",
-                "IsPublic",
-                "GamePublic",
-                "Public",
-                "isPublic",
-            };
-
-            foreach (var name in candidateNames)
-            {
-                try
-                {
-                    var prop = type.GetProperty(name, flags);
-                    if (prop != null && prop.PropertyType == typeof(bool))
-                    {
-                        value = (bool)prop.GetValue(target);
-                        return true;
-                    }
-                }
-                catch
-                {
-                }
-
-                try
-                {
-                    var field = type.GetField(name, flags);
-                    if (field != null && field.FieldType == typeof(bool))
-                    {
-                        value = (bool)field.GetValue(target);
-                        return true;
-                    }
-                }
-                catch
-                {
-                }
-            }
-
-            return false;
+            if (gameStartManager == null) return;
+            gameStartManager.HostPublicButton?.SelectButton(recruiting);
+            gameStartManager.HostPrivateButton?.SelectButton(!recruiting);
         }
 
         private static bool TryCollectLobby(out string hostName, out string roomCode, out string state, out int players, out int maxPlayers)
