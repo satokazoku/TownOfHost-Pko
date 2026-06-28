@@ -825,6 +825,8 @@ public enum CustomRoles
     Evolver,
     Conjurer,
     Swooper,
+
+    BeginnerImpostor,
     //TOH-K
     Bomber,
     TeleportKiller,
@@ -1072,7 +1074,6 @@ public enum CustomRoles
     Braid,
     Vega,
     Altair,
-    BeginnerImpostor = 499,
     // Sub-roll after 500
     NotAssigned = 500,
     LastImpostor,

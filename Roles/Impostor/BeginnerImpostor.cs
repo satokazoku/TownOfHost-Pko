@@ -1,4 +1,4 @@
-/*using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
@@ -43,11 +43,11 @@ public sealed class BeginnerImpostor : RoleBase, IImpostor, IUsePhantomButton
 
     private readonly List<BeginnerImpostorDummy> dummies = new();
     private float currentKillCooldown;
+    private float syncedAbilityCooldown;
     private int dummyKillCount;
     private bool initialized;
 
-    // 配置を調整したい場合は、この候補座標だけを編集すればいい。
-    // マップのスポーン座標とかやってくれて助かったよ、ChatGPT
+    // スポーン位置は by ChatGpt
     private static readonly Dictionary<MapNames, Vector2[]> DummySpawnPointsByMap = new()
     {
         [MapNames.Skeld] = new[]
@@ -164,6 +164,7 @@ public sealed class BeginnerImpostor : RoleBase, IImpostor, IUsePhantomButton
     public BeginnerImpostor(PlayerControl player) : base(RoleInfo, player)
     {
         currentKillCooldown = OptionKillCooldown.GetFloat();
+        syncedAbilityCooldown = currentKillCooldown;
         dummyKillCount = 0;
     }
 
@@ -194,7 +195,7 @@ public sealed class BeginnerImpostor : RoleBase, IImpostor, IUsePhantomButton
 
     public override void ApplyGameOptions(IGameOptions opt)
     {
-        AURoleOptions.PhantomCooldown = 0.1f;
+        AURoleOptions.PhantomCooldown = syncedAbilityCooldown;
     }
 
     public override void StartGameTasks()
@@ -213,10 +214,12 @@ public sealed class BeginnerImpostor : RoleBase, IImpostor, IUsePhantomButton
         {
             initialized = true;
             currentKillCooldown = OptionKillCooldown.GetFloat();
+            syncedAbilityCooldown = currentKillCooldown;
             dummyKillCount = 0;
             (this as IUsePhantomButton).Init(Player);
             IUsePhantomButton.IPPlayerKillCooldown[Player.PlayerId] = 0f;
             EnsureDummyCount();
+            _ = new LateTask(EnsureDummyCount, 0.5f, "BeginnerImpostor.InitialDummyRetry", true);
             SendRPC();
             Logger.Info($"Initial dummy spawn: map={(MapNames)Main.NormalOptions.MapId}, count={OptionDummyCount.GetInt()}",
                 "BeginnerImpostor");
@@ -226,6 +229,7 @@ public sealed class BeginnerImpostor : RoleBase, IImpostor, IUsePhantomButton
         if (OptionRelocateAfterMeeting.GetBool())
             RelocateDummies();
 
+        syncedAbilityCooldown = currentKillCooldown;
         EnsureDummyCount();
     }
 
@@ -239,25 +243,41 @@ public sealed class BeginnerImpostor : RoleBase, IImpostor, IUsePhantomButton
         dummies.Clear();
     }
 
-    bool IUsePhantomButton.IsresetAfterKill => false;
+    bool IUsePhantomButton.IsresetAfterKill => true;
+    bool IUsePhantomButton.SyncAbilityCooldownWithKillCooldown => true;
+    void IUsePhantomButton.SetSyncedAbilityCooldown(float cooldown)
+        => syncedAbilityCooldown = cooldown;
+
+    public void OnMurderPlayerAsKiller(MurderInfo info)
+        => syncedAbilityCooldown = currentKillCooldown;
 
     void IUsePhantomButton.OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
     {
-        AdjustKillCooldown = false;
-        ResetCooldown = false;
+        AdjustKillCooldown = true;
+        ResetCooldown = true;
 
         if (!AmongUsClient.Instance.AmHost || !Player.IsAlive() || GameStates.IsMeeting)
+        {
+            ResetCooldown = false;
             return;
+        }
 
         var target = GetNearestKillableDummy();
         if (target == null)
+        {
+            ResetCooldown = false;
             return;
+        }
 
         target.OnKilled(Player);
-        // 非ホストは下の共通CheckVanish処理でImpostor→Phantomへ戻すだけで
-        // 能力を再初期化できる。trueにするとProtectPlayerが送られ、
-        // バニラクライアントに守護天使の緑シールド演出が表示されてしまう。
-        ResetCooldown = Player.AmOwner;
+
+        if (OptionResetKillCooldown.GetBool())
+        {
+            Main.AllPlayerKillCooldown[Player.PlayerId] = currentKillCooldown;
+            IUsePhantomButton.IPPlayerKillCooldown[Player.PlayerId] = 0f;
+            var state = PlayerState.GetByPlayerId(Player.PlayerId);
+            if (state != null) state.Is10secKillButton = false;
+        }
     }
 
     public override string GetAbilityButtonText() => GetString("BeginnerImpostorTrainButton");
@@ -271,14 +291,21 @@ public sealed class BeginnerImpostor : RoleBase, IImpostor, IUsePhantomButton
     }
 
     public override void CheckWinner(GameOverReason reason)
+        => EnforceDummyKillWinRequirement();
+
+    public void EnforceDummyKillWinRequirement()
     {
         if (!OptionRequireDummyKills.GetBool()
             || dummyKillCount >= OptionRequiredDummyKills.GetInt()
-            || !Player.IsWinner(CustomWinner.Impostor))
+            || !CustomWinnerHolder.winners.Contains(CustomWinner.Impostor)
+            || !CustomWinnerHolder.WinnerIds.Contains(Player.PlayerId))
             return;
 
         CustomWinnerHolder.CantWinPlayerIds.Add(Player.PlayerId);
         CustomWinnerHolder.WinnerIds.Remove(Player.PlayerId);
+        Logger.Info(
+            $"勝利条件未達成のため除外: {Player.Data?.GetLogPlayerName()} dummyKills={dummyKillCount}/{OptionRequiredDummyKills.GetInt()}",
+            "BeginnerImpostor");
     }
 
     private BeginnerImpostorDummy GetNearestKillableDummy()
@@ -316,19 +343,9 @@ public sealed class BeginnerImpostor : RoleBase, IImpostor, IUsePhantomButton
         currentKillCooldown = Mathf.Max(
             OptionMinimumKillCooldown.GetFloat(),
             currentKillCooldown - OptionCooldownReduction.GetFloat());
-        Main.AllPlayerKillCooldown[Player.PlayerId] = currentKillCooldown;
-
-        if (OptionResetKillCooldown.GetBool() && Player.AmOwner)
-            Player.SetKillCooldown(currentKillCooldown, force: true, delay: true);
-        else
-            // 非ホストは直後のImpostor→Phantom切り替えでキルタイマーも再初期化する。
-            // ProtectedMurderを使わないため、バニラクライアントに防御演出が出ない。
-            Player.SyncSettings();
 
         SendRPC();
         UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
-
-        _ = new LateTask(EnsureDummyCount, 0.1f, "BeginnerImpostor.RefillDummy", true);
     }
 
     private void EnsureDummyCount()
@@ -485,4 +502,3 @@ public sealed class BeginnerImpostorDummy : CustomNetObject, IKillableDummy
 
     public override void OnMeeting() { }
 }
-*/

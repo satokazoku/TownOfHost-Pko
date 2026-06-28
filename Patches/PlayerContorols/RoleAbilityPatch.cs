@@ -241,7 +241,8 @@ namespace TownOfHost
             var AdjustKillCooldown = true;
             bool? ResetCooldown = true;
 
-            if (__instance.GetRoleClass() is IUsePhantomButton iusephantombutton && Main.CanUseAbility)
+            var iusephantombutton = __instance.GetRoleClass() as IUsePhantomButton;
+            if (iusephantombutton != null && Main.CanUseAbility)
                 iusephantombutton.CheckOnClick(ref AdjustKillCooldown, ref ResetCooldown);
 
             float TurnTimer = 0;
@@ -253,6 +254,8 @@ namespace TownOfHost
                 killcool = 10;
             float cooldown = killcool - TurnTimer;
             if (cooldown <= 1) cooldown = 0.005f;
+            if (iusephantombutton?.SyncAbilityCooldownWithKillCooldown == true)
+                iusephantombutton.SetSyncedAbilityCooldown(cooldown);
             Logger.Info($"Use:{__instance.Data.GetLogPlayerName()}", "PhantomButton");
 
             if (AdjustKillCooldown)
@@ -300,6 +303,11 @@ namespace TownOfHost
             writer.EndMessage();
             writer.SendMessage();
             __instance.ResetKillCooldown();
+            if (AdjustKillCooldown)
+            {
+                Main.AllPlayerKillCooldown[__instance.PlayerId] = cooldown;
+                IUsePhantomButton.IPPlayerKillCooldown[__instance.PlayerId] = 0f;
+            }
 
             return __instance.GetCustomRole() is CustomRoles.Phantom;
         }

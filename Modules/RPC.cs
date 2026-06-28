@@ -67,10 +67,17 @@ namespace TownOfHost
             switch (rpcType)
             {
                 case RpcCalls.SetName:
-                    subReader.ReadUInt32();
-                    string name = subReader.ReadString();
-                    if (subReader.BytesRemaining > 0 && (subReader?.ReadBoolean() ?? true)) return false;
-                    Logger.Info("名前変更:" + __instance.GetNameWithRole().RemoveHtmlTags() + " => " + name, "SetName");
+                    try
+                    {
+                        subReader.ReadUInt32();
+                        string name = subReader.ReadString();
+                        if (subReader.BytesRemaining > 0 && (subReader?.ReadBoolean() ?? true)) return false;
+                        Logger.Info("名前変更:" + __instance.GetNameWithRole().RemoveHtmlTags() + " => " + name, "SetName");
+                    }
+                    catch (System.IO.InvalidDataException)
+                    {
+                        // SetName RPCの形式が異なる場合はログ解析だけを省略し、本来のHandleRpcへ渡す。
+                    }
                     break;
                 case RpcCalls.SetRole:
                     RoleTypes role = (RoleTypes)subReader.ReadUInt16();

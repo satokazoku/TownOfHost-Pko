@@ -73,6 +73,18 @@ public static class AbilityButtonDoClickPatch
 
             pb.CheckOnClick(ref AdjustKillCooldown, ref ResetCooldown);
 
+            float cooldown = IUsePhantomButton.GetRemainingKillCooldown(player);
+            if (pb.SyncAbilityCooldownWithKillCooldown)
+                pb.SetSyncedAbilityCooldown(cooldown);
+
+            if (AdjustKillCooldown)
+            {
+                Main.AllPlayerKillCooldown[player.PlayerId] = cooldown;
+                IUsePhantomButton.IPPlayerKillCooldown[player.PlayerId] = 0f;
+                player.SetKillTimer(cooldown);
+                player.SyncSettings();
+            }
+
             if (ResetCooldown == true)
             {
                 player.Data.Role.SetCooldown();

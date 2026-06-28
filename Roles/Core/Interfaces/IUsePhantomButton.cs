@@ -35,6 +35,22 @@ public interface IUsePhantomButton
                 else Init(player);
             }
     }
+
+    public static float GetRemainingKillCooldown(PlayerControl player)
+    {
+        IPPlayerKillCooldown.TryGetValue(player.PlayerId, out var turnTimer);
+        Main.AllPlayerKillCooldown.TryGetValue(player.PlayerId, out var killCooldown);
+
+        if (MeetingStates.FirstMeeting
+            && !Options.FixFirstKillCooldown.GetBool()
+            && killCooldown > 10f
+            && PlayerState.GetByPlayerId(player.PlayerId)?.Is10secKillButton == true)
+            killCooldown = 10f;
+
+        var cooldown = killCooldown - turnTimer;
+        return cooldown <= 1f ? 0.005f : cooldown;
+    }
+
     public void CheckOnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
     {
         if (!UseOneclickButton)
@@ -64,4 +80,14 @@ public interface IUsePhantomButton
 
     /// <summary>キル後、クールダウンをリセットするか</summary>
     public bool IsresetAfterKill => true;
+
+    /// <summary>
+    /// ファントムボタン使用時、能力クールダウンを現在のキルクールダウンへ同期するか。
+    /// </summary>
+    public bool SyncAbilityCooldownWithKillCooldown => false;
+
+    /// <summary>
+    /// 共通ファントム処理で算出した現在のキルクールダウンを役職へ通知する。
+    /// </summary>
+    public void SetSyncedAbilityCooldown(float cooldown) { }
 }

@@ -131,6 +131,10 @@ namespace TownOfHost
                             break;
                     }
 
+                // 勝者固定経路でも、乗っ取りではない個人勝利条件は必ず適用する。
+                foreach (var beginner in CustomRoleManager.AllActiveRoles.Values.OfType<BeginnerImpostor>())
+                    beginner.EnforceDummyKillWinRequirement();
+
                 if (!lockWinner && SuddenDeathMode.NowSuddenDeathTemeMode && !(CustomWinnerHolder.WinnerTeam is CustomWinner.SuddenDeathRed or CustomWinner.SuddenDeathBlue or CustomWinner.SuddenDeathGreen or CustomWinner.SuddenDeathYellow or CustomWinner.PurpleLovers))
                 {
                     SuddenDeathMode.TeamAllWin();

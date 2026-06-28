@@ -40,6 +40,7 @@ namespace TownOfHost
             Main.NormalOptions.SetBool(BoolOptionNames.ConfirmImpostor, false);
 
             UtilsGameLog.Reset();
+            CustomNetObject.Reset();
             PlayerState.Clear();
 
             CustomRoleManager.Initialize();

@@ -189,7 +189,16 @@ public class CustomNetObject
         if (IsSpawning || SpawnQueue.Count == 0) return;
         IsSpawning = true;
         var action = SpawnQueue.Dequeue();
-        action();
+        try
+        {
+            action();
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e.ToString(), "CNO.Spawn");
+            IsSpawning = false;
+            ProcessQueue();
+        }
     }
 
     public static void ResetSpawnState()
@@ -285,7 +294,14 @@ public class CustomNetObject
 
         _ = new LateTask(() =>
         {
-            capturedSelf.OnCreated();
+            try
+            {
+                capturedSelf.OnCreated();
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.ToString(), "CNO.OnCreated");
+            }
 
             // ★ GameData.AllPlayers からも除去（会議でのUI崩れを防ぐ）
             try
