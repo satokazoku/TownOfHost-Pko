@@ -71,6 +71,7 @@ namespace TownOfHost
                 roleCommands.Add(CustomRoles.Guarding, "gi");
                 roleCommands.Add(CustomRoles.Guesser, "Gr");
                 roleCommands.Add(CustomRoles.Moon, "Mo");
+                roleCommands.Add(CustomRoles.VoteTracker, "Vt");
                 roleCommands.Add(CustomRoles.Lighting, "Li");
                 roleCommands.Add(CustomRoles.Management, "Dr");
                 roleCommands.Add(CustomRoles.Connecting, "Cn");
@@ -84,6 +85,7 @@ namespace TownOfHost
                 roleCommands.Add(CustomRoles.Tiebreaker, "tb");
                 roleCommands.Add(CustomRoles.MagicHand, "MaH");
                 roleCommands.Add(CustomRoles.Powerful, "pf");
+                roleCommands.Add(CustomRoles.Absorb, "Abs");
 
                 //デバフ
                 roleCommands.Add(CustomRoles.SlowStarter, "sl");

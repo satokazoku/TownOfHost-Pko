@@ -125,7 +125,7 @@ class VersionInfoManager
                     ModUpdater.downloadUrl = release.DownloadUrl;
                     ModUpdater.latestVersion = new(release.TagName.TrimStart('v')?.Trim('S')?.Trim('s'));
                     ModUpdater.latestTitle = $"Ver. {ModUpdater.latestVersion}";
-                    MainMenuManagerPatch.UpdateButton2.Button.gameObject.SetActive(false);
+                    MainMenuManagerPatch.UpdateDetailsButton.Button.gameObject.SetActive(false);
                 }
             }
 

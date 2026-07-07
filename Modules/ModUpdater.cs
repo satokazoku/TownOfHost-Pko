@@ -46,7 +46,7 @@ namespace TownOfHost
             }
             MainMenuManagerPatch.UpdateButton.Button.gameObject.SetActive(hasUpdate);
             MainMenuManagerPatch.UpdateButton.Button.transform.Find("FontPlacer/Text_TMP").GetComponent<TMPro.TMP_Text>().SetText($"{GetString("updateButton")}\n{latestTitle}");
-            MainMenuManagerPatch.UpdateButton2.Button.gameObject.SetActive(hasUpdate);
+            MainMenuManagerPatch.UpdateDetailsButton.Button.gameObject.SetActive(hasUpdate);
         }
         /// <param name="all">1ページ分のリリースをすべて取得し、releasesとsnapshotsを更新します</param>
         /// <param name="forced">allパラメータと同時に使用します / キャッシュを使用せずもう一度取得します</param>

@@ -679,7 +679,7 @@ namespace TownOfHost
                 AddRoleTextData = GetRoleColorCode(missrole);
 
             var AddRoleInfoTitleString = $"{GetString("AddonInfoTitle")}";
-            var AddRoleInfoTitle = $"<{AddRoleTextData}>{AddRoleInfoTitleString}";
+            var AddRoleInfoTitle = $"<{AddRoleTextData}>{AddRoleInfoTitleString}</color>";
             var sb = new StringBuilder();
 
             //バフ
@@ -696,6 +696,7 @@ namespace TownOfHost
             if (player.Is(CustomRoles.Revenger)) SendMessage(GetAddonsHelp(CustomRoles.Revenger), player.PlayerId, AddRoleInfoTitle);
             if (player.Is(CustomRoles.Speeding)) SendMessage(GetAddonsHelp(CustomRoles.Speeding), player.PlayerId, AddRoleInfoTitle);
             if (player.Is(CustomRoles.Guarding)) SendMessage(GetAddonsHelp(CustomRoles.Guarding), player.PlayerId, AddRoleInfoTitle);
+            if (player.Is(CustomRoles.Absorb)) SendMessage(GetAddonsHelp(CustomRoles.Absorb), player.PlayerId, AddRoleInfoTitle);
             if (player.Is(CustomRoles.Management)) SendMessage(GetAddonsHelp(CustomRoles.Management), player.PlayerId, AddRoleInfoTitle);
             if (player.Is(CustomRoles.Opener)) SendMessage(GetAddonsHelp(CustomRoles.Opener), player.PlayerId, AddRoleInfoTitle);
             if (player.Is(CustomRoles.Seeing)) SendMessage(GetAddonsHelp(CustomRoles.Seeing), player.PlayerId, AddRoleInfoTitle);
@@ -761,6 +762,8 @@ namespace TownOfHost
                 CustomRoles.Revenger => AddonInfo(role, "Я", From.TownOfHost_Y),
                 CustomRoles.Speeding => AddonInfo(role, "∈"),
                 CustomRoles.Guarding => AddonInfo(role, "ζ", From.TownOfHost_Y),
+                CustomRoles.Absorb => AddonInfo(role, "Г"),
+                CustomRoles.VoteTracker => AddonInfo(role, "ν"),
                 CustomRoles.Management => AddonInfo(role, "θ", From.TownOfHost_Y),
                 CustomRoles.Opener => AddonInfo(role, "п"),
                 //CustomRoles.AntiTeleporter => AddonInfo(role, "t", From.RevolutionaryHostRoles),

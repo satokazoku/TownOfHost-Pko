@@ -26,7 +26,7 @@ namespace TownOfHost
         private static SimpleButton StatisticsButton;
         private static GameObject Statistics_ScrollStuff;
         public static SimpleButton UpdateButton { get; private set; }
-        public static SimpleButton UpdateButton2;
+        public static SimpleButton UpdateDetailsButton { get; private set; }
         private static SimpleButton gitHubButton;
         private static SimpleButton TwitterXButton;
         private static SimpleButton TOHPBOTButton;
@@ -35,7 +35,7 @@ namespace TownOfHost
         public static TextMeshPro Statistics_TMP;
         public static GameObject VersionMenu;
         public static GameObject betaVersionMenu;
-        public static AnnouncementPopUp updatea;
+        public static AnnouncementPopUp UpdateDetailsPopup;
 
         [HarmonyPatch(nameof(MainMenuManager.Start)), HarmonyPostfix, HarmonyPriority(Priority.Normal)]
         public static void StartPostfix(MainMenuManager __instance)
@@ -167,31 +167,33 @@ namespace TownOfHost
                     isActive: false);
             }
             // アップデート(詳細)ボタンを生成
-            if (SimpleButton.IsNullOrDestroyed(UpdateButton2))
+            if (SimpleButton.IsNullOrDestroyed(UpdateDetailsButton))
             {
-                UpdateButton2 = CreateButton(
-                    "UpdateButton2",
+                UpdateDetailsButton = CreateButton(
+                    "UpdateDetailsButton",
                     new(1.3f, -1.9f, 1f),
                     new(153, 153, 153, byte.MaxValue),
                     new(209, 209, 209, byte.MaxValue),
                     () =>
                     {
-                        if (updatea == null)
+                        if (UpdateDetailsPopup == null)
                         {
-                            updatea = Object.Instantiate(__instance.announcementPopUp);
+                            UpdateDetailsPopup = Object.Instantiate(__instance.announcementPopUp);
                         }
-                        updatea.name = "Update Detail";
-                        updatea.gameObject.SetActive(true);
-                        updatea.AnnouncementListSlider.SetActive(false);
-                        updatea.Title.text = "TOH-P " + ModUpdater.latestTitle;
-                        updatea.AnnouncementBodyText.text = Regex.Replace(ModUpdater.body.Replace("#", "").Replace("**", ""), @"\[(.*?)\]\(.*?\)", "$1");
-                        updatea.DateString.text = "Latest Release";
-                        updatea.SubTitle.text = "";
-                        updatea.ListScroller.gameObject.SetActive(false);
+
+                        UpdateDetailsPopup.name = "Update Detail";
+                        UpdateDetailsPopup.gameObject.SetActive(true);
+                        UpdateDetailsPopup.AnnouncementListSlider.SetActive(false);
+                        UpdateDetailsPopup.Title.text = "TOH-K " + ModUpdater.latestTitle;
+                        UpdateDetailsPopup.AnnouncementBodyText.text = Regex.Replace(ModUpdater.body.Replace("#", "").Replace("**", ""), @"\[(.*?)\]\(.*?\)", "$1");
+                        UpdateDetailsPopup.DateString.text = "Latest Release";
+                        UpdateDetailsPopup.SubTitle.text = "";
+                        UpdateDetailsPopup.ListScroller.gameObject.SetActive(false);
                     },
                     "▽",
                     new(0.5f, 0.5f),
-                    isActive: false);
+                    isActive: false,
+                    toolTip: "UpdateDetailsButtonInfo");
             }
             //同じバージョンの 安定ver,デバッグバージョンの切り替えの奴
             if (SimpleButton.IsNullOrDestroyed(betaversionchange))
@@ -309,12 +311,22 @@ namespace TownOfHost
             string label,
             Vector2? scale = null,
             bool isActive = true,
-            Transform transform = null)
+            Transform transform = null,
+            string toolTip = null)
         {
             var button = new SimpleButton(transform == null ? CredentialsPatch.TOHPLogo.transform : transform, name, localPosition, normalColor, hoverColor, action, label, isActive);
             if (scale.HasValue)
             {
                 button.Scale = scale.Value;
+            }
+            if (toolTip != null)
+            {
+                button.Button.OnMouseOver.AddListener((Action)(() =>
+                {
+                    var pos = ToolTip.GetMoucePos(new(-1.8f, -0.2f, -30)); //ejectボタンに隠れないように
+                    ToolTip.Show(button.Button, Translator.GetString(toolTip), pos);
+                }));
+                button.Button.OnMouseOut.AddListener((Action)ToolTip.Hide);
             }
             return button;
         }
@@ -492,11 +504,7 @@ namespace TownOfHost
             CreateStreameMenu.CloseMenu();
             _ = new LateTask(() =>
             {
-                if (__instance == null) return;
-
-                var ejectButton = __instance.ejectMenu?.ejectButton;
-                if (ejectButton != null && ejectButton.gameObject != null)
-                    ejectButton.gameObject.SetActive(true);
+                __instance.ejectMenu?.ejectButton?.gameObject?.SetActive(true);
             }, 0.5f, "ShowButton", true);
             HideOnlineJoinControls(__instance);
         }

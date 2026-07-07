@@ -605,6 +605,26 @@ public class ModNewsHistory
                 };
                 AllModNews.Add(news);
             }
+            {
+                var news = new ModNews
+                {
+                    Number = 100081,
+                    Title = "七夕だ！織姫と彦星だ！",
+                    SubTitle = "<color=#00c1ff>Town Of Host-K v.51.14.32.44</color>",
+                    ShortTitle = "<color=#00c1ff>◆TOH-K v.51.14.32.44</color>",
+                    Text = "<size=80%>ことしあとはんぶん。\n"
+                    + "期間限定役職【織姫・彦星】が14日まで帰ってきました。\nコンビネーションタブにいるのでそちらから。ぜひ\n"
+                    + "<size=125%>【バグ修正】</size>\n"
+                    + "・非クライアントバグの修正\n"
+                    + "・会議左上の拡張テキストが正常なものにならない問題の修正\n"
+                    + "\n<size=125%>【設定追加】</size>\n"
+                    + "・会議中マジック対象が見える設定の追加\n"
+                    + "\n<size=125%>【追加役職】</size>\n"
+                    + "<size=100%>Ⓐ アブソーブ</size>\n設定された日数に満たないか設定人数以上であるときにキルをガードする。",
+                    Date = "2026-07-07T00:00:00Z"
+                };
+                AllModNews.Add(news);
+            }
             AnnouncementPopUp.UpdateState = AnnouncementPopUp.AnnounceState.NotStarted;
         }
     }

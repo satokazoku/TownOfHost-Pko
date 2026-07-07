@@ -367,6 +367,7 @@
 "AntiTeleporter","AntiTeleporter","アンチテレポーター"
 "Powerful","Powerful","パワフル"
 "Stack","Stack","スタック"
+"Absorb","Absorb","アブソーブ"
 
 "# デバフ属性"
 "SlowStarter","SlowStarter","スロースターター"
@@ -729,6 +730,7 @@
 "AntiTeleporterInfo","I don't want Teleport","絶対にテレポートしたくないでござる","我不想传送"
 "PowerfulInfo","Power is Power!!","パワーがあれば問題無し!!"
 "StackInfo","Add-onBundle","属性の詰め合わセット"
+"AbsorbInfo","absorb for a short while","スポンジも驚く吸収力"
 
 "# デバフ属性"
 "SlowStarterInfo","I'm sure he'll do it later","んー...後5分だけぇ..."
@@ -1111,6 +1113,7 @@
 "AntiTeleporterInfoLong","Add-ons:\nThe Anti Teleport Modifier prevents the player from getting teleported to the Meeting Table if a body gets reported or an Emergency Meeting is called.\nThe player will start the round where the previous one ended (Emergency Meeting Call/Body Report).","(属性):\n会議や死体レポートなどが起こってもその後にテレポートせず、元居た場所からスタートします。","(附加效果):\n如果有尸体被报告或紧急会议被召集，通讯兵效果可以防止玩家被远程传送到会议桌。\n玩家将在上一回合结束时的位置继续（紧急会议/尸体报告）."
 "StackInfoLong","The attributes you set will be applied at the start of the game.","設定した属性がゲーム開始時に付与される。"
 "PowerfulInfoLong","An attribute granted only to roles capable of performing kills. \nThe kill power of a standard kill becomes 2.","キル可能役職にのみ付与される属性。\n通常キルのキルパワーが2になる。"
+"AbsorbInfoLong","Prevents you from being killed while the number of survivors remains above the set threshold or until the set number of days has passed.","設定人数以上が生存または、設定日数までの間、キルをガードする。"
 
 "# デバフ属性"
 "SlowStarterInfoLong","Add-ons:\nGive to Impostor Only.\nCan't make a kill until the number of imposters is reduced.","(属性):\nインポスターにしか付与されない。\n味方の生存人数が一定人数を下回るまでキルできない。"
@@ -1623,6 +1626,7 @@
 "MagicianMagicUseKillCount","magic use kill count","マジック発動に必要なキル数"
 "MagicianResetKillCount","after meeting reset kill count","会議後、キルカウントをリセットする"
 "MagicianResetMagicTarget","after meeting magic target","会議後、マジック対象をリセットする"
+"MagicianMeetingMark","Mark magic targets during meetings","会議中全員からマジック対象が見える"
 "MagicianRadius","magic distance","マジックの範囲"
 "StealthExcludeImpostors","Exclude Impostors From Blindness","暗転効果の対象からインポスターを除外する","","","Исключить Предателей из слепоты","Excluir Impostores da Cegueira",""
 "StealthDarkenDuration","Blindness Duration","暗転の持続時間","","","Длительность слепоты","Duração da Cegueira",""
@@ -2504,6 +2508,8 @@
 "Everyturn","Send for Everyturn","条件達成後、毎ターン送る"
 "SunglassesVisionmagnification","VisionMagnification","視界の倍率"
 "SunglassesVisionmagnification_Info","SunglassesCrewVision:{0} => {1}\nSunglassesImposotrVision:{2} => {3}","サングラスクルー視界:{0} => {1}\nサングラスインポスター視界:{2} => {3}"
+"AbsorbDisableDay","DisableDay","無効化される日"
+"AbsorbDisablePlayerCount","DisablePlayerCount","無効化される生存人数"
 
 "## 幽霊役職設定"
 "GhostRoleOptions","GhostRole Options","幽霊役職の設定"
@@ -3183,6 +3189,8 @@
 "GameModeInfo_SuddenDeath","<SuddenDeath>\n<size=60%>In this mode, all players fight using roles assigned in the standard setup, and the last surviving player wins.\nThere are also team-based battles.","＜サドンデス＞\n<size=60%>スタンダードで配役される役職を使って全員が戦い、最後まで生き残った1人が勝利です。\nチーム戦もあります。"
 "GameModeInfo_MurderMystery","<MurderMystery>\n<size=60%>This is a mode where players are divided into Killers and Crewmates.\nKillers win by eliminating all Crewmates, while Crewmates win by eliminating all Killers.\nWhen Crewmates complete their tasks,\nthey become Sheriffs and gain a long-range kill ability.","＜マーダーミステリー＞\n<size=60%>殺人鬼とクルーで分かれて遊ぶモードです。\n殺人鬼はクルー全滅、クルーは殺人鬼全滅で勝利です。\nクルーはタスクを完了させると\n保安官となり遠距離キル能力を所持します。"
 "GM_Info","A role that is assigned only to the host. It starts in a dead state and does not participate in the game.","ホストのみに配役される役職。最初から死亡状態で、ゲームに関与しません。"
+
+"UpdateDetailsButtonInfo","Click to view update details.","クリックしてアップデートの詳細を表示します"
 
 "## その他"
 "DefaultSystemMessageTitle","【===== System Message =====】","【===== システムメッセージ ======】","【===== 系统信息 ======】","【===== 系統訊息 ======】","【=== Системное сообщение ===】","【===== Mensagem do Sistema ======】",""

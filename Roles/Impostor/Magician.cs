@@ -1,11 +1,10 @@
 using AmongUs.GameOptions;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
+using Hazel;
 
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
-using Hazel;
 
 namespace TownOfHost.Roles.Impostor;
 
@@ -42,6 +41,11 @@ public sealed class Magician : RoleBase, IImpostor, IUsePhantomButton
         HaveKillCount = 0;
         MagicTarget = new();
         magiccount = 0;
+
+        if (OptionMettingMark.GetBool())
+        {
+            CustomRoleManager.MarkOthers.Add(GetMarkOthers);
+        }
     }
 
     static OptionItem OptionMagicCooldown;
@@ -51,6 +55,7 @@ public sealed class Magician : RoleBase, IImpostor, IUsePhantomButton
     static OptionItem OptionMagicUseKillCount;
     static OptionItem OptionResetKillCount;
     static OptionItem OptionResetMagicTarget;
+    static OptionItem OptionMettingMark;
 
     static float DefaultCooldown;
     static float Maximum;
@@ -74,6 +79,7 @@ public sealed class Magician : RoleBase, IImpostor, IUsePhantomButton
         MagicianMagicUseKillCount,
         MagicianResetKillCount,
         MagicianResetMagicTarget,
+        MagicianMeetingMark,
     }
 
     public static void SetupOptionItem()
@@ -89,12 +95,20 @@ public sealed class Magician : RoleBase, IImpostor, IUsePhantomButton
         OptionShowDeadbody = BooleanOptionItem.Create(RoleInfo, 14, Option.MagicianShowDeadbody, false, false);
         OptionResetKillCount = BooleanOptionItem.Create(RoleInfo, 15, Option.MagicianResetKillCount, true, false);
         OptionResetMagicTarget = BooleanOptionItem.Create(RoleInfo, 16, Option.MagicianResetMagicTarget, false, false);
+        OptionMettingMark = BooleanOptionItem.Create(RoleInfo, 17, Option.MagicianMeetingMark, false, false);
+    }
+
+    public override void OnDestroy()
+    {
+        CustomRoleManager.MarkOthers.Remove(GetMarkOthers);
     }
 
     public override void AfterMeetingTasks()
     {
         if (ResetKillCount) HaveKillCount = 0;
-        if (ResetMagicTarget) MagicTarget.Clear();
+        if (ResetMagicTarget) MagicTarget.Clear(); //↓死亡している対象を削除
+        else MagicTarget.RemoveAll(id => PlayerState.GetByPlayerId(id).IsDead);
+
         //クールダウンリセット
         if (Maximum <= MagicCount && Maximum > 0)
             MagicCooldown = 999;
@@ -105,7 +119,7 @@ public sealed class Magician : RoleBase, IImpostor, IUsePhantomButton
     public void OnMurderPlayerAsKiller(MurderInfo info)
     {
         HaveKillCount++;
-        SendRPC();
+        SendRPC_SetKillCount();
     }
 
     bool IUsePhantomButton.IsPhantomRole => MagicCount < Maximum || Maximum is 0;
@@ -116,26 +130,30 @@ public sealed class Magician : RoleBase, IImpostor, IUsePhantomButton
         ResetCooldown = false;
         if (Maximum <= MagicCount && Maximum > 0) return;
         ResetCooldown = true;
-        Dictionary<PlayerControl, float> distance = new();
-        float dis;
+
         bool check = false;
+        float minDis = Radius * Radius;
+        PlayerControl target = null;
+
+        var myPos = Player.transform.position;
         foreach (var pc in PlayerCatch.AllAlivePlayerControls)
         {
+            //自分と相方以外で、近くにいて既にターゲットにされていないか
             if (pc.Is(CustomRoles.King)) continue;
-            dis = Vector2.Distance(Player.transform.position, pc.transform.position);
-            //↑プレイヤーとの距離 ↓自分以外、で近くにいて 既にターゲットにされていないか
-            if (pc.PlayerId != Player.PlayerId && dis < Radius && !MagicTarget.Contains(pc.PlayerId) && !pc.IsTeammate(Player))
+            if (Is(pc) || MagicTarget.Contains(pc.PlayerId)) continue;
+            if (pc.IsTeammate(Player)) continue;
+
+            var dis = Vector2.SqrMagnitude(myPos - pc.transform.position);
+            if (dis < minDis)
             {
-                distance.Add(pc, dis);
+                target = pc;
+                minDis = dis;
             }
         }
-        if (distance.Count != 0)
+        if (target != null)
         {
-            var min = distance.OrderBy(c => c.Value).FirstOrDefault();
-            var target = min.Key;
-
             MagicCount++;
-            SendRPC();
+            SendRPC_AddTarget(target.PlayerId);
             check = (Maximum <= MagicCount && Maximum > 0) || MagicCooldown != DefaultCooldown;
             MagicTarget.Add(target.PlayerId);
             Player.SetKillCooldown(target: target);
@@ -189,7 +207,7 @@ public sealed class Magician : RoleBase, IImpostor, IUsePhantomButton
         }
         MagicTarget.Clear();
         HaveKillCount -= MagicUseKillCount;
-        SendRPC();
+        SendRPC_MagicKill();
         Player.SetKillCooldown();
         _ = new LateTask(() => UtilsNotifyRoles.NotifyRoles(), 0.1f);
     }
@@ -223,18 +241,65 @@ public sealed class Magician : RoleBase, IImpostor, IUsePhantomButton
         return $"<size=50%>{GetString("PhantomButtonLowertext")}</size>";
     }
 
-    public void SendRPC()
+    public string GetMarkOthers(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
+    {
+        seen ??= seer;
+        if (isForMeeting & MagicTarget.Contains(seen.PlayerId))
+        {
+            return Utils.ColorString(Palette.ImpostorRed, "♢");
+        }
+        return "";
+    }
+
+    public void SendRPC_AddTarget(byte targetId)
     {
         using var sender = CreateSender();
+        sender.Writer.WritePacked((int)RPC_Types.AddMagicTarget);
+        sender.Writer.Write(targetId);
         sender.Writer.Write(MagicCount);
+    }
+
+    public void SendRPC_SetKillCount()
+    {
+        using var sender = CreateSender();
+        sender.Writer.WritePacked((int)RPC_Types.SetKillCount);
+        sender.Writer.Write(HaveKillCount);
+    }
+
+    public void SendRPC_MagicKill()
+    {
+        using var sender = CreateSender();
+        sender.Writer.WritePacked((int)RPC_Types.MagicKill);
         sender.Writer.Write(HaveKillCount);
     }
 
     public override void ReceiveRPC(MessageReader reader)
     {
-        MagicCount = reader.ReadInt32();
-        HaveKillCount = reader.ReadInt32();
+        switch ((RPC_Types)reader.ReadPackedInt32())
+        {
+            case RPC_Types.AddMagicTarget:
+                byte targetId = reader.ReadByte();
+                if (!MagicTarget.Contains(targetId))
+                    MagicTarget.Add(targetId);
+                MagicCount = reader.ReadInt32();
+                break;
+            case RPC_Types.SetKillCount:
+                HaveKillCount = reader.ReadInt32();
+                break;
+            case RPC_Types.MagicKill:
+                MagicTarget.Clear();
+                HaveKillCount = reader.ReadInt32();
+                break;
+        }
     }
+
+    enum RPC_Types
+    {
+        AddMagicTarget,
+        SetKillCount,
+        MagicKill
+    }
+
     public override void CheckWinner(GameOverReason reason)
     {
         Achievements.RpcCompleteAchievement(Player.PlayerId, 1, achievements[0], magiccount);

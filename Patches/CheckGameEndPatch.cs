@@ -28,7 +28,12 @@ namespace TownOfHost
         {
             if (!AmongUsClient.Instance.AmHost) return true;
 
-            if (predicate == null) return false;
+            if (predicate == null)
+            {
+                Logger.Warn("ゲーム終了判定が未初期化のため、現在のゲームモードに合わせて初期化します", "GameEndChecker");
+                EnsurePredicate();
+                return false;
+            }
 
             if (Main.DontGameSet && CustomWinnerHolder.WinnerTeam != CustomWinner.Draw) return false;
 
@@ -406,6 +411,28 @@ namespace TownOfHost
             }
         }
         private const float EndGameDelay = 0.2f;
+
+        private static void EnsurePredicate()
+        {
+            switch (Options.CurrentGameMode)
+            {
+                case CustomGameMode.SuddenDeath:
+                    SetPredicateToSadness();
+                    break;
+                case CustomGameMode.MurderMystery:
+                    SetPredicateToMurderMystery();
+                    break;
+                case CustomGameMode.HideAndSeek:
+                    SetPredicateToHideAndSeek();
+                    break;
+                case CustomGameMode.TaskBattle:
+                    SetPredicateToTaskBattle();
+                    break;
+                default:
+                    SetPredicateToNormal();
+                    break;
+            }
+        }
 
         public static void SetPredicateToNormal() => predicate = new NormalGameEndPredicate();
         public static void SetPredicateToHideAndSeek() => predicate = new HideAndSeekGameEndPredicate();

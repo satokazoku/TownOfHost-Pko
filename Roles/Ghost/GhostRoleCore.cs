@@ -68,6 +68,7 @@ class GhostRoleCore
         Stack.Init();
         Sunglasses.Init();
         Powerful.Init();
+        Absorb.Init();
     }
     public static void SetupCustomOptionAddonAndIsGhostRole()
     {
@@ -93,6 +94,7 @@ class GhostRoleCore
         Revenger.SetupCustomOption();
         Speeding.SetupCustomOption();
         Guarding.SetupCustomOption();
+        Absorb.SetupCustomOption();
         Management.SetupCustomOption();
         Seeing.SetupCustomOption();
         Opener.SetupCustomOption();

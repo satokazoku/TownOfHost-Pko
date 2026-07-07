@@ -688,7 +688,7 @@ namespace TownOfHost
             bool Ishedder = false;
             CustomRoles[] killLv1 = [CustomRoles.UltraStar, CustomRoles.NekoKabocha , CustomRoles.Puppeteer , CustomRoles.Sniper, CustomRoles.TeleportKiller
             ,CustomRoles.Bomber , CustomRoles.Vampire,CustomRoles.Remotekiller];
-            CustomRoles[] GuardLv1 = [CustomRoles.GuardMaster, CustomRoles.Guarding, CustomRoles.OneWolf, CustomRoles.VentOpener];
+            CustomRoles[] GuardLv1 = [CustomRoles.GuardMaster, CustomRoles.Guarding, CustomRoles.OneWolf, CustomRoles.VentOpener, CustomRoles.Absorb];
             CustomRoles[] killLv2 = [CustomRoles.Ballooner, CustomRoles.FireWorks, CustomRoles.Warlock, CustomRoles.GrimReaper];
             CustomRoles[] GuardLv2 = [CustomRoles.Fox, CustomRoles.MadGuardian];
             CustomRoles[] KillLv3 = [CustomRoles.Jumper];
