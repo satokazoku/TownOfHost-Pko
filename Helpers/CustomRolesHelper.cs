@@ -253,6 +253,8 @@ namespace TownOfHost
         {
             return role is CustomRoles.GuardianAngel
                         or CustomRoles.Ghostbuttoner
+                        or CustomRoles.GhostFloodlight
+                        or CustomRoles.GhostSaboteur
                         or CustomRoles.GhostNoiseSender
                         or CustomRoles.GhostReseter
                         or CustomRoles.GhostRumour

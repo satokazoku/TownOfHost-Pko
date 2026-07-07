@@ -797,6 +797,8 @@ namespace TownOfHost
                 CustomRoles.Stack => AddonInfo(role),
                 //幽霊役職
                 CustomRoles.Ghostbuttoner => AddonInfo(role),
+                CustomRoles.GhostFloodlight => AddonInfo(role),
+                CustomRoles.GhostSaboteur => AddonInfo(role),
                 CustomRoles.GhostNoiseSender => AddonInfo(role),
                 CustomRoles.GhostReseter => AddonInfo(role),
                 CustomRoles.GhostRumour => AddonInfo(role),
@@ -932,7 +934,7 @@ namespace TownOfHost
                 case From.TownOfHost_K: Fromtext += $"<#00bfff>TownOfHost K</color>"; break;
                 case From.TownOfHost_for_E: Fromtext += $"<#18e744>TownOfHost for E</color>"; break;
                 case From.Speyrp: Fromtext = $"<#7fffbf>From:Yoran★</color>"; break;
-                case From.TownOfHost_E: Fromtext += $"<#ffc0cb>TownOfHost E</color>"; break;
+                case From.TownOfHost_Enhanced: Fromtext += $"<#ffc0cb>TownOfHost Enhanced</color>"; break;
                 case From.TownOfHost_Pko: Fromtext += $"<#FF9631>TownOfHost Pko</color>"; break;
                 case From.RevolutionaryHostRoles: Fromtext += $"<#3cb371>RevolutionaryHostRoles</color>"; break;
                 case From.Love_Couple_Mod: Fromtext += "<#ff6be4>Love Couple Mod</color>"; break;

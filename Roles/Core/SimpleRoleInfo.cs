@@ -26,7 +26,7 @@ public enum From
     TownOfHost_Y,
     TownOfHost_K,
     TownOfHost_for_E,
-    TownOfHost_E,
+    TownOfHost_Enhanced,
     TownOfHost_Pko,
     Speyrp,
     RevolutionaryHostRoles,

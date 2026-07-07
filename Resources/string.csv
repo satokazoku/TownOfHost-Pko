@@ -94,6 +94,7 @@
 "Conjurer","Conjurer","魔術師"
 "Swooper","Swooper","スウーパー"
 "MassMurder","Mass Murderer","マスマーダー"
+"EvilStandMaster","EvilStandMaster","イビルスタンドマスター","","","",""
 "#ImpostorName"
 
 "# マッドメイト系役職"
@@ -277,6 +278,9 @@
 "PokerFace","PokerFace","ポーカーフェイス"
 "TheThreeLittlePigs","TheThreeLittlePigs","三匹の子豚"
 "HappyJester","HappyJester","ハッピージェスター"
+"TheFirstLittlePig","The First Little Pig","1番目の仔豚"
+"TheSecondLittlePig","The Second Little Pig","2番目の仔豚"
+"TheThirdLittlePig","The Third Little Pig","3番目の仔豚"
 "#NeutralName"
 
 "#コンビネーション役職"
@@ -332,6 +336,8 @@
 "# GhostRole"
 "GhostRole","GhostRole","GhostRoll"
 "Ghostbuttoner","Ghostbuttoner","ゴーストボタナー"
+"GhostFloodlight","GhostFloodlight","ゴーストフラッドライター"
+"GhostSaboteur","Ghost Saboteur","ゴーストサボタージュ"
 "GhostNoiseSender","GhostNoiseSender","ゴーストノイズセンダー"
 "GhostReseter","GhostReseter","ゴーストリセッター"
 "GhostRumour","GhostRumour","ゴーストルーモア"
@@ -660,6 +666,15 @@
 "VillainInfo","","偽りの平穏を打ち砕き、本性を現せ"
 "ScratcherInfo","Scratch and win","人生はギャンブルzoy"
 "HappyJesterInfo","","追放されてみんなでハッピーエンドを迎えよう"
+"OgreInfo","I held the club!","金棒を持たせたな？"
+"LawyerInfo","I work for my client","依頼人の為に私、動きます","我为我的客户工作"
+"PursuerInfo","I lost a client","依頼人いなくなっちゃった","我丢失了一个客户"
+"DuelistInfo","I decided on you, it's battle time!","貴方は因縁の相手、いざ勝負！"
+"PirateInfo","I am the captain of the pirates","海賊団船長とはこの私だ",
+"GangInfo","As Gang, we're going to make sure the captain wins","一味として船長を勝たせるんだ",
+"TheFirstLittlePigInfo","House， keep us safe!","家を作って狼から身を守ろう"
+"TheSecondLittlePigInfo","House， keep us safe!","家を作って狼から身を守ろう"
+"TheThirdLittlePigInfo","House， keep us safe!","家を作って狼から身を守ろう"
 "#NeutralInfo"
 
 "# HideAndSeek"
@@ -789,7 +804,7 @@
 "CharismaStarInfoLong","An imposter that allows any player to assemble to the nearest vent from himself. The \n kill button uses double clicks. The single click determines the member to assemble, while the double click usually kills. Multiple members can be set to gather, and by pressing the disappear button, the members can be gathered to a vent near you. [\n “gather all” setting is turned on, all members can be gathered together if no one has been chosen. When the \n gathering setting is on, if the target player is using a ladder, he/she cannot gather. If a player cannot assemble due to the setting, he/she will self-destruct.","任意のプレイヤーを自身から一番近いベントへ集合させることができるインポスター。\nキルボタンはダブルクリックを使い分ける。シングルクリックでは集合メンバーを決め、ダブルクリックでは通常キルをする。\n集合メンバーは複数人設定することができ、消えるボタンを押すことでそのメンバーを自身付近のベントに集めることができる。\n全員集合できる設定をONにしている時、誰もメンバーを決めていないと全員を集合させることができる。\n集合をかけた時、対象プレイヤーがはしごを使用していると集まることが出来ない。設定により、集まれないプレイヤーは自爆する。",
 "AssassinInfoLong","Combination Role with <#8cc2ff>Merlin</color>. \n Assassin's Conference can be triggered upon death when the \n banishment or the setting “Causing Assassin's Conference outside of banishment” is enabled. \n If you can guess (vote) for Merlin in the Assassin's Conference, the Imposter will win. \n Also, when the setting is enabled, the ability of some roles can be held along with Assassin.","<#8cc2ff>マーリン</color>とのコンビネーション役職。\n\n追放、又は「追放以外でもアサシン会議を起こす」の設定が有効時に死亡時に\nアサシン会議を発生させることができる。\n\nアサシン会議でマーリンに推測(投票)できればインポスターの勝利。\n\nまた、設定有効時にはアサシンと併せて一部の役職の能力を持つこともできる。"
 "ArcherInfoLong","An Impostor who can kill Crewmates using a bow and arrows.\nPress the Phantom button and move in the opposite direction of where you want to fire to shoot an arrow.\nPlayers hit by the arrow die instantly (deathreason: Hit).\nThe arrow disappears when it hits a wall or after a certain amount of time.","弓矢を駆使し、クルーをキルすることができるインポスター。\nファントムボタンを押し、矢を放ちたい方向と逆方向に移動し、\nもう一度ファントムボタンを押すことで矢を放つことができる。\n矢が当たったプレイヤーはその場で死亡する(死因:命中)\n矢は壁に当たるか一定時間経過すると消滅する。"
-"HadouHoInfoLong","This is an imposter that can fire a beam in a straight line in the direction it's facing with a single click.\nBe careful, as the color of the star might give you away!\nAdvice: It's recommended to move in the direction you want to shoot while shooting (to prevent shooting back).","ワンクリックボタンで向いてる方向に直線上にビームが撃てるインポスターです。\n★の色でバレる可能性があるので気をつけよう！\nアドバイス:撃ちたい方向に動きながら撃つのがおすすめ(逆撃ちを防ぐため)"
+"HadouHoInfoLong","This is an imposter that can fire a beam in a straight line in the direction it's facing with a single click.\nBe careful, as the color of the star might give you away!\nAdvice: It's recommended to move in the direction you want to shoot while shooting (to prevent shooting back).","ワンクリックボタンで向いてる方向に直線上にビームが撃てるインポスターです。※ベント内でも死亡します\n★の色でバレる可能性があるので気をつけよう！\nアドバイス:撃ちたい方向に動きながら撃つのがおすすめ(逆撃ちを防ぐため)"
 "SelfBomberInfoLong","Press the ability button to explode and kill nearby players. You also die.","能力ボタンを押すと自爆し、周囲のプレイヤーをキルします。\nまた、自分自身も死亡します。"
 "DoubleKillerInfoLong","","特殊なキル能力を有するインポスターです。\nファントムボタンでキルをすることができます。\nクールタイムは独立しており、別々に使用することができます。"
 "TimeSleeperInfoLong","Recording can be started with a single click. The recording time will be rewound after the initial recording time has elapsed. Players using animations during recording are excluded.","ワンクリックボタンでRECができる。設定時間経過で設定時間巻き戻される。REC中にアニメーション使用中だったプレイヤー等は対象外。"
@@ -841,7 +856,7 @@
 "RabbitInfoLong","Once a setup task is completed, an arrow will appear for 5 seconds indicating the direction of a random imposter at that time. After all tasks are completed, some tasks will be added that are not counted, and you can use an ability each time you complete one.","設定タスク完了すると、タスクを1つ完了させる毎にその時のランダムな1インポスターがどの方向にいるかが矢印で5秒間表示される。\nタスク全完了後もカウントされないタスクが発生し、完了するごとに能力を使用できる。"
 "SantaInfoLong","This role allows you to assign a designated role to nearby players by using the kill button after completing a task.However, if the opponent is not from the Crewmates faction, they will commit suicide.","ペットを撫でることでタスクモードとプレゼントモードを切り替えることが出来る。プレゼントモード中キルボタンで近くのプレイヤーに設定の役職を付与できる役職。\nペットがない場合でもタスク全完了でプレゼントが可能になる。\nただし、相手がクルーメイト陣営以外だった場合自殺する。"
 "SheriffInfoLong","You can kill anyone on Team Impostors.\nThe ability to kill Neutrals is a configurable setting.\nIf you try to kill a crew, you will kill yourself instead. You have no tasks.","ペットを撫でることでタスクモードとシェリフモードを切り替えることが出来る。\nシェリフモード中インポスター陣営をキルすることができる。\n※ニュートラルをキル可能にする設定有。\nｸﾙｰﾒｲﾄをキルすると自殺する。\nタスクモード中にはシェリフのキル能力が使用できない。\nシェリフモードではタスクが行えない。","(船员阵营):\n警长可以击杀内鬼（根据房间设置，警长也可以击杀独立阵营玩家）。\n警长若尝试击杀船员阵营的玩家，警长将会走火自杀。\n警长没有任务。","(船員):\n警長可以殺死狼人陣營的人,\n*可以設定中立陣營是否可以被殺\n警長若槍到好人陣營將會自殺,警長沒有任務。","(Член Экипажа):\nШериф может убивать Предателей. \nЕсть настройка, позволяющая убить даже Нейтралов. \nОднако если Шериф попытается убить Члена Экипажа, то это приведёт к его смерти. У него нет заданий.","(Tripulantes):\nVocê pode matar qualquer um, no Time Impostor.\nA habilidade de matar neutros é configurável.\nSe você tentar matar um Tripulante, irá morrer no lugar dele. Você não tem tarefas.",""
-"SheriffHadouHoInfoLong","","ワンクリックボタンで向いてる方向に直線上にビームが撃てるシェリフ。\n通常キルは不可能。\nビームで人外を最低でも１キルもできなかった場合自爆する。\nアドバイス:撃ちたい方向に動きながら撃つのがおすすめ(逆撃ちを防ぐため)"
+"SheriffHadouHoInfoLong","","ワンクリックボタンで向いてる方向に直線上にビームが撃てるシェリフ。※ベント内でも死亡します\n通常キルは不可能。\nビームでプレイヤーを最低でも１キルしないと自爆する。\nアドバイス:撃ちたい方向に動きながら撃つのがおすすめ(逆撃ちを防ぐため)"
 "SnitchInfoLong","Once you finish all your tasks, the Impostors' names will be displayed in red to you.\nWhen you have only one task left, a ★ mark will be displayed next to your name and you will be exposed to the Impostors.","タスク完了と同時にインポスターの名前の色が\n赤く表示され逆に自身のタスクが少なくなると\n名前の横に★が表示されｲﾝﾎﾟｽﾀｰに暴かれる。","(船员阵营):\n告密者完成所有任务后，将可以看到以红色昵称表示的所有内鬼。\n当告密者仅剩一个任务的时候，内鬼将会看到自己以及告密者的昵称旁边有「★」作为提示。\n（注:告密者同时作为恋人时，其技能将失效）","(船員):\n當告密者做完所有任務,狼人的名字將會變成紅色(僅告密者可見),\n但是當他剩下最後一個任務時,\n狼人會看見告密者頭上會有個星號標記。(中立或船員不可見)\n(P.S:戀人告密者技能失效)","(Член Экипажа):\nКак только Стукач выполнит все задания, то никнейм у всех Предателей будет отображаться \nкрасным цветом, и наоборот, если количество ваших заданий будет близка к завершению, \nто рядом с никнеймом Стукача появится звёздочка★, которая будет видна Предателям.","(Tripulantes): \nAssim que você terminar suas tarefas, os nomes dos Impostores serão revelados em vermelho para você. \nQuando estiver com apenas uma tarefa faltando, um símbolo (★) será mostrado no seu nome e você estará exposto aos Impostores.",""
 "SpeedBoosterInfoLong","Once you finish your tasks, a random living player will get a speed boost.","既定のタスク数を完了させると、ランダムな生存者のスピードを上げる事ができる。","(船员阵营):\n增速者完成所有任务后，场上任意一名存活玩家的速度将被加快。","(船員):加速器做完任務時可以讓隨機的活著玩家速度加快","(Член Экипажа):\nОн может увеличить скорость случайных живых игроков, если он будет выполнять задания.","(Tripulantes): \nAssim que você finalizar suas tarefas, um jogador vivo aleatório irá receber um aumento de velocidade.",""
 "DoctorInfoLong","You can see the cause of death for all players.\nIn addition, you can access vitals wherever you are while you still have battery.","プレイヤーの死因を知ることができる。(設定有)\nまた、充電がある限りどこでもバイタルを確認できる。","(船员阵营):\n医生可以查看生命监测装置并确认死亡玩家的死因。\n查看的时间长短与设备的充能数挂钩。","(船員):\n醫生可以知道每個玩家的死因\n還有醫生有一個跟科學家一樣的心電圖,它也需要充電。","(Член Экипажа):\nДоктор может узнать причину смерти игрока. \nКроме того, он имеет портативные пульсы как у учёного, которые он может использовать в любом месте, пока у него не закончится зарядка.","(Tripulantes): \nVocê pode ver a causa da morte de todos os jogadores. \nAdicionalmente, você tem acesso aos sinais vitais de todos enquanto tiver bateria.",""
@@ -934,7 +949,7 @@
 "WorkaholicInfoLong","Has more tasks than a Crewmate.\nIf you complete all tasks while alive, you achieve a solo win.\nCompleting all tasks after death will not grant a win.","クルーよりもタスクが多い。\n生存中にタスクを全て完了することで単独勝利できる。\n死亡後にタスクを全て完了しても勝利できない。"
 "MonochromerInfoLong","Wins if you survive until the end and the Crewmate team wins.\nIf the Crewmates win by tasks, you will be included in the victory.\nOtherwise, you will steal the win.\n\nDuring task turns, from the Monochromer perspective, the skins of all other players (except Ultrastar) become gray, making them indistinguishable.\nYou can change this in the settings to display them in white and black instead of gray.\n\nIn the white/black display mode, players are divided based on their original skin colors, as shown below:\n\n<#ee54bb>Pink</color>, <#f07d0d>Orange/color>, <#f6f657>Yellow</color>, <#d7e1f1>White</color>, <#38ffdd>Cyan</color>, <#50f039>Lime</color>, <#ecc0d3>Rose</color>, <#f0e7a8>Banana</color>, <#d76464>Coral</color> → White<#c61111>Red</color>, <#132ed2>Blue</color>, <#11802d>Green</color>, <#3f474e>Black</color>, <#6b2fbc>Purple</color>, <#71491e>Brown</color>, <#5f1d2e>Maroon</color>, <#758593>Gray</color>, <#918877>Tan</color> → Black","最後まで生存しているかつ、クルー陣営が勝利すると勝利できる。\nタスク勝利だと自身も追加、それ以外だと乗っ取り勝利する。\nタスクターン中、モノクラーからのみ他のプレイヤー全員(ウルトラスターを除く)のスキンがグレーになり、識別できなくなる。\nグレーではなく白,黒で表示するように設定で変更が可能。\n白,黒表示では元々のスキンの色で分けられており、以下の通りである。\n\n<#ee54bb>ピンク</color>,<#f07d0d>オレンジ</color>,<#f6f657>イエロー</color>,<#d7e1f1>ホワイト</color>,<#38ffdd>シアン</color>,<#50f039>ライム</color>,<#ecc0d3>ローズ</color>,<#f0e7a8>バナナ</color>,<#d76464>コーラル</color>→白\n<#c61111>レッド</color>,<#132ed2>ブルー</color>,<#11802d>グリーン</color>,<#3f474e>ブラック</color>,<#6b2fbc>パープル</color>,<#71491e>ブラウン</color>,<#5f1d2e>マルーン</color>,<#758593>グレー</color>,<#918877>タン</color>→黒"
 "JackaldollInfoLong","Sides with the Jackal team.\nCan recognize both Jackal and Jackal Mafia.\nIf your master is eliminated, your role may change depending on the settings.\nHas no tasks.","ジャッカル陣営の味方をする。\nジャッカル、ジャッカルマフィアと互いに認識できる。\nご主人が全滅した場合設定に応じて役職が変わったりなどする。\nタスクはない。"
-"JackalHadouHoInfoLong","This Jackal can fire a beam in a straight line in the direction you're facing with a single click.\n Be careful, as the color of the star might give you away! After voting for yourself, you can vote for another player, allowing you to get SK (Skill Skill) by getting close to that player for 1.5 seconds on the next turn. \n If you reload, you can fire a super wave cannon.\n Advice: It's recommended to move in the direction you want to fire while shooting (to prevent shooting back).","ワンクリックボタンで向いてる方向に直線上にビームが撃てるジャッカルです。\n★の色でバレる可能性があるので気をつけよう！\nペットを撫でることでキルモードとSKモードを変更できます。SKモードでプレイヤーにキルすることでで弾といサイドキックを作ることができます。\n※ペットがない場合でも会議で自投票後プレイヤーに投票、次のターンそのプレイヤーに1.5秒近づくことでも弾サイドキックが可能です。\n弾が装填をした場合超波動砲を撃てます。\nアドバイス:撃ちたい方向に動きながら撃つのがおすすめ(逆撃ちを防ぐため)"
+"JackalHadouHoInfoLong","This Jackal can fire a beam in a straight line in the direction you're facing with a single click.\n Be careful, as the color of the star might give you away! After voting for yourself, you can vote for another player, allowing you to get SK (Skill Skill) by getting close to that player for 1.5 seconds on the next turn. \n If you reload, you can fire a super wave cannon.\n Advice: It's recommended to move in the direction you want to fire while shooting (to prevent shooting back).","ワンクリックボタンで向いてる方向に直線上にビームが撃てるジャッカルです。※ベント内でも死亡します\n★の色でバレる可能性があるので気をつけよう！\nペットを撫でることでキルモードとSKモードを変更できます。SKモードでプレイヤーにキルすることでで弾といサイドキックを作ることができます。\n※ペットがない場合でも会議で自投票後プレイヤーに投票、次のターンそのプレイヤーに1.5秒近づくことでも弾サイドキックが可能です。\n弾が装填をした場合超波動砲を撃てます。\nアドバイス:撃ちたい方向に動きながら撃つのがおすすめ(逆撃ちを防ぐため)"
 "TamaInfoLong","Sides with the Jackal team.\nCan recognize both Jackal and Jackal Mafia.\nIf your master is eliminated, your role may change depending on the settings.\nHas no tasks.\nThe Wave Motion Gun Jackal can be reloaded by clicking the kill button.\nWhen Wave Motion Gun Jackal dies, it is promoted to Wave Motion Gun Jackal.","ジャッカル陣営の味方をする。\nジャッカル、ジャッカルマフィアと互いに認識できる。\nご主人が全滅した場合設定に応じて役職が変わったりなどする。\nタスクはない。\n波動砲ジャッカルにキルボタンをクリックすることで装填ができる。\n波動砲ジャッカルが死ぬと波動砲ジャッカルに昇格する。"
 "DoppelGangerInfoLong","Cannot kill anyone except the shapeshift target.\nAlso cannot revert shapeshifting once transformed.\nWhile shapeshifted, a count increases by 0.1 per second, and after killing the shapeshift target, the count increases by 1 per second until a report occurs.\nIf the count exceeds the value required for an additional victory and you survive until the end of the game, you achieve an additional win.\nIf the count reaches the value required for a win, you instantly win at that moment.\nCannot use vents or sabotages.","シェイプ対象以外キルが出来ない。\nまた、シェイプシフトを解除することもできない。\nシェイプシフト中にカウントが0.1/s溜まり、シェイプ対象をキルすると、通報までカウントが1/s貯まる。\n追加勝利に必要なカウントを超えゲーム終了まで生存していると追加勝利、\n勝利に必要なカウントに達するとその時点で自身が勝利する。\nベントやサボタージュは使用不可能"
 "MassMediaInfoLong","Can use the Kill button to track a target.\n\nThe Mass Media can see the location of their target, but when the target is nearby, their vision turns completely dark.\nIf the target is killed and the Mass Media reports the body,\nthey can guess who killed the target through a voting event.\nOnce the guess is made, the meeting ends immediately.\nIf the Mass Media skips voting, no guess is made.\nIf the guess is correct, the Mass Media wins.\nIf the guess is wrong, the Mass Media dies.\nThe Mass Media cannot use any information devices (such as admin map or vitals).\nThe tracking target and related data are reset at each meeting.\nWhen the Mass Media reports the target’s body, any role-related or attribute-related effects will not be applied.","キルボタンを使ってその人を追跡することが出来る。\nマスメディアは追跡相手の位置が分かるが、追跡相手が近いと視界が真っ暗になる。\n追跡相手がキルされ、自身が通報した場合、\n誰が追跡相手をキルしたのかを投票で推測することが出来る。\n推測を行った場合は会議が即座に終了する。スキップの場合は推測が行われない。\n推測があっていた場合、マスメディアの勝利、間違っていればマスメディアが死亡する。\nまた、情報機器を使用することが出来ない。追跡相手等は会議でリセットされる。\nマスメディアが対象の死体を通報する時にのみ、属性(役職付与属性含む)の効果は適応されない"
@@ -973,7 +988,14 @@
 "ScratcherInfoLong","Each time you finish a task you earn scratch tickets.\n\nIn a meeting you can scratch tickets by self-voting (vote for yourself). Each scratch consumes one ticket and rolls for a hit at the set probability; the result and remaining tickets are shown by message.\n\nGet the set number of hits to hijack the game and win alone.","タスクを終わらせる度にスクラッチを入手する。\n会議でコマンド/cmd shでスクラッチを削ることができ、当たったかどうかがメッセージで表示される。\n設定した枚数の当たりを引くと単独勝利。"
 "MoiraInfoLong","[Neutral] Crewmate replacement\n\nMoira can alter the fates of others by swapping two players' roles.\n\nDuring a meeting, self-vote to enter [Fate Change Mode].\nThen vote for your 1st target, then vote for your 2nd target.\nAt the end of the meeting, the two targets will have their roles swapped.\n\nYou have a limited number of swaps.\nOnce all swaps are used, your identity is revealed to everyone.\nIf you survive to the end after using all your swaps, you win!\n\nSwapped roles are permanent — they are NOT reverted even if Moira dies.\n\nIf [Swap Votes] is ON:\nVotes cast on your two targets will be counted for the other target instead.","モイラは2人のプレイヤーの役職を入れ替えることができる。\n\n会議中に自分自身に投票すると【運命改変モード】に入る。\n次に1人目のターゲットに投票し、さらに2人目のターゲットに投票する。\n会議終了時に、その2人の役職が入れ替わる。\n\n改変回数には上限がある。\n全ての改変を使い切ると、モイラの正体が全員に公開される。\n全改変を使い切り、試合終了後に生存していると単独勝利！ない。"
 "HappyJesterInfoLong","","会議で追放された時にプレイヤー全員が勝利できる。\n追放されず試合が終了orキルされると敗北。\nこの役職には勝利優先度がなく必ずこの役職が勝利を優先される。\n※勝利画面でジェスター勝利と出るのは仕様です。"
-"#NeutralInfoLong"
+"OgreInfoLong","(Neutrals):\nAdditional victory is awarded if the impostor survives Ogre with at least one impostor remaining at the end of the game.\nIt has a kill button and can kill, but the probability of a successful kill decreases with each successful kill.\nWhen about to be killed by an impostor, it will guard the kill with a set probability. If the kill is from a non-impostor, it will guard the kill with a set probability and rebound to kill.","ゲーム決着時に、インポスターが1人以上残った状態で自身が生存していると追加で勝利する。\nキルボタンを持ちキルできるが、キル成功確率はキルに成功する毎に下がる。\nインポスターからキルされそうになった時、設定確率でキルガードする。インポスター以外からのキルの場合、設定確率でキルガードし、はね返してキルする。"
+"LawyerInfoLong","(Neutrals):\nLawyer defends the impostor or NeutralKiller.\nIf the client dies, the Lawyer changes his role to Pursuer(additional win if he survives & prevents a set number of kills).Both Lawyer and Pursuer do not have the task.\n\nThere are two conditions for a lawyer's victory.\nWhen the client wins when he is alive,\n1) If the lawyer is dead, he wins along with his winning team.\n2) If the lawyer survives, the winning team's victory is intercepted (sole victory for the lawyer).","弁護士は、依頼人となるインポスターorキル可能な第3陣営を擁護する。\n依頼人が死亡すると弁護士は役職が変更されて「追跡者(自身が生存していれば追加勝利 + 設定回数キルを防ぐ)」 になる。弁護士、追跡者共にタスクはもたない。\n\n弁護士の勝利条件は以下の2通り。\n依頼人が生存時に勝利した時、\n1) 弁護士が死亡していたら、その優勝チームと共に勝利。\n2) 弁護士が生存していたら、優勝チームの勝利を横取り(弁護士の単独勝利)。","(中立阵营):\n律师为内鬼/中立杀手负责辩护\n如果客户死了 它就会变成起诉人(如果他活了下来并防止了一定数量的击杀，则会赢得额外的胜利).律师和追击者都没有任务\n\n律师获胜有两个条件\n当客户活着时获胜,\n1) 如果律师死了，他将与获胜团队一起获胜.\n2) 如果律师活到了最后，获胜团队的胜利将被取消（律师抢夺了胜利）"
+"PirateInfoLong","(Neutrals):\nFirst, someone kills.The killed Crew member dies, but becomes a member of the pirate Gang and the victory condition changes to Pirate Victory.\nThe gang has a task, and the pirate's ability is expanded according to the gang's completion of the task.\nIf the Impostor is wiped out and the number of pirates equals or exceeds the number of crew members, wins alone.\n[Pirate ability by Gang task]\n25%：Can Vent\n50%：Can Kill\n75%：Grant Buff-Add-On\n100%：Know Impostor","はじめに誰かキルする。そのキルされた人は死亡するが、海賊の一味となり勝利条件が「海賊の勝利」に変化する。\n一味はタスクを持ち、一味のタスク完了度により海賊の能力が拡大する。\nインポスターの全滅かつ、海賊の数がクルーと同数または上回ると単独で勝利する。\n[一味のタスクによる海賊の能力]\n25%完了：ベント使用可能\n50%完了：キル可能\n75%完了：バフ属性の付与\n100%完了：インポスターが誰か分かる"
+"GangInfoLong","(Neutrals):\nLet's aim for a pirate victory. The gang has a task, and the pirate's ability is expanded according to the gang's completion of the task.\n[task]\n25%：Can Vent\n50%：Can Kill\n75%：Grant Buff-Add-On\n100%：Know Impostor","海賊の勝利を目指そう。一味のタスク完了度により海賊の能力が拡大する。\n[タスク]\n25%完了：ベント使用可能\n50%完了：キル可能\n75%完了：バフ属性の付与\n100%完了：インポスターが誰か分かる"
+"DuelistInfoLong","(Neutrals):\nThe opponent who votes for the first meeting becomes the Duelist's own Archenemy.After the decision of the Archenemy, the name of the duelist is also displayed from the Archenemy's point of view, and the victory condition for the duelist and Archenemy is 'If you are alive when the victory is decided and your Archenemy dies, you win an additional victory.'","自投票後会議で投票した相手を自身の宿敵にする。宿敵決定時の投票時、決闘者の投票先は全視点見えない。設定ターン以内に会議で宿敵を決定しないと自殺する。\n宿敵決定後、宿敵目線でも決闘者が誰か表示され、決闘者・宿敵の勝利条件は「勝利判定時に自身が生存、且つ宿敵(決闘者)が死亡で追加勝利」となる。"
+"PursuerInfoLong","(Neutrals):\nThe client died, so the lawyer became a pursuer.\nIf you yourself are still alive at the end of the game, you win an additional victory. It is also possible to prevent kills for a set number of times.","依頼人が死亡したので弁護士は追跡者になった。\n自身がゲーム終了時に生存していれば追加で勝利となる。また、設定回数分キルを防ぐことが可能。","(中立阵营):\n当客户死了 律师将会变成起诉人\n如果起诉人在游戏结束时还活着，它将单独获得胜利. 也可以在设定的次数内阻止死亡",
+"MonikaInfoLong","","キルボタン「抹消」で対象を半死亡の「ゴミ箱」レイヤーへ送る。ゴミ箱の者は会議での発言・投票・能力を失うが、ゴミ箱・死亡者とは秘匿チャットで会話できる。ゴミ箱に居ない生存者が2名になると特殊会議で追加の勝者を選び、0～1名になるとモニカと残り全員が勝利する。"
+"PokerFaceInfoLong","PokerfaceWinnerOnlyAlive,Only surviving poker faces win.","生き残ったポーカーフェイスのみ勝利する"
 
 "# ImpostorDescInfos"
 "QuickKillerDesc","If you perform a kill while <b>{0}</b> or more players are alive,\nyou enter Quick Mode for <b>{1}</b> seconds.\nDuring Quick Mode, the kill cooldown is 0 seconds.\nAfter Quick Mode ends, the kill cooldown returns to normal.","<b>{0}</b>人以上生存している状態でキルをすると、\n<b>{1}</b>秒間の間、クイックモードになる\nクイックモード中はキルクールが0sになる。\nクイックモード終了時、キルクールが戻る。"
@@ -2029,7 +2051,9 @@
 "MilkmanMilkPerTask","Milk per Task Completed","タスク1完了毎の牛乳数"
 "MilkmanEnableRottenMilk","Enable Rotten Milk","腐った牛乳を配達する"
 "MilkmanRottenMilkChance","Rotten Milk Chance","腐った牛乳の確率"
+"MilkmanRevealNameOnSurvive","Reveal Name on Survive","生存時に名前を明かす"
 "NiceWorkaholicCanWinAtDeath","Can Win Death","死亡後も勝利できる"
+"NimrodMeetingTime","Execution Meeting Time","ニムロッド会議時間"
 
 "## Neutral Role Setting"
 "SchrodingerCatExiledTeamChanges","Team Changes When Ejected","吊られた際、陣営が変化する","薛定谔的猫被放逐时会加入其他阵营","薛定諤的貓被丟出時陣營會轉變","Команда меняется после его Изгнания","Time Muda Quando Exilado",""
@@ -2290,6 +2314,35 @@
 "MoiraRevealed","{0} has used all fate swaps. Their identity is now revealed!","{0} の運命改変が全て使われた。正体が明らかになった！"
 "MoiraExiledRevert","Moira has been eliminated. All fate swaps have been undone.","モイラが排除された。全ての運命改変が解除された。"
 "HappyJesterRequireTask","Require Task Completion","タスク完了で勝利"
+"OgreKillSuccessRate","Percentage Reduction in the Rate of Successful Kill(*)","キル成功確率が減少する割合(×)",
+"OgreKilledGuardRate","Killed Guard Rate","キルされる時にガードする確率",
+"PirateLimitTurn","Turn Required To Create Gang","一味を作成しないといけないターン数",
+"PirateImpostorCanBeGang","Impostor Can Be Gang","インポスターが一味になれる",
+"PirateMadmateCanBeGang","Madmate Can Be Gang","マッドメイトが一味になれる",
+"PirateNeutralCanBeGang","Neutral Can Be Gang","ニュートラルが一味になれる",
+"PirateBuffAddonAssignTarget","Buff Add-On To Be Granted (Gang Task 75%)","一味のタスク75%で付与するバフ属性",
+"PirateLimitTurn","Pirate Limit Turn","一味作成の猶予ターン数"
+"PirateCanImpostorBeGang","Pirate Can Impostor Be Gang","インポスターを一味にできる"
+"PirateCanMadmateBeGang","Pirate Can Madmate Be Gang","マッドメイトを一味にできる"
+"PirateCanNeutralBeGang","Pirate Can Neutral Be Gang","第三陣営を一味にできる"
+"PirateBuffAddonTarget","Pirate Buff Addon Target","海賊に付与する追加属性"
+"LawyerTargetKnows","Lawyer target knows","依頼人は弁護されている事がわかる","律师的客户知道自己有律师",
+"LawyerKnowTargetRole","Lawyer know target role","弁護士は依頼人の役職が分かる","律师知道客户职业",
+"LawyerPursuerGuardNum","Pursuer guard count","追跡者のキルガード回数","起诉人自保次数",
+"DuelistMeetingLimit","Duelist Meeting Limit","宿敵決定の猶予ターン数",
+"PokerFaceAdditionalWin","","追加勝利"
+"TheFirstLittlePigTaskPercent","1st Pig Required Tasks","1番目の仔豚の必要タスク量"
+"TheFirstLittlePigFlashInterval","Warning Flash Interval","警戒フラッシュの間隔"
+"TheSecondLittlePigTaskPercent","2nd Pig Required Tasks","2番目の仔豚の必要タスク量"
+"TheSecondLittlePigGuardCount","Guard Count","ガード回数"
+"TheThirdLittlePigTaskPercent","3rd Pig Required Tasks","3番目の仔豚の必要タスク量"
+"TheThirdLittlePigCounterCount","Counter Count","カウンター回数"
+"MonikaEraseButton","Erase","抹消"
+"MonikaTrashedNotify","<color=#e5a497>【×抹消×】\nあなたはゴミ箱レイヤーに送られました。\n会議での発言・投票・能力使用はできません。\nゴミ箱・死亡者とはチャットで会話できます。</color>","<color=#e5a497>【×抹消×】\nあなたはゴミ箱レイヤーに送られました。\n会議での発言・投票・能力使用はできません。\nゴミ箱・死亡者とはチャットで会話できます。</color>"
+"MonikaButtonConsumedNotify","<color=#e5a497>【Emergency Meeting】\nYour emergency meeting button count was reduced by 1.</color>","<color=#e5a497>【緊急会議】\nあなたの緊急会議ボタン使用回数が1消費されました。</color>"
+"MonikaLowerText","Erase targets to send them to the Trash layer","キルで抹消 → ゴミ箱レイヤーへ送る"
+"MonikaSelectMeetingTitle","Monika Victory - Choose an Additional Winner","モニカ勝利 - 追加の勝者を選択"
+"MonikaSelectMeetingText","Vote for one player to make them win with you (Skip = no additional winner)","1人に投票すると共に勝利します（スキップ=追加勝者なし）"
 
 "## Unit Role Setting"
 "BraidKillCooldown","Bread Task Complete Driver Killcool","ブレイドが全タスク完了時のキルクール"
@@ -2598,6 +2651,7 @@
 "Analyzer_MeetingText","{0} was {1}players...","{0}陣営は残り{1}人いるようだ。"
 "Analyzer_MeetingTitle","【===== Analysis =====】","【===== 解析結果 =====】"
 "IsNimrodMeetingTitle","【===== Nimrod Meeting =====】","【===== ニムロッド会議 =====】"
+"IsNimrodMeetingText","Nimrod! Choose who to execute!","処刑するプレイヤーを選べ！"
 
 "OnePlayer","the first person","一人目"
 "TowPlayer","second person","二人目"

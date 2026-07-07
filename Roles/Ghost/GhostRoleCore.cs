@@ -22,6 +22,8 @@ class GhostRoleCore
         GhostReseter.Init();
         GhostRumour.Init();
         GuardianAngel.Init();
+        GhostFloodlight.Init();
+        GhostSaboteur.Init();
 
         //アドオンもここ置かせて( ᐛ )
         LastImpostor.Init();
@@ -130,6 +132,8 @@ class GhostRoleCore
         ObjectOptionitem.Create(1_000_120, "Madmate", true, null, TabGroup.GhostRoles)
             .SetOptionName(() => "Crew Ghost").SetColor(ModColors.CrewMateBlue).SetTag(CustomOptionTags.Role);
         Ghostbuttoner.SetupCustomOption();
+        GhostSaboteur.SetupCustomOption();
+        GhostFloodlight.SetupCustomOption();
         GhostNoiseSender.SetupCustomOption();
         GhostReseter.SetupCustomOption();
         GhostRumour.SetupCustomOption();

@@ -21,29 +21,45 @@ namespace TownOfHost.Modules
             Logger.Info($"DefaultDiscussionTime:{DefaultDiscussionTime}, DefaultVotingTime{DefaultVotingTime}", "MeetingTimeManager.Init");
             ResetMeetingTime();
         }
+
         public static void ApplyGameOptions(IGameOptions opt)
         {
             opt.SetInt(Int32OptionNames.DiscussionTime, DiscussionTime);
             opt.SetInt(Int32OptionNames.VotingTime, VotingTime);
         }
+
         private static void ResetMeetingTime()
         {
             DiscussionTime = DefaultDiscussionTime;
             VotingTime = DefaultVotingTime;
         }
+
         public static void OnReportDeadBody()
         {
-            if (Roles.Crewmate.Balancer.Id != 255 && Roles.Crewmate.Balancer.target1 is not 255 && Roles.Crewmate.Balancer.target1 is not 255)
+            // ★ ニムロッド会議
+            if (Roles.Crewmate.Nimrod.IsExecutionMeeting())
+            {
+                Nimrod(Roles.Crewmate.Nimrod.meetingtime);
+                return;
+            }
+
+            // 天秤会議
+            if (Roles.Crewmate.Balancer.Id != 255
+                && Roles.Crewmate.Balancer.target1 is not 255
+                && Roles.Crewmate.Balancer.target2 is not 255)
             {
                 Balancer(Roles.Crewmate.Balancer.meetingtime);
                 return;
             }
-            if (Assassin.assassin?.NowState is Assassin.AssassinMeeting.Guessing or Assassin.AssassinMeeting.CallMetting)
+
+            if (Assassin.assassin?.NowState is Assassin.AssassinMeeting.Guessing
+                or Assassin.AssassinMeeting.CallMetting)
             {
                 DiscussionTime = 0;
                 VotingTime = Assassin.OptionAssassinMeetingTime.GetInt();
                 return;
             }
+
             if (Options.AllAliveMeeting.GetBool() && PlayerCatch.IsAllAlive)
             {
                 DiscussionTime = 0;
@@ -64,9 +80,7 @@ namespace TownOfHost.Modules
                 if (role is IMeetingTimeAlterable meetingTimeAlterable)
                 {
                     if (!role.Player.IsAlive() && meetingTimeAlterable.RevertOnDie)
-                    {
                         continue;
-                    }
 
                     var time = meetingTimeAlterable.CalculateMeetingTimeDelta();
                     Logger.Info($"会議時間-{role.Player.GetNameWithRole()}: {time} s", "MeetingTimeManager.OnReportDeadBody");
@@ -75,16 +89,15 @@ namespace TownOfHost.Modules
             }
 
             int TotalMeetingTime = DiscussionTime + VotingTime;
-            //時間の下限、上限で刈り込み
             BonusMeetingTime = Math.Clamp(TotalMeetingTime + BonusMeetingTime, MeetingTimeMin, MeetingTimeMax) - TotalMeetingTime;
             if (BonusMeetingTime >= 0)
-                VotingTime += BonusMeetingTime; //投票時間を延長
+                VotingTime += BonusMeetingTime;
             else
             {
-                DiscussionTime += BonusMeetingTime; //会議時間を優先的に短縮
-                if (DiscussionTime < 0) //会議時間だけでは賄えない場合
+                DiscussionTime += BonusMeetingTime;
+                if (DiscussionTime < 0)
                 {
-                    VotingTime += DiscussionTime; //足りない分投票時間を短縮
+                    VotingTime += DiscussionTime;
                     DiscussionTime = 0;
                 }
             }
@@ -92,6 +105,13 @@ namespace TownOfHost.Modules
         }
 
         public static void Balancer(int time)
+        {
+            DiscussionTime = 0;
+            VotingTime = time;
+        }
+
+        // ★ ニムロッド会議用（Balancer と同じ実装）
+        public static void Nimrod(int time)
         {
             DiscussionTime = 0;
             VotingTime = time;

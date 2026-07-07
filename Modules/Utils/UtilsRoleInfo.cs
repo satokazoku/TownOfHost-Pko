@@ -111,6 +111,9 @@ namespace TownOfHost
                 roleCommands.Add((CustomRoles)(-7), $"== {GetString("GhostRole")} ==");  // 区切り用
                                                                                          //幽霊
                 roleCommands.Add(CustomRoles.Ghostbuttoner, "Bbu");
+                roleCommands.Add(CustomRoles.GhostSaboteur, "Gsa");
+                roleCommands.Add(CustomRoles.GhostFloodlight, "Gfl");
+                roleCommands.Add(CustomRoles.GhostSaboteur, "Gsa");
                 roleCommands.Add(CustomRoles.GhostNoiseSender, "NiS");
                 roleCommands.Add(CustomRoles.GhostReseter, "Res");
                 roleCommands.Add(CustomRoles.GhostRumour, "Rum");

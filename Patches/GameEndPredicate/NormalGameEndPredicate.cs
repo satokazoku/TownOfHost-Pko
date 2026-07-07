@@ -264,9 +264,17 @@ namespace TownOfHost
             int MadBetrayer = 0;
             int Pavlov = 0;
             int StandMasterCount = 0;
+            // ★ Monika: ゴミ箱に居ない生存モニカ数（モニカ独自勝利は Monika.cs で処理）
+            int MonikaCount = 0;
 
             foreach (var pc in PlayerCatch.AllAlivePlayerControls)
             {
+                // ★ Monika: ゴミ箱レイヤーに居るプレイヤーは半死亡扱い。
+                //    「ゴミ箱に居ない生存者」のみをカウント対象にするため、生存カウントから除外する。
+                if (Monika.MonikaTrashLayer.Contains(pc.PlayerId)) continue;
+                // ★ Monika本人はキル勢だが、勝利判定は Monika.cs 側で独自に行うため
+                //    通常の陣営カウントには含めず、生存フラグだけ立てる。
+                if (pc.Is(CustomRoles.Monika)) { MonikaCount++; continue; }
                 if (pc.GetCustomRole() is CustomRoles.MadBetrayer)
                 {
                     Roles.Madmate.MadBetrayer.CheckCount(ref Crew, ref MadBetrayer);
@@ -306,6 +314,15 @@ namespace TownOfHost
 
             bool standMasterAlive = PlayerCatch.AllAlivePlayerControls
                 .Any(pc => pc.Is(CustomRoles.StandMaster));
+
+            // ★ Monika: モニカが生存している間は、通常の陣営全滅判定でゲームを終わらせない。
+            //    （モニカの勝利/敗北判定は Monika.cs の CheckWinConditions で行う）
+            if (MonikaCount > 0
+                && Imp == 0 && Jackal == 0 && Remotekiller == 0 && GrimReaper == 0
+                && MilkyWay == 0 && MadBetrayer == 0 && Pavlov == 0 && StandMasterCount == 0)
+            {
+                return false;
+            }
 
             if (Imp == 0 && FoxAndCrew == 0 && Jackal == 0 && Remotekiller == 0
                 && MilkyWay == 0 && MadBetrayer == 0 && Pavlov == 0 && StandMasterCount == 0) //全滅

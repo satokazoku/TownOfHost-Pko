@@ -130,7 +130,9 @@ class AddondataInfo
 
                     // 幽霊役職
                     {CustomRoles.Ghostbuttoner,"#d0af4c"},
+                    {CustomRoles.GhostFloodlight, "#66f3ff"},
                     {CustomRoles.GhostNoiseSender, "#5aa698"},
+                    {CustomRoles.GhostSaboteur, "#00ffcc"},
                     {CustomRoles.GhostReseter , "#a87a71"},
                     {CustomRoles.GhostRumour , "#707cab"},
                     {CustomRoles.GuardianAngel,"#7cc0fc"},

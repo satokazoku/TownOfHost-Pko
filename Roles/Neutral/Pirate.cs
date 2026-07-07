@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
@@ -42,11 +41,7 @@ public sealed class Pirate : RoleBase, IKiller
         CanImpostorBeGang = OptionCanImpostorBeGang.GetBool();
         CanMadmateBeGang = OptionCanMadmateBeGang.GetBool();
         CanNeutralBeGang = OptionCanNeutralBeGang.GetBool();
-
-        int sel = OptionBuffAddonTarget.GetValue();
-        grantAddonRole = sel == 0
-            ? BuffAddonRoles[IRandom.Instance.Next(BuffAddonRoles.Length)]
-            : BuffAddonRoles[sel - 1];
+        GangBuffAddons = OptionGangBuffAddon.GetNowRoleValue();
 
         gangPlayerId = byte.MaxValue;
         isMadeGang = false;
@@ -59,7 +54,7 @@ public sealed class Pirate : RoleBase, IKiller
     static OptionItem OptionCanImpostorBeGang;
     static OptionItem OptionCanMadmateBeGang;
     static OptionItem OptionCanNeutralBeGang;
-    static OptionItem OptionBuffAddonTarget;
+    static AssignOptionItem OptionGangBuffAddon;
 
     static float KillCooldown_;
     static bool HasImpostorVision_;
@@ -70,19 +65,11 @@ public sealed class Pirate : RoleBase, IKiller
 
     public byte gangPlayerId;
     public bool isMadeGang;
-    public CustomRoles grantAddonRole;
     int turnNumber;
 
-    enum OptionName
-    {
-        PirateLimitTurn,
-        PirateCanImpostorBeGang,
-        PirateCanMadmateBeGang,
-        PirateCanNeutralBeGang,
-        PirateBuffAddonTarget,
-    }
+    public static List<CustomRoles> GangBuffAddons = new();
 
-    public static readonly CustomRoles[] BuffAddonRoles =
+    public static readonly CustomRoles[] DefaultBuffAddons =
     [
         CustomRoles.Autopsy,
         CustomRoles.Lighting,
@@ -102,6 +89,30 @@ public sealed class Pirate : RoleBase, IKiller
         CustomRoles.Water,
     ];
 
+    public static readonly CustomRoles[] RemoveAddon =
+    [
+        CustomRoles.Amnesia,
+        CustomRoles.Workhorse,
+        CustomRoles.LastImpostor,
+        CustomRoles.LastNeutral,
+        CustomRoles.Stack,
+        CustomRoles.Jumbo,
+        CustomRoles.Stamina,
+        CustomRoles.Twins,
+        CustomRoles.Triplets,
+        CustomRoles.OneWolf,
+        CustomRoles.Connecting,
+    ];
+
+    enum OptionName
+    {
+        PirateLimitTurn,
+        PirateCanImpostorBeGang,
+        PirateCanMadmateBeGang,
+        PirateCanNeutralBeGang,
+        PirateGangBuffAddon,
+    }
+
     static void SetupOptionItem()
     {
         SoloWinOption.Create(RoleInfo, 9, defo: 15);
@@ -109,15 +120,15 @@ public sealed class Pirate : RoleBase, IKiller
             new(0f, 180f, 2.5f), 30f, false).SetValueFormat(OptionFormat.Seconds);
         OptionHasImpostorVision = BooleanOptionItem.Create(RoleInfo, 11, GeneralOption.ImpostorVision, true, false);
         OptionLimitTurn = IntegerOptionItem.Create(RoleInfo, 12, OptionName.PirateLimitTurn,
-            new(1, 30, 1), 3, false).SetValueFormat(OptionFormat.Turns);
+            new(1, 30, 1), 3, false).SetValueFormat(OptionFormat.Times);
         OptionCanImpostorBeGang = BooleanOptionItem.Create(RoleInfo, 13, OptionName.PirateCanImpostorBeGang, false, false);
         OptionCanMadmateBeGang = BooleanOptionItem.Create(RoleInfo, 14, OptionName.PirateCanMadmateBeGang, true, false);
         OptionCanNeutralBeGang = BooleanOptionItem.Create(RoleInfo, 15, OptionName.PirateCanNeutralBeGang, true, false);
-
-        var options = new[] { "Random" }
-            .Concat(BuffAddonRoles.Select(r => UtilsRoleText.GetRoleName(r)))
-            .ToArray();
-        OptionBuffAddonTarget = StringOptionItem.Create(RoleInfo, 16, OptionName.PirateBuffAddonTarget, options, 0, false);
+        OptionGangBuffAddon = AssignOptionItem.Create(
+            RoleInfo, 16, OptionName.PirateGangBuffAddon,
+            0, false, null,
+            true, true, true, true, true,
+            RemoveAddon);
 
         Gang.HideRoleOptions(CustomRoles.Gang);
     }
@@ -148,10 +159,7 @@ public sealed class Pirate : RoleBase, IKiller
         return true;
     }
 
-    public override void ApplyGameOptions(IGameOptions opt)
-    {
-        opt.SetVision(HasImpostorVision_);
-    }
+    public override void ApplyGameOptions(IGameOptions opt) => opt.SetVision(HasImpostorVision_);
 
     public void OnCheckMurderAsKiller(MurderInfo info)
     {
@@ -203,10 +211,7 @@ public sealed class Pirate : RoleBase, IKiller
         _ = new LateTask(() => UtilsNotifyRoles.NotifyRoles(), 0.2f, "Pirate.Notify", true);
     }
 
-    public override void OnStartMeeting()
-    {
-        turnNumber++;
-    }
+    public override void OnStartMeeting() => turnNumber++;
 
     public override void AfterMeetingTasks()
     {
@@ -259,7 +264,6 @@ public sealed class Pirate : RoleBase, IKiller
         using var sender = CreateSender();
         sender.Writer.Write(gangPlayerId);
         sender.Writer.Write(isMadeGang);
-        sender.Writer.WritePacked((int)grantAddonRole);
         sender.Writer.Write(turnNumber);
     }
 
@@ -267,7 +271,6 @@ public sealed class Pirate : RoleBase, IKiller
     {
         gangPlayerId = reader.ReadByte();
         isMadeGang = reader.ReadBoolean();
-        grantAddonRole = (CustomRoles)reader.ReadPackedInt32();
         turnNumber = reader.ReadInt32();
     }
 }
@@ -301,17 +304,12 @@ public sealed class Gang : RoleBase, IAdditionalWinner
         CustomRoleManager.MarkOthers.Add(GetMarkOthers);
     }
 
-    static void SetupOptionItem()
-    {
-        HideRoleOptions(CustomRoles.Gang);
-    }
+    static void SetupOptionItem() => HideRoleOptions(CustomRoles.Gang);
 
     public static void HideRoleOptions(CustomRoles role)
     {
-        if (Options.CustomRoleSpawnChances?.TryGetValue(role, out var sp) == true)
-            sp.SetHidden(true);
-        if (Options.CustomRoleCounts?.TryGetValue(role, out var cp) == true)
-            cp.SetHidden(true);
+        if (Options.CustomRoleSpawnChances?.TryGetValue(role, out var sp) == true) sp.SetHidden(true);
+        if (Options.CustomRoleCounts?.TryGetValue(role, out var cp) == true) cp.SetHidden(true);
     }
 
     public byte OwnerId;
@@ -329,19 +327,27 @@ public sealed class Gang : RoleBase, IAdditionalWinner
         }
     }
 
-    public override void OnDestroy()
-    {
-        CustomRoleManager.MarkOthers.Remove(GetMarkOthers);
-    }
+    public override void OnDestroy() => CustomRoleManager.MarkOthers.Remove(GetMarkOthers);
 
-    public void SetOwner(byte ownerId)
-    {
-        OwnerId = ownerId;
-        SendRpc();
-    }
+    public void SetOwner(byte ownerId) { OwnerId = ownerId; SendRpc(); }
 
     public Pirate GetOwner() =>
         OwnerId == byte.MaxValue ? null : GetPlayerById(OwnerId)?.GetRoleClass() as Pirate;
+
+    public override void OnFixedUpdate(PlayerControl player)
+    {
+        if (!AmongUsClient.Instance.AmHost || player != Player || !Player.IsAlive()) return;
+        if (!GameStates.IsInTask || OwnerId == byte.MaxValue) return;
+
+        var owner = GetPlayerById(OwnerId);
+        if (owner == null || !owner.IsAlive() || owner.GetRoleClass() is not Pirate)
+        {
+            var state = PlayerState.GetByPlayerId(Player.PlayerId);
+            if (state != null) state.DeathReason = CustomDeathReason.FollowingSuicide;
+            Player.SetRealKiller(owner ?? Player);
+            Player.RpcMurderPlayerV2(Player);
+        }
+    }
 
     public override bool OnCompleteTask(uint taskid)
     {
@@ -371,12 +377,16 @@ public sealed class Gang : RoleBase, IAdditionalWinner
             var pirate = GetOwner();
             if (pirate != null && pirate.Player.IsAlive())
             {
-                pirate.Player.RpcSetCustomRole(pirate.grantAddonRole);
-                Utils.SendMessage(string.Format(
-                    GetString("GangAddonGranted"),
-                    UtilsRoleText.GetRoleColorAndtext(pirate.grantAddonRole)),
+                var pool = Pirate.GangBuffAddons;
+                CustomRoles addon = pool.Count > 0
+                    ? pool[IRandom.Instance.Next(pool.Count)]
+                    : Pirate.DefaultBuffAddons[IRandom.Instance.Next(Pirate.DefaultBuffAddons.Length)];
+
+                pirate.Player.RpcSetCustomRole(addon);
+                Utils.SendMessage(
+                    string.Format(GetString("GangAddonGranted"), UtilsRoleText.GetRoleColorAndtext(addon)),
                     pirate.Player.PlayerId);
-                Logger.Info($"[Gang] 海賊に属性付与: {pirate.grantAddonRole}", "Gang");
+                Logger.Info($"[Gang] 海賊に属性付与: {addon}", "Gang");
             }
         }
 
@@ -395,8 +405,7 @@ public sealed class Gang : RoleBase, IAdditionalWinner
 
     public override void AfterMeetingTasks()
     {
-        if (!AmongUsClient.Instance.AmHost) return;
-        if (!Player.IsAlive()) return;
+        if (!AmongUsClient.Instance.AmHost || !Player.IsAlive()) return;
 
         if (CanKill)
         {

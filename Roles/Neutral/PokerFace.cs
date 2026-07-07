@@ -44,7 +44,6 @@ public sealed class PokerFace : RoleBase
 
     static OptionItem OptionAdditionalWin;
     static OptionItem OptionCanVent;
-    static OptionItem OptionAddOns;
 
     static bool AdditionalWin;
     static bool CanVent;
@@ -64,9 +63,6 @@ public sealed class PokerFace : RoleBase
 
         OptionCanVent = BooleanOptionItem.Create(
             RoleInfo, 12, GeneralOption.CanVent, false, false);
-
-        OptionAddOns = BooleanOptionItem.Create(
-            RoleInfo, 13, OptionName.PokerFaceAddOns, false, false);
         RoleAddAddons.Create(RoleInfo, 14, NeutralKiller: false);
     }
 

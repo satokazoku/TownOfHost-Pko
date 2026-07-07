@@ -63,6 +63,8 @@ public sealed class Lawyer : RoleBase
 
     static void SetupOptionItem()
     {
+        SoloWinOption.Create(RoleInfo, 9, defo: 15);
+
         OptionHasImpostorVision = BooleanOptionItem.Create(RoleInfo, 10, GeneralOption.ImpostorVision, false, false);
         OptionKnowTargetRole = BooleanOptionItem.Create(RoleInfo, 11, OptionName.LawyerKnowTargetRole, false, false);
         OptionTargetKnows = BooleanOptionItem.Create(RoleInfo, 12, OptionName.LawyerTargetKnows, false, false);

@@ -557,6 +557,8 @@ public static class CustomRoleManager
                 case CustomRoles.Stack: Stack.Add(pc.PlayerId); break;
 
                 case CustomRoles.Ghostbuttoner: Ghostbuttoner.Add(pc.PlayerId); break;
+                case CustomRoles.GhostFloodlight: GhostFloodlight.Add(pc.PlayerId); break;
+                case CustomRoles.GhostSaboteur: GhostSaboteur.Add(pc.PlayerId); break;
                 case CustomRoles.GhostNoiseSender: GhostNoiseSender.Add(pc.PlayerId); break;
                 case CustomRoles.GhostReseter: GhostReseter.Add(pc.PlayerId); break;
                 case CustomRoles.GhostRumour: GhostRumour.Add(pc.PlayerId); break;
@@ -1139,6 +1141,9 @@ public enum CustomRoles
     GhostReseter,
     GuardianAngel,
     GhostRumour,
+    //Pko
+    GhostFloodlight,
+    GhostSaboteur,
     //NeutralGhost
     AsistingAngel,
     Securer,

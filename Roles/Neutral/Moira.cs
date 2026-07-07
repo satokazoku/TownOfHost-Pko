@@ -1,4 +1,5 @@
-/*using System;
+/*
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
@@ -8,7 +9,7 @@ using TownOfHost.Roles.Core.Interfaces;
 using static TownOfHost.Modules.SelfVoteManager;
 using static TownOfHost.PlayerCatch;
 using static TownOfHost.Translator;
-
+using static TownOfHost.UtilsRoleText;
 namespace TownOfHost.Roles.Neutral;
 
 public sealed class Moira : RoleBase, ISelfVoter

@@ -18,7 +18,7 @@ public sealed class ShrineMaiden : RoleBase, ISelfVoter
             CustomRoles.ShrineMaiden,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            35200,
+            135200,
             SetupOptionItem,
             "SM",
             "#b7282e",

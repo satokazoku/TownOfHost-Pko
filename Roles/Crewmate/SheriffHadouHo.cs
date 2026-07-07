@@ -1,4 +1,4 @@
-/*using AmongUs.GameOptions;
+using AmongUs.GameOptions;
 using Hazel;
 using TownOfHost.Modules;
 using TownOfHost.Patches;
@@ -32,7 +32,6 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton
         Cooldown = OptionCooldown.GetFloat();
         ChargeTime = OptionChargeTime.GetFloat();
         ShotLimit = OptionShotLimit.GetInt();
-        SelfDestructOnMiss = OptionSelfDestructOnMiss.GetBool();
         BeamColorModeValue = OptionBeamColorMode.GetValue();
 
         IsCharging = false;
@@ -40,18 +39,14 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton
         PlayerSpeed = 0f;
         ShowBeamMark = false;
         HasHitEvil = false;
-        IsDead = false;
         IsFiring = false;
         _prevCharging = false;
         _prevBeamMark = false;
         BeamFacingLeft = false;
         PlayerColor = 0;
-
         beamMode = false;
         nowcool = Cooldown;
         LastCooltime = (int)Cooldown;
-
-        CustomRoleManager.LowerOthers.Add(GetLowerTextOthers);
     }
 
     static OptionItem OptionCooldown;
@@ -59,10 +54,12 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton
     static OptionItem OptionChargeTime;
     static float ChargeTime;
     static OptionItem OptionShotLimit;
-    static OptionItem OptionSelfDestructOnMiss;
-    static bool SelfDestructOnMiss;
     static OptionItem OptionBeamColorMode;
     static int BeamColorModeValue;
+    static OptionItem OptionBeamUnlockTask;
+
+    static float KillCooldown_Legacy;
+    static int BeamUnlockTaskCount;
 
     int ShotLimit;
     public bool IsCharging;
@@ -70,17 +67,19 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton
     float PlayerSpeed;
     public bool ShowBeamMark;
     bool HasHitEvil;
-    bool IsDead;
     bool IsFiring;
     bool spawnCooldownStarted;
     bool _prevCharging;
     bool _prevBeamMark;
     bool BeamFacingLeft;
     int PlayerColor;
-
     bool beamMode;
     float nowcool;
     int LastCooltime;
+
+    bool IsBeamUnlocked =>
+        BeamUnlockTaskCount <= 0 ||
+        (MyTaskState != null && MyTaskState.CompletedTasksCount >= BeamUnlockTaskCount);
 
     enum BeamColorMode { Cyan, Yellow }
 
@@ -88,28 +87,33 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton
     {
         SheriffHadouHoChargeTime,
         SheriffHadouHoShotLimit,
-        SheriffHadouHoSelfDestruct,
         SheriffHadouHoBeamColorMode,
+        SheriffHadouHoBeamUnlockTask,
     }
 
     static void SetupOptionItem()
     {
-        OptionCooldown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.Cooldown, OptionBaseCoolTime, 30f, false)
-            .SetValueFormat(OptionFormat.Seconds);
+        OptionCooldown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.Cooldown,
+            new(0f, 60f, 0.5f), 30f, false).SetValueFormat(OptionFormat.Seconds);
         OptionChargeTime = FloatOptionItem.Create(RoleInfo, 11, OptionName.SheriffHadouHoChargeTime,
             new(0.5f, 10f, 0.5f), 3f, false).SetValueFormat(OptionFormat.Seconds);
         OptionShotLimit = IntegerOptionItem.Create(RoleInfo, 12, OptionName.SheriffHadouHoShotLimit,
             new(1, 15, 1), 3, false).SetValueFormat(OptionFormat.Times);
-        OptionSelfDestructOnMiss = BooleanOptionItem.Create(RoleInfo, 13, OptionName.SheriffHadouHoSelfDestruct, false, false);
-        OptionBeamColorMode = StringOptionItem.Create(RoleInfo, 14, OptionName.SheriffHadouHoBeamColorMode,
+        OptionBeamColorMode = StringOptionItem.Create(RoleInfo, 14,
+            OptionName.SheriffHadouHoBeamColorMode,
             new string[] { "Cyan", "Yellow" }, 1, false);
+        OptionBeamUnlockTask = IntegerOptionItem.Create(RoleInfo, 15,
+            OptionName.SheriffHadouHoBeamUnlockTask,
+            new(0, 10, 1), 0, false).SetValueFormat(OptionFormat.Times);
     }
 
     public override void Add()
     {
+        CustomRoleManager.LowerOthers.Add(GetLowerTextOthers);
         PlayerSpeed = Main.AllPlayerSpeed[Player.PlayerId];
         PlayerColor = Player.Data.DefaultOutfit.ColorId;
         BeamColorModeValue = OptionBeamColorMode.GetValue();
+        BeamUnlockTaskCount = OptionBeamUnlockTask.GetInt();
         spawnCooldownStarted = false;
         beamMode = false;
         nowcool = Cooldown;
@@ -126,17 +130,19 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton
     public override void ApplyGameOptions(IGameOptions opt)
     {
         opt.SetVision(false);
+        float cd = Mathf.Max(nowcool, 0.1f);
         if (!beamMode)
         {
-            AURoleOptions.EngineerCooldown = Mathf.Max(nowcool, 0.1f);
+            AURoleOptions.EngineerCooldown = cd;
             AURoleOptions.EngineerInVentMaxTime = 0f;
         }
         else
         {
-            AURoleOptions.PhantomCooldown = Cooldown;
+            AURoleOptions.PhantomCooldown = cd;
         }
     }
 
+    bool IUsePhantomButton.SyncAbilityCooldownWithKillCooldown => false;
     public override bool CanClickUseVentButton => !beamMode;
     public override bool OnEnterVent(PlayerPhysics physics, int ventId)
     {
@@ -146,16 +152,19 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton
 
     bool IUsePhantomButton.IsPhantomRole => beamMode && !IsFiring;
     bool IUsePhantomButton.IsresetAfterKill => false;
-    public override bool CanUseAbilityButton() => beamMode && !IsFiring && ShotLimit > 0;
+
+    public override bool CanUseAbilityButton()
+        => beamMode && !IsFiring && ShotLimit > 0 && nowcool <= 0f && IsBeamUnlocked;
 
     public override RoleTypes? AfterMeetingRole
-        => (beamMode && ShotLimit > 0) ? RoleTypes.Phantom : RoleTypes.Engineer;
+        => (beamMode && ShotLimit > 0 && IsBeamUnlocked) ? RoleTypes.Phantom : RoleTypes.Engineer;
 
     void OnPetUsed()
     {
         if (!Player.IsAlive()) return;
         if (ShotLimit <= 0) return;
-        if (IsFiring) return;
+        if (IsFiring || IsCharging || ShowBeamMark) return;
+        if (!beamMode && !IsBeamUnlocked) return;
 
         beamMode = !beamMode;
         ApplyModeDesync(beamMode);
@@ -178,36 +187,21 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton
                     toBeamMode ? RoleTypes.Phantom : RoleTypes.Engineer,
                     Player.GetClientId());
         }
-
-        if (!toBeamMode)
+        _ = new LateTask(() =>
         {
-            Player.MarkDirtySettings();
-            _ = new LateTask(() =>
-            {
-                if (Player.IsAlive() && !beamMode)
-                    Player.RpcResetAbilityCooldown(Sync: true);
-            }, 0.1f, "SheriffHadouHo.EngineerReset", true);
-        }
-        else
-        {
-            _ = new LateTask(() =>
-            {
-                if (Player.IsAlive() && beamMode)
-                {
-                    AURoleOptions.PhantomCooldown = Cooldown;
-                    Player.RpcResetAbilityCooldown(Sync: true);
-                }
-            }, 0.1f, "SheriffHadouHo.PhantomReset", true);
-        }
+            if (Player.IsAlive())
+                Player.RpcResetAbilityCooldown(Sync: true);
+        }, 0.1f, "SHH.ModeDesync", true);
     }
 
     void IUsePhantomButton.OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
     {
         AdjustKillCooldown = false;
         ResetCooldown = false;
-
         if (IsFiring || ShowBeamMark || !Player.IsAlive() || IsCharging || !beamMode) return;
         if (ShotLimit <= 0) return;
+        if (nowcool > 0f) return;
+        if (!IsBeamUnlocked) return;
 
         IsFiring = true;
         IsCharging = true;
@@ -218,7 +212,6 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton
         Player.SyncSettings();
         _prevCharging = true;
         _prevBeamMark = false;
-
         UtilsNotifyRoles.NotifyRoles(ForceLoop: true);
         SendRpc();
     }
@@ -229,7 +222,7 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton
         if (t == null) return;
         var rt = t.GetComponent<TMPro.TextMeshPro>();
         if (rt == null) return;
-        if (beaming) { rt.text = "<alpha=#00>　</alpha>"; t.SetLocalY(0.35f); }
+        if (beaming) { rt.text = "<alpha=#00> </alpha>"; t.SetLocalY(0.35f); }
         else { rt.enabled = true; t.SetLocalY(0.35f); }
     }
 
@@ -249,7 +242,8 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton
     {
         if (!AmongUsClient.Instance.AmHost) return;
 
-        if (!spawnCooldownStarted && Player.IsAlive() && !GameStates.Intro && GameStates.IsInTask && !GameStates.IsMeeting)
+        if (!spawnCooldownStarted && Player.IsAlive()
+            && !GameStates.Intro && GameStates.IsInTask && !GameStates.IsMeeting)
         {
             spawnCooldownStarted = true;
             Player.RpcResetAbilityCooldown(Sync: true);
@@ -258,11 +252,7 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton
         if (MeetingHud.Instance != null)
         {
             if (IsCharging || ShowBeamMark || IsFiring)
-            {
-                ResetBeamState();
-                UtilsNotifyRoles.NotifyRoles();
-                SendRpc();
-            }
+            { ResetBeamState(); UtilsNotifyRoles.NotifyRoles(); SendRpc(); }
             return;
         }
 
@@ -275,7 +265,7 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton
             return;
         }
 
-        if (!beamMode && !IsFiring && Player.IsAlive() && GameStates.IsInTask)
+        if (!IsFiring && Player.IsAlive() && GameStates.IsInTask)
         {
             if (nowcool > 0) nowcool -= Time.fixedDeltaTime;
             else nowcool = 0;
@@ -287,9 +277,9 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton
                 Player.MarkDirtySettings();
                 _ = new LateTask(() =>
                 {
-                    if (Player.IsAlive() && !beamMode)
+                    if (Player.IsAlive())
                         Player.RpcResetAbilityCooldown(Sync: true);
-                }, 0.1f, "SheriffHadouHo.VentCDSync", true);
+                }, 0.1f, "SHH.CDSync", true);
                 if (player != PlayerControl.LocalPlayer)
                     UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: player);
             }
@@ -304,12 +294,16 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton
         }
 
         if (ShowBeamMark && Player.IsAlive()) ApplyBeamHit();
-        if (IsCharging) { chargeTimer += Time.fixedDeltaTime; if (chargeTimer >= ChargeTime) FireBeam(); }
+        if (IsCharging)
+        {
+            chargeTimer += Time.fixedDeltaTime;
+            if (chargeTimer >= ChargeTime) FireBeam();
+        }
     }
 
     void FireBeam()
     {
-        if (IsDead || !Player.IsAlive()) return;
+        if (!Player.IsAlive()) return;
         BeamFacingLeft = Player.cosmetics.FlipX;
         SendBeamDirection(BeamFacingLeft);
         Utils.AllPlayerKillFlash();
@@ -325,7 +319,6 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton
         {
             ShowBeamMark = false; _prevBeamMark = false;
             SetRoleTextHeight(false);
-
             UtilsNotifyRoles.NotifyRoles(ForceLoop: true);
             SendRpc();
 
@@ -339,22 +332,25 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton
                 PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = CustomDeathReason.Misfire;
                 Player.RpcMurderPlayerV2(Player);
                 IsFiring = false;
+                UtilsGameLog.AddGameLog("SheriffHadouHo",
+                    $"{UtilsName.GetPlayerColor(Player)} はビームで誰も倒せず自爆した");
                 return;
             }
 
             Player.RpcSetColor((byte)PlayerColor);
             Main.AllPlayerSpeed[Player.PlayerId] = PlayerSpeed;
             Player.MarkDirtySettings();
-
+            nowcool = Cooldown;
+            LastCooltime = (int)Cooldown;
             _ = new LateTask(() =>
             {
                 if (!Player.IsAlive()) { IsFiring = false; return; }
-                AURoleOptions.PhantomCooldown = Cooldown;
+                Player.MarkDirtySettings();
                 Player.RpcResetAbilityCooldown(Sync: true);
                 UtilsNotifyRoles.NotifyRoles(OnlyMeName: true);
                 _ = new LateTask(() => { IsFiring = false; }, 0.3f, "SHHResetFiring", true);
             }, 0.2f, "SHHResetCooldown", true);
-        }, 3f);
+        }, 3f, "SHHBeamEnd", true);
     }
 
     void ApplyBeamHit()
@@ -362,6 +358,7 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton
         if (!AmongUsClient.Instance.AmHost || !Player.IsAlive()) return;
         var myPos = Player.GetTruePosition();
         Vector2 dir = BeamFacingLeft ? Vector2.left : Vector2.right;
+
         foreach (var target in PlayerCatch.AllAlivePlayerControls)
         {
             if (target.PlayerId == Player.PlayerId) continue;
@@ -371,7 +368,8 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton
             if ((toTarget - dir * dot).magnitude > 1.3f) continue;
 
             bool isEvil = Sheriff.CanBeKilledBy(target);
-            CustomRoleManager.OnCheckMurder(Player, target, target, target, true, true, 1, CustomDeathReason.Hit);
+            CustomRoleManager.OnCheckMurder(Player, target, target, target,
+                true, true, 1, CustomDeathReason.Hit);
             if (isEvil) HasHitEvil = true;
         }
     }
@@ -386,11 +384,7 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton
     public override void OnStartMeeting()
     {
         ResetBeamState();
-        if (beamMode)
-        {
-            beamMode = false;
-            SendRpc();
-        }
+        if (beamMode) { beamMode = false; SendRpc(); }
     }
 
     public override void AfterMeetingTasks()
@@ -401,24 +395,31 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton
         ApplyModeDesync(beamMode);
     }
 
-    public override bool GetTemporaryName(ref string name, ref bool NoMarker, bool isForMeeting, PlayerControl seer, PlayerControl seen = null)
+    public override bool GetTemporaryName(ref string name, ref bool NoMarker,
+        bool isForMeeting, PlayerControl seer, PlayerControl seen = null)
     {
         seen ??= seer;
         if (!Player.IsAlive() || isForMeeting) return false;
-        string myColor = "#" + ColorUtility.ToHtmlStringRGB(Palette.PlayerColors[Player.Data.DefaultOutfit.ColorId]);
+        string myColor = "#" + ColorUtility.ToHtmlStringRGB(
+            Palette.PlayerColors[Player.Data.DefaultOutfit.ColorId]);
 
         if (IsCharging && seen.PlayerId == Player.PlayerId)
         {
-            bool fl = seer.PlayerId == Player.PlayerId ? Player.cosmetics.FlipX : BeamFacingLeft;
+            bool fl = seer.PlayerId == Player.PlayerId
+                ? Player.cosmetics.FlipX : BeamFacingLeft;
             string bigStar = $"<size=800%><color={myColor}>★</color></size>";
-            string blank = "　　　";
-            name = "<line-height=1200%>\n" + (fl ? bigStar + blank : blank + bigStar) + "</line-height>";
+            string blank = "   ";
+            name = "<line-height=1200%>\n"
+                + (fl ? bigStar + blank : blank + bigStar)
+                + "</line-height>";
             NoMarker = true; return true;
         }
 
-        if (seen == seer && Is(seer) && !seer.IsModClient() && (IsCharging || ShowBeamMark))
+        if (seen == seer && Is(seer) && !seer.IsModClient()
+            && (IsCharging || ShowBeamMark))
         {
-            if (ShowBeamMark && seen.PlayerId == Player.PlayerId) { BuildBeamName(ref name, myColor, false); NoMarker = true; return true; }
+            if (ShowBeamMark && seen.PlayerId == Player.PlayerId)
+            { BuildBeamName(ref name, myColor, false); NoMarker = true; return true; }
             return false;
         }
 
@@ -437,10 +438,10 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton
         bool fl = BeamFacingLeft;
         string star = $"<voffset=0.35em><size=800%><color={myColor}>★</color></size></voffset>";
         string beam = BuildBeamBlock();
-        string blank = "<size=1200%>　</size>";
+        string blank = "<size=1200%> </size>";
         string sB = fl ? star + blank : blank + star;
         string longBeam = fl ? beam + beam + sB : sB + beam + beam;
-        string hugeBlank = "<alpha=#00>" + new string('　', 10) + "</alpha>";
+        string hugeBlank = "<alpha=#00>" + new string(' ', 10) + "</alpha>";
         string ls = wider ? "<line-height=5300%>\n" : "<line-height=4300%>\n";
         string ss = "<size=5000%>", se = "</size></line-height>";
         name = fl
@@ -451,37 +452,79 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton
     string BuildBeamBlock()
     {
         if ((BeamColorMode)BeamColorModeValue == BeamColorMode.Yellow)
-            return "<color=#f8cd46>━</color><color=#f8cd46>━</color><color=#f8cd46>━</color><color=#f8cd46>━</color><color=#f8cd46>━</color><color=#f8cd46>━</color><color=#f8cd46>━</color>";
-        return "<color=#00CFFF>━</color><color=#00CFFF>━</color><color=#00CFFF>━</color><color=#00CFFF>━</color><color=#00CFFF>━</color><color=#00CFFF>━</color><color=#00CFFF>━</color>";
+            return "<color=#f8cd46>━</color><color=#f8cd46>━</color>"
+                 + "<color=#f8cd46>━</color><color=#f8cd46>━</color>"
+                 + "<color=#f8cd46>━</color><color=#f8cd46>━</color>"
+                 + "<color=#f8cd46>━</color>";
+        return "<color=#00CFFF>━</color><color=#00CFFF>━</color>"
+             + "<color=#00CFFF>━</color><color=#00CFFF>━</color>"
+             + "<color=#00CFFF>━</color><color=#00CFFF>━</color>"
+             + "<color=#00CFFF>━</color>";
     }
 
-    public override string GetLowerText(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
+    public override string GetLowerText(PlayerControl seer, PlayerControl seen = null,
+        bool isForMeeting = false, bool isForHud = false)
     {
         seen ??= seer;
         if (seen.PlayerId != seer.PlayerId || isForMeeting || !Player.IsAlive()) return "";
 
         string size = isForHud ? "" : "<size=60%>";
 
-        if (ShotLimit <= 0) return $"{size}<color=#888888>弾切れ</color>";
-        if (!beamMode) return $"{size}<color=#f8cd46>ペット → 波動砲モードへ (CD: {LastCooltime}s)</color>";
-        if (!IsCharging) return $"{size}<color=#ff0000>ファントムボタン → チャージ発射</color>";
-        return $"{size}<color=#ff0000>チャージ中... {(ChargeTime - chargeTimer):F1}s</color>";
+        if (ShotLimit <= 0)
+            return $"{size}<color=#888888>弾切れ</color>";
+
+        if (!IsBeamUnlocked)
+        {
+            int done = MyTaskState?.CompletedTasksCount ?? 0;
+            int remaining = BeamUnlockTaskCount - done;
+            return $"{size}<color=#888888>波動砲ロック中 (あと {remaining} タスク)</color>";
+        }
+
+        if (!beamMode)
+        {
+            string cdText = LastCooltime > 0
+                ? $" (CD: {LastCooltime}s)"
+                : " <color=#00ff88>(準備完了)</color>";
+            return $"{size}<color=#f8cd46>ペット → 波動砲モードへ{cdText}</color>";
+        }
+
+        if (IsCharging)
+            return $"{size}<color=#ff0000>チャージ中... {(ChargeTime - chargeTimer):F1}s</color>";
+
+        string ready = nowcool <= 0f
+            ? " <color=#00ff88>(発射可能)</color>"
+            : $" (CD: {LastCooltime}s)";
+        return $"{size}<color=#ff0000>ファントムボタン → チャージ発射{ready}</color>";
     }
 
-    public string GetLowerTextOthers(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
+    public string GetLowerTextOthers(PlayerControl seer, PlayerControl seen = null,
+        bool isForMeeting = false, bool isForHud = false)
     {
         seen ??= seer;
         if (seen != seer || isForMeeting || !Player.IsAlive()) return "";
-        if (IsCharging && seer.PlayerId != Player.PlayerId) return $"\n<color=#ff0000>チャージ中... {(int)(ChargeTime - chargeTimer)}s</color>";
-        if (ShowBeamMark && seer.PlayerId != Player.PlayerId) return "\n<color=#ff0000>ビーム中</color>";
+        if (IsCharging && seer.PlayerId != Player.PlayerId)
+            return $"\n<color=#ff0000>チャージ中... {(int)(ChargeTime - chargeTimer)}s</color>";
+        if (ShowBeamMark && seer.PlayerId != Player.PlayerId)
+            return "\n<color=#ff0000>ビーム中</color>";
         return "";
     }
 
     public override string GetProgressText(bool comms = false, bool GameLog = false)
     {
         if (!Player.IsAlive()) return "";
-        string mode = beamMode ? "<color=#ff4444>[波動砲]</color>" : "<color=#f8cd46>[Task]</color>";
-        return $"{Utils.ColorString(ShotLimit > 0 ? Color.yellow : Color.gray, $"({ShotLimit})")}{mode}";
+
+        if (!IsBeamUnlocked)
+        {
+            int done = MyTaskState?.CompletedTasksCount ?? 0;
+            return $"<color=#888888>[{done}/{BeamUnlockTaskCount}]</color>";
+        }
+
+        string shots = Utils.ColorString(ShotLimit > 0 ? Color.yellow : Color.gray, $"({ShotLimit})");
+        string mode = beamMode
+            ? "<color=#ff4444>[波動砲]</color>"
+            : "<color=#f8cd46>[タスク]</color>";
+        string cd = $"<color=#ffffff>({LastCooltime})</color>";
+        return $"{shots}{mode}{cd}";
     }
 
     public override string GetAbilityButtonText() => "発射";
@@ -494,6 +537,7 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton
     void SendRpc()
     {
         using var sender = CreateSender();
+        sender.Writer.Write((byte)0);
         sender.Writer.Write(IsCharging);
         sender.Writer.Write(ShowBeamMark);
         sender.Writer.Write(ShotLimit);
@@ -509,11 +553,11 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton
 
     public override void ReceiveRPC(MessageReader reader)
     {
-        if (reader.Length - reader.Position == 2)
-        { reader.ReadByte(); BeamFacingLeft = reader.ReadBoolean(); return; }
+        byte tag = reader.ReadByte();
+        if (tag == 1) { BeamFacingLeft = reader.ReadBoolean(); return; }
         IsCharging = reader.ReadBoolean();
         ShowBeamMark = reader.ReadBoolean();
         ShotLimit = reader.ReadInt32();
         beamMode = reader.ReadBoolean();
     }
-}*/
+}

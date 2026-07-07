@@ -27,7 +27,7 @@ public sealed class StandMaster : RoleBase, ILNKiller, IUsePhantomButton
             "#8B4513",
             (6, 4),
             true,
-            countType: CountTypes.Crew,
+            countType: CountTypes.StandMaster,
             assignInfo: new RoleAssignInfo(CustomRoles.StandMaster, CustomRoleTypes.Neutral)
             {
                 AssignCountRule = new(1, 1, 1)

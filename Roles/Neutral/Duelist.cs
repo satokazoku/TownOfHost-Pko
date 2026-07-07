@@ -31,6 +31,7 @@ public sealed class Duelist : RoleBase, IAdditionalWinner
     {
         archenemyPlayerId = byte.MaxValue;
         hasChosenArchenemy = false;
+        inSelectionMode = false;
 
         Duelists.Add(this);
         CustomRoleManager.MarkOthers.Add(GetMarkOthers);
@@ -59,6 +60,7 @@ public sealed class Duelist : RoleBase, IAdditionalWinner
 
     byte archenemyPlayerId;
     bool hasChosenArchenemy;
+    bool inSelectionMode;
 
     private PlayerControl Archenemy
         => archenemyPlayerId == byte.MaxValue ? null : GetPlayerById(archenemyPlayerId);
@@ -68,36 +70,70 @@ public sealed class Duelist : RoleBase, IAdditionalWinner
         MeetingLimit = OptionMeetingLimit.GetInt();
     }
 
+    public override void OnStartMeeting()
+    {
+        inSelectionMode = false;
+    }
+
     public override bool CheckVoteAsVoter(byte votedForId, PlayerControl voter)
     {
         if (!Is(voter) || !Player.IsAlive()) return true;
+
         if (hasChosenArchenemy) return true;
 
-        if (votedForId >= 253 || votedForId == Player.PlayerId)
+        if (!inSelectionMode)
         {
-            int left = MeetingLimit - UtilsGameLog.day;
+            if (votedForId == Player.PlayerId)
+            {
+                inSelectionMode = true;
+                int left = MeetingLimit - UtilsGameLog.day;
+                string warn = left <= 0
+                    ? "<color=#ff1919>！期限切れ！</color>"
+                    : $"残り{left}ターン";
+                SendMessage(
+                    $"<color={RoleInfo.RoleColorCode}>" +
+                    $"【選択モード】誰かに投票して宿敵を指定してください\n" +
+                    $"自投票・スキップでキャンセル ({warn})</color>",
+                    Player.PlayerId);
+                return false;
+            }
+            return true;
+        }
+        else
+        {
+            if (votedForId == Player.PlayerId || votedForId >= 253)
+            {
+                inSelectionMode = false;
+                SendMessage(
+                    $"<color={RoleInfo.RoleColorCode}>宿敵選択をキャンセルしました</color>",
+                    Player.PlayerId);
+                return false;
+            }
+
+            var target = GetPlayerById(votedForId);
+            if (target == null || !target.IsAlive())
+            {
+                inSelectionMode = false;
+                return false;
+            }
+
+            hasChosenArchenemy = true;
+            archenemyPlayerId = votedForId;
+            inSelectionMode = false;
+            SendRpc();
+
             SendMessage(
-                $"<color={RoleInfo.RoleColorCode}>宿敵を決めませんでした。残り {left} ターン</color>",
+                $"<color={RoleInfo.RoleColorCode}>{target.Data.PlayerName} を宿敵に指定！\n" +
+                $"相手が死亡すれば追加勝利！</color>",
                 Player.PlayerId);
+            SendMessage(
+                $"<color={RoleInfo.RoleColorCode}>あなたは {Player.Data.PlayerName} に宿敵として指定されました。\n" +
+                $"相手が死亡すれば追加勝利！</color>",
+                target.PlayerId);
+
+            UtilsNotifyRoles.NotifyRoles();
             return false;
         }
-
-        var target = GetPlayerById(votedForId);
-        if (target == null || !target.IsAlive()) return true;
-
-        hasChosenArchenemy = true;
-        archenemyPlayerId = votedForId;
-        SendRpc();
-
-        SendMessage(
-            $"<color={RoleInfo.RoleColorCode}>{target.Data.PlayerName} を宿敵に指定！\n相手が死亡すれば追加勝利！</color>",
-            Player.PlayerId);
-        SendMessage(
-            $"<color={RoleInfo.RoleColorCode}>あなたは {Player.Data.PlayerName} に宿敵として指定されました。\n相手が死亡すれば追加勝利！</color>",
-            target.PlayerId);
-
-        UtilsNotifyRoles.NotifyRoles();
-        return false;
     }
 
     public override void AfterMeetingTasks()
@@ -196,11 +232,20 @@ public sealed class Duelist : RoleBase, IAdditionalWinner
 
         if (!hasChosenArchenemy && isForMeeting)
         {
-            int left = MeetingLimit - UtilsGameLog.day;
-            string warn = left <= 0
-                ? "<color=#ff1919>！期限切れ！</color>"
-                : $"残り{left}ターン";
-            return $"{size}<color={c}>誰かに投票 → 宿敵を設定 ({warn})\nスキップ / 自投票 → 今ターンはパス</color>";
+            if (!inSelectionMode)
+            {
+                int left = MeetingLimit - UtilsGameLog.day;
+                string warn = left <= 0
+                    ? "<color=#ff1919>！期限切れ！</color>"
+                    : $"残り{left}ターン";
+                return $"{size}<color={c}>自投票 → 宿敵選択モードへ ({warn})\n" +
+                       $"通常投票 → 今ターンはパス</color>";
+            }
+            else
+            {
+                return $"{size}<color={c}>【選択中】誰かに投票して宿敵を指定\n" +
+                       $"自投票・スキップでキャンセル</color>";
+            }
         }
 
         if (archenemyPlayerId == byte.MaxValue) return "";

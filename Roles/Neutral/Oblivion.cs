@@ -1,3 +1,4 @@
+/*
 using System.Collections.Generic;
 using AmongUs.GameOptions;
 using Hazel;
@@ -238,3 +239,4 @@ public sealed class Oblivion : RoleBase, IKillFlashSeeable
         pendingDeadPlayerId = reader.ReadByte();
     }
 }
+*/

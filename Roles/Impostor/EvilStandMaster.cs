@@ -1,4 +1,3 @@
-// ★ CustomRoles に EvilStandMaster を追加してください
 using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
@@ -8,16 +7,10 @@ using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using static TownOfHost.PlayerCatch;
 using static TownOfHost.Translator;
+using static TownOfHost.Utils;
 
 namespace TownOfHost.Roles.Impostor;
 
-/// <summary>
-/// イビルスタンドマスター
-/// ファントムボタンでランダムなインポスター相方を自分の位置にワープさせる。
-/// ワープ成功時: 相方のキルCDを設定秒数短縮（オプション）。
-/// ワープ不可時（全員ベント/移動中/死亡）: 自分のキルCDを短縮（オプション）。
-/// ワープ滞在時間: ワープしてきた相方を指定秒数その場に固定する。
-/// </summary>
 public sealed class EvilStandMaster : RoleBase, IImpostor, IUsePhantomButton
 {
     public static readonly SimpleRoleInfo RoleInfo =
@@ -81,7 +74,6 @@ public sealed class EvilStandMaster : RoleBase, IImpostor, IUsePhantomButton
             new(0f, 60f, 0.5f), 5f, false, OptionReduceOwnKillCD).SetValueFormat(OptionFormat.Seconds);
     }
 
-    // ─── 初期化 ──────────────────────────────────────────────────
     public override void Add()
     {
         WarpCooldown = OptionWarpCooldown.GetFloat();
@@ -97,13 +89,11 @@ public sealed class EvilStandMaster : RoleBase, IImpostor, IUsePhantomButton
     public bool CanUseSabotageButton() => true;
     public bool CanUseImpostorVentButton() => true;
 
-    // ─── ファントムCD設定 ─────────────────────────────────────────
     public override void ApplyGameOptions(IGameOptions opt)
     {
         AURoleOptions.PhantomCooldown = WarpCooldown;
     }
 
-    // ─── ファントムボタン ─────────────────────────────────────────
     public void OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
     {
         AdjustKillCooldown = false;
@@ -114,25 +104,22 @@ public sealed class EvilStandMaster : RoleBase, IImpostor, IUsePhantomButton
 
         if (candidates.Count == 0)
         {
-            // 全員ベント/移動中/死亡 → 自分のキルCDを短縮
             if (ReduceOwnKillCD && OwnKillCDReduce > 0f)
             {
                 float newCd = Mathf.Max(0.1f, Player.killTimer - OwnKillCDReduce);
                 Player.SetKillCooldown(newCd);
                 Logger.Info($"[EvilStandMaster] ワープ不可→自分のキルCD {OwnKillCDReduce}秒短縮", "EvilStandMaster");
             }
-            SendMessage(GetString("EvilStandMasterNoTarget"), Player.PlayerId);
+            Utils.SendMessage(GetString("EvilStandMasterNoTarget"), Player.PlayerId);
             return;
         }
 
-        // ランダムに1人選んで自分の位置にワープ
         var target = candidates[IRandom.Instance.Next(candidates.Count)];
         var pos = Player.GetTruePosition();
 
         target.RpcSnapToForced(pos);
         Logger.Info($"[EvilStandMaster] {target.Data?.GetLogPlayerName()} を {pos} にワープ", "EvilStandMaster");
 
-        // ワープ滞在時間: 対象をその場に固定
         if (WarpStayDuration > 0f)
         {
             var origSpeed = Main.AllPlayerSpeed.TryGetValue(target.PlayerId, out var s)
@@ -149,7 +136,6 @@ public sealed class EvilStandMaster : RoleBase, IImpostor, IUsePhantomButton
             }, WarpStayDuration, $"EvilStandMaster.Unfreeze.{target.PlayerId}", true);
         }
 
-        // ワープ成功時: 相方のキルCDを短縮
         if (ReduceTeammateKillCD && TeammateKillCDReduce > 0f)
         {
             float newCd = Mathf.Max(0.1f, target.killTimer - TeammateKillCDReduce);
@@ -157,14 +143,12 @@ public sealed class EvilStandMaster : RoleBase, IImpostor, IUsePhantomButton
             Logger.Info($"[EvilStandMaster] {target.Data?.GetLogPlayerName()} のキルCD {TeammateKillCDReduce}秒短縮", "EvilStandMaster");
         }
 
-        SendMessage(
+        Utils.SendMessage(
             string.Format(GetString("EvilStandMasterWarped"), target.Data?.PlayerName ?? "???"),
             Player.PlayerId);
         UtilsNotifyRoles.NotifyRoles();
     }
 
-    // ─── ワープ候補取得 ──────────────────────────────────────────
-    // 自分以外の生存インポスター陣営で、ベント/ジップライン/梯子不使用のもの
     private List<PlayerControl> GetWarpCandidates()
     {
         return AllAlivePlayerControls
@@ -172,7 +156,7 @@ public sealed class EvilStandMaster : RoleBase, IImpostor, IUsePhantomButton
                 pc.PlayerId != Player.PlayerId &&
                 pc.GetCustomRole().IsImpostor() &&
                 !pc.inVent &&
-                !pc.inMovingPlat &&      // ジップライン/移動プラットフォーム
+                !pc.inMovingPlat &&
                 !pc.walkingToVent &&
                 !pc.onLadder &&
                 !pc.MyPhysics.Animations.IsPlayingEnterVentAnimation() &&

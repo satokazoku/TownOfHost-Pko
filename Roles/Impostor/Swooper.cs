@@ -24,7 +24,7 @@ public sealed class Swooper : RoleBase, IImpostor, IUsePhantomButton
             SetupOptionItem,
             "sw",
             OptionSort: (3, 10),
-            from: From.TownOfHost_E
+            from: From.TownOfHost_Enhanced
         );
 
     public Swooper(PlayerControl player) : base(RoleInfo, player)

@@ -663,6 +663,8 @@ namespace TownOfHost
             if (__instance.IsGhostRole())
             {
                 Ghostbuttoner.UseAbility(__instance);
+                GhostFloodlight.UseAbility(__instance, target);
+                GhostSaboteur.UseAbility(__instance, target);
                 GhostNoiseSender.UseAbility(__instance, target);
                 GhostReseter.UseAbility(__instance, target);
                 GhostRumour.UseAbility(__instance, target);
