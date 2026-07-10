@@ -1,6 +1,3 @@
-// ★ CustomRoles.Jailer を追加してください
-// ★ CountTypes.Crew でスポーン設定
-
 using AmongUs.GameOptions;
 using Hazel;
 using TownOfHost.Modules;
@@ -13,14 +10,14 @@ using static TownOfHost.Translator;
 
 namespace TownOfHost.Roles.Crewmate;
 
-public sealed class Jailer : RoleBase, IUsePhantomButton
+public sealed class Jailer : RoleBase, IUsePhantomButton, IKiller
 {
     public static readonly SimpleRoleInfo RoleInfo =
         SimpleRoleInfo.Create(
             typeof(Jailer),
             player => new Jailer(player),
             CustomRoles.Jailer,
-            () => RoleTypes.Engineer,   // タスクモード基底: Engineer
+            () => RoleTypes.Engineer,
             CustomRoleTypes.Crewmate,
             260300,
             SetupOptionItem,
@@ -48,7 +45,6 @@ public sealed class Jailer : RoleBase, IUsePhantomButton
         spawnCooldownStarted = false;
     }
 
-    // ─── オプション ──────────────────────────────────────────────
     static OptionItem OptionKillCooldown;
     static OptionItem OptionImprisonType;
     static OptionItem OptionImprisonTurns;
@@ -66,7 +62,6 @@ public sealed class Jailer : RoleBase, IUsePhantomButton
         JailerContinueAfterMeeting,
     }
 
-    // ─── インスタンス状態 ─────────────────────────────────────────
     JailerMode mode;
     bool prisonLocationSet;
     Vector2 prisonLocation;
@@ -79,7 +74,12 @@ public sealed class Jailer : RoleBase, IUsePhantomButton
     int LastCooltime;
     bool spawnCooldownStarted;
 
-    // ─── オプション値ヘルパー ─────────────────────────────────────
+    public bool CanKill { get; private set; } = false;
+    public float CalculateKillCooldown() => OptionKillCooldown.GetFloat();
+    public bool CanUseKillButton() => mode == JailerMode.SelectPrisoner && prisonLocationSet && !hasPrisoner && Player.IsAlive();
+    public bool CanUseSabotageButton() => false;
+    public bool CanUseImpostorVentButton() => false;
+
     static float KillCooldown => OptionKillCooldown.GetFloat();
     static ImprisonmentType ImpType => (ImprisonmentType)OptionImprisonType.GetValue();
     static int ImprisonTurns => OptionImprisonTurns.GetInt();
@@ -89,30 +89,27 @@ public sealed class Jailer : RoleBase, IUsePhantomButton
     static void SetupOptionItem()
     {
         OptionKillCooldown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.KillCooldown,
-            new(2.5f, 60f, 2.5f), 25f, false)
+                new(2.5f, 60f, 2.5f), 25f, false)
             .SetValueFormat(OptionFormat.Seconds);
 
         OptionImprisonType = StringOptionItem.Create(RoleInfo, 11, OptionName.JailerImprisonType,
             new string[] { "Turns", "Seconds" }, 0, false);
 
-        // Turns 専用
         OptionImprisonTurns = IntegerOptionItem.Create(RoleInfo, 12, OptionName.JailerImprisonTurns,
-            new(1, 10, 1), 2, false)
-            .SetValueFormat(OptionFormat.Rounds)
-            .SetParent(CustomRoleSpawnChances[CustomRoles.Jailer]);
+                new(1, 10, 1), 2, false)
+            .SetValueFormat(OptionFormat.Times)
+            .SetParent(OptionImprisonType);
 
-        // Seconds 専用
         OptionImprisonSeconds = FloatOptionItem.Create(RoleInfo, 13, OptionName.JailerImprisonSeconds,
-            new(2.5f, 180f, 2.5f), 30f, false)
+                new(2.5f, 180f, 2.5f), 30f, false)
             .SetValueFormat(OptionFormat.Seconds)
-            .SetParent(CustomRoleSpawnChances[CustomRoles.Jailer]);
+            .SetParent(OptionImprisonType);
 
         OptionContinueAfterMeeting = BooleanOptionItem.Create(RoleInfo, 14,
-            OptionName.JailerContinueAfterMeeting, false, false)
+                OptionName.JailerContinueAfterMeeting, false, false)
             .SetParent(OptionImprisonSeconds);
     }
 
-    // ─── ライフサイクル ───────────────────────────────────────────
     public override void Add()
     {
         nowcool = KillCooldown;
@@ -128,12 +125,10 @@ public sealed class Jailer : RoleBase, IUsePhantomButton
         prisonObject = null;
     }
 
-    // ─── IUsePhantomButton ───────────────────────────────────────
     bool IUsePhantomButton.IsPhantomRole => mode == JailerMode.SetLocation;
     bool IUsePhantomButton.IsresetAfterKill => false;
     bool IUsePhantomButton.SyncAbilityCooldownWithKillCooldown => false;
 
-    // Phantom ボタン: 牢屋位置を設定
     void IUsePhantomButton.OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
     {
         AdjustKillCooldown = false;
@@ -143,18 +138,15 @@ public sealed class Jailer : RoleBase, IUsePhantomButton
         prisonLocation = Player.GetTruePosition();
         prisonLocationSet = true;
 
-        // 仮の牢屋マーカーをスポーン
         prisonObject?.Despawn();
         prisonObject = new PrisonNetObject(prisonLocation, "?");
 
-        // 囚人選択フェーズへ
         SwitchMode(JailerMode.SelectPrisoner);
         SendRpc();
         Utils.SendMessage(GetString("JailerLocationSet"), Player.PlayerId);
         UtilsNotifyRoles.NotifyRoles(SpecifySeer: Player);
     }
 
-    // ─── ApplyGameOptions ────────────────────────────────────────
     public override void ApplyGameOptions(IGameOptions opt)
     {
         opt.SetVision(false);
@@ -165,10 +157,7 @@ public sealed class Jailer : RoleBase, IUsePhantomButton
                 AURoleOptions.EngineerInVentMaxTime = 0f;
                 break;
             case JailerMode.SetLocation:
-                AURoleOptions.PhantomCooldown = 0.1f; // 即座に押せる
-                break;
-            case JailerMode.SelectPrisoner:
-                // Impostor desync → キルCDは別途 SetKillCooldown で管理
+                AURoleOptions.PhantomCooldown = 0.1f;
                 break;
         }
     }
@@ -176,29 +165,25 @@ public sealed class Jailer : RoleBase, IUsePhantomButton
     public override bool CanClickUseVentButton => mode == JailerMode.Task;
     public override bool OnEnterVent(PlayerPhysics physics, int ventId)
         => mode == JailerMode.Task && !hasPrisoner;
-
     public override RoleTypes? AfterMeetingRole
         => mode == JailerMode.SetLocation ? RoleTypes.Phantom : RoleTypes.Engineer;
 
-    // ─── ペット: タスク ⇔ 能力モード切替（Sheriff方式）────────────
     void OnPetAction()
     {
         if (!Player.IsAlive()) return;
-        if (hasPrisoner) return; // 拘禁中は切替不可
+        if (hasPrisoner) return;
 
         if (mode == JailerMode.Task)
         {
-            if (nowcool > 0f) return; // CDが切れるまで切替不可
+            if (nowcool > 0f) return;
             SwitchMode(JailerMode.SetLocation);
         }
         else
         {
-            // 能力モードからキャンセル → タスクモードに戻す
             prisonLocationSet = false;
             prisonObject?.Despawn();
             prisonObject = null;
             SwitchMode(JailerMode.Task);
-            // CDは引き継ぐ（ペナルティなし）
         }
 
         SendRpc();
@@ -215,7 +200,6 @@ public sealed class Jailer : RoleBase, IUsePhantomButton
     {
         if (!AmongUsClient.Instance.AmHost || !Player.IsAlive()) return;
 
-        // 自分のロールタイプを切り替え
         RoleTypes self = newMode switch
         {
             JailerMode.Task => RoleTypes.Engineer,
@@ -225,7 +209,6 @@ public sealed class Jailer : RoleBase, IUsePhantomButton
         };
         Player.RpcSetRoleDesync(self, Player.GetClientId());
 
-        // SelectPrisoner時: インポスターには Scientist に見せてキルボタンを隠す
         if (newMode == JailerMode.SelectPrisoner)
         {
             foreach (var pc in AllAlivePlayerControls)
@@ -242,30 +225,24 @@ public sealed class Jailer : RoleBase, IUsePhantomButton
         }, 0.1f, "Jailer.Desync", true);
     }
 
-    // ─── キルボタン: 囚人選択（SelectPrisoner mode）──────────────
-    public override bool OnCheckMurderAsKiller(MurderInfo info)
+    public void OnCheckMurderAsKiller(MurderInfo info)
     {
-        if (mode != JailerMode.SelectPrisoner) return true;
-        if (!prisonLocationSet || hasPrisoner) return true;
+        if (mode != JailerMode.SelectPrisoner) return;
+        if (!prisonLocationSet || hasPrisoner) return;
 
         (_, var target) = info.AttemptTuple;
+        info.DoKill = false;
 
         prisonerPlayerId = target.PlayerId;
         hasPrisoner = true;
-
-        // 閉じ込め時間セット
         imprisonSecondsLeft = ImprisonSeconds;
         imprisonTurnsLeft = ImprisonTurns;
 
-        // ターゲットを牢屋にワープ
         target.RpcSnapToForced(prisonLocation);
-
-        // 牢屋表示更新
         prisonObject?.UpdateName(target.Data.PlayerName);
 
-        // タスクモードに戻る（拘禁中は守備に回る）
         SwitchMode(JailerMode.Task);
-        // ★ 閉じ込め終了までキルCDは一時停止（freedで0にリセット）
+
         nowcool = KillCooldown;
         LastCooltime = (int)nowcool;
 
@@ -276,11 +253,8 @@ public sealed class Jailer : RoleBase, IUsePhantomButton
 
         SendRpc();
         UtilsNotifyRoles.NotifyRoles();
-
-        return false; // 実際にはキルしない
     }
 
-    // ─── OnFixedUpdate ────────────────────────────────────────────
     public override void OnFixedUpdate(PlayerControl player)
     {
         if (!AmongUsClient.Instance.AmHost) return;
@@ -292,20 +266,15 @@ public sealed class Jailer : RoleBase, IUsePhantomButton
             Player.RpcResetAbilityCooldown(Sync: true);
         }
 
-        // ── 囚人の位置強制 ────────────────────────────────────────
         if (hasPrisoner && GameStates.IsInTask)
         {
             var prisoner = GetPlayerById(prisonerPlayerId);
-            if (prisoner == null || !prisoner.IsAlive())
-            {
-                FreePrisoner(); return;
-            }
-            // 動こうとしたら即戻す
+            if (prisoner == null || !prisoner.IsAlive()) { FreePrisoner(); return; }
+
             if (Vector2.Distance(prisoner.GetTruePosition(), prisonLocation) > 0.25f)
                 prisoner.RpcSnapToForced(prisonLocation);
         }
 
-        // ── 秒数モードタイマー ────────────────────────────────────
         if (hasPrisoner && ImpType == ImprisonmentType.Seconds && GameStates.IsInTask)
         {
             if (!GameStates.IsMeeting || ContinueThroughMeeting)
@@ -315,7 +284,6 @@ public sealed class Jailer : RoleBase, IUsePhantomButton
             }
         }
 
-        // ── タスクモード CDカウントダウン（Sheriff方式）─────────────
         if (mode == JailerMode.Task && !hasPrisoner && Player.IsAlive() && GameStates.IsInTask)
         {
             if (nowcool > 0) nowcool -= Time.fixedDeltaTime;
@@ -336,7 +304,6 @@ public sealed class Jailer : RoleBase, IUsePhantomButton
         }
     }
 
-    // ─── 閉じ込め解除 ─────────────────────────────────────────────
     void FreePrisoner()
     {
         if (!hasPrisoner) return;
@@ -353,7 +320,6 @@ public sealed class Jailer : RoleBase, IUsePhantomButton
         imprisonSecondsLeft = 0f;
         imprisonTurnsLeft = 0;
 
-        // ★ 閉じ込め終了でキルCD即リセット
         nowcool = 0f;
         LastCooltime = 0;
         Player.MarkDirtySettings();
@@ -367,7 +333,6 @@ public sealed class Jailer : RoleBase, IUsePhantomButton
         UtilsNotifyRoles.NotifyRoles();
     }
 
-    // ─── 会議系 ──────────────────────────────────────────────────
     public override void OnStartMeeting()
     {
         if (!hasPrisoner || ImpType != ImprisonmentType.Turns) return;
@@ -380,14 +345,11 @@ public sealed class Jailer : RoleBase, IUsePhantomButton
 
         if (hasPrisoner)
         {
-            // ターンモード: ターン切れで解放
             if (ImpType == ImprisonmentType.Turns && imprisonTurnsLeft <= 0)
             {
-                FreePrisoner();
-                return;
+                FreePrisoner(); return;
             }
 
-            // 会議後に囚人を牢屋に再スナップ
             _ = new LateTask(() =>
             {
                 var prisoner = GetPlayerById(prisonerPlayerId);
@@ -396,11 +358,9 @@ public sealed class Jailer : RoleBase, IUsePhantomButton
             }, 1.0f, "Jailer.PostMeetingSnap", true);
         }
 
-        // desync 再適用
         _ = new LateTask(() => ApplyModeDesync(mode), 0.5f, "Jailer.AfterMeetDesync", true);
     }
 
-    // ─── 表示 ────────────────────────────────────────────────────
     public override string GetProgressText(bool comms = false, bool GameLog = false)
     {
         if (!Player.IsAlive()) return "";
@@ -412,14 +372,14 @@ public sealed class Jailer : RoleBase, IUsePhantomButton
             string t = ImpType == ImprisonmentType.Seconds
                 ? $"{Mathf.CeilToInt(imprisonSecondsLeft)}s"
                 : $"{imprisonTurnsLeft}T";
-            return $"<color={RoleInfo.RoleColorCode}>🔒{pn}({t})</color>";
+            return $"<color={RoleInfo.RoleColorCode}>[JAIL] {pn}({t})</color>";
         }
 
         string modeStr = mode switch
         {
-            JailerMode.Task => "<color=#f8cd46>[T]</color>",
-            JailerMode.SetLocation => "<color=#ff8800>[📍]</color>",
-            JailerMode.SelectPrisoner => "<color=#ff4444>[⛓]</color>",
+            JailerMode.Task => "<color=#f8cd46>[タスク]</color>",
+            JailerMode.SetLocation => "<color=#ff8800>[位置設定]</color>",
+            JailerMode.SelectPrisoner => "<color=#ff4444>[拘禁選択]</color>",
             _ => "?"
         };
         return $"<color={RoleInfo.RoleColorCode}>({LastCooltime})</color>{modeStr}";
@@ -441,14 +401,15 @@ public sealed class Jailer : RoleBase, IUsePhantomButton
             string t = ImpType == ImprisonmentType.Seconds
                 ? $"{Mathf.CeilToInt(imprisonSecondsLeft)}秒"
                 : $"残り{imprisonTurnsLeft}ターン";
-            return $"{sz}<color={c}>🔒 {pn} を拘禁中 ({t})</color>";
+            return $"{sz}<color={c}>[JAIL] {pn} を拘禁中 ({t})</color>";
         }
 
         return mode switch
         {
             JailerMode.Task =>
                 $"{sz}<color={c}>ペット → 能力モードへ" +
-                (nowcool > 0 ? $" (CD: {LastCooltime}s)" : " <color=#00ff88>(準備完了)</color>") + "</color>",
+                (nowcool > 0 ? $" (CD: {LastCooltime}s)" : " <color=#00ff88>(準備完了)</color>") +
+                "</color>",
             JailerMode.SetLocation =>
                 $"{sz}<color=#ff8800>ファントムボタン → 牢屋の位置を設定\nペット → キャンセル</color>",
             JailerMode.SelectPrisoner =>
@@ -457,16 +418,15 @@ public sealed class Jailer : RoleBase, IUsePhantomButton
         };
     }
 
-    // 囚人側のロワーテキスト（自分が囚われていることを表示）
-    public override string GetSuffix(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
+    public override string GetSuffix(PlayerControl seer, PlayerControl seen = null,
+    bool isForMeeting = false)
     {
         seen ??= seer;
         if (!hasPrisoner) return "";
         if (seen.PlayerId != prisonerPlayerId || seer.PlayerId != prisonerPlayerId) return "";
-        return "<color=#4488cc>🔒 拘禁中 🔒</color>";
+        return "<color=#4488cc>[JAIL] 拘禁中</color>";
     }
 
-    // ─── RPC ─────────────────────────────────────────────────────
     void SendRpc()
     {
         if (!AmongUsClient.Instance.AmHost) return;
@@ -493,10 +453,6 @@ public sealed class Jailer : RoleBase, IUsePhantomButton
     }
 }
 
-// ══════════════════════════════════════════════════════════════
-//  牢屋 CNO（EHR ■スタイルで表現）
-//  BeginnerImpostor 方式: RpcSetColor + RawSetColor + SetName
-// ══════════════════════════════════════════════════════════════
 public sealed class PrisonNetObject : CustomNetObject
 {
     readonly Vector2 _pos;
@@ -516,12 +472,10 @@ public sealed class PrisonNetObject : CustomNetObject
         var hostPC = PlayerControl.LocalPlayer;
         byte hColor = (byte)(hostPC?.Data?.DefaultOutfit.ColorId ?? 0);
 
-        // ★ BeginnerImpostor 方式: RpcSetColor + 即時 RawSetColor
-        PlayerControl.RpcSetColor(6); // Black
+        PlayerControl.RpcSetColor(6);
         if (hostPC != null) hostPC.RpcSetColor(hColor);
         PlayerControl.RawSetColor(6);
 
-        // ボディを透明化
         try { PlayerControl.cosmetics.currentBodySprite.BodySprite.color = Color.clear; } catch { }
         PlayerControl.cosmetics.colorBlindText.color = Color.clear;
 
@@ -535,26 +489,37 @@ public sealed class PrisonNetObject : CustomNetObject
         }, 0.15f, "PrisonCNO.Color", true);
     }
 
-    // 囚人名を更新（囚人確定時に呼ぶ）
     public void UpdateName(string prisonerName)
     {
         _prisonerName = prisonerName;
         SetName(BuildPrisonLabel(prisonerName));
     }
 
-    // ★ EHR スタイルの牢屋ラベル
     static string BuildPrisonLabel(string prisoner)
     {
-        const string bar = "<color=#777777>■</color>";
-        const string wall = "<color=#777777>│</color>";
-        string top = $"{bar}{bar}{bar}{bar}{bar}";
-        string mid = $"{wall}<color=#ffffff>{prisoner}</color>{wall}";
-        string bottom = $"{bar}{bar}{bar}{bar}{bar}";
-        return $"<line-height=100%><size=130%>{top}</size>\n" +
-               $"<size=100%><color=#ffdd88>🔒</color>{mid}<color=#ffdd88>🔒</color></size>\n" +
-               $"<size=130%>{bottom}</size></line-height>";
+        int count = 10;
+
+        string roof = new('■', count);
+        string bottom = new('■', count);
+        string bars = new('│', count);
+
+        string cRoof = $"<color=#777777>{roof}</color>";
+        string cBars = $"<color=#777777>{bars}</color>";
+        string cBottom = $"<color=#777777>{bottom}</color>";
+
+        return $"<voffset=-7.0em><line-height=55%>{cRoof}\n" +
+               $"{cBars}\n" +
+               $"{cBars}\n" +
+               $"{cBars}\n" +
+               $"{cBars}\n" +
+               $"{cBars}\n" +
+               $"{cBars}\n" +
+               $"{cBars}\n" +
+               $"{cBars}\n" +
+               $"{cBars}\n" +
+               $"{cBars}\n" +
+               $"{cBottom}</line-height></voffset>";
     }
 
-    // 牢屋は会議中も維持（デスポーンしない）
     public override void OnMeeting() { }
 }
