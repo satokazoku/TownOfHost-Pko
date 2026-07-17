@@ -480,7 +480,7 @@ namespace TownOfHost
             var playersText = $"{Math.Max(players, 0)}/{Math.Max(maxPlayers, 0)}";
 
             var progressLine = rawState == "InGame"
-                ? $"♣試合の進行状況♣(テスト機能): **{Math.Clamp(progressPercent, 0, 100)}%**\n"
+                ? $"♣試合の進行状況♣: **{Math.Clamp(progressPercent, 0, 100)}%**\n"
                 : "";
 
             return "⠀⠀⠀【募集情報】\n"

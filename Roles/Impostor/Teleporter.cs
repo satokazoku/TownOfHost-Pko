@@ -6,6 +6,7 @@ using TownOfHost.Modules;
 using TownOfHost.Patches;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Crewmate;
 using TownOfHost.Roles.Impostor;
 using TownOfHost.Roles.Neutral;
 using UnityEngine;
@@ -102,6 +103,8 @@ public sealed class Teleporter : RoleBase, IImpostor, IUsePhantomButton
             return hh.IsCharging || hh.ShowBeamMark;
         if (pc?.GetRoleClass() is JackalHadouHo jhh)
             return jhh.IsCharging || jhh.IsSuperCharging || jhh.ShowBeamMark;
+        if (pc?.GetRoleClass() is SheriffHadouHo shh)
+            return shh.IsCharging || shh.ShowBeamMark;
         return false;
     }
 
@@ -229,7 +232,7 @@ public sealed class Teleporter : RoleBase, IImpostor, IUsePhantomButton
         var dest = PlayerCatch.GetPlayerById(destPlayerId);
         string destName = dest != null ? UtilsName.GetPlayerColor(dest, true) : "???";
         int sec = Mathf.CeilToInt(pendingTimer);
-        return $"\\n<color=#ff4500>{destName} の元に {sec}秒後テレポートします！</color>";
+        return $"\n<color=#ff4500>{destName} の元に {sec}秒後テレポートします！</color>";
     }
 
     public override string GetLowerText(PlayerControl seer, PlayerControl seen = null,

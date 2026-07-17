@@ -114,6 +114,8 @@ public sealed class NiceTeleporter : RoleBase
             return hh.IsCharging || hh.ShowBeamMark;
         if (pc?.GetRoleClass() is JackalHadouHo jhh)
             return jhh.IsCharging || jhh.IsSuperCharging || jhh.ShowBeamMark;
+        if (pc?.GetRoleClass() is SheriffHadouHo shh)
+            return shh.IsCharging || shh.ShowBeamMark;
         return false;
     }
 

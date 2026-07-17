@@ -1,0 +1,5 @@
+DROP TABLE IF EXISTS ai_config;
+CREATE TABLE IF NOT EXISTS ai_config (
+  key TEXT PRIMARY KEY,
+  value TEXT
+);

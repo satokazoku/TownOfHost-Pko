@@ -1,0 +1,14 @@
+[name = "presets-api"]
+type = "javascript"
+main = "workers/src/index.ts"
+compatibility_date = "2026-01-01"
+
+# Set your account_id and preview dev settings before deploying
+account_id = "your-account-id"
+
+[vars]
+# Add any environment variables here
+
+[[d1_databases]]
+binding = "D1_PRESETS"
+database_name = "D1_PRESETS"

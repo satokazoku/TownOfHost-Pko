@@ -8,7 +8,7 @@ namespace TownOfHost.Modules
 {
     public static class Aiserver
     {
-        private const string Url = "https://handwash-antler-barmaid.ngrok-free.dev/ai";
+        private const string Url = "https://pikeo-ai.pikeo-ai.workers.dev/ai";
 
         public static void Send(string prompt, byte senderId)
         {

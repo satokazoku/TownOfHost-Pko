@@ -1,0 +1,13 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "pikeo-ai",
+  "main": "src/index.ts",
+  "compatibility_date": "2024-04-03",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "pikeo-ai-db",
+      "database_id": "94ffb573-1831-49f2-a189-6b536a6e5cd7"
+    }
+  ]
+}

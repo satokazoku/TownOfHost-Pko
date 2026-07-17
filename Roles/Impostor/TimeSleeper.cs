@@ -6,6 +6,7 @@ using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Impostor;
 using TownOfHost.Roles.Neutral;
+using TownOfHost.Roles.Crewmate;
 
 namespace TownOfHost.Roles.Impostor;
 
@@ -103,6 +104,8 @@ public sealed class TimeSleeper : RoleBase, IImpostor, IUsePhantomButton
             return hh.IsCharging || hh.ShowBeamMark;
         if (pc.GetRoleClass() is JackalHadouHo jhh)
             return jhh.IsCharging || jhh.IsSuperCharging || jhh.ShowBeamMark;
+        if (pc.GetRoleClass() is SheriffHadouHo shh)
+            return shh.IsCharging || shh.ShowBeamMark;
         return false;
     }
 

@@ -30,6 +30,11 @@ namespace TownOfHost
                 if (jackalHo.IsCharging || jackalHo.ShowBeamMark)
                     return false;
             }
+            if (__instance.GetRoleClass() is Roles.Crewmate.SheriffHadouHo crewmateHo)
+            {
+                if (crewmateHo.IsCharging || crewmateHo.ShowBeamMark)
+                    return false;
+            }
 
             if (!fromTop && Options.CantUseZipLineTotop.GetBool()) return false;
             if (fromTop && Options.CantUseZipLineTodown.GetBool()) return false;
@@ -100,7 +105,7 @@ namespace TownOfHost
         }
     }
 
-    // ★ MovingPlatform（エアシップのぬーん）禁止Patch
+    //エアシップのぬーん禁止Patch
     [HarmonyPatch(typeof(MovingPlatformBehaviour))]
     class HadouHoMovingPlatformPatch
     {
@@ -114,39 +119,18 @@ namespace TownOfHost
                 if (hadouHo.IsCharging || hadouHo.ShowBeamMark)
                     return false;
             }
-            // ★ JackalHadouHoも追加
             if (player.GetRoleClass() is Roles.Neutral.JackalHadouHo jackalHo)
             {
                 if (jackalHo.IsCharging || jackalHo.ShowBeamMark)
                     return false;
             }
-            return true;
-
-        }
-    }
-
-    // ★ 梯子禁止Patch（ClimbLadderをフック）
-    [HarmonyPatch(typeof(PlayerPhysics), nameof(PlayerPhysics.ClimbLadder))]
-    class HadouHoLadderPatch
-    {
-        public static bool Prefix(PlayerPhysics __instance, Ladder source, byte climbLadderSid)
-        {
-            if (AmongUsClient.Instance.AmHost is false) return true;
-
-            var player = __instance.myPlayer;
-            if (player == null) return true;
-
-            if (player.GetRoleClass() is Roles.Impostor.HadouHo hadouHo)
+            if (player.GetRoleClass() is Roles.Crewmate.SheriffHadouHo sheriffHo)
             {
-                if (hadouHo.IsCharging || hadouHo.ShowBeamMark)
-                    return false;
-            }
-            if (player.GetRoleClass() is Roles.Neutral.JackalHadouHo jackalHo)
-            {
-                if (jackalHo.IsCharging || jackalHo.ShowBeamMark)
+                if (sheriffHo.IsCharging || sheriffHo.ShowBeamMark)
                     return false;
             }
             return true;
+
         }
     }
 }

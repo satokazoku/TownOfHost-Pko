@@ -34,6 +34,8 @@ public sealed class Freeter : RoleBase, IKiller, IAdditionalWinner
         BetTargetId = byte.MaxValue;
         hasBeenEmployed = false;
         unemployedTurns = 0;
+        lastBetTargetRole = CustomRoles.NotAssigned;
+        initialBetTargetRole = CustomRoles.NotAssigned;
     }
 
     static OptionItem OptUnemployedDeathTurns;
@@ -45,6 +47,7 @@ public sealed class Freeter : RoleBase, IKiller, IAdditionalWinner
     byte BetTargetId;
     public byte GetBetTargetId => BetTargetId;
     CustomRoles lastBetTargetRole;
+    CustomRoles initialBetTargetRole;
     bool hasBeenEmployed;
     int unemployedTurns;
 
@@ -59,20 +62,17 @@ public sealed class Freeter : RoleBase, IKiller, IAdditionalWinner
 
     private static void SetupOptionItem()
     {
-        // 無職(BetTargetId未設定)のままこのターン数が経過すると死亡する。0で無効化(死なない)
         OptUnemployedDeathTurns = IntegerOptionItem.Create(
                 RoleInfo, 10, OptionName.FreeterUnemployedDeathTurns,
                 new(0, 15, 1), 3, false)
             .SetValueFormat(OptionFormat.Times)
             .SetZeroNotation(OptionZeroNotation.Infinity);
 
-        // 一度も就職したことがない状態で最初の就職を試みるときのクールタイム
         OptInitialCooldown = FloatOptionItem.Create(
                 RoleInfo, 11, OptionName.FreeterInitialCooldown,
                 new(0f, 60f, 2.5f), 20f, false)
             .SetValueFormat(OptionFormat.Seconds);
 
-        // 一度就職した後、雇用主が死亡するなどして再就職が必要になったときのクールタイム
         OptFinalCooldown = FloatOptionItem.Create(
                 RoleInfo, 12, OptionName.FreeterFinalCooldown,
                 new(0f, 120f, 2.5f), 90f, false)
@@ -93,8 +93,6 @@ public sealed class Freeter : RoleBase, IKiller, IAdditionalWinner
     public bool CanUseKillButton() => Player.IsAlive() && BetTargetId == byte.MaxValue;
     public bool CanUseImpostorVentButton() => false;
     public bool CanUseSabotageButton() => false;
-
-    // 初回就職はInitial、雇用主を失った後の再就職はFinalのクールタイムを使う
     public float CalculateKillCooldown() =>
         hasBeenEmployed ? OptFinalCooldown.GetFloat() : OptInitialCooldown.GetFloat();
 
@@ -158,6 +156,7 @@ public sealed class Freeter : RoleBase, IKiller, IAdditionalWinner
 
         BetTargetId = closest.PlayerId;
         lastBetTargetRole = closest.GetCustomRole();
+        initialBetTargetRole = lastBetTargetRole;
         hasBeenEmployed = true;
         unemployedTurns = 0;
 
@@ -185,6 +184,7 @@ public sealed class Freeter : RoleBase, IKiller, IAdditionalWinner
             NameColorManager.Remove(BetTargetId, Player.PlayerId);
             BetTargetId = byte.MaxValue;
             lastBetTargetRole = CustomRoles.NotAssigned;
+            initialBetTargetRole = CustomRoles.NotAssigned;
             SendRPC();
             SendMessage(GetString("Freeter_BetTargetDead"), Player.PlayerId);
             Player.ResetKillCooldown();
@@ -226,7 +226,6 @@ public sealed class Freeter : RoleBase, IKiller, IAdditionalWinner
         }, 0.3f, "Freeter.ColorRefresh", true);
     }
 
-    // 無職のまま設定ターン数が経過したら死亡させる(0なら無効)
     private void CheckUnemployedDeath()
     {
         if (!Player.IsAlive()) return;
@@ -287,7 +286,10 @@ public sealed class Freeter : RoleBase, IKiller, IAdditionalWinner
         if (target.Is(CustomRoles.Freeter)) return false;
 
         return CustomWinnerHolder.WinnerIds.Contains(BetTargetId)
-            || CustomWinnerHolder.WinnerRoles.Any(role => target.Is(role));
+            || CustomWinnerHolder.WinnerRoles.Any(role =>
+                target.Is(role)
+                || role == initialBetTargetRole
+                || role == lastBetTargetRole);
     }
 
     public override void CheckWinner(GameOverReason reason)
@@ -301,7 +303,10 @@ public sealed class Freeter : RoleBase, IKiller, IAdditionalWinner
         if (target == null || target.Is(CustomRoles.Freeter)) return;
 
         bool employerWon = CustomWinnerHolder.WinnerIds.Contains(BetTargetId)
-                        || CustomWinnerHolder.WinnerRoles.Any(role => target.Is(role));
+                        || CustomWinnerHolder.WinnerRoles.Any(role =>
+                            target.Is(role)
+                            || role == initialBetTargetRole
+                            || role == lastBetTargetRole);
         if (!employerWon) return;
 
         CustomWinnerHolder.WinnerIds.Add(Player.PlayerId);

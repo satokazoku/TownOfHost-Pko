@@ -74,6 +74,17 @@ public interface ISchrodingerCatOwner
         /// ベトレイヤーに所属する状態
         /// </summary>
         Betrayer,
+        /// <summary>
+        /// パブロフに所属する状態
+        /// </summary>
         Pavlov,
+        /// <summary>
+        /// オポチュニストに所属する状態
+        /// </summary>
+        Opportunist,
+        /// <summary>
+        /// 鬼に所属する状態
+        /// </summary>
+        Ogre,
     }
 }
