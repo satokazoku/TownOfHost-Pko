@@ -72,13 +72,6 @@ namespace TownOfHost
         public bool InvertParentValueForDisplay { get; private set; }
         public List<OptionItem> Children;
 
-        /// <summary>
-        /// 親が複数選択(StringOptionなど)の時、親がこの値(index)のいずれかの時のみ表示・有効になる。<br/>
-        /// null の場合は従来通り「親の GetBool() が true(=0以外)」で表示。<br/>
-        /// SetParent(parent, activeValues...) で設定する。
-        /// </summary>
-        public int[] ParentActiveValues { get; private set; } = null;
-
         public OptionBehaviour OptionBehaviour;
         public MonoBehaviour OptionHedder;
 
@@ -191,38 +184,6 @@ namespace TownOfHost
             i.InvertParentValueForDisplay = invertParentValueForDisplay;
             parent.SetChild(i);
         });
-
-        /// <summary>
-        /// 親が複数選択(StringOptionなど)の場合に、親が指定した値(index)のいずれかの時のみ
-        /// この子オプションを表示・有効化する。<br/>
-        /// 例: <c>.SetParent(ModeOption, 1, 2)</c> で ModeOption が index 1 か 2 の時だけ表示。
-        /// </summary>
-        public OptionItem SetParent(OptionItem parent, params int[] activeValues) => Do(i =>
-        {
-            if (parent != null && parented)
-            {
-                Logger.Warn($"{Name} : 既にSetParentがされてます", "SetParent");
-                return;
-            }
-            if (parent != null) parented = true;
-            i.Parent = parent;
-            i.ParentActiveValues = (activeValues != null && activeValues.Length > 0) ? activeValues : null;
-            parent.SetChild(i);
-        });
-
-        /// <summary>
-        /// 親の値条件(ParentActiveValues)を満たしているか。<br/>
-        /// 条件未設定(null)なら常に true。
-        /// </summary>
-        private bool CheckParentActiveValue()
-        {
-            if (ParentActiveValues == null || Parent == null) return true;
-            var pv = Parent.GetValue();
-            for (int k = 0; k < ParentActiveValues.Length; k++)
-                if (ParentActiveValues[k] == pv) return true;
-            return false;
-        }
-
         public bool IsParentValueEnabledForDisplay()
             => Parent == null || (InvertParentValueForDisplay ? !Parent.GetBool() : Parent.GetBool());
         public OptionItem SetParentRole(CustomRoles parentrole)
@@ -272,10 +233,6 @@ namespace TownOfHost
             if (!(CurrentValue != 0 && (Parent == null || Parent.GetBool() || CheckRoleOption(Parent))))
                 return false;
 
-            // 親が複数選択で、指定した値の時のみ表示する条件が設定されている場合
-            if (!CheckParentActiveValue())
-                return false;
-
             var tags = GameModeManager.GetTags(Options.CurrentGameMode);
 
             if (!(Tag == CustomOptionTags.All || tags.Contains(Tag)))
@@ -283,7 +240,7 @@ namespace TownOfHost
 
             return !tags.Any(tag => DisableTag.Contains(tag));
         }
-        public bool InfoGetBool() => CurrentValue != 0 && (Parent == null || Parent.InfoGetBool()) && CheckParentActiveValue();
+        public bool InfoGetBool() => CurrentValue != 0 && (Parent == null || Parent.InfoGetBool());
         public bool CheckRoleOption(OptionItem option) => option.CustomRole is not CustomRoles.NotAssigned;
 
         /* オプションのgetboolの表示のやつ */
@@ -357,7 +314,7 @@ namespace TownOfHost
         }
 
         // 外部からの操作
-        public virtual void Refresh()
+        public virtual void Refresh(bool updateOptionShower = true)
         {
             if (OptionBehaviour is not null and StringOption opt)
             {
@@ -378,7 +335,10 @@ namespace TownOfHost
                 opt.ValueText.text = GetString();
                 opt.oldValue = opt.Value = CurrentValue;
             }
-            OptionShower.Update = true;
+            if (updateOptionShower)
+            {
+                OptionShower.Update = true;
+            }
         }
         public virtual void SetValue(int afterValue, bool doSave, bool doSync = true)
         {
@@ -409,7 +369,11 @@ namespace TownOfHost
         }
         public void SetAllValues(int[] values)  // プリセット読み込み専用
         {
-            AllValues = values;
+            AllValues = new int[NumPresets];
+            for (var i = 0; i < AllValues.Length; i++)
+            {
+                AllValues[i] = values != null && i < values.Length ? values[i] : DefaultValue;
+            }
         }
 
         // 演算子オーバーロード
@@ -419,14 +383,21 @@ namespace TownOfHost
             => item.Do(item => item.SetValue(item.CurrentValue - 1));
 
         // 全体操作用
-        public static void SwitchPreset(int newPreset)
+        public static void SwitchPreset(int newPreset, bool doSync = true)
         {
-            CurrentPreset = Math.Clamp(newPreset, 0, NumPresets - 1);
+            var preset = Math.Clamp(newPreset, 0, NumPresets - 1);
+            if (CurrentPreset == preset) return;
+
+            CurrentPreset = preset;
 
             foreach (var op in AllOptions)
-                op.Refresh();
+                op.Refresh(updateOptionShower: false);
 
-            SyncAllOptions();
+            OptionShower.Update = true;
+            if (doSync)
+            {
+                SyncAllOptions();
+            }
         }
         public static void SyncAllOptions()
         {

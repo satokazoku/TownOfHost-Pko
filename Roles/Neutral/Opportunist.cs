@@ -46,6 +46,7 @@ public sealed class Opportunist : RoleBase, IAdditionalWinner, IKiller
             new(0f, 180f, 0.5f), 30f, false, OptionHasKillButton)
             .SetValueFormat(OptionFormat.Seconds);
     }
+    public static bool HasKillButton => OptionHasKillButton?.GetBool() ?? false;
 
     float timer;
     Vector2 pos;

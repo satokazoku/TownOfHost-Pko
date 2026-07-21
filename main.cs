@@ -59,10 +59,10 @@ namespace TownOfHost
         public static ConfigEntry<string> ExplosionKeyInput { get; private set; }
 
         public const string PluginGuid = "com.satokazoku.TownOfHost-Pko";
-        public const string BepInExPluginVersion = "5.33.18.90";
-        public const string PluginVersion = "5.33.18.90";//ほんとはx.y.z表記にしたかったけどx.y.z.km.ks表記だと警告だされる
-        public const string PluginShowVersion = "5.33.18.90";
-        public const string ModVersion = ".18.90";//リリースver用バージョン変更dc9b79
+        public const string BepInExPluginVersion = "5.33.18.91";
+        public const string PluginVersion = "5.33.18.91";//ほんとはx.y.z表記にしたかったけどx.y.z.km.ks表記だと警告だされる
+        public const string PluginShowVersion = "5.33.18.91";
+        public const string ModVersion = ".18.91";//リリースver用バージョン変更dc9b79
 
         /// 配布するデバッグ版なのであればtrue。リリース時にはfalseにすること。
         public static bool DebugVersion = false;
@@ -121,6 +121,7 @@ namespace TownOfHost
         public static ConfigEntry<string> Preset14 { get; private set; }
         public static ConfigEntry<string> Preset15 { get; private set; }
         public static ConfigEntry<string> Preset16 { get; private set; }
+        public static ConfigEntry<string>[] Presets { get; private set; }
         public static ConfigEntry<string> SKey { get; private set; }
         public static ConfigEntry<string> JoinWord { get; private set; }
         public static ConfigEntry<string> RemoveWord { get; private set; }
@@ -184,6 +185,61 @@ namespace TownOfHost
             => Path.GetFullPath(Path.Combine(
                 string.IsNullOrEmpty(BepInEx.Paths.BepInExRootPath) ? Application.persistentDataPath : BepInEx.Paths.BepInExRootPath,
                 "../TOHP_DATA"));
+        public static string GetPresetName(int presetIndex)
+        {
+            var translationKey = $"Preset_{presetIndex + 1}";
+            if (Presets == null || presetIndex < 0 || presetIndex >= Presets.Length)
+            {
+                return Translator.GetString(translationKey);
+            }
+
+            var preset = Presets[presetIndex];
+            return preset.Value == (string)preset.DefaultValue ? Translator.GetString(translationKey) : preset.Value;
+        }
+        public static void SetPresetName(int presetIndex, string value)
+        {
+            if (Presets == null || presetIndex < 0 || presetIndex >= Presets.Length) return;
+            Presets[presetIndex].Value = value;
+        }
+        public static void ResetPresetName(int presetIndex)
+        {
+            if (Presets == null || presetIndex < 0 || presetIndex >= Presets.Length) return;
+            Presets[presetIndex].Value = (string)Presets[presetIndex].DefaultValue;
+        }
+        public static void ResetPresetNames()
+        {
+            if (Presets == null) return;
+            for (var i = 0; i < Presets.Length; i++)
+            {
+                ResetPresetName(i);
+            }
+        }
+        private void BindPresetNames()
+        {
+            Presets = new ConfigEntry<string>[16];
+            for (var i = 0; i < Presets.Length; i++)
+            {
+                var presetNumber = i + 1;
+                Presets[i] = Config.Bind("Preset Name Options", $"Preset{presetNumber}", $"Preset_{presetNumber}");
+            }
+
+            Preset1 = Presets[0];
+            Preset2 = Presets[1];
+            Preset3 = Presets[2];
+            Preset4 = Presets[3];
+            Preset5 = Presets[4];
+            Preset6 = Presets[5];
+            Preset7 = Presets[6];
+            Preset8 = Presets[7];
+            Preset9 = Presets[8];
+            Preset10 = Presets[9];
+            Preset11 = Presets[10];
+            Preset12 = Presets[11];
+            Preset13 = Presets[12];
+            Preset14 = Presets[13];
+            Preset15 = Presets[14];
+            Preset16 = Presets[15];
+        }
         public override void Load()
         {
             GameCount = 0;
@@ -246,22 +302,7 @@ namespace TownOfHost
             VisibleTasksCount = false;
             MessagesToSend = new List<(string, byte, string)>();
 
-            Preset1 = Config.Bind("Preset Name Options", "Preset1", "Preset_1");
-            Preset2 = Config.Bind("Preset Name Options", "Preset2", "Preset_2");
-            Preset3 = Config.Bind("Preset Name Options", "Preset3", "Preset_3");
-            Preset4 = Config.Bind("Preset Name Options", "Preset4", "Preset_4");
-            Preset5 = Config.Bind("Preset Name Options", "Preset5", "Preset_5");
-            Preset6 = Config.Bind("Preset Name Options", "Preset6", "Preset_6");
-            Preset7 = Config.Bind("Preset Name Options", "Preset7", "Preset_7");
-            Preset8 = Config.Bind("Preset Name Options", "Preset8", "Preset_8");
-            Preset9 = Config.Bind("Preset Name Options", "Preset9", "Preset_9");
-            Preset10 = Config.Bind("Preset Name Options", "Preset10", "Preset_10");
-            Preset11 = Config.Bind("Preset Name Options", "Preset11", "Preset_11");
-            Preset12 = Config.Bind("Preset Name Options", "Preset12", "Preset_12");
-            Preset13 = Config.Bind("Preset Name Options", "Preset13", "Preset_13");
-            Preset14 = Config.Bind("Preset Name Options", "Preset14", "Preset_14");
-            Preset15 = Config.Bind("Preset Name Options", "Preset15", "Preset_15");
-            Preset16 = Config.Bind("Preset Name Options", "Preset16", "Preset_16");
+            BindPresetNames();
             SKey = Config.Bind("Other", "countdata", "141c2e1c");
             BetaBuildURL = Config.Bind("Other", "BetaBuildURL", "");
             MessageWait = Config.Bind("Other", "MessageWait", 1f);
@@ -394,6 +435,7 @@ namespace TownOfHost
         Compression,
         Evaporation,
         Retaliation,
+        RuleViolation,
         etc = -1
     }
     //WinData
@@ -462,6 +504,7 @@ namespace TownOfHost
         Pirate = CustomRoles.Pirate,
         Victim = CustomRoles.Victim,
         Amateras = CustomRoles.Amateras,
+        Ruler = CustomRoles.Ruler,
 
         HASTroll = CustomRoles.HASTroll,
         TaskPlayerB = CustomRoles.TaskPlayerB,

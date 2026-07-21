@@ -20,11 +20,11 @@ public class SingleRoleDescription : RoleDescription
     {
         get
         {
-            if (RoleInfo.Desc == null) return Translator.GetString(DescriptionKey);
+            if (RoleInfo.Desc == null) return MonkeyBehaviorBanOption.ApplyNotice(RoleInfo.RoleName, Translator.GetString(DescriptionKey));
             var CustomDescription = RoleInfo.Desc();
 
-            if (CustomDescription == null) return Translator.GetString(DescriptionKey);
-            return CustomDescription;
+            if (CustomDescription == null) return MonkeyBehaviorBanOption.ApplyNotice(RoleInfo.RoleName, Translator.GetString(DescriptionKey));
+            return MonkeyBehaviorBanOption.ApplyNotice(RoleInfo.RoleName, CustomDescription);
         }
     }
     public const string BlurbSuffix = "Info";

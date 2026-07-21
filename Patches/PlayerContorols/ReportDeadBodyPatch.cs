@@ -124,7 +124,7 @@ namespace TownOfHost
             PlayerControlRpcUseZiplinePatch.OnMeeting(reporter, target);
 
             ShapeKiller.SetDummyReport(ref reporter, target);
-            WaitMeeting(reporter, target);
+            WaitMeeting(reporter, target, Meetinginfo, colorcode);
         }
         public static Dictionary<byte, (float time, DontReportreson reason)> DontReport = new();
         public static string GetDontReportMark(PlayerControl seer, PlayerControl seen, bool isForMeeting = false)
@@ -301,7 +301,7 @@ namespace TownOfHost
                 }, 0.2f, "", true);
             }
         }
-        static void WaitMeeting(PlayerControl reporter, NetworkedPlayerInfo target)
+        static void WaitMeeting(PlayerControl reporter, NetworkedPlayerInfo target, string Meetinginfo = "", string colorcode = "")
         {
             if (!AmongUsClient.Instance.AmHost) return;
 
@@ -322,39 +322,56 @@ namespace TownOfHost
 
             AdminProvider.CalculateAdmin(true);
 
-            if (target != null)
+            if (Meetinginfo == "")
             {
-                UtilsGameLog.AddGameLog("Meeting", UtilsName.GetPlayerColor(target, true) + Translator.GetString("Meeting.Report") + "\n\t\t┗  " + string.Format(Translator.GetString("Meeting.Shoushu"), UtilsName.GetPlayerColor(reporter.PlayerId, true)));
-                var colorid = Camouflage.PlayerSkins[target.PlayerId].ColorId;
-                var DieName = Palette.GetColorName(colorid);
-                var check = false;
-                var color = Palette.PlayerColors[colorid];
-                if (ChengeMeetingInfo.TryGetValue(target.PlayerId, out var output))
+                if (target != null)
                 {
-                    color = ModColors.NeutralGray;
-                    check = true;
-                    DieName = output;
+                    UtilsGameLog.AddGameLog("Meeting", UtilsName.GetPlayerColor(target, true) + Translator.GetString("Meeting.Report") + "\n\t\t┗  " + string.Format(Translator.GetString("Meeting.Shoushu"), UtilsName.GetPlayerColor(reporter.PlayerId, true)));
+                    var colorid = Camouflage.PlayerSkins[target.PlayerId].ColorId;
+                    var DieName = Palette.GetColorName(colorid);
+                    var check = false;
+                    var color = Palette.PlayerColors[colorid];
+                    if (ChengeMeetingInfo.TryGetValue(target.PlayerId, out var output))
+                    {
+                        color = ModColors.NeutralGray;
+                        check = true;
+                        DieName = output;
+                    }
+                    MeetingHudPatch.Oniku = (check ? DieName : UtilsName.GetPlayerColor(target, true)) + Translator.GetString("Meeting.Report") + "\n　" + string.Format(Translator.GetString("Meeting.Shoushu"), UtilsName.GetPlayerColor(reporter.PlayerId, true));
+                    UtilsNotifyRoles.ExtendedMeetingText = "<u>★".Color(Palette.PlayerColors[Camouflage.PlayerSkins[reporter.PlayerId].ColorId]) + "<#ffffff>" + string.Format(Translator.GetString("MI.die"), DieName.Color(color)) + "</u></color>";
+                    RpcSyncMeetingInfo(reporter, target, check ? DieName : null);
                 }
-                MeetingHudPatch.Oniku = (check ? DieName : UtilsName.GetPlayerColor(target, true)) + Translator.GetString("Meeting.Report") + "\n　" + string.Format(Translator.GetString("Meeting.Shoushu"), UtilsName.GetPlayerColor(reporter.PlayerId, true));
-                UtilsNotifyRoles.ExtendedMeetingText = "<u>★".Color(Palette.PlayerColors[Camouflage.PlayerSkins[reporter.PlayerId].ColorId]) + "<#ffffff>" + string.Format(Translator.GetString("MI.die"), DieName.Color(color)) + "</u></color>";
-                RpcSyncMeetingInfo(reporter, target, check ? DieName : null);
+                else
+                {
+                    UtilsGameLog.AddGameLog("Meeting", Translator.GetString("Meeting.Button") + "\n\t\t┗  " + string.Format(Translator.GetString("Meeting.Shoushu"), UtilsName.GetPlayerColor(reporter.PlayerId, true)));
+                    MeetingHudPatch.Oniku = Translator.GetString("Meeting.Button") + "\n　" + string.Format(Translator.GetString("Meeting.Shoushu"), UtilsName.GetPlayerColor(reporter.PlayerId, true));
+                    UtilsNotifyRoles.ExtendedMeetingText = "<u>★".Color(Palette.PlayerColors[Camouflage.PlayerSkins[reporter.PlayerId].ColorId]) + "<#ffffff>" + Translator.GetString("MI.Bot") + "</u></color>";
+                    RpcSyncMeetingInfo(reporter, target);
+                }
             }
             else
             {
-                UtilsGameLog.AddGameLog("Meeting", Translator.GetString("Meeting.Button") + "\n\t\t┗  " + string.Format(Translator.GetString("Meeting.Shoushu"), UtilsName.GetPlayerColor(reporter.PlayerId, true)));
-                MeetingHudPatch.Oniku = Translator.GetString("Meeting.Button") + "\n　" + string.Format(Translator.GetString("Meeting.Shoushu"), UtilsName.GetPlayerColor(reporter.PlayerId, true));
-                UtilsNotifyRoles.ExtendedMeetingText = "<u>★".Color(Palette.PlayerColors[Camouflage.PlayerSkins[reporter.PlayerId].ColorId]) + "<#ffffff>" + Translator.GetString("MI.Bot") + "</u></color>";
-                RpcSyncMeetingInfo(reporter, target);
+                MeetingHudPatch.Oniku = GetString(Meetinginfo);
+                if (colorcode == "") colorcode = "#ffffff";
+                UtilsNotifyRoles.ExtendedMeetingText = $"<color={colorcode}><u>★" + GetString(Meetinginfo) + "</u></color>";
+                RpcSyncMeetingInfo(reporter, target, null, Meetinginfo, colorcode);
             }
             DisableDevice.CheckAddtime();
             DisableDevice.SendMessage();
 
+            var meetingInfo = UtilsNotifyRoles.ExtendedMeetingText;
             foreach (var pc in PlayerCatch.AllPlayerControls)
             {
                 var roleClass = pc.GetRoleClass();
                 roleClass?.OnReportDeadBody(reporter, target);
             }
-
+            if (meetingInfo != UtilsNotifyRoles.ExtendedMeetingText)
+            {
+                MeetingHudPatch.Oniku = GetString(Meetinginfo);
+                if (colorcode == "") colorcode = "#ffffff";
+                UtilsNotifyRoles.ExtendedMeetingText = $"<color={colorcode}><u>★" + GetString(Meetinginfo) + "</u></color>";
+                RpcSyncMeetingInfo(reporter, target, null, UtilsNotifyRoles.ExtendedMeetingText);
+            }
             _ = new LateTask(() =>
             {
                 foreach (var pc in PlayerCatch.AllPlayerControls)
@@ -430,58 +447,6 @@ namespace TownOfHost
             AmongUsClient.Instance.FinishRpcImmediately(writer);
         }
 
-        /// <summary>
-        /// 会議画面の Day 表示欄(MeetingInfo)に、プレイヤーごとに異なる個別テキストを表示するための保持領域。<br/>
-        /// キー: 表示先プレイヤーId / 値: そのプレイヤーにだけ見える追加テキスト。<br/>
-        /// ExtendedMeetingText(全員共通) の下に追記される。
-        /// </summary>
-        public static Dictionary<byte, string> PersonalMeetingText = new();
-
-        /// <summary>
-        /// ホストが特定プレイヤーにだけ会議情報テキストを送る。<br/>
-        /// ホスト自身宛の場合は直接 PersonalMeetingText に格納する。<br/>
-        /// [ホストのみ]
-        /// </summary>
-        public static void SetPersonalMeetingInfoFor(PlayerControl target, string text)
-        {
-            if (!AmongUsClient.Instance.AmHost || target == null) return;
-            text ??= "";
-
-            // ホスト自身宛
-            if (target.AmOwner)
-            {
-                if (string.IsNullOrEmpty(text)) PersonalMeetingText.Remove(target.PlayerId);
-                else PersonalMeetingText[target.PlayerId] = text;
-                return;
-            }
-
-            if (!PlayerCatch.AnyModClient()) return;
-
-            var writer = AmongUsClient.Instance.StartRpcImmediately(
-                PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PersonalMeetingInfo,
-                Hazel.SendOption.Reliable, target.GetClientId());
-            writer.Write(target.PlayerId);
-            writer.Write(text);
-            AmongUsClient.Instance.FinishRpcImmediately(writer);
-        }
-
-        /// <summary>会議情報の個別テキストをクリアする(全員分)。会議開始時に呼ぶ。[ホストのみ]</summary>
-        public static void ClearPersonalMeetingInfo()
-        {
-            PersonalMeetingText.Clear();
-        }
-
-        public static void SetPersonalMeetingInfo(Hazel.MessageReader reader)
-        {
-            if (AmongUsClient.Instance.AmHost) return;
-
-            var targetId = reader.ReadByte();
-            var text = reader.ReadString();
-
-            if (string.IsNullOrEmpty(text)) PersonalMeetingText.Remove(targetId);
-            else PersonalMeetingText[targetId] = text;
-        }
-
         public static void CancelMeeting(Hazel.MessageReader reader)
         {
             if (AmongUsClient.Instance.AmHost) return;
@@ -526,6 +491,7 @@ namespace TownOfHost
             if (overrideInfo)
             {
                 MeetingHudPatch.Oniku = GetString(meetingInfo);
+                if (infoColorCode == "") infoColorCode = "#ffffff";
                 UtilsNotifyRoles.ExtendedMeetingText = $"<color={infoColorCode}><u>★" + GetString(meetingInfo) + "</u></color>";
                 return;
             }

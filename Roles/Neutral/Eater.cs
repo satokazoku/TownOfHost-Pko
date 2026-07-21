@@ -1,4 +1,5 @@
-using System.Collections.Generic;
+// 俺の約1日さようなら
+/*using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using AmongUs.GameOptions;
@@ -757,3 +758,4 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
         achievements.Add(0, n1);
     }
 }
+*/

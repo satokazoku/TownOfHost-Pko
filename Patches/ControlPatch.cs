@@ -90,6 +90,10 @@ namespace TownOfHost
             {
                 UtilsOutputLog.OpenDirectory(System.Environment.CurrentDirectory);
             }
+            if (TryCancelQueuedCommandOutput())
+            {
+                return;
+            }
             /*if (GetKeysDown(KeyCode.T, KeyCode.B) && !Main.TaskBattleOptionv)
             {
                 Main.TaskBattleOptionv = true; //隠しゲームモード 気づけた方おめ！ 全然使っていいよ！いつか普通にできるようにするから、いまのうちに友達に自慢しｙ((((
@@ -218,25 +222,7 @@ namespace TownOfHost
                         else if (GameSettingMenuStartPatch.priset?.textArea?.text is not "")
                         {
                             var pr = OptionItem.AllOptions.Where(op => op.Id == 0).FirstOrDefault();
-                            switch (pr.CurrentValue)
-                            {
-                                case 0: Main.Preset1.Value = GameSettingMenuStartPatch.priset.textArea.text; break;
-                                case 1: Main.Preset2.Value = GameSettingMenuStartPatch.priset.textArea.text; break;
-                                case 2: Main.Preset3.Value = GameSettingMenuStartPatch.priset.textArea.text; break;
-                                case 3: Main.Preset4.Value = GameSettingMenuStartPatch.priset.textArea.text; break;
-                                case 4: Main.Preset5.Value = GameSettingMenuStartPatch.priset.textArea.text; break;
-                                case 5: Main.Preset6.Value = GameSettingMenuStartPatch.priset.textArea.text; break;
-                                case 6: Main.Preset7.Value = GameSettingMenuStartPatch.priset.textArea.text; break;
-                                case 7: Main.Preset8.Value = GameSettingMenuStartPatch.priset.textArea.text; break;
-                                case 8: Main.Preset9.Value = GameSettingMenuStartPatch.priset.textArea.text; break;
-                                case 9: Main.Preset10.Value = GameSettingMenuStartPatch.priset.textArea.text; break;
-                                case 10: Main.Preset11.Value = GameSettingMenuStartPatch.priset.textArea.text; break;
-                                case 11: Main.Preset12.Value = GameSettingMenuStartPatch.priset.textArea.text; break;
-                                case 12: Main.Preset13.Value = GameSettingMenuStartPatch.priset.textArea.text; break;
-                                case 13: Main.Preset14.Value = GameSettingMenuStartPatch.priset.textArea.text; break;
-                                case 14: Main.Preset15.Value = GameSettingMenuStartPatch.priset.textArea.text; break;
-                                case 15: Main.Preset16.Value = GameSettingMenuStartPatch.priset.textArea.text; break;
-                            }
+                            Main.SetPresetName(pr.CurrentValue, GameSettingMenuStartPatch.priset.textArea.text);
                             GameSettingMenuStartPatch.priset.textArea.Clear();
                         }
                     }
@@ -341,6 +327,25 @@ namespace TownOfHost
             }*/
             //マスゲーム用コード終わり
         }
+        static bool TryCancelQueuedCommandOutput()
+        {
+            var isCtrlDown = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
+            if (!isCtrlDown || !Input.GetKeyDown(KeyCode.R)) return false;
+
+            var removedCount = Main.MessagesToSend?.Count ?? 0;
+            Main.MessagesToSend?.Clear();
+            Main.MegCount = 0;
+            ChatUpdatePatch.DoBlockChat = false;
+            ChatUpdatePatch.BlockSendName = false;
+            TownOfHost.Modules.ChatManager.ChatManager.IsForceSend = false;
+
+            var chat = HudManager.InstanceExists ? HudManager.Instance?.Chat : null;
+            chat?.freeChatField?.textArea?.Clear();
+
+            Logger.Info($"Canceled queued command output. Removed={removedCount}", "KeyCommand");
+            return true;
+        }
+
         static void TryHandleModeratorKeyCommands()
         {
             if (!Moderator.CanUseModeratorKeyCommand(PlayerControl.LocalPlayer)) return;

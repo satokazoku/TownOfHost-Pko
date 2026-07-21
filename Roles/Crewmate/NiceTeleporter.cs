@@ -63,7 +63,7 @@ public sealed class NiceTeleporter : RoleBase
     static void SetupOptionItem()
     {
         OptionCooldown = FloatOptionItem.Create(RoleInfo, 10, OptionName.NiceTeleporterCooldown,
-            new(5f, 120f, 5f), 45f, false).SetValueFormat(OptionFormat.Seconds);
+            new(5f, 120f, 2.5f), 45f, false).SetValueFormat(OptionFormat.Seconds);
         OptionWaitingTime = FloatOptionItem.Create(RoleInfo, 11, OptionName.NiceTeleporterWaitingTime,
             new(0f, 10f, 1f), 3f, false).SetValueFormat(OptionFormat.Seconds);
     }
@@ -99,6 +99,10 @@ public sealed class NiceTeleporter : RoleBase
         if (pc.MyPhysics.Animations.IsPlayingAnyLadderAnimation()) return true;
         if (pc.onLadder) return true;
         if (pc.inMovingPlat) return true;
+        if (pc.inVent) return true;
+        if (pc.walkingToVent) return true;
+        if (pc.MyPhysics.Animations.IsPlayingEnterVentAnimation()) return true;
+
         if ((MapNames)Main.NormalOptions.MapId == MapNames.Airship &&
             Vector2.Distance(pc.GetTruePosition(), LIFT_POSITION) <= 1.9f) return true;
         return false;
@@ -196,7 +200,7 @@ public sealed class NiceTeleporter : RoleBase
         if (destPlayer == null || !destPlayer.IsAlive() || !Player.IsAlive())
         { SendRpc(); UtilsNotifyRoles.NotifyRoles(); return; }
 
-        if (IsBeamingOrCharging(Player))
+        if (IsOnRestrictedMove(Player) || IsBeamingOrCharging(Player))
         { SendRpc(); UtilsNotifyRoles.NotifyRoles(); return; }
 
         if (IsOnRestrictedMove(destPlayer) || IsBeamingOrCharging(destPlayer))

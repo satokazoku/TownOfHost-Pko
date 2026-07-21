@@ -620,6 +620,8 @@ public sealed class Onmyoji : RoleBase, IKiller, ISelfVoter
     {
         if (target == null) return false;
         if (target.Is(CustomRoleTypes.Impostor)) return true;
+        if (target.Is(CustomRoles.StandMaster) && StandMaster.EnableKillAbility) return true;
+        if (target.Is(CustomRoles.Opportunist) && Opportunist.HasKillButton) return true;
         return target.GetCustomRole() is
             CustomRoles.CountKiller or CustomRoles.Strawdoll or
             CustomRoles.Jackal or CustomRoles.JackalHadouHo or CustomRoles.JackalMafia or CustomRoles.JackalAlien or

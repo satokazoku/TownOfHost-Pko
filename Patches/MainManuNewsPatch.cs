@@ -672,6 +672,23 @@ public class ModNewsHistory
                 };
                 AllModNews.Add(news);
             }
+            {
+                var news = new ModNews
+                {
+                    Number = 100098,
+                    Title = "もう少しで夏休みだじぇ",
+                    SubTitle = "<color=#FF9631>●TOH-Pko v5.33.18.91</color>",
+                    ShortTitle = "<color=#FF9631>●TOH-Pko v5.33.18.91</color>",
+                    Text = "・ラビットバグ修正(?)\n"
+                    + "・ナイステレポーターバグ修正\n"
+                    + "・テレポーターバグ修正\n"
+                    + "・スウーパーバグ修正\n"
+                    + "・ジェイラーバグ修正\n"
+                    ,
+                    Date = "2026-7-13"
+                };
+                AllModNews.Add(news);
+            }
             AnnouncementPopUp.UpdateState = AnnouncementPopUp.AnnounceState.NotStarted;
         }
     }

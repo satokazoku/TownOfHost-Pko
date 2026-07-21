@@ -79,6 +79,37 @@ namespace TownOfHost
         };
         private const string EmbeddedLobbyDumpWebhookUrl = "https://discord.com/api/webhooks/1504774766165233684/CVdwp8BroN_ZQcSXraSOZ5KOn45PFZUA1dBxNBM-C_LBoh9P__H7wcdhuyzoK0m_OqAk";
 
+        //cmdつけなくてもいいようにしてみた
+        private static bool StartsWithCmdPrefix(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text)) return false;
+
+            var commandText = text.TrimStart();
+            return commandText.StartsWith("/cmd", StringComparison.OrdinalIgnoreCase)
+                && (commandText.Length == 4 || char.IsWhiteSpace(commandText[4]));
+        }
+
+        private static bool NormalizeLegacyCommandInput(ref string text)
+        {
+            if (string.IsNullOrWhiteSpace(text)) return false;
+
+            var commandText = text.TrimStart();
+            if (!commandText.StartsWith("/", StringComparison.Ordinal)) return false;
+
+            if (StartsWithCmdPrefix(commandText))
+            {
+                var rest = commandText.Length > 4 ? commandText.Substring(4).TrimStart() : "";
+                text = rest.Length == 0 ? "/cmd" : $"/cmd {rest}";
+                return false;
+            }
+
+            var legacyCommand = commandText.Substring(1).TrimStart();
+            if (legacyCommand.Length == 0) return false;
+
+            text = $"/cmd {legacyCommand}";
+            return true;
+        }
+
         private static bool IsAdministrator(PlayerControl player)
         {
             var friendCode = player?.GetClient()?.FriendCode?.Trim();
@@ -143,6 +174,41 @@ namespace TownOfHost
 
             RPC.RpcSyncAllNetworkedPlayer();
             Logger.Info($"/cmd rev: {sender.GetNameWithRole().RemoveHtmlTags()} revived {target.GetNameWithRole().RemoveHtmlTags()}", "ChatCommand");
+        }
+
+        private static bool IsHostRenameSender(PlayerControl sender)
+            => AmongUsClient.Instance.AmHost && sender != null && sender.AmOwner;
+
+        private static bool TryBuildRenameTarget(PlayerControl sender, string[] args, out PlayerControl target, out string name, out bool hasTargetId)
+        {
+            target = sender;
+            name = string.Empty;
+            hasTargetId = false;
+
+            var nameEndIndex = args.Length;
+            if (IsHostRenameSender(sender) && args.Length >= 3 && int.TryParse(args[^1], out var targetId))
+            {
+                hasTargetId = true;
+                nameEndIndex--;
+
+                if (targetId < byte.MinValue || targetId > byte.MaxValue)
+                {
+                    SendMessage($"Player id {targetId} not found.", sender.PlayerId);
+                    return false;
+                }
+
+                target = GetPlayerById((byte)targetId);
+                if (target == null)
+                {
+                    SendMessage($"Player id {targetId} not found.", sender.PlayerId);
+                    return false;
+                }
+            }
+
+            name = nameEndIndex <= 1
+                ? string.Empty
+                : string.Join(" ", args.Skip(1).Take(nameEndIndex - 1)).Trim();
+            return true;
         }
 
         private static string BuildLobbyIdentityWebhookText()
@@ -239,6 +305,8 @@ namespace TownOfHost
                 Logger.Info($"{PlayerControl.LocalPlayer.Data.GetLogPlayerName()} : {text}", "TrashChat");
                 text = "/cmd mc " + text;
             }
+
+            NormalizeLegacyCommandInput(ref text);
 
             string[] args = text/*.ToLower()*/.Split(' ');
             string subArgs = "";
@@ -354,6 +422,104 @@ namespace TownOfHost
                     case "/aj":
                         canceled = true;
                         PreviousSessionDetector.EnableTemporaryAllow();
+                        break;
+                    case "/bot":
+                    case "/testbot":
+                        canceled = true;
+                        if (args.Length >= 2 && args[1].ToLowerInvariant() is "snr" or "legacy")
+                        {
+                            if (args.Length >= 3 && args[2].ToLowerInvariant() is "cancel" or "clear" or "off")
+                            {
+                                TestBotManager.CancelLegacySnrStartBots();
+                                SendMessage("Canceled SNR-style bot spawn.", PlayerControl.LocalPlayer.PlayerId);
+                                break;
+                            }
+
+                            var count = 1;
+                            var nameStartIndex = 2;
+                            if (args.Length >= 3 && int.TryParse(args[2], out var parsedCount))
+                            {
+                                count = parsedCount;
+                                nameStartIndex = 3;
+                            }
+
+                            var namePrefix = args.Length > nameStartIndex ? string.Join(" ", args.Skip(nameStartIndex)) : null;
+                            var armedCount = TestBotManager.ArmLegacySnrStartBots(count, namePrefix);
+                            SendMessage(
+                                $"Armed SNR-style bot spawn for next game start: {armedCount} bot(s).",
+                                PlayerControl.LocalPlayer.PlayerId);
+                            break;
+                        }
+
+                        if (!TestBotManager.CanSpawnInCurrentRoom(out var testBotBlockReason))
+                        {
+                            SendMessage(
+                                $"`/cmd bot` is local-test only. Blocked: {testBotBlockReason}.",
+                                PlayerControl.LocalPlayer.PlayerId);
+                            break;
+                        }
+                        {
+                            var hideInLobby = false;
+                            var nameStartIndex = 1;
+                            if (args.Length >= 2 && args[1].ToLowerInvariant() is "hide" or "hidden" or "h")
+                            {
+                                hideInLobby = true;
+                                nameStartIndex = 2;
+                            }
+                            else if (args.Length >= 2 && args[1].ToLowerInvariant() is "show" or "visible" or "v")
+                            {
+                                nameStartIndex = 2;
+                            }
+
+                            string botName = args.Length > nameStartIndex ? string.Join(" ", args.Skip(nameStartIndex)) : null;
+                            var bot = TestBotManager.Spawn(botName, hideInLobby: hideInLobby);
+                            SendMessage(
+                                bot == null
+                                    ? "Failed to spawn test bot. Check the log for details."
+                                    : $"Spawned test bot: [{bot.PlayerId}] {bot.Data?.PlayerName ?? botName ?? "TOHP TestBot"} ({(hideInLobby ? "hidden" : "visible")})",
+                                PlayerControl.LocalPlayer.PlayerId);
+                        }
+                        break;
+                    case "/botmark":
+                    case "/markbot":
+                        canceled = true;
+                        if (args.Length < 2 || !byte.TryParse(args[1], out var markBotPlayerId))
+                        {
+                            SendMessage("Usage: `/cmd botmark <playerId> [hide]`", PlayerControl.LocalPlayer.PlayerId);
+                            break;
+                        }
+                        {
+                            var target = GetPlayerById(markBotPlayerId);
+                            var hideInLobby = args.Length >= 3 && args[2].ToLowerInvariant() is "hide" or "hidden" or "h";
+                            SendMessage(
+                                TestBotManager.MarkRealClient(target, hideInLobby)
+                                    ? $"Marked as online bot: [{target.PlayerId}] {target.Data?.PlayerName ?? target.name}"
+                                    : $"Failed to mark online bot: {markBotPlayerId}",
+                                PlayerControl.LocalPlayer.PlayerId);
+                        }
+                        break;
+                    case "/botunmark":
+                    case "/unmarkbot":
+                        canceled = true;
+                        if (args.Length < 2 || !byte.TryParse(args[1], out var unmarkBotPlayerId))
+                        {
+                            SendMessage("Usage: `/cmd botunmark <playerId>`", PlayerControl.LocalPlayer.PlayerId);
+                            break;
+                        }
+                        SendMessage(
+                            TestBotManager.Unmark(unmarkBotPlayerId)
+                                ? $"Unmarked bot: {unmarkBotPlayerId}"
+                                : $"Bot mark not found: {unmarkBotPlayerId}",
+                            PlayerControl.LocalPlayer.PlayerId);
+                        break;
+                    case "/botclear":
+                    case "/clearbot":
+                        canceled = true;
+                        {
+                            var count = TestBotManager.AllBots.Count;
+                            TestBotManager.DespawnAll();
+                            SendMessage($"Removed test bots: {count}", PlayerControl.LocalPlayer.PlayerId);
+                        }
                         break;
                     case "/exempt":
                     case "/ex":
@@ -704,7 +870,7 @@ namespace TownOfHost
                     case "/r":
                     case "/rename":
                         canceled = true;
-                        var name = string.Join(" ", args.Skip(1)).Trim();
+                        if (!TryBuildRenameTarget(PlayerControl.LocalPlayer, args, out var renameTarget, out var name, out var hasTargetId)) break;
                         if (string.IsNullOrEmpty(name))
                         {
                             Main.nickName = "";
@@ -716,7 +882,16 @@ namespace TownOfHost
                             break;
                         }
                         if (name.StartsWith(" ")) break;
-                        Main.nickName = name;
+                        if (hasTargetId)
+                        {
+                            if (renameTarget.AmOwner) Main.nickName = name;
+                            renameTarget.RpcSetName(name);
+                            Logger.Info($"/rename: host changed {renameTarget.GetNameWithRole().RemoveHtmlTags()} to {name.RemoveHtmlTags()}", "ChatCommand");
+                        }
+                        else
+                        {
+                            Main.nickName = name;
+                        }
                         break;
 
                     case "/hn":
@@ -1796,6 +1971,10 @@ namespace TownOfHost
                             }
                         }
                         break;
+                    case "/ruler":
+                        canceled = true;
+                        Ruler.HandleRuleCommand(PlayerControl.LocalPlayer, args);
+                        break;
                     case "/wi":
                         if (DebugModeManager.EnableTOHPDebugMode.GetBool())
                         {
@@ -2032,12 +2211,15 @@ namespace TownOfHost
             canceled = false;
             if (!AmongUsClient.Instance.AmHost)
             {
-                if (text.StartsWith("/cmd"))
+                var commandText = text;
+                NormalizeLegacyCommandInput(ref commandText);
+                if (StartsWithCmdPrefix(commandText))
                 {
                     canceled = true;
                 }
                 return;
             }
+            NormalizeLegacyCommandInput(ref text);
             //モニカ用ゴミ箱レイヤー専用の秘匿チャット
             if (TownOfHost.Roles.Neutral.Monika.MonikaTrashLayer.Contains(player.PlayerId) && !player.Is(CustomRoles.Monika))
             {
@@ -2053,7 +2235,7 @@ namespace TownOfHost
 
                 if (trashBody != null)
                 {
-                    canceled = true; 
+                    canceled = true;
                     if (!AmongUsClient.Instance.AmHost) return;
                     SendTrashSecretChat(player, trashBody);
                     return;
@@ -2102,6 +2284,10 @@ namespace TownOfHost
 
                 case "/cr":
                     ExecuteInGameRoleChange(player, args);
+                    break;
+
+                case "/ruler":
+                    Ruler.HandleRuleCommand(player, args);
                     break;
 
                 case "/wi":
@@ -2387,13 +2573,13 @@ namespace TownOfHost
                 case "/r":
                 case "/rename":
                     canceled = true;
-                    if (Options.OptionCommandRename.GetBool())
+                    if (Options.OptionCommandRename.GetBool() && !IsHostRenameSender(player))
                     {
                         SendMessage("<color=#ff0000>現在このコマンドはホストによって無効化されています。</color>", player.PlayerId);
                         break;
                     }
-                    var name = string.Join(" ", args.Skip(1)).Trim();
-                    if (string.IsNullOrEmpty(name)) { player.RpcSetName(player.Data.PlayerName); break; }
+                    if (!TryBuildRenameTarget(player, args, out var renameTarget, out var name, out _)) break;
+                    if (string.IsNullOrEmpty(name)) { renameTarget.RpcSetName(renameTarget.Data.PlayerName); break; }
                     if (!GameStates.IsLobby) { SendMessage(GetString("RenameError.NotLobby"), player.PlayerId); break; }
                     if (name.StartsWith(" ")) break;
                     if (name.Length > Options.OptionNameCharLimit.GetInt())
@@ -2401,7 +2587,9 @@ namespace TownOfHost
                         SendMessage($"<color=#ff0000>名前が長すぎます！(最大 {Options.OptionNameCharLimit.GetInt()} 文字)</color>", player.PlayerId);
                         break;
                     }
-                    player.RpcSetName(name);
+                    if (renameTarget.AmOwner) Main.nickName = name;
+                    renameTarget.RpcSetName(name);
+                    Logger.Info($"/rename: {player.GetNameWithRole().RemoveHtmlTags()} changed {renameTarget.GetNameWithRole().RemoveHtmlTags()} to {name.RemoveHtmlTags()}", "ChatCommand");
                     break;
                 case "/8ball":
                     canceled = true;

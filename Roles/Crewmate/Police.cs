@@ -1,3 +1,4 @@
+/*
 using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
@@ -356,7 +357,7 @@ public sealed class Police : RoleBase, IKiller, IUsePhantomButton
         if (!Player.IsAlive()) return "";
         string mode = handcuffMode
             ? "<color=#1a6bb5>[手錠]</color>"
-            : "<color=#aaaaaa>[Task]</color>";
+            : "<color=#aaaaaa>[タスク]</color>";
         string stock = $"<color=#1a6bb5>({handcuffStock})</color>";
         return $"{stock}{mode}";
     }
@@ -427,3 +428,4 @@ public static class HandcuffedKillBlockPatch
         return false;
     }
 }
+*/

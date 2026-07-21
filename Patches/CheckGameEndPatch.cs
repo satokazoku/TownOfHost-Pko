@@ -247,6 +247,8 @@ namespace TownOfHost
                     CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Draw);
                 }
 
+                Ruler.ApplyGameEndRules();
+
                 if (isSabotageEnd && Options.OptionSabotageFinAllKill.GetBool())
                 {
                     PlayerCatch.AllAlivePlayerControls

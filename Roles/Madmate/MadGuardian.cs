@@ -53,6 +53,12 @@ public sealed class MadGuardian : RoleBase, IKillFlashSeeable, IDeathReasonSeeab
     }
     public override bool OnCheckMurderAsTarget(MurderInfo info)
     {
+        // フリーターの「就職」やジェイラーの「拘禁」のように、info.DoKillをfalseにしただけで
+        // 本当は殺しに来ていない相手に対してガードが発動してしまうのを防ぐ。
+        // OnCheckMurderAsKiller(攻撃側)はOnCheckMurderAsTarget(被害側)より先に評価されるため、
+        // ここでDoKillが既にfalseなら偽のキル判定だと分かる。
+        if (!info.DoKill) return true;
+
         (var killer, var target) = info.AttemptTuple;
 
         //MadGuardianを切れるかの判定処理

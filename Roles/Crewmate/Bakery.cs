@@ -66,14 +66,13 @@ public sealed class Bakery : RoleBase
         if (bakerycount > 1) IsOnlyNomalMessage = true;
     }
 
-    // 配達システムは会議画面上部の MeetingInfo に本人にだけ個別表示する
-    public override string MeetingInfoText()
+    public override string MeetingAddMessage()
     {
         if (AddOns.Common.Amnesia.CheckAbilityreturn(Player)) return "";
         if (Player.IsAlive())
         {
-            string BakeryTitle = $"<size=80%><color=#8f6121>{GetString("Message.BakeryTitle")}</color></size>";
-            return BakeryTitle + "\n<size=65%><color=#d9b382>" + BakeryMeg() + "</color></size>";
+            string BakeryTitle = $"<size=90%><color=#8f6121>{GetString("Message.BakeryTitle")}</size></color>";
+            return BakeryTitle + "\n<size=70%>" + BakeryMeg() + "</size>\n";
         }
         return "";
     }

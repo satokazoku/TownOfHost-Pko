@@ -513,6 +513,8 @@ public sealed class Stand : RoleBase, ILNKiller
 
     public override bool OnCheckMurderAsTarget(MurderInfo info)
     {
+        if (!info.DoKill) return true;
+
         var sm = GetOwner();
         if (sm == null || !sm.Player.IsAlive()) return true;
 

@@ -551,6 +551,7 @@ namespace TownOfHost
                 "ハッピージェスター" or "はっぴーじぇすたー" or "happijesuta" => GetString("HappyJester"),
                 "バットガール" or "ばっとがーる" or "battogaru" => GetString("BatGirl"),
                 "アマテラス" or "あまてらす" or "amaterasu" => GetString("Amateras"),
+                "ルーラー" or "るーらー" or "ru-ra-" or "ruler" => GetString("Ruler"),
                 "被虐者" or "ひぎゃくしゃ" or "ヒギャクシャ" or "higyakusha" => GetString("Victim"),
                 //幽霊役職
                 //コンビネーション
@@ -572,6 +573,189 @@ namespace TownOfHost
                 _ => text,
             };
         }
+        static readonly Dictionary<string, string> KanaRomajiMap = new()
+        {
+            ["あ"] = "a",
+            ["い"] = "i",
+            ["う"] = "u",
+            ["え"] = "e",
+            ["お"] = "o",
+            ["か"] = "ka",
+            ["き"] = "ki",
+            ["く"] = "ku",
+            ["け"] = "ke",
+            ["こ"] = "ko",
+            ["さ"] = "sa",
+            ["し"] = "shi",
+            ["す"] = "su",
+            ["せ"] = "se",
+            ["そ"] = "so",
+            ["た"] = "ta",
+            ["ち"] = "chi",
+            ["つ"] = "tsu",
+            ["て"] = "te",
+            ["と"] = "to",
+            ["な"] = "na",
+            ["に"] = "ni",
+            ["ぬ"] = "nu",
+            ["ね"] = "ne",
+            ["の"] = "no",
+            ["は"] = "ha",
+            ["ひ"] = "hi",
+            ["ふ"] = "fu",
+            ["へ"] = "he",
+            ["ほ"] = "ho",
+            ["ま"] = "ma",
+            ["み"] = "mi",
+            ["む"] = "mu",
+            ["め"] = "me",
+            ["も"] = "mo",
+            ["や"] = "ya",
+            ["ゆ"] = "yu",
+            ["よ"] = "yo",
+            ["ら"] = "ra",
+            ["り"] = "ri",
+            ["る"] = "ru",
+            ["れ"] = "re",
+            ["ろ"] = "ro",
+            ["わ"] = "wa",
+            ["を"] = "wo",
+            ["ん"] = "n",
+            ["が"] = "ga",
+            ["ぎ"] = "gi",
+            ["ぐ"] = "gu",
+            ["げ"] = "ge",
+            ["ご"] = "go",
+            ["ざ"] = "za",
+            ["じ"] = "ji",
+            ["ず"] = "zu",
+            ["ぜ"] = "ze",
+            ["ぞ"] = "zo",
+            ["だ"] = "da",
+            ["ぢ"] = "ji",
+            ["づ"] = "zu",
+            ["で"] = "de",
+            ["ど"] = "do",
+            ["ば"] = "ba",
+            ["び"] = "bi",
+            ["ぶ"] = "bu",
+            ["べ"] = "be",
+            ["ぼ"] = "bo",
+            ["ぱ"] = "pa",
+            ["ぴ"] = "pi",
+            ["ぷ"] = "pu",
+            ["ぺ"] = "pe",
+            ["ぽ"] = "po",
+            ["ぁ"] = "a",
+            ["ぃ"] = "i",
+            ["ぅ"] = "u",
+            ["ぇ"] = "e",
+            ["ぉ"] = "o",
+            ["ゃ"] = "ya",
+            ["ゅ"] = "yu",
+            ["ょ"] = "yo",
+            ["きゃ"] = "kya",
+            ["きゅ"] = "kyu",
+            ["きょ"] = "kyo",
+            ["しゃ"] = "sha",
+            ["しゅ"] = "shu",
+            ["しょ"] = "sho",
+            ["ちゃ"] = "cha",
+            ["ちゅ"] = "chu",
+            ["ちょ"] = "cho",
+            ["にゃ"] = "nya",
+            ["にゅ"] = "nyu",
+            ["にょ"] = "nyo",
+            ["ひゃ"] = "hya",
+            ["ひゅ"] = "hyu",
+            ["ひょ"] = "hyo",
+            ["みゃ"] = "mya",
+            ["みゅ"] = "myu",
+            ["みょ"] = "myo",
+            ["りゃ"] = "rya",
+            ["りゅ"] = "ryu",
+            ["りょ"] = "ryo",
+            ["ぎゃ"] = "gya",
+            ["ぎゅ"] = "gyu",
+            ["ぎょ"] = "gyo",
+            ["じゃ"] = "ja",
+            ["じゅ"] = "ju",
+            ["じょ"] = "jo",
+            ["びゃ"] = "bya",
+            ["びゅ"] = "byu",
+            ["びょ"] = "byo",
+            ["ぴゃ"] = "pya",
+            ["ぴゅ"] = "pyu",
+            ["ぴょ"] = "pyo",
+            ["ふぁ"] = "fa",
+            ["ふぃ"] = "fi",
+            ["ふぇ"] = "fe",
+            ["ふぉ"] = "fo",
+            ["ゔぁ"] = "va",
+            ["ゔぃ"] = "vi",
+            ["ゔ"] = "vu",
+            ["ゔぇ"] = "ve",
+            ["ゔぉ"] = "vo",
+            ["ヴぁ"] = "va",
+            ["ヴぃ"] = "vi",
+            ["ヴ"] = "vu",
+            ["ヴぇ"] = "ve",
+            ["ヴぉ"] = "vo",
+        };
+
+        static string NormalizeRomajiInput(string text)
+            => Regex.Replace(KanaToRomaji(text ?? ""), @"[^a-z0-9]", string.Empty).ToLowerInvariant();
+
+        static string KanaToRomaji(string text)
+        {
+            var result = "";
+            var doubleNext = false;
+            for (var i = 0; i < text.Length; i++)
+            {
+                var current = NormalizeKana(text[i]);
+                if (current == 'っ')
+                {
+                    doubleNext = true;
+                    continue;
+                }
+                if (current == 'ー')
+                {
+                    var vowel = result.LastOrDefault(ch => "aeiou".Contains(ch));
+                    if (vowel != default) result += vowel;
+                    continue;
+                }
+
+                var key = current.ToString();
+                if (i + 1 < text.Length)
+                {
+                    var next = NormalizeKana(text[i + 1]);
+                    var combined = $"{current}{next}";
+                    if (KanaRomajiMap.TryGetValue(combined, out var combinedRomaji))
+                    {
+                        result += doubleNext && combinedRomaji.Length > 0 ? $"{combinedRomaji[0]}{combinedRomaji}" : combinedRomaji;
+                        doubleNext = false;
+                        i++;
+                        continue;
+                    }
+                }
+
+                if (KanaRomajiMap.TryGetValue(key, out var romaji))
+                {
+                    result += doubleNext && romaji.Length > 0 ? $"{romaji[0]}{romaji}" : romaji;
+                    doubleNext = false;
+                }
+                else if (char.IsLetterOrDigit(current))
+                {
+                    result += char.ToLowerInvariant(current);
+                    doubleNext = false;
+                }
+            }
+            return result;
+        }
+
+        static char NormalizeKana(char c)
+            => c >= 'ァ' && c <= 'ヶ' ? (char)(c - 0x60) : c;
+
         public static bool GetRoleByInputName(string input, out CustomRoles output, bool includeVanilla = false)
         {
             output = new();
@@ -580,11 +764,17 @@ namespace TownOfHost
             input = Regex.Replace(input, @"[\x01-\x1F,\x7F]", string.Empty);
             input = input.ToLower().Trim().Replace("是", string.Empty);
             if (input == "" || input == string.Empty) return false;
+            var romajiInput = NormalizeRomajiInput(input);
             input = FixRoleNameInput(input).ToLower();
             foreach (CustomRoles role in Enum.GetValues(typeof(CustomRoles)))
             {
                 if (!includeVanilla && role.IsVanilla() && role != CustomRoles.GuardianAngel) continue;
-                if (input == GuessManager.ChangeNormal2Vanilla(role))
+                var roleName = GuessManager.ChangeNormal2Vanilla(role);
+                if (input == roleName
+                    || (!string.IsNullOrEmpty(romajiInput)
+                        && (romajiInput == NormalizeRomajiInput(role.ToString())
+                            || romajiInput == NormalizeRomajiInput(GetString(role.ToString()))
+                            || romajiInput == NormalizeRomajiInput(roleName))))
                 {
                     output = role;
                     return true;

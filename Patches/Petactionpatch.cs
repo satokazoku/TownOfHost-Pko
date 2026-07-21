@@ -151,6 +151,7 @@ public static class PetActionManager
     private const string DefaultPetIdForPetAction = "pet_test";
 
     public static readonly Dictionary<byte, System.Action> Handlers = new();
+    public static bool AutoGrantPetEnabled => Options.AutoGrantPet?.GetBool() ?? true;
 
     public static void Register(byte playerId, System.Action action)
     {
@@ -171,6 +172,7 @@ public static class PetActionManager
     public static void EnsureDefaultPet(byte playerId)
     {
         if (!AmongUsClient.Instance.AmHost) return;
+        if (!AutoGrantPetEnabled) return;
         if (!GameStates.IsInGame || GameStates.IsLobby) return;
 
         var pc = PlayerCatch.GetPlayerById(playerId);

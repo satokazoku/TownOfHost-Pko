@@ -568,6 +568,7 @@ public static class CustomRoleManager
                 case CustomRoles.Sunglasses: Sunglasses.Add(pc.PlayerId); break;
                 case CustomRoles.Securer: Securer.Add(pc.PlayerId); break;
                 case CustomRoles.Sealer: Sealer.Add(pc.PlayerId); break;
+                case CustomRoles.SilverBuzzer: SilverBuzzer.Add(pc.PlayerId); break;
 
                 case CustomRoles.Amanojaku: Amanojaku.Add(pc.PlayerId); break;
                 case CustomRoles.OneWolf: OneWolf.Add(pc.PlayerId); break;
@@ -844,7 +845,7 @@ public enum CustomRoles
     Evolver,
     Conjurer,
     Swooper,
-    BeginnerImpostor,
+    Spider,
     //TOH-K
     Bomber,
     TeleportKiller,
@@ -891,6 +892,7 @@ public enum CustomRoles
     EvilLinker,
     MassMurder,
     EvilStandMaster,
+    BeginnerImpostor,
     //DEBUG only Impostor
     //Madmate
     MadGuardian,
@@ -1098,6 +1100,7 @@ public enum CustomRoles
     Vega,
     Altair,
     Amateras,
+    Ruler,
     Abuser,
     Victim,
     // Sub-roll after 500
@@ -1173,6 +1176,7 @@ public enum CustomRoles
     Securer,
     Sealer,
     Triplets,
+    SilverBuzzer,
 }
 public enum CustomRoleTypes
 {

@@ -105,7 +105,7 @@ namespace TownOfHost
             }
 
             Camouflage.Init();
-            var invalidColor = PlayerCatch.AllPlayerControls.Where(p => p.Data.DefaultOutfit.ColorId < 0 || Palette.PlayerColors.Length <= p.Data.DefaultOutfit.ColorId);
+            var invalidColor = PlayerCatch.AllPlayerControls.Where(p => !p.IsTestBot() && (p.Data.DefaultOutfit.ColorId < 0 || Palette.PlayerColors.Length <= p.Data.DefaultOutfit.ColorId));
             if (invalidColor.Any())
             {
                 var msg = Translator.GetString("Error.InvalidColor");
@@ -116,10 +116,10 @@ namespace TownOfHost
             }
             List<string> allname = new();
 
-            foreach (var target in PlayerCatch.AllPlayerControls)
+            foreach (var target in PlayerCatch.AllPlayerControls.Where(pc => !pc.IsTestBot()))
             {
                 allname.Add(target.Data.PlayerName);
-                foreach (var seer in PlayerCatch.AllPlayerControls)
+                foreach (var seer in PlayerCatch.AllPlayerControls.Where(pc => !pc.IsTestBot()))
                 {
                     var pair = (target.PlayerId, seer.PlayerId);
                     Main.LastNotifyNames[pair] = target.name;
@@ -127,9 +127,9 @@ namespace TownOfHost
             }
             StreamerInfo.ChangeList(allname);
             List<PlayerControl> players = new();
-            PlayerCatch.AllPlayerControls.Do(x => players.Add(x));
+            PlayerCatch.AllPlayerControls.Where(pc => !pc.IsTestBot()).Do(x => players.Add(x));
             PlayerCatch.AllPlayerNetId = new();
-            foreach (var pc in PlayerCatch.AllPlayerControls)
+            foreach (var pc in PlayerCatch.AllPlayerControls.Where(pc => !pc.IsTestBot()))
             {
                 PlayerCatch.AllPlayerNetId.TryAdd(pc.PlayerId, pc.NetId);
                 PlayerState.Create(pc.PlayerId);
@@ -239,7 +239,7 @@ namespace TownOfHost
             if (!AmongUsClient.Instance.AmHost) return true;
             //CustomRpcSenderとRpcSetRoleReplacerの初期化
             Dictionary<byte, CustomRpcSender> senders = new();
-            foreach (var pc in PlayerCatch.AllPlayerControls)
+            foreach (var pc in PlayerCatch.AllPlayerControls.Where(pc => !pc.IsTestBot()))
             {
                 senders[pc.PlayerId] = new CustomRpcSender($"{pc.name}'s SetRole Sender", SendOption.None, false)
                         .StartMessage(pc.GetClientId());
@@ -268,6 +268,8 @@ namespace TownOfHost
                     List<PlayerControl> AllPlayers = new();
                     foreach (var pc in PlayerCatch.AllPlayerControls)
                     {
+                        if (pc.IsTestBot())
+                            continue;
                         if (pc.isDummy && DebugModeManager.DummyAssignRole.GetBool() is false)
                         {
                             pc.RpcSetCustomRole(CustomRoles.Crewmate);
@@ -317,7 +319,7 @@ namespace TownOfHost
                 Il2CppSystem.Collections.Generic.List<NetworkedPlayerInfo> playerInfos = new();
                 foreach (NetworkedPlayerInfo data in GameData.Instance.AllPlayers)
                 {
-                    if (data.Object != null && !data.IsDead && !Disconnected.Contains(data.PlayerId) && data?.Object?.isDummy is false)
+                    if (data.Object != null && !data.Object.IsTestBot() && !data.IsDead && !Disconnected.Contains(data.PlayerId) && data?.Object?.isDummy is false)
                         playerInfos.Add(data);
                 }
                 IGameOptions currentGameOptions = GameOptionsManager.Instance.CurrentGameOptions;
@@ -360,7 +362,7 @@ namespace TownOfHost
             List<PlayerControl> Phantoms = new();
             List<PlayerControl> Vipers = new();
 
-            foreach (var pc in PlayerCatch.AllPlayerControls)
+            foreach (var pc in PlayerCatch.AllPlayerControls.Where(pc => !pc.IsTestBot()))
             {
                 if (!pc.Is(CustomRoles.GM)) PlayerCatch.OldAlivePlayerControles.Add(pc);
                 pc.Data.IsDead = false; //プレイヤーの死を解除する
@@ -424,7 +426,7 @@ namespace TownOfHost
             {
                 SetColorPatch.IsAntiGlitchDisabled = true;
                 if (!Main.HnSFlag)
-                    foreach (var pc in PlayerCatch.AllPlayerControls)
+                    foreach (var pc in PlayerCatch.AllPlayerControls.Where(pc => !pc.IsTestBot()))
                     {
                         if (pc.Is(CustomRoleTypes.Impostor))
                             pc.RpcSetColor(0);
@@ -455,7 +457,7 @@ namespace TownOfHost
 
                 if (TaskBattle.IsTaskBattleTeamMode)
                 {
-                    foreach (var pc in PlayerCatch.AllPlayerControls)
+                    foreach (var pc in PlayerCatch.AllPlayerControls.Where(pc => !pc.IsTestBot()))
                         foreach (var (team, players) in TaskBattle.TaskBattleTeams)
                         {
                             if (!players.Contains(pc.PlayerId)) continue;
@@ -496,6 +498,7 @@ namespace TownOfHost
                 AddOnsAssignDataOnlyKiller.AssignAddOnsFromList();
                 AddOnsAssignDataTeamImp.AssignAddOnsFromList();
                 AddOnsAssignData.AssignAddOnsFromList();
+                SilverBuzzer.CloseInitialAssignment();
                 Twins.AssingAndReset();
                 Triplets.AssingAndReset();
                 if (Amanojaku.AssingDay.GetInt() == 0) AmanojakuAssing.AssignAddOnsFromList();
@@ -517,7 +520,7 @@ namespace TownOfHost
                 }
 
                 CustomRoleManager.CreateInstance();
-                foreach (var pc in PlayerCatch.AllPlayerControls)
+                foreach (var pc in PlayerCatch.AllPlayerControls.Where(pc => !pc.IsTestBot()))
                 {
                     var role = pc.GetCustomRole();
                     HudManager.Instance.SetHudActive(true);
@@ -549,7 +552,7 @@ namespace TownOfHost
                 }
             }
             GameOptionsSender.AllSenders.Clear();
-            foreach (var pc in PlayerCatch.AllPlayerControls)
+            foreach (var pc in PlayerCatch.AllPlayerControls.Where(pc => !pc.IsTestBot()))
             {
                 GameOptionsSender.AllSenders.Add(
                     new PlayerGameOptionsSender(pc)
@@ -557,9 +560,9 @@ namespace TownOfHost
             }
 
             //コネクティングが1ならコネクティングを削除
-            if (PlayerCatch.AllPlayerControls.Count(x => x.Is(CustomRoles.Connecting)) == 1)
+            if (PlayerCatch.AllPlayerControls.Where(pc => !pc.IsTestBot()).Count(x => x.Is(CustomRoles.Connecting)) == 1)
             {
-                PlayerCatch.AllPlayerControls.Where(x => x.Is(CustomRoles.Connecting)).ToArray().Do(
+                PlayerCatch.AllPlayerControls.Where(x => !x.IsTestBot() && x.Is(CustomRoles.Connecting)).ToArray().Do(
                             pc => PlayerState.GetByPlayerId(pc.PlayerId).RemoveSubRole(CustomRoles.Connecting));
             }
             UtilsRoleInfo.SetRoleLists();

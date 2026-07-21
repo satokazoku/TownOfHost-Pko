@@ -9,6 +9,7 @@ using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Impostor;
 using TownOfHost.Roles.Neutral;
 using UnityEngine;
+
 namespace TownOfHost.Roles.Impostor;
 
 public sealed class Teleporter : RoleBase, IImpostor, IUsePhantomButton
@@ -86,6 +87,10 @@ public sealed class Teleporter : RoleBase, IImpostor, IUsePhantomButton
         if (pc.MyPhysics.Animations.IsPlayingAnyLadderAnimation()) return true;
         if (pc.onLadder) return true;
         if (pc.inMovingPlat) return true;
+        if (pc.inVent) return true;
+        if (pc.walkingToVent) return true;
+        if (pc.MyPhysics.Animations.IsPlayingEnterVentAnimation()) return true;
+
         if ((MapNames)Main.NormalOptions.MapId == MapNames.Airship &&
             Vector2.Distance(pc.GetTruePosition(), LIFT_POSITION) <= 1.9f) return true;
         return false;
@@ -153,7 +158,7 @@ public sealed class Teleporter : RoleBase, IImpostor, IUsePhantomButton
             SendRpc(); UtilsNotifyRoles.NotifyRoles(); return;
         }
 
-        if (IsBeamingOrCharging(Player))
+        if (IsOnRestrictedMove(Player) || IsBeamingOrCharging(Player))
         {
             SendRpc(); UtilsNotifyRoles.NotifyRoles(); return;
         }
@@ -163,7 +168,6 @@ public sealed class Teleporter : RoleBase, IImpostor, IUsePhantomButton
             SendRpc(); UtilsNotifyRoles.NotifyRoles(); return;
         }
 
-        // ★ 修正：GetTruePosition() から ペンギンと同じく transform.position ベースの取得に変更
         var dest = (Vector2)destPlayer.transform.position;
 
         Player.RpcSnapToForced(dest);

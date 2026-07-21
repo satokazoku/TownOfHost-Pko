@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using TownOfHost.Roles.Core;
 
 namespace TownOfHost
@@ -21,7 +22,7 @@ namespace TownOfHost
             if (SlotRoles?.Count is 0 or null) return false;
             foreach (var info in SlotRoles)
             {
-                if (info.AssignOption.GetNowRoleValue().Contains(role)) return true;
+                if (info.AssignOption.GetNowRoleValue().Any(optionRole => optionRole == role && Event.CheckRole(optionRole))) return true;
             }
             return false;
         }
@@ -52,22 +53,24 @@ namespace TownOfHost
         /// <returns>0→変更なし 1→既に割り当て済み 2 →排他的アサイン</returns>
         public int CheckAssignRole(ref CustomRoles role)
         {
+            var targetRole = role;
             if (AssignRole is not CustomRoles.NotAssigned)//既にこのグループは割り当て済みならおわり
             {
                 if (AssignOption.GetBool())
                 {
-                    if (AssignOption.GetNowRoleValue().Contains(role)) return 1;
+                    if (AssignOption.GetNowRoleValue().Any(optionRole => optionRole == targetRole && Event.CheckRole(optionRole))) return 1;
                 }
                 return 0;
             }
 
             if (AssignOption.GetBool())
             {
-                if (AssignOption.GetNowRoleValue().Contains(role))
+                var activeRoles = AssignOption.GetNowRoleValue().Where(optionRole => Event.CheckRole(optionRole)).ToArray();
+                if (activeRoles.Contains(role))
                 {
                     List<CustomRoles> list = new();
 
-                    foreach (var chancerole in AssignOption.GetNowRoleValue())
+                    foreach (var chancerole in activeRoles)
                     {
                         for (var i = 0; i < Options.GetRoleChance(chancerole); i++)
                         {
@@ -86,7 +89,7 @@ namespace TownOfHost
         public string AssignChanceRolestring()
         {
             List<string> strings = new();
-            foreach (var role in AssignOption.GetNowRoleValue())
+            foreach (var role in AssignOption.GetNowRoleValue().Where(optionRole => Event.CheckRole(optionRole)))
             {
                 strings.Add(UtilsRoleText.GetRoleColorAndtext(role));
             }

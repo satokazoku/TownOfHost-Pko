@@ -42,6 +42,7 @@ public sealed class Jailer : RoleBase, IUsePhantomButton, IKiller
         nowcool = OptionKillCooldown.GetFloat();
         LastCooltime = (int)nowcool;
         spawnCooldownStarted = false;
+        remainAbilityCount = OptionAbilityCount.GetInt();
     }
 
     static OptionItem OptionKillCooldown;
@@ -49,6 +50,8 @@ public sealed class Jailer : RoleBase, IUsePhantomButton, IKiller
     static OptionItem OptionImprisonTurns;
     static OptionItem OptionImprisonSeconds;
     static OptionItem OptionContinueAfterMeeting;
+    static OptionItem OptionAbilityTask;
+    static OptionItem OptionAbilityCount;
 
     enum JailerMode { Task, SetLocation, SelectPrisoner }
     enum ImprisonmentType { Turns, Seconds }
@@ -59,6 +62,8 @@ public sealed class Jailer : RoleBase, IUsePhantomButton, IKiller
         JailerImprisonTurns,
         JailerImprisonSeconds,
         JailerContinueAfterMeeting,
+        JailerAbilityTask,
+        JailerAbilityCount,
     }
 
     JailerMode mode;
@@ -72,6 +77,7 @@ public sealed class Jailer : RoleBase, IUsePhantomButton, IKiller
     float nowcool;
     int LastCooltime;
     bool spawnCooldownStarted;
+    int remainAbilityCount;
 
     public bool CanKill { get; private set; } = false;
     public float CalculateKillCooldown() => OptionKillCooldown.GetFloat();
@@ -84,6 +90,15 @@ public sealed class Jailer : RoleBase, IUsePhantomButton, IKiller
     static int ImprisonTurns => OptionImprisonTurns.GetInt();
     static float ImprisonSeconds => OptionImprisonSeconds.GetFloat();
     static bool ContinueThroughMeeting => OptionContinueAfterMeeting.GetBool();
+    static int AbilityTask => OptionAbilityTask.GetInt();
+    static int AbilityCount => OptionAbilityCount.GetInt();
+
+    bool IsAbilityUnlocked
+        => AbilityTask <= 0
+           || (MyTaskState != null && MyTaskState.CompletedTasksCount >= AbilityTask);
+
+    bool HasAbilityUse
+        => AbilityCount == 0 || remainAbilityCount > 0;
 
     static void SetupOptionItem()
     {
@@ -107,6 +122,15 @@ public sealed class Jailer : RoleBase, IUsePhantomButton, IKiller
         OptionContinueAfterMeeting = BooleanOptionItem.Create(RoleInfo, 14,
                 OptionName.JailerContinueAfterMeeting, false, false)
             .SetParent(OptionImprisonSeconds);
+
+        OptionAbilityTask = IntegerOptionItem.Create(RoleInfo, 15, OptionName.JailerAbilityTask,
+                new(0, 20, 1), 0, false)
+            .SetValueFormat(OptionFormat.Pieces);
+
+        OptionAbilityCount = IntegerOptionItem.Create(RoleInfo, 16, OptionName.JailerAbilityCount,
+                new(0, 99, 1), 0, false)
+            .SetValueFormat(OptionFormat.Times)
+            .SetZeroNotation(OptionZeroNotation.Infinity);
     }
 
     public override void Add()
@@ -114,6 +138,7 @@ public sealed class Jailer : RoleBase, IUsePhantomButton, IKiller
         nowcool = KillCooldown;
         LastCooltime = (int)nowcool;
         spawnCooldownStarted = false;
+        remainAbilityCount = AbilityCount;
         PetActionManager.Register(Player.PlayerId, OnPetAction);
     }
 
@@ -134,7 +159,7 @@ public sealed class Jailer : RoleBase, IUsePhantomButton, IKiller
         ResetCooldown = false;
         if (mode != JailerMode.SetLocation || hasPrisoner) return;
 
-        prisonLocation = Player.GetTruePosition();
+        prisonLocation = (Vector2)Player.transform.position;
         prisonLocationSet = true;
 
         prisonObject?.Despawn();
@@ -175,6 +200,22 @@ public sealed class Jailer : RoleBase, IUsePhantomButton, IKiller
         if (mode == JailerMode.Task)
         {
             if (nowcool > 0f) return;
+
+            if (!IsAbilityUnlocked)
+            {
+                int need = AbilityTask;
+                int done = MyTaskState?.CompletedTasksCount ?? 0;
+                Utils.SendMessage(
+                    string.Format(GetString("JailerAbilityLocked"), done, need),
+                    Player.PlayerId);
+                return;
+            }
+            if (!HasAbilityUse)
+            {
+                Utils.SendMessage(GetString("JailerAbilityExhausted"), Player.PlayerId);
+                return;
+            }
+
             SwitchMode(JailerMode.SetLocation);
         }
         else
@@ -220,7 +261,8 @@ public sealed class Jailer : RoleBase, IUsePhantomButton, IKiller
         _ = new LateTask(() =>
         {
             if (!Player.IsAlive()) return;
-            Player.RpcResetAbilityCooldown(Sync: true);
+            if (newMode != JailerMode.SelectPrisoner)
+                Player.RpcResetAbilityCooldown(Sync: true);
         }, 0.1f, "Jailer.Desync", true);
     }
 
@@ -228,6 +270,7 @@ public sealed class Jailer : RoleBase, IUsePhantomButton, IKiller
     {
         if (mode != JailerMode.SelectPrisoner) return;
         if (!prisonLocationSet || hasPrisoner) return;
+        if (AbilityCount > 0 && remainAbilityCount <= 0) return;
 
         (_, var target) = info.AttemptTuple;
         info.DoKill = false;
@@ -236,6 +279,7 @@ public sealed class Jailer : RoleBase, IUsePhantomButton, IKiller
         hasPrisoner = true;
         imprisonSecondsLeft = ImprisonSeconds;
         imprisonTurnsLeft = ImprisonTurns;
+        if (AbilityCount > 0) remainAbilityCount--;
 
         target.RpcSnapToForced(prisonLocation);
         prisonObject?.UpdateName(target.Data.PlayerName);
@@ -270,7 +314,15 @@ public sealed class Jailer : RoleBase, IUsePhantomButton, IKiller
             var prisoner = GetPlayerById(prisonerPlayerId);
             if (prisoner == null || !prisoner.IsAlive()) { FreePrisoner(); return; }
 
-            if (Vector2.Distance(prisoner.GetTruePosition(), prisonLocation) > 0.25f)
+            if (prisoner.inVent)
+            {
+                _ = new LateTask(() =>
+                {
+                    if (prisoner != null && prisoner.IsAlive())
+                        prisoner.RpcSnapToForced(prisonLocation);
+                }, 0.1f, "Jailer.VentEscape", true);
+            }
+            else if (Vector2.Distance(prisoner.GetTruePosition(), prisonLocation) > 0.25f)
                 prisoner.RpcSnapToForced(prisonLocation);
         }
 
@@ -318,7 +370,6 @@ public sealed class Jailer : RoleBase, IUsePhantomButton, IKiller
         prisonLocationSet = false;
         imprisonSecondsLeft = 0f;
         imprisonTurnsLeft = 0;
-
         nowcool = 0f;
         LastCooltime = 0;
         Player.MarkDirtySettings();
@@ -374,6 +425,14 @@ public sealed class Jailer : RoleBase, IUsePhantomButton, IKiller
             return $"<color={RoleInfo.RoleColorCode}>[JAIL] {pn}({t})</color>";
         }
 
+        if (!IsAbilityUnlocked)
+        {
+            int done = MyTaskState?.CompletedTasksCount ?? 0;
+            return $"<color=#aaaaaa>({done}/{AbilityTask})</color>";
+        }
+        if (!HasAbilityUse)
+            return $"<color=#888888>(使用済)</color>";
+
         string modeStr = mode switch
         {
             JailerMode.Task => "<color=#f8cd46>[タスク]</color>",
@@ -381,7 +440,8 @@ public sealed class Jailer : RoleBase, IUsePhantomButton, IKiller
             JailerMode.SelectPrisoner => "<color=#ff4444>[拘禁選択]</color>",
             _ => "?"
         };
-        return $"<color={RoleInfo.RoleColorCode}>({LastCooltime})</color>{modeStr}";
+        string countStr = AbilityCount > 0 ? $"/{remainAbilityCount}" : "";
+        return $"<color={RoleInfo.RoleColorCode}>({LastCooltime}{countStr})</color>{modeStr}";
     }
 
     public override string GetLowerText(PlayerControl seer, PlayerControl seen = null,
@@ -402,6 +462,14 @@ public sealed class Jailer : RoleBase, IUsePhantomButton, IKiller
                 : $"残り{imprisonTurnsLeft}ターン";
             return $"{sz}<color={c}>[JAIL] {pn} を拘禁中 ({t})</color>";
         }
+
+        if (!IsAbilityUnlocked)
+        {
+            int done = MyTaskState?.CompletedTasksCount ?? 0;
+            return $"{sz}<color=#aaaaaa>能力解放まで: タスク {done}/{AbilityTask}</color>";
+        }
+        if (!HasAbilityUse)
+            return $"{sz}<color=#888888>能力使用回数が切れました</color>";
 
         return mode switch
         {
@@ -438,6 +506,7 @@ public sealed class Jailer : RoleBase, IUsePhantomButton, IKiller
         sender.Writer.Write(prisonLocation.y);
         sender.Writer.Write(imprisonSecondsLeft);
         sender.Writer.Write(imprisonTurnsLeft);
+        sender.Writer.Write(remainAbilityCount);
     }
 
     public override void ReceiveRPC(MessageReader reader)
@@ -449,6 +518,7 @@ public sealed class Jailer : RoleBase, IUsePhantomButton, IKiller
         prisonLocation = new Vector2(reader.ReadSingle(), reader.ReadSingle());
         imprisonSecondsLeft = reader.ReadSingle();
         imprisonTurnsLeft = reader.ReadInt32();
+        remainAbilityCount = reader.ReadInt32();
     }
 }
 

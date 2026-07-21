@@ -258,15 +258,6 @@ public abstract class RoleBase : IDisposable
     public virtual string MeetingAddMessage() => "";
 
     /// <summary>
-    /// 会議画面上部の Day 表示欄(MeetingInfo)に、この役職の持ち主にだけ個別に表示する追加テキスト。<br/>
-    /// 空文字なら何も表示しない。<br/>
-    /// 全員共通の ExtendedMeetingText と違い、プレイヤーごとに異なる内容を出せる。<br/>
-    /// ホスト側で会議開始時に収集され、対象プレイヤーにのみ送信される。
-    /// [return: ホストのみ]
-    /// </summary>
-    public virtual string MeetingInfoText() => "";
-
-    /// <summary>
     /// 自分が投票した瞬間，票がカウントされる前に呼ばれる<br/>
     /// falseを返すと投票行動自体をなかったことにし，再度投票できるようになる<br/>
     /// 投票行動自体は取り消さず，票だけカウントさせない場合は<see cref="ModifyVote"/>を使用し，doVoteをfalseにする

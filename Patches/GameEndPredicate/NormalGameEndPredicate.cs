@@ -291,7 +291,12 @@ namespace TownOfHost
                     case CountTypes.GrimReaper: GrimReaper++; break;
                     case CountTypes.MilkyWay: MilkyWay++; break;
                     case CountTypes.Pavlov: Pavlov++; break;
-                    case CountTypes.StandMaster: StandMasterCount++; break;
+                    case CountTypes.StandMaster:
+                        // キル能力ONの間はスタンドマスター本人もキル陣営として数える。
+                        // OFFの場合、本人は最初の1回スタンド化するだけの非キラーなのでスタンド本体のみカウントする。
+                        if (!pc.Is(CustomRoles.StandMaster) || StandMaster.EnableKillAbility)
+                            StandMasterCount++;
+                        break;
                     case CountTypes.Eater: EaterCount++; break;
                 }
             }
@@ -322,15 +327,6 @@ namespace TownOfHost
 
             bool standMasterAlive = PlayerCatch.AllAlivePlayerControls
                 .Any(pc => pc.Is(CustomRoles.StandMaster));
-
-            foreach (var pc in PlayerCatch.AllAlivePlayerControls)
-            {
-                if (pc.GetRoleClass() is Eater eater && eater.TryWinByLastSurvivorRule())
-                {
-                    reason = GameOverReason.ImpostorsByKill;
-                    return true;
-                }
-            }
 
             // 覚醒した被虐者は、残り2人になった時点で相手の陣営を無視して単独勝利する。
             // それまでは通常の人数勝利を止める。

@@ -40,13 +40,6 @@ namespace TownOfHost.Roles.AddOns.Common
         };
         static readonly IEnumerable<CustomRoles> ValidRoles = CustomRolesHelper.AllRoles.Where(role => !InvalidRoles.Contains(role));
 
-
-        // ここに追加した役職は「属性Guesser」の抽選対象から除外される
-        static readonly CustomRoles[] GuesserDenyRoles =
-        {
-            CustomRoles.God,
-        };
-
         public AddOnsAssignData(int idStart, CustomRoles role, bool assignCrewmate, bool assignMadmate, bool assignImpostor, bool assignNeutral)
         {
             this.IdStart = idStart;
@@ -132,8 +125,7 @@ namespace TownOfHost.Roles.AddOns.Common
                 var role = pc.GetCustomRole();
                 if (!ValidRoles.Contains(role)) return false;
 
-                // Guesser付与時のみ、指定役職を候補から除外
-                if (data.Role == CustomRoles.Guesser && GuesserDenyRoles.Contains(role)) return false;
+                if (!CustomRolesHelper.CanHaveSubRole(role, data.Role)) return false;
                 if (data.Role == CustomRoles.Securer && !Securer.CanBeAssigned(pc)) return false;
 
                 return true;

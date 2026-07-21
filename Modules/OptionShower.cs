@@ -70,6 +70,7 @@ namespace TownOfHost
                         if (kvp.Value.Tag is CustomOptionTags.Role or CustomOptionTags.All && Options.GetRoleChance(kvp.Key) > 0) //スタンダードか全てのゲームモードで表示する役職
                         {
                             var role = kvp.Key;
+                            if (!Event.CheckRole(role)) continue;
                             if (role.IsCombinationRole() || SlotRoleAssign.IsSeted(role)) continue;
                             if (farst && role.IsImpostor())
                             {
@@ -137,7 +138,7 @@ namespace TownOfHost
                             }
                         }
                     count = -1;
-                    foreach (var role in CustomRolesHelper.AllStandardRoles.Where(role => role.IsCombinationRole() && role.IsEnable()))
+                    foreach (var role in CustomRolesHelper.AllStandardRoles.Where(role => role.IsCombinationRole() && role.IsEnable() && Event.CheckRole(role)))
                     {
                         if (count is -1)
                             sb.Append($"<#f7c114>\n<u>☆Combinations</u>\n</color>");
@@ -186,10 +187,11 @@ namespace TownOfHost
                 nameAndValue(Options.EnableGM);
                 //いっくらなんでもこれが重すぎる！
                 //30役職を上回ったらこの処理をスキップ
-                if (Options.CustomRoleSpawnChances.Count(op => Options.GetRoleChance(op.Key) > 0) < 30)
+                if (Options.CustomRoleSpawnChances.Count(op => Options.GetRoleChance(op.Key) > 0 && Event.CheckRole(op.Key)) < 30)
                 {
                     foreach (var kvp in Options.CustomRoleSpawnChances)
                     {
+                        if (!Event.CheckRole(kvp.Key)) continue;
                         AddRoleOption(kvp);
 
                         if (!kvp.Key.IsEnable()) continue;
@@ -206,6 +208,7 @@ namespace TownOfHost
 
                     void AddRoleOption(KeyValuePair<CustomRoles, IntegerOptionItem> kvp, bool isadd = false)
                     {
+                        if (!Event.CheckRole(kvp.Key)) return;
                         if ((!kvp.Key.IsEnable() && !isadd) || kvp.Value.IsHiddenOn(Options.CurrentGameMode) || (kvp.Value.IsEnabled?.Invoke() == false)) return;
                         sb.Append('\n');
                         sb.Append($"</size><size=100%>{UtilsRoleText.GetCombinationName(kvp.Key)}: {kvp.Value.GetString()}×{kvp.Key.GetCount()}</size>\n<size=80%>");

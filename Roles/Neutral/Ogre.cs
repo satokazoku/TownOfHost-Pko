@@ -106,6 +106,12 @@ public sealed class Ogre : RoleBase, IKiller, IAdditionalWinner
 
     public override bool OnCheckMurderAsTarget(MurderInfo info)
     {
+        // フリーターの「就職」やジェイラーの「拘禁」など、キルボタンを間借りして
+        // info.DoKillをfalseにしているだけの役職に対しては、鬼を実際に殺そうとしたわけではないので反撃しない。
+        // OnCheckMurderAsKiller(攻撃側の役職処理)はOnCheckMurderAsTarget(被害側の役職処理)より先に走るため、
+        // ここに来た時点でDoKillが既にfalseなら「本当のキルではない」と判定できる。
+        if (!info.DoKill) return true;
+
         (var killer, var target) = info.AttemptTuple;
 
         if (killer.GetCustomRole() == CustomRoles.Tairou) return true;

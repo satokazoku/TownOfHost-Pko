@@ -54,6 +54,7 @@ namespace TownOfHost
             {
                 case CustomWinner.God: meg = GetString("GodWinText"); break;
                 case CustomWinner.Amateras: meg = GetString("AmaterasWinText"); break;
+                case CustomWinner.Ruler: meg = GetString("RulerWinText"); break;
                 case CustomWinner.Draw: meg = GetString("ForceEnd"); break;
                 case CustomWinner.None: meg = GetString("EveryoneDied"); break;
                 case CustomWinner.SuddenDeathRed: meg = GetString("SuddenDeathRed"); winnerColor = ModColors.Red; break;
@@ -61,6 +62,12 @@ namespace TownOfHost
                 case CustomWinner.SuddenDeathYellow: meg = GetString("SuddenDeathYellow"); winnerColor = ModColors.Yellow; break;
                 case CustomWinner.SuddenDeathGreen: meg = GetString("SuddenDeathGreen"); winnerColor = ModColors.Green; break;
                 case CustomWinner.SuddenDeathPurple: meg = GetString("SuddenDeathPurple"); winnerColor = ModColors.Purple; break;
+            }
+
+            if (CustomWinnerHolder.ForceEveryoneWinsText)
+            {
+                meg = GetString("RulerEveryoneWinsText");
+                winnerColor = UtilsRoleText.GetRoleColor(CustomRoles.Ruler);
             }
 
             var star = "★".Color(winnerColor);

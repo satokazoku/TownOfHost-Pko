@@ -96,7 +96,7 @@ public class SimpleRoleInfo
         BaseRoleType = baseRoleType;
         CustomRoleType = customRoleType;
         CountType = countType;
-        ConfigId = configId;
+        ConfigId = Event.GetCurrentConfigId(roleName, configId);
         OptionCreator = optionCreator;
         this.OptionSort = OptionSort.HasValue ? OptionSort.Value : (0, 0);
         IsDesyncImpostor = isDesyncImpostor;

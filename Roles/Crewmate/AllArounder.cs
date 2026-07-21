@@ -90,14 +90,13 @@ public sealed class AllArounder : RoleBase, ISystemTypeUpdateHook, IKillFlashSee
     }
     #endregion
     #region Meeting
-    // 配達システムは会議画面上部の MeetingInfo に本人にだけ個別表示する
-    public override string MeetingInfoText()
+    public override string MeetingAddMessage()
     {
         if (!CanUseAbility() || NowRole is not NowMode.Bakery) return "";
         if (Player.IsAlive())
         {
-            string BakeryTitle = $"<size=80%><color=#8f6121>{GetString("Message.BakeryTitle")}</color></size>";
-            return BakeryTitle + $"\n<size=65%><color=#d9b382>{GetString("Message.Bakery")}</color></size>";
+            string BakeryTitle = $"<size=90%><color=#8f6121>{GetString("Message.BakeryTitle")}</size></color>";
+            return BakeryTitle + $"\n<size=70%>{GetString("Message.Bakery")}</size>\n";
         }
         return "";
     }
@@ -715,4 +714,4 @@ public sealed class AllArounder : RoleBase, ISystemTypeUpdateHook, IKillFlashSee
         achievements.Add(1, l1);
         achievements.Add(2, l2);
     }
-}
+} 

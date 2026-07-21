@@ -203,6 +203,17 @@ public sealed class Swooper : RoleBase, IImpostor, IUsePhantomButton
         SendMessage(GetString("SwooperInvisStateOut"), Player.PlayerId);
     }
 
+    private static void SnapToPosition(PlayerControl player, Vector2 position)
+    {
+        player.NetTransform.SnapTo(position);
+        ushort sid = (ushort)(player.NetTransform.lastSequenceId + 2U);
+        var writer = AmongUsClient.Instance.StartRpcImmediately(
+            player.NetTransform.NetId, (byte)RpcCalls.SnapTo, Hazel.SendOption.Reliable);
+        NetHelpers.WriteVector2(position, writer);
+        writer.Write(sid);
+        AmongUsClient.Instance.FinishRpcImmediately(writer);
+    }
+
     public void OnCheckMurderAsKiller(MurderInfo info)
     {
         if (!Is(info.AttemptKiller) || info.IsSuicide) return;
@@ -211,13 +222,15 @@ public sealed class Swooper : RoleBase, IImpostor, IUsePhantomButton
         info.DoKill = false;
         (var killer, var target) = info.AttemptTuple;
 
-        var targetPos = target.GetTruePosition();
-        killer.RpcSnapToForced(targetPos);
+        Vector2 targetPos = target.transform.position;
 
         RPC.PlaySoundRPC(killer.PlayerId, Sounds.KillSound);
         killer.RpcProtectedMurderPlayer(target);
         target.SetRealKiller(killer);
         target.RpcMurderPlayer(target);
+
+        SnapToPosition(killer, targetPos);
+
         killer.ResetKillCooldown();
         killer.SetKillCooldown();
     }
@@ -337,19 +350,10 @@ public sealed class Swooper : RoleBase, IImpostor, IUsePhantomButton
         seen ??= seer;
         if (!Is(seer) || seer.PlayerId != seen.PlayerId || !Player.IsAlive() || isForMeeting) return "";
 
+        if (isInvisible || cooldownTimer > 0f) return "";
+
         string size = isForHud ? "" : "<size=60%>";
         string color = RoleInfo.RoleColorCode;
-
-        if (isInvisible)
-        {
-            int sec = Mathf.CeilToInt(durationTimer);
-            return $"{size}<color={color}>【透明中】残り {sec}s で解除</color>";
-        }
-        if (cooldownTimer > 0f)
-        {
-            int sec = Mathf.CeilToInt(cooldownTimer);
-            return $"{size}<color=#888888>クールダウン中 ({sec}s)</color>";
-        }
         return $"{size}<color={color}>ベントに入ると透明化！</color>";
     }
 

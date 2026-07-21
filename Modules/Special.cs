@@ -13,6 +13,8 @@ namespace TownOfHost;
 
 static class Event
 {
+    public const int OutOfPeriodRoleIdOffset = 5;
+
     public static bool IsChristmas = DateTime.Now.Month == 12 && DateTime.Now.Day is 24 or 25;
     public static bool White = DateTime.Now.Month == 3 && DateTime.Now.Day is 14;
     public static bool IsInitialRelease = DateTime.Now.Month == 10 && DateTime.Now.Day is 31;
@@ -25,6 +27,31 @@ static class Event
     public static bool NowRoleEvent => false;
     public static List<string> OptionLoad = new();
     public static bool IsE(this CustomRoles role) => role is CustomRoles.SpeedStar or CustomRoles.Chameleon or CustomRoles.Fortuner;
+    public static bool IsEventRole(CustomRoles role) => EventRoles.ContainsKey(role);
+    public static int GetRoleId(CustomRoles role, bool isInEventPeriod)
+    {
+        var roleId = (int)role;
+        if (!IsEventRole(role)) return roleId;
+        return isInEventPeriod ? roleId : roleId + OutOfPeriodRoleIdOffset;
+    }
+
+    public static int GetCurrentRoleId(CustomRoles role, bool useApiData = true)
+    {
+        if (!IsEventRole(role)) return (int)role;
+        return GetRoleId(role, CheckRole(role, useApiData));
+    }
+
+    public static int GetConfigId(CustomRoles role, int configId, bool isInEventPeriod)
+    {
+        if (!IsEventRole(role)) return configId;
+        return isInEventPeriod ? configId : configId + OutOfPeriodRoleIdOffset;
+    }
+
+    public static int GetCurrentConfigId(CustomRoles role, int configId, bool useApiData = true)
+    {
+        if (!IsEventRole(role)) return configId;
+        return GetConfigId(role, configId, CheckRole(role, useApiData));
+    }
 
     /// <summary>
     /// 期間限定ロールが使用可能かをチェックします<br/>
@@ -48,7 +75,6 @@ static class Event
             return result;
         }
 
-        var roleId = (int)role;
         var events = VersionInfoManager.version?.Events;
         var allverevents = VersionInfoManager.allversion?.Events;
 
@@ -58,7 +84,7 @@ static class Event
             foreach (var data in events)
             {
                 if (result) continue;
-                result |= data.RoleId == roleId && data.Period.IsActive;
+                result |= IsEventDataActiveForRole(data, role);
             }
         }
         if (allverevents != null)
@@ -66,12 +92,21 @@ static class Event
             foreach (var data in allverevents)
             {
                 if (result) continue;
-                result |= data.RoleId == roleId && data.Period.IsActive;
+                result |= IsEventDataActiveForRole(data, role);
             }
         }
         cachedEventFlags[(role, true)] = result;
         return result;
     }
+
+    private static bool IsEventDataActiveForRole(VersionInfoManager.VersionInfo.EventData data, CustomRoles role)
+    {
+        if (data?.Period == null) return false;
+
+        var isInEventPeriod = data.Period.IsActive;
+        return data.RoleId == GetRoleId(role, isInEventPeriod) && isInEventPeriod;
+    }
+
     public static Dictionary<CustomRoles, Func<bool>> EventRoles = new()
     {
         {CustomRoles.Altair,() => Tanabata},
