@@ -20,7 +20,8 @@ namespace TownOfHost
         StandardHAS,//= 0x04
         SuddenDeath,//= 0x05
         MurderMystery,//= 0x06
-        DummyBattleRoyale,//= 0x07
+        DummyHunter,//= 0x07
+        ShuffleRole,//= 0x08
         All = int.MaxValue
     }
 
@@ -32,7 +33,8 @@ namespace TownOfHost
         TaskBattle,//タスクバトルMode
         SuddenDeath,//サドンデス(Sta)
         MurderMystery,
-        DummyBattleRoyale,
+        DummyHunter,
+        ShuffleRole,
         StandardHAS,//役職入りかくれんぼ(Sta)
         Role,//役職設定
         GameOption,//ゲーム設定
@@ -80,23 +82,13 @@ namespace TownOfHost
             Logger.Info("Options.Load End", "Options");
         }
 
-        // プリセット
-        private static readonly string[] presets =
-        {
-            Main.Preset1.Value, Main.Preset2.Value, Main.Preset3.Value,
-            Main.Preset4.Value, Main.Preset5.Value,Main.Preset6.Value,
-            Main.Preset7.Value, Main.Preset8.Value, Main.Preset9.Value, Main.Preset10.Value,
-            Main.Preset11.Value, Main.Preset12.Value,Main.Preset13.Value,
-            Main.Preset14.Value, Main.Preset15.Value, Main.Preset16.Value,
-        };
-
         // ゲームモード
         public static OptionItem GameMode;
         public static CustomGameMode CurrentGameMode => (CustomGameMode)GameMode.GetValue();
 
         public static readonly string[] gameModes =
         {
-            "Standard", "HideAndSeek","TaskBattle","StandardHAS","SuddenDeath","MurderMystery","DummyBattleRoyale",
+            "Standard", "HideAndSeek","TaskBattle","StandardHAS","SuddenDeath","MurderMystery","DummyHunter",
         };
 
         // MapActive
@@ -281,15 +273,6 @@ namespace TownOfHost
         public static OptionItem AddedPreset5;
         public static OptionItem AddedPreset6;
         public static OptionItem AddedPreset7;
-        public static OptionItem AddedPreset8;
-        public static OptionItem AddedPreset9;
-        public static OptionItem AddedPreset10;
-        public static OptionItem AddedPreset11;
-        public static OptionItem AddedPreset12;
-        public static OptionItem AddedPreset13;
-        public static OptionItem AddedPreset14;
-        public static OptionItem AddedPreset15;
-        public static OptionItem AddedPreset16;
 
         // ランダムスポーン
         public static OptionItem EnableRandomSpawn;
@@ -548,6 +531,7 @@ namespace TownOfHost
         public static OptionItem OptionGameChatHideNearChat;
         public static OptionItem OptionGameChatHideNearChatRange;
         public static OptionItem ConvenientOptions;
+        public static OptionItem AutoGrantPet;
         public static OptionItem FirstTurnMeeting;
         public static bool firstturnmeeting;
         public static OptionItem FirstTurnMeetingCantability;
@@ -636,6 +620,8 @@ namespace TownOfHost
 
         public static int GetRoleChance(CustomRoles role)
         {
+            if (!Event.CheckRole(role)) return 0;
+
             if (CustomRoleSpawnChances.TryGetValue(role, out var option))
             {
                 if (option.GetBool())
@@ -677,6 +663,8 @@ namespace TownOfHost
             //最初のオプションのみここ
             SuddenDeathMode.CreateOption();
             MurderMystery.SetUpMurderMysteryOption();
+            //ダミーハンター
+            DummyHunter.SetupOptionItem();
             //DummyBattleRoyaleManager.SetupOptionItem();
             ObjectOptionitem.Create(1_000_121, "StandardHAS", true, null, TabGroup.MainSettings).SetOptionName(() => "Standard HAS").SetColorcode("#ecff41ff").SetTag(CustomOptionTags.StandardHAS);
             StandardHASWaitingTime = FloatOptionItem.Create(100007, "StandardHASWaitingTime", new(0f, 180f, 2.5f), 10f, TabGroup.MainSettings, false)
@@ -1188,6 +1176,9 @@ namespace TownOfHost
             OutroCrewWinreasonchenge = BooleanOptionItem.Create(111006, "OutroCrewWinreasonchenge", true, TabGroup.MainSettings, false)
                 .SetColorcode("#66ffff")
                 .SetParent(ConvenientOptions);
+            AutoGrantPet = BooleanOptionItem.Create(111007, "AutoGrantPet", true, TabGroup.MainSettings, false)
+                .SetColorcode("#f0d36a")
+                .SetParent(ConvenientOptions);
 
             OptionBatchSetting = BooleanOptionItem.Create(113000, "OptionBatchSetting", false, TabGroup.MainSettings, false)
                 .SetHeader(true)
@@ -1218,52 +1209,25 @@ namespace TownOfHost
                 .SetHeader(true)
                 .SetColorcode("#49a484");
             AddedPreset1 = BooleanOptionItem.Create(113501, "RandomPreset", false, TabGroup.MainSettings, true)
-                .SetOptionName(() => string.Format(Translator.GetString("AddedPreset"), Main.Preset1.Value))
+                .SetOptionName(() => string.Format(Translator.GetString("AddedPreset"), Main.GetPresetName(0)))
                 .SetParent(RandomPreset);
             AddedPreset2 = BooleanOptionItem.Create(113502, "RandomPreset", false, TabGroup.MainSettings, true)
-                .SetOptionName(() => string.Format(Translator.GetString("AddedPreset"), Main.Preset2.Value))
+                .SetOptionName(() => string.Format(Translator.GetString("AddedPreset"), Main.GetPresetName(1)))
                 .SetParent(RandomPreset);
             AddedPreset3 = BooleanOptionItem.Create(113503, "RandomPreset", false, TabGroup.MainSettings, true)
-                .SetOptionName(() => string.Format(Translator.GetString("AddedPreset"), Main.Preset3.Value))
+                .SetOptionName(() => string.Format(Translator.GetString("AddedPreset"), Main.GetPresetName(2)))
                 .SetParent(RandomPreset);
             AddedPreset4 = BooleanOptionItem.Create(113504, "RandomPreset", false, TabGroup.MainSettings, true)
-                .SetOptionName(() => string.Format(Translator.GetString("AddedPreset"), Main.Preset4.Value))
+                .SetOptionName(() => string.Format(Translator.GetString("AddedPreset"), Main.GetPresetName(3)))
                 .SetParent(RandomPreset);
             AddedPreset5 = BooleanOptionItem.Create(113505, "RandomPreset", false, TabGroup.MainSettings, true)
-                .SetOptionName(() => string.Format(Translator.GetString("AddedPreset"), Main.Preset5.Value))
+                .SetOptionName(() => string.Format(Translator.GetString("AddedPreset"), Main.GetPresetName(4)))
                 .SetParent(RandomPreset);
             AddedPreset6 = BooleanOptionItem.Create(113506, "RandomPreset", false, TabGroup.MainSettings, true)
-                .SetOptionName(() => string.Format(Translator.GetString("AddedPreset"), Main.Preset6.Value))
+                .SetOptionName(() => string.Format(Translator.GetString("AddedPreset"), Main.GetPresetName(5)))
                 .SetParent(RandomPreset);
             AddedPreset7 = BooleanOptionItem.Create(113507, "RandomPreset", false, TabGroup.MainSettings, true)
-                .SetOptionName(() => string.Format(Translator.GetString("AddedPreset"), Main.Preset7.Value))
-                .SetParent(RandomPreset);
-            AddedPreset8 = BooleanOptionItem.Create(113508, "RandomPreset", false, TabGroup.MainSettings, true)
-                .SetOptionName(() => string.Format(Translator.GetString("AddedPreset"), Main.Preset8.Value))
-                .SetParent(RandomPreset);
-            AddedPreset9 = BooleanOptionItem.Create(113509, "RandomPreset", false, TabGroup.MainSettings, true)
-                .SetOptionName(() => string.Format(Translator.GetString("AddedPreset"), Main.Preset9.Value))
-                .SetParent(RandomPreset);
-            AddedPreset10 = BooleanOptionItem.Create(113510, "RandomPreset", false, TabGroup.MainSettings, true)
-                .SetOptionName(() => string.Format(Translator.GetString("AddedPreset"), Main.Preset10.Value))
-                .SetParent(RandomPreset);
-            AddedPreset11 = BooleanOptionItem.Create(113511, "RandomPreset", false, TabGroup.MainSettings, true)
-                .SetOptionName(() => string.Format(Translator.GetString("AddedPreset"), Main.Preset11.Value))
-                .SetParent(RandomPreset);
-            AddedPreset12 = BooleanOptionItem.Create(113512, "RandomPreset", false, TabGroup.MainSettings, true)
-                .SetOptionName(() => string.Format(Translator.GetString("AddedPreset"), Main.Preset12.Value))
-                .SetParent(RandomPreset);
-            AddedPreset13 = BooleanOptionItem.Create(113513, "RandomPreset", false, TabGroup.MainSettings, true)
-                .SetOptionName(() => string.Format(Translator.GetString("AddedPreset"), Main.Preset13.Value))
-                .SetParent(RandomPreset);
-            AddedPreset14 = BooleanOptionItem.Create(113514, "RandomPreset", false, TabGroup.MainSettings, true)
-                .SetOptionName(() => string.Format(Translator.GetString("AddedPreset"), Main.Preset14.Value))
-                .SetParent(RandomPreset);
-            AddedPreset15 = BooleanOptionItem.Create(113515, "RandomPreset", false, TabGroup.MainSettings, true)
-                .SetOptionName(() => string.Format(Translator.GetString("AddedPreset"), Main.Preset15.Value))
-                .SetParent(RandomPreset);
-            AddedPreset16 = BooleanOptionItem.Create(113516, "RandomPreset", false, TabGroup.MainSettings, true)
-                .SetOptionName(() => string.Format(Translator.GetString("AddedPreset"), Main.Preset16.Value))
+                .SetOptionName(() => string.Format(Translator.GetString("AddedPreset"), Main.GetPresetName(6)))
                 .SetParent(RandomPreset);
 
             DisableTaskWin = BooleanOptionItem.Create(1_000_200, "DisableTaskWin", false, TabGroup.MainSettings, false)
@@ -1564,6 +1528,7 @@ namespace TownOfHost
                         if (info.RoleName is CustomRoles.AlienHijack) continue;
                         SetupRoleOptions(info);
                         info.OptionCreator?.Invoke();
+                        MonkeyBehaviorBanOption.Create(info);
                     }
                     NowTabNum++;
                 }

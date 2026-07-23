@@ -254,6 +254,8 @@ public static class MeetingHudPatch
             CustomRoleManager.AllActiveRoles.Values.Do(role => role.OnStartMeeting());
             RoomTaskAssign.AllRoomTasker.Values.Do(tasker => tasker.OnStartMeeting());
             SlowStarter.OnStartMeeting();
+            if (DummyHunter.IsThisMode) DummyHunter.OnMeeting();
+
             Send = "<size=80%>";
             Title = "";
 
@@ -278,6 +280,11 @@ public static class MeetingHudPatch
             if (neswmeg != "")
             {
                 Send += neswmeg + "\n";
+            }
+            var silverBuzzerMessage = SilverBuzzer.SendMessage();
+            if (silverBuzzerMessage != "")
+            {
+                Send += silverBuzzerMessage + "\n";
             }
             if (Options.SyncButtonMode.GetBool())
             {

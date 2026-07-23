@@ -140,7 +140,7 @@ public sealed class Freeter : RoleBase, IKiller, IAdditionalWinner
         roleText = UtilsRoleText.GetRoleName(CustomRoles.Freeter);
         if (ColorUtility.TryParseHtmlString(RoleInfo.RoleColorCode, out var c))
             roleColor = c;
-        addon = false;
+        addon = true;
     }
 
     public void OnCheckMurderAsKiller(MurderInfo info)

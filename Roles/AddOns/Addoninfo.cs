@@ -47,6 +47,7 @@ class AddondataInfo
                 CustomRoles.Stamina => "Ｓt",
                 CustomRoles.Securer => "Su",
                 CustomRoles.Sealer => "Se",
+                CustomRoles.SilverBuzzer => "Sb",
                 CustomRoles.Triplets => "三",
                 _ => ""
             };
@@ -80,6 +81,7 @@ class AddondataInfo
                     {CustomRoles.OneWolf , "#ff1919"},
                     {CustomRoles.Securer, "#ff1919" },
                     {CustomRoles.Sealer, "#ff1919" },
+                    {CustomRoles.SilverBuzzer, "#C0C0C0" },
 
                     { CustomRoles.Watching, "#800080"},
                     {CustomRoles.Speeding, "#33ccff"},

@@ -289,9 +289,9 @@ namespace TownOfHost
                 // tp コマンド
                 if (Show(Options.OptionCommandTp))
                 {
-                    tpinfo += $"\n/cmd tp o - {GetString("Command.tpo")}";
-                    tpinfo += $"\n/cmd tp i - {GetString("Command.tpi")}";
-                    tpinfo += $"\n/cmd allplayertp(apt) - {GetString("Command.apt")}";
+                    tpinfo += $"\n/tp o - {GetString("Command.tpo")}";
+                    tpinfo += $"\n/tp i - {GetString("Command.tpi")}";
+                    tpinfo += $"\n/allplayertp(apt) - {GetString("Command.apt")}";
                 }
             }
 
@@ -302,116 +302,116 @@ namespace TownOfHost
             {
                 //ホスト限定（制限対象外）
                 text += $"<size=80%></line-height>\n<#8cffff>【~~~~~~~{GetString("OnlyHost")}~~~~~~~】</color></size><line-height=1.3pic>"
-                    + $"\n/cmd rename(r) - {GetString("Command.rename")}"
-                    + $"\n/cmd dis - {GetString("Command.dis")}"
-                    + $"\n/cmd sw - {GetString("Command.sw")}"
-                    + $"\n/cmd forceend(fe) - {GetString("Command.forceend")}"
-                    + $"\n/cmd mw - {GetString("Command.mw")}"
-                    + $"\n/cmd kf - {GetString("Command.kf")}"
-                    + $"\n/cmd addwhite(aw) - {GetString("Command.addwhite")}"
-                    + $"\n/cmd set rule(s r) - {GetString("Command.set_rule")}"
-                    + $"\n/cmd mod id|name|color - {GetString("Command.modadd")}"
-                    + $"\n/cmd mod delete id|name|color - {GetString("Command.moddel")}"
-                    + $"\n/cmd gc - {GetString("Command.globalconnect")}";
+                    + $"\n/rename(r) - {GetString("Command.rename")}"
+                    + $"\n/cdis - {GetString("Command.dis")}"
+                    + $"\n/sw - {GetString("Command.sw")}"
+                    + $"\n/forceend(fe) - {GetString("Command.forceend")}"
+                    + $"\n/mw - {GetString("Command.mw")}"
+                    + $"\n/kf - {GetString("Command.kf")}"
+                    + $"\n/addwhite(aw) - {GetString("Command.addwhite")}"
+                    + $"\n/set rule(s r) - {GetString("Command.set_rule")}"
+                    + $"\n/mod id|name|color - {GetString("Command.modadd")}"
+                    + $"\n/mod delete id|name|color - {GetString("Command.moddel")}"
+                    + $"\n/gc - {GetString("Command.globalconnect")}";
 
                 if (Options.OptionStreamerSetting.GetBool())
                 {
-                    text += $"\n/cmd exempt(ex) - {GetString("Command.exempt")}"
-                        + $"\n/cmd exempt(ex) id|name|color - {GetString("Command.exempt")}"
-                        + $"\n/cmd exempt(ex) delete id|name|color - {GetString("Command.exempt")}"
-                        + $"\n/cmd kp - {GetString("Command.kp")}"
-                        + $"\n/cmd aj - {GetString("Command.aj")}";
+                    text += $"\n/exempt(ex) - {GetString("Command.exempt")}"
+                        + $"\n/exempt(ex) id|name|color - {GetString("Command.exempt")}"
+                        + $"\n/exempt(ex) delete id|name|color - {GetString("Command.exempt")}"
+                        + $"\n/kp - {GetString("Command.kp")}"
+                        + $"\n/aj - {GetString("Command.aj")}";
                 }
 
-                text += "\n/cmd ws - マッチメイキングのサブテキストをセットします。";
+                text += "\n/ws - マッチメイキングのサブテキストをセットします。";
 
                 text += $"<size=80%></line-height>\n<#028760>【~~~~~~~{GetString("OnlyClient")}~~~~~~~】</color></size><line-height=1.3pic>"
-                    + $"\n/cmd dump - {GetString("Command.dump")}";
+                    + $"\n/dump - {GetString("Command.dump")}";
             }
 
             //全員
             text += $"<size=80%></line-height>\n<#918877>【~~~~~~~{GetString("Allplayer")}~~~~~~~】</color></size><line-height=1.3pic>";
             if (Show(Options.OptionCommandNow))
-                text += $"\n/cmd now(n) - {GetString("Command.now")}";
+                text += $"\n/now(n) - {GetString("Command.now")}";
 
             if (Show(Options.OptionCommandNowRole))
-                text += $"\n/cmd now role(n r) - {GetString("Command.nowrole")}";
+                text += $"\n/now role(n r) - {GetString("Command.nowrole")}";
             if (Show(Options.OptionCommandNowSet))
-                text += $"\n/cmd now set(n s) - {GetString("Command.nowset")}";
+                text += $"\n/now set(n s) - {GetString("Command.nowset")}";
             if (Show(Options.OptionCommandNowW))
-                text += $"\n/cmd now w(n w) - {GetString("Command.nowwin")}";
+                text += $"\n/now w(n w) - {GetString("Command.nowwin")}";
             if (Show(Options.OptionCommandHNow))
-                text += $"\n/cmd h now(h n) - {GetString("Command.h_now")}";
+                text += $"\n/h now(h n) - {GetString("Command.h_now")}";
             if (Show(Options.OptionCommandHRoles))
-                text += $"\n/cmd h roles(h r ) {GetString("Command.h_roles")}";
+                text += $"\n/h roles(h r ) {GetString("Command.h_roles")}";
             if (Show(Options.OptionCommandMyrole))
-                text += $"\n/cmd myrole(m) - {GetString("Command.m")}";
+                text += $"\n/myrole(m) - {GetString("Command.m")}";
             if (Show(Options.OptionCommandMeetinginfo))
-                text += $"\n/cmd meetinginfo(mi,/day) - {GetString("Command.mi")}";
+                text += $"\n/meetinginfo(mi,/day) - {GetString("Command.mi")}";
             if (Show(Options.OptionCommandNumberDNumber))
-                text += $"\n/cmd (number)d(number) - {GetString("Command.(number)d(number)")}";
+                text += $"\n/(number)d(number) - {GetString("Command.(number)d(number)")}";
             if (Show(Options.OptionCommand8ball))
-                text += $"\n/cmd 8ball - {GetString("Command.8ball")}";
+                text += $"\n/8ball - {GetString("Command.8ball")}";
             if (Show(Options.OptionCommandPko))
-                text += $"\n/cmd pko - {GetString("Command.pko")}";
+                text += $"\n/pko - {GetString("Command.pko")}";
             if (Show(Options.OptionCommandRename))
-                text += $"\n/cmd rename(r) - {GetString("Command.rename")}";
+                text += $"\n/rename(r) - {GetString("Command.rename")}";
             if (Show(Options.OptionCommandRule))
-                text += $"\n/cmd rule(rl) - {GetString("Command.rule")}";
+                text += $"\n/rule(rl) - {GetString("Command.rule")}";
 
             //条件付きコマンド（制限対象外
             if (ShouldShowGuesserCommand())
-                text += $"\n/cmd bt - {GetString("Command.bt")}";
+                text += $"\n/bt - {GetString("Command.bt")}";
             if (Event.CheckRole(CustomRoles.Amateras) && CustomRoles.Amateras.IsPresent())
-                text += $"\n/cmd wi - {GetString("Command.wi")}";
+                text += $"\n/wi - {GetString("Command.wi")}";
             if (Options.ImpostorHideChat.GetBool())
-                text += $"\n/cmd ic - {GetString("Command.impchat")}";
+                text += $"\n/sc - {GetString("Command.impchat")}";
             if (Options.JackalHideChat.GetBool())
-                text += $"\n/cmd jc - {GetString("Command.jacchat")}";
+                text += $"\n/sc - {GetString("Command.jacchat")}";
             if (Options.LoversHideChat.GetBool())
-                text += $"\n/cmd lc - {GetString("Command.LoverChat")}";
+                text += $"\n/lc - {GetString("Command.LoverChat")}";
             if (Options.CupidHideChat.GetBool())
-                text += $"\n/cmd lc - {GetString("Command.CupidChat")}";
+                text += $"\n/lc - {GetString("Command.CupidChat")}";
             if (Options.ConnectingHideChat.GetBool())
-                text += $"\n/cmd cc - {GetString("Command.ConnectingChat")}";
+                text += $"\n/cc - {GetString("Command.ConnectingChat")}";
             if (Options.TwinsHideChat.GetBool())
-                text += $"\n/cmd tc - {GetString("Command.TwinsChat")}";
+                text += $"\n/tc - {GetString("Command.TwinsChat")}";
             if (Options.OnmyojiHideChat.GetBool())
-                text += $"\n/cmd oc - {GetString("Command.OnmyojiChat")}";
+                text += $"\n/sc - {GetString("Command.OnmyojiChat")}";
             if (Options.PavlovHideChat.GetBool())
-                text += $"\n/cmd pc - {GetString("Command.PavlovChat")}";
+                text += $"\n/sc - {GetString("Command.PavlovChat")}";
             if (Options.StandHideChat.GetBool())
-                text += $"\n/cmd sc - {GetString("Command.StandChat")}";
+                text += $"\n/sc - {GetString("Command.StandChat")}";
             if (Options.FreeterHideChat.GetBool())
-                text += $"\n/cmd fc - {GetString("Command.FreeterChat")}";
+                text += $"\n/fc - {GetString("Command.FreeterChat")}";
 
             //ロビー限定
             if (GameStates.IsLobby)
             {
                 if (Show(Options.OptionCommandLastresult))
-                    text += $"\n/cmd lastresult(l) - {GetString("Command.lastresult")}";
+                    text += $"\n/lastresult(l) - {GetString("Command.lastresult")}";
                 if (Show(Options.OptionCommandKilllog))
-                    text += $"\n/cmd killlog(kl) - {GetString("Command.killlog")}";
+                    text += $"\n/killlog(kl) - {GetString("Command.killlog")}";
                 if (Show(Options.OptionCommandTimer))
-                    text += $"\n/cmd timer - {GetString("Command.timer")}";
+                    text += $"\n/timer - {GetString("Command.timer")}";
             }
 
             //モデレーターコマンド（制限対象外)
             if (isModerator)
             {
                 text += $"<size=80%></line-height>\n<#ADE0EE>【~~~~~~~{GetString("ModeratorCommand")}~~~~~~~】</color></size><line-height=1.3pic>"
-                    + $"\n/cmd fe - {GetString("Command.fe")}"
-                    + $"\n/cmd sw - {GetString("Command.Mkf")}"
-                    + $"\n/cmd say - {GetString("Command.Msay")}"
-                    + $"\n/cmd start - {GetString("Command.start")}"
-                    + $"\n/cmd kf - {GetString("Command.kf")}"
-                    + $"\n/cmd mf - {GetString("Command.mf")}"
-                    + $"\n/cmd ban - {GetString("Command.ban")}"
-                    + $"\n/cmd kick - {GetString("Command.kick")}";
+                    + $"\n/fe - {GetString("Command.fe")}"
+                    + $"\n/sw - {GetString("Command.Mkf")}"
+                    + $"\n/say - {GetString("Command.Msay")}"
+                    + $"\n/start - {GetString("Command.start")}"
+                    + $"\n/kf - {GetString("Command.kf")}"
+                    + $"\n/mf - {GetString("Command.mf")}"
+                    + $"\n/ban - {GetString("Command.ban")}"
+                    + $"\n/kick - {GetString("Command.kick")}";
             }
 
             if (Main.UseYomiage.Value)
-                text += $"\n/cmd voice - {GetString("Command.voice")}";
+                text += $"\n/voice - {GetString("Command.voice")}";
 
             SendMessage(text + tpinfo, to, checkl: true);
         }
@@ -908,6 +908,7 @@ namespace TownOfHost
         {
             MovingPlatformBehaviourPatch.SetPlatfrom();
             GameStates.CalledMeeting = false;
+            if (DummyHunter.IsThisMode) DummyHunter.AfterMeeting();
             //天秤会議だと送らない
             if (Balancer.Id == 255 && Balancer.target1 != 255 && Balancer.target2 != 255 && (!Options.firstturnmeeting || !MeetingStates.First))
             {

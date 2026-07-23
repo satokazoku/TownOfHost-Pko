@@ -70,7 +70,7 @@ namespace TownOfHost
                     //shapeshifter.RpcShapeshift(shapeshifter, false);
                     var min = mpdistance.OrderBy(c => c.Value).FirstOrDefault();//一番値が小さい
                     PlayerControl targetm = min.Key;
-                    if (!targetm.Is(CustomRoles.King) && !targetm.Is(CustomRoles.Merlin))
+                    if (!targetm.Is(CustomRoles.King) && !targetm.Is(CustomRoles.Autocrat) && !targetm.Is(CustomRoles.Merlin))
                     {
                         var source = shapeshifter.Is(CustomRoles.Egoist) || targetRole is CustomRoles.Jackaldoll
                             ? Walkure.RoleChangeSource.Jackal
@@ -237,7 +237,16 @@ namespace TownOfHost
         public static bool CheckVanish(PlayerControl __instance)
         {
             if (AmongUsClient.Instance.AmHost is false) return false;
+
+            //ダミーハンター：ファントムで一番近いダミーの位置へワープしてキル(キルワープ再現)
+            if (DummyHunter.IsThisMode && DummyHunter.IsActive)
+            {
+                DummyHunter.OnPhantomClick(__instance);
+                return false;
+            }
+
             if (__instance.PlayerId == PlayerControl.LocalPlayer.PlayerId) return false;
+
             var AdjustKillCooldown = true;
             bool? ResetCooldown = true;
 

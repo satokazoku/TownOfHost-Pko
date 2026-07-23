@@ -48,6 +48,8 @@ namespace TownOfHost
         ClientSendHideMessage,
         SyncModSystem,
         SyncAssassinState,
+        SyncDummyHunterScore,
+        SyncTestBot,
     }
 
     public enum Sounds
@@ -289,6 +291,12 @@ namespace TownOfHost
                     byte assassinId = reader.ReadByte();
                     if (CustomRoleManager.GetByPlayerId(assassinId) is not Roles.Impostor.Assassin assassinRole) break;
                     assassinRole.ReceiveStateRPC(reader);
+                    break;
+                case CustomRPC.SyncDummyHunterScore:
+                    DummyHunter.ReceiveSyncScore(reader);
+                    break;
+                case CustomRPC.SyncTestBot:
+                    TestBotManager.ReceiveSync(reader);
                     break;
                 case CustomRPC.GetAchievement:
                     byte id = reader.ReadByte();

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+/*using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
@@ -313,4 +313,4 @@ public sealed class Pursuer : RoleBase, IAdditionalWinner
     {
         guardCount = reader.ReadInt32();
     }
-}
+}*/

@@ -234,7 +234,11 @@ namespace TownOfHost
     class NumberOptionStartPatch
     {
         public static List<NumberOption> all = new();
-        public static void Postfix(NumberOption __instance) => all.Add(__instance);
+        public static void Postfix(NumberOption __instance)
+        {
+            all.Add(__instance);
+            NumericOptionInput.Attach(__instance);
+        }
     }
     [HarmonyPatch(typeof(ToggleOption), nameof(ToggleOption.Initialize))]
     class ToggleOptionStartPatch

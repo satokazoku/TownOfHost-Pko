@@ -294,8 +294,6 @@ public sealed class EvilLinker : RoleBase, IImpostor, IUsePhantomButton
 
         Player.MarkDirtySettings();
         Player.RpcResetAbilityCooldown(Sync: true);
-        Main.AllPlayerKillCooldown[Player.PlayerId] = CalculateKillCooldown();
-        Player.SetKillCooldown(CalculateKillCooldown());
 
         foreach (var pair in linkPairs)
         {

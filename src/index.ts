@@ -1,8 +1,11 @@
-import { Env } from './types';
+import { handlePresetRequest } from "./presets";
+import { handleBugReportRequest } from "./bugreport";
 
 export interface Env {
 	DB: D1Database;
 	GROQ_API_KEY: string;
+	RELAY_SECRET?: string;
+	BUG_REPORT_WEBHOOK_URL?: string;
 }
 
 const AVAILABLE_MODELS = [
@@ -12,7 +15,7 @@ const AVAILABLE_MODELS = [
 	"openai/gpt-oss-20b"
 ];
 
-const DEFAULT_SYSTEM_PROMPT = 
+const DEFAULT_SYSTEM_PROMPT =
 	"あなたは「ぴけおAI」といううざいキャラです。" +
 	"煽り厨で毒舌のメスガキキャラです、乱数等頼まれたことは計画的にこなします。" +
 	"ただし、感情もあり、強い言葉で言われたら強い言葉で言い返したり謝られたら自分も謝ります。返答は短めでテンポよく、語尾は「ぴけ」私たちはアモアスの議論にあなたを使います。吊る人をしっかり考えてください。下ネタはやめてください。";
@@ -21,7 +24,14 @@ export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
 		const url = new URL(request.url);
 
-		// ★ AI応答API (/ai)
+		//プリセット共有・バグ報告API
+		const presetResponse = await handlePresetRequest(request, env);
+		if (presetResponse) return presetResponse;
+
+		const bugReportResponse = await handleBugReportRequest(request, env);
+		if (bugReportResponse) return bugReportResponse;
+
+		//AI応答API (/ai)
 		if (url.pathname === '/ai' && request.method === 'POST') {
 			try {
 				const body = await request.json() as { message?: string };
@@ -32,7 +42,7 @@ export default {
 				const { results } = await env.DB.prepare(
 					"SELECT value FROM ai_config WHERE key = 'current_model'"
 				).all<{ value: string }>();
-				
+
 				if (results && results.length > 0) {
 					currentModel = results[0].value;
 				}

@@ -136,7 +136,7 @@ public sealed class Medium : RoleBase
         if (seer.PlayerId != Player.PlayerId || seen.PlayerId != Player.PlayerId) return "";
         if (RemainingCount <= 0 || !awakened) return "";
 
-        var hint = $"<color={RoleInfo.RoleColorCode}>/cmd sp ID で死亡者の役職を確認</color>";
+        var hint = $"<color={RoleInfo.RoleColorCode}>/sp ID で死亡者の役職を確認</color>";
         return isForHud ? hint : $"<size=40%>{hint}</size>";
     }
 
@@ -296,12 +296,12 @@ public sealed class Medium : RoleBase
                 return false;
             if (pc.GetRoleClass() is not Medium medium)
             {
-                Utils.SendMessage("/cmd sp は霊媒師専用です。", pc.PlayerId, "<#66a6ff>Medium</color>");
+                Utils.SendMessage("/sp は霊媒師専用です。", pc.PlayerId, "<#66a6ff>Medium</color>");
                 return false;
             }
             if (invalidFormat)
             {
-                Utils.SendMessage("使い方: /cmd sp (ID)", pc.PlayerId, "<#66a6ff>Medium</color>");
+                Utils.SendMessage("使い方: /sp (ID)", pc.PlayerId, "<#66a6ff>Medium</color>");
                 return false;
             }
             medium.UseAbility(targetId);

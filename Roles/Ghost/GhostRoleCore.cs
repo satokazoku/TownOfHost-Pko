@@ -63,6 +63,7 @@ class GhostRoleCore
         OneWolf.Init();
         Securer.Init();
         Sealer.Init();
+        SilverBuzzer.Init();
         Twins.Init();
         Triplets.Init();
         Stack.Init();
@@ -109,6 +110,7 @@ class GhostRoleCore
         OneWolf.SetupCustomOption();
         Securer.SetupCustomOption();
         Sealer.SetupCustomOption();
+        SilverBuzzer.SetupCustomOption();
         SlowStarter.SetupCustomOption();
         Notvoter.SetupCustomOption();
         Elector.SetupCustomOption();

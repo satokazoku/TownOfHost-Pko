@@ -187,6 +187,7 @@ namespace TownOfHost
                         case CustomRoles.Stamina: sb.Append(Stamina.SubRoleMark); break;
                         case CustomRoles.Securer: sb.Append(Securer.SubRoleMark); break;
                         case CustomRoles.Sealer: sb.Append(Sealer.SubRoleMark); break;
+                        case CustomRoles.SilverBuzzer: sb.Append(SilverBuzzer.SubRoleMark); break;
                         case CustomRoles.Jumbo: sb.Append(Jumbo.SubRoleMark); break;
                         case CustomRoles.Clumsy: sb.Append(Clumsy.SubRoleMark); break;
                         case CustomRoles.Elector: sb.Append(Elector.SubRoleMark); break;
@@ -249,6 +250,7 @@ namespace TownOfHost
                         if (data.GiveSunglasses.GetBool()) Subrole.Add(CustomRoles.Sunglasses);
                         if (data.GiveSecurer.GetBool() && Securer.CanBeAssigned(player)) Subrole.Add(CustomRoles.Securer);
                         if (data.GiveSealer.GetBool() && Sealer.CanBeAssigned(player)) Subrole.Add(CustomRoles.Sealer);
+                        if (data.GiveSilverBuzzer.GetBool()) Subrole.Add(CustomRoles.SilverBuzzer);
                     }
                     if (state.SubRoles.Any(x => x is CustomRoles.LastImpostor))
                     {
@@ -593,6 +595,7 @@ namespace TownOfHost
                             if (data.GiveSunglasses.GetBool()) Subrole.Add(CustomRoles.Sunglasses);
                             if (data.GiveSecurer.GetBool() && Securer.CanBeAssigned(player)) Subrole.Add(CustomRoles.Securer);
                             if (data.GiveSealer.GetBool() && Sealer.CanBeAssigned(player)) Subrole.Add(CustomRoles.Sealer);
+                            if (data.GiveSilverBuzzer.GetBool()) Subrole.Add(CustomRoles.SilverBuzzer);
                         }
                         if (state.SubRoles.Any(x => x is CustomRoles.LastImpostor))
                         {

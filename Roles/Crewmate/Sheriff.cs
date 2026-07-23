@@ -78,8 +78,9 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
     float nowcool;
     int LastCooltime;
     int Flug3;
+    bool diedTaskModeApplied;
 
-    /// <summary>村長に任命されたプレイヤーID一覧（タスクなし扱い）</summary>
+    //村長に任命されたプレイヤーID一覧（タスクなし扱い
     public static HashSet<byte> AppointedPlayerIds = new();
 
     public static readonly string[] KillOption =
@@ -148,10 +149,11 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
 
     public override void Add()
     {
-        AppointedPlayerIds.Clear(); // ゲーム開始時にリセット
+        AppointedPlayerIds.Clear();
         ShotLimit = ShotLimitOpt.GetInt();
         CurrentKillCooldown = KillCooldown.GetFloat();
         Taskmode = RequiresTasks;
+        diedTaskModeApplied = false;
         Logger.Info($"{PlayerCatch.GetPlayerById(Player.PlayerId)?.GetNameWithRole().RemoveHtmlTags()} : 残り{ShotLimit}発", "Sheriff");
         PetActionManager.Register(Player.PlayerId, OnPetUsed);
         if (!RequiresTasks)
@@ -332,7 +334,6 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
     {
         if (!RequiresTasks) return false;
         if (!Player.IsAlive()) return true;
-        // 村長に任命されたシェリフはタスクなし
         if (AppointedPlayerIds.Contains(Player.PlayerId)) return false;
         return Taskmode;
     }
@@ -341,7 +342,13 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
     {
         if (!AmongUsClient.Instance.AmHost) return;
         if (GameStates.CalledMeeting || GameStates.Intro) return;
-        if (!player.IsAlive()) return;
+        if (!player.IsAlive())
+        {
+            if (RequiresTasks && !Taskmode && !diedTaskModeApplied)
+                ForceTaskModeOnDeath();
+            return;
+        }
+
         if (!RequiresTasks) return;
 
         if (nowcool > 0)
@@ -357,6 +364,31 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
             if (player != PlayerControl.LocalPlayer)
                 UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: player);
         }
+    }
+
+    private void ForceTaskModeOnDeath()
+    {
+        diedTaskModeApplied = true;
+        Taskmode = true;
+
+        var clientId = Player.GetClientId();
+        if (clientId != -1)
+        {
+            SetRoleForSheriffClient(Player, RoleTypes.Crewmate, clientId);
+
+            foreach (var pc in PlayerCatch.AllPlayerControls)
+            {
+                if (pc.PlayerId == Player.PlayerId) continue;
+                var role = pc.GetCustomRole();
+                if (role.IsImpostor())
+                    SetRoleForSheriffClient(pc, role.GetRoleTypes(), clientId);
+            }
+        }
+
+        SendRPC();
+        Logger.Info(
+            $"{Player.GetNameWithRole().RemoveHtmlTags()} は死亡によりタスクモードへ強制切替",
+            "Sheriff");
     }
 
     private bool ModeSwitching(bool? taskMode = null)

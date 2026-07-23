@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using AmongUs.GameOptions;
 using HarmonyLib;
+using TownOfHost.Roles.AddOns.Common;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using UnityEngine;
@@ -101,6 +102,7 @@ namespace TownOfHost
         public void SetMainRole(CustomRoles role, [System.Runtime.CompilerServices.CallerMemberName] string name = "")
         {
             MainRole = role;
+            SubRoles.RemoveAll(subRole => !CustomRolesHelper.CanHaveSubRole(role, subRole));
 
             CountType = CustomRoleManager.GetRoleInfo(role) is SimpleRoleInfo roleInfo ?
                 roleInfo.CountType :
@@ -115,12 +117,22 @@ namespace TownOfHost
         }
         public void SetSubRole(CustomRoles role, bool AllReplace = false)
         {
+            if (!CustomRolesHelper.CanHaveSubRole(MainRole, role))
+            {
+                Logger.Info($"Invalid SubRole skipped: {MainRole} + {role}", nameof(PlayerState));
+                return;
+            }
+
             if (AllReplace)
                 SubRoles.Do(role => SubRoles.Remove(role));
 
             if (!SubRoles.Contains(role))
             {
                 SubRoles.Add(role);
+                if (role == CustomRoles.SilverBuzzer)
+                {
+                    SilverBuzzer.OnGranted(PlayerId);
+                }
                 CustomRoleManager.OtherRolesAdd(PlayerCatch.GetPlayerById(PlayerId), role);
             }
         }

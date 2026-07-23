@@ -146,6 +146,10 @@ namespace TownOfHost
                     {
                         TaskBattle.GetMark(seer, null, ref SelfMark);
                     }
+                    if (DummyHunter.IsThisMode)
+                    {
+                        SelfMark.Append(DummyHunter.GetScoreMark(seer.PlayerId));
+                    }
                     //Markとは違い、改行してから追記されます。
                     SelfSuffix.Clear();
 
@@ -277,6 +281,10 @@ namespace TownOfHost
 
                             //seerに関わらず発動するMark
                             TargetMark.Append(CustomRoleManager.GetMarkOthers(seer, target, false));
+
+                            //ダミーハンター：名前の右にキルしたダミーの数を表示
+                            if (DummyHunter.IsThisMode)
+                                TargetMark.Append(DummyHunter.GetScoreMark(target.PlayerId));
 
                             //ハートマークを付ける(相手に)
                             var seerri = seer.GetLoverRole();

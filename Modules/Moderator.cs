@@ -177,7 +177,7 @@ public static class Moderator
 
         if (args.Length < 2)
         {
-            SendMessage("使用方法: /cmd mod <名前|色|FC> | /cmd mod delete <名前|色|FC>", sender.PlayerId);
+            SendMessage("使用方法: /mod <名前|色|FC> | /mod delete <名前|色|FC>", sender.PlayerId);
             return;
         }
 
@@ -274,7 +274,7 @@ public static class Moderator
     {
         if (args.Length < 2)
         {
-            SendMessage($"使用方法: /cmd {(ban ? "ban" : "kick")} <PlayerId>", sender.PlayerId);
+            SendMessage($"使用方法: /{(ban ? "ban" : "kick")} <PlayerId>", sender.PlayerId);
             return;
         }
 
@@ -321,7 +321,7 @@ public static class Moderator
     {
         if (args.Length <= 1)
         {
-            SendMessage("使用方法: /cmd say <message>", sender.PlayerId);
+            SendMessage("使用方法: /say <message>", sender.PlayerId);
             return;
         }
 
@@ -410,7 +410,7 @@ public static class Moderator
                 }
                 else
                 {
-                    SendMessage("/cmd sw <crewmate|impostor|jackal|none|draw|role>", sender.PlayerId);
+                    SendMessage("/sw <crewmate|impostor|jackal|none|draw|role>", sender.PlayerId);
                 }
                 break;
         }
@@ -431,7 +431,7 @@ public static class Moderator
         {
             if (!int.TryParse(args[1], out sec))
             {
-                SendMessage("使用方法: /cmd start <0-600>", sender.PlayerId);
+                SendMessage("使用方法: /start <0-600>", sender.PlayerId);
                 return;
             }
         }

@@ -248,6 +248,8 @@ namespace TownOfHost
                     CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Draw);
                 }
 
+                Ruler.ApplyGameEndRules();
+
                 if (isSabotageEnd && Options.OptionSabotageFinAllKill.GetBool())
                 {
                     PlayerCatch.AllAlivePlayerControls
@@ -445,6 +447,8 @@ namespace TownOfHost
         public static void SetPredicateToHideAndSeek() => predicate = new HideAndSeekGameEndPredicate();
         public static void SetPredicateToTaskBattle() => predicate = new TaskBattle.TaskBattleGameEndPredicate();
         public static void SetPredicateToMurderMystery() => predicate = new MurderMystery.MurderMysteryGameEndPredicate();
+        public static void SetPredicateToDummyHunter() => predicate = new DummyHunter.DummyHunterGameEndPredicate();
+
         public static void SetPredicateToSadness() => predicate = new SadnessGameEndPredicate();
     }
 }

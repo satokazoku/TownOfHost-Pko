@@ -19,7 +19,7 @@ namespace TownOfHost.Modules;
 [HarmonyPatch]
 class VersionInfoManager
 {
-    public static readonly string URL = "https://raw.githubusercontent.com/KYMario/TownOfHost-Pko/main/versions.json";
+    public static readonly string URL = "https://raw.githubusercontent.com/satokazoku/TownOfHost-Pko/main/versions.json";
     //public static readonly string URL = "https://raw.githubusercontent.com/KYMario/TOHP-Test/main/versions.json";
     public static Dictionary<string, VersionInfo> Versions { get; protected set; }
     public static VersionInfo version { get; protected set; }

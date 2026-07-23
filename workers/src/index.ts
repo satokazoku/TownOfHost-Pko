@@ -1,17 +1,28 @@
 // Cloudflare Worker for presets API (D1)
+
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+
+function jsonResponse(body: any, status = 200) {
+  return new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json', ...CORS_HEADERS } });
+}
+
 export default {
   async fetch(request: Request, env: any) {
     try {
       const url = new URL(request.url);
       const pathname = url.pathname.replace(/\/+$/, '');
 
-      if (request.method === 'OPTIONS') return new Response(null, { status: 204 });
+      if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS_HEADERS });
 
       // POST /presets - create a new preset
       if (request.method === 'POST' && pathname === '/presets') {
         const contentType = request.headers.get('content-type') || '';
         if (!contentType.includes('application/json')) {
-          return new Response(JSON.stringify({ error: 'application/json required' }), { status: 400 });
+          return jsonResponse({ error: 'application/json required' }, 400);
         }
         const body = await request.json();
         const name = (body.name || '').toString().trim();
@@ -21,18 +32,14 @@ export default {
         const tags = Array.isArray(body.tags) ? body.tags.map(String).join(',') : (body.tags || '').toString();
 
         if (!name || !creator || !config_json) {
-          return new Response(JSON.stringify({ error: 'name, creator, config_json are required' }), { status: 400 });
+          return jsonResponse({ error: 'name, creator, config_json are required' }, 400);
         }
 
         const sql = `INSERT INTO presets (name, creator, config_json, version, tags) VALUES (?, ?, ?, ?, ?)`;
         const result = await env.D1_PRESETS.prepare(sql).bind(name, creator, config_json, version, tags).run();
-        // D1 run returns meta with last_row_id in many environments
         const id = result?.meta?.last_row_id ?? result?.meta?.last_insert_rowid ?? null;
 
-        return new Response(JSON.stringify({ id }), {
-          status: 201,
-          headers: { 'content-type': 'application/json' },
-        });
+        return jsonResponse({ id }, 201);
       }
 
       // GET /presets - list with filters, sort, paging
@@ -63,7 +70,7 @@ export default {
         }
 
         if (q) {
-          where.push('(name LIKE '%' || ? || '%' OR creator LIKE '%' || ? || '%')');
+          where.push(`(name LIKE '%' || ? || '%' OR creator LIKE '%' || ? || '%')`);
           binds.push(q, q);
         }
 
@@ -85,7 +92,7 @@ export default {
 
         return new Response(JSON.stringify({ total, page, per_page, presets: rows }), {
           status: 200,
-          headers: { 'content-type': 'application/json' },
+          headers: { 'content-type': 'application/json', ...CORS_HEADERS },
         });
       }
 
@@ -95,8 +102,8 @@ export default {
         const id = Number(presetIdMatch[1]);
         const row = await env.D1_PRESETS.prepare('SELECT id, name, creator, version, tags, downloads, created_at FROM presets WHERE id = ?').bind(id).all();
         const resultRow = row?.results?.[0] ?? null;
-        if (!resultRow) return new Response(JSON.stringify({ error: 'not found' }), { status: 404 });
-        return new Response(JSON.stringify(resultRow), { status: 200, headers: { 'content-type': 'application/json' } });
+        if (!resultRow) return jsonResponse({ error: 'not found' }, 404);
+        return jsonResponse(resultRow, 200);
       }
 
       // POST /presets/:id/download
@@ -105,16 +112,30 @@ export default {
         const id = Number(downloadMatch[1]);
         // increment downloads
         await env.D1_PRESETS.prepare('UPDATE presets SET downloads = downloads + 1 WHERE id = ?').bind(id).run();
-        const row = await env.D1_PRESETS.prepare('SELECT config_json FROM presets WHERE id = ?').bind(id).all();
+        const row = await env.D1_PRESETS.prepare('SELECT config_json, name FROM presets WHERE id = ?').bind(id).all();
         const configRow = row?.results?.[0] ?? null;
-        if (!configRow) return new Response(JSON.stringify({ error: 'not found' }), { status: 404 });
-        // return config_json and metadata
-        return new Response(JSON.stringify({ id, config_json: configRow.config_json }), { status: 200, headers: { 'content-type': 'application/json' } });
+        if (!configRow) return jsonResponse({ error: 'not found' }, 404);
+
+        // if client requests as file, return as attachment
+        const asFile = url.searchParams.get('as_file');
+        if (asFile === '1') {
+          const filename = `${(configRow.name || 'preset').replace(/[^a-z0-9_.-]/gi, '_')}.txt`;
+          return new Response(configRow.config_json, {
+            status: 200,
+            headers: {
+              'content-type': 'application/octet-stream',
+              'content-disposition': `attachment; filename="${filename}"`,
+              ...CORS_HEADERS,
+            },
+          });
+        }
+
+        return jsonResponse({ id, config_json: configRow.config_json }, 200);
       }
 
-      return new Response('Not found', { status: 404 });
+      return new Response('Not found', { status: 404, headers: CORS_HEADERS });
     } catch (err: any) {
-      return new Response(JSON.stringify({ error: String(err) }), { status: 500 });
+      return jsonResponse({ error: String(err) }, 500);
     }
   }
 };

@@ -79,7 +79,6 @@ public static class GlobalChatManager
                 }
             }
             catch (OperationCanceledException) { break; }
-            catch (Exception e) { Logger.Warn($"GlobalChat 接続エラー: {e.Message}", "GlobalChatManager"); }
 
             try { await Task.Delay(5000, ct); } catch { break; }
         }

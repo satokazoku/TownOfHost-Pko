@@ -385,6 +385,7 @@ namespace TownOfHost.Roles
 
             foreach (var role in AllMainRoles.OrderBy(x => Guid.NewGuid())) //確定枠が偏らないようにシャッフル
             {
+                if (!Event.CheckRole(role)) continue;
                 if (!role.IsAssignable()) continue;
 
                 var chance = role.GetChance();
@@ -444,6 +445,8 @@ namespace TownOfHost.Roles
             //固定だとしても確率でアサインさせる
             foreach (var subRole in CustomRolesHelper.AllAddOns)
             {
+                if (!Event.CheckRole(subRole)) continue;
+
                 var chance = subRole.GetChance();
                 var count = subRole.GetAssignCount();
                 if (chance == 0 || count == 0) continue;
@@ -458,6 +461,8 @@ namespace TownOfHost.Roles
             var candidateRoleList = new List<CustomRoles>();
             foreach (var role in AllMainRoles)
             {
+                if (!Event.CheckRole(role)) continue;
+
                 if (!shutoku)
                     if (!role.IsAssignable()) continue;
 

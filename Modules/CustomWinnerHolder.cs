@@ -32,6 +32,7 @@ namespace TownOfHost
         // 勝利優先順位の最高値です。
         // この数値より大きい(同値除く)と勝利を上書きします
         public static int WinPriority;
+        public static bool ForceEveryoneWinsText;
 
         // 勝利優先順位の影響で勝利した陣営の勝利含め、単独勝利判定の陣営が格納されます。
         // ※ホストしか正常な値になりません。
@@ -48,6 +49,7 @@ namespace TownOfHost
             CantWinPlayerIds = new();
             winners = new();
             WinPriority = -1;
+            ForceEveryoneWinsText = false;
             GameStates.CalledMeeting = false;
         }
         public static void ClearWinners()
@@ -58,6 +60,7 @@ namespace TownOfHost
             NeutralWinnerIds.Clear();
             winners.Clear();
             WinPriority = -1;
+            ForceEveryoneWinsText = false;
         }
         /// <summary><para>WinnerTeamに値を代入します。</para><para>すでに代入されている場合、AdditionalWinnerRolesに追加します。</para></summary>
         public static void SetWinnerOrAdditonalWinner(CustomWinner winner)
@@ -173,6 +176,8 @@ namespace TownOfHost
             foreach (var lid in CantWinPlayerIds)
                 writer.Write(lid);
 
+            writer.Write(ForceEveryoneWinsText);
+
             return writer;
         }
         public static void ReadFrom(MessageReader reader)
@@ -198,6 +203,7 @@ namespace TownOfHost
             int CantWinPlayerIdsCount = reader.ReadPackedInt32();
             for (int i = 0; i < CantWinPlayerIdsCount; i++)
                 CantWinPlayerIds.Add(reader.ReadByte());
+            ForceEveryoneWinsText = reader.Position < reader.Length && reader.ReadBoolean();
         }
     }
 }

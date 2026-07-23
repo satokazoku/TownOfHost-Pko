@@ -33,6 +33,7 @@ namespace TownOfHost
         }
         public static void Postfix()
         {
+            NumericOptionInput.Close(false);
             if (ShowFilter.CallEsc()) return;
             if (ShowRandomSpawnOption.CallEsc()) return;
             ModSettingsButton = null;
@@ -240,26 +241,7 @@ namespace TownOfHost
                         if (priset.textArea.text != "")
                         {
                             var pr = OptionItem.AllOptions.Where(op => op.Id == 0).FirstOrDefault();
-                            switch (pr.CurrentValue)
-                            {
-                                case 0: Main.Preset1.Value = priset.textArea.text; break;
-                                case 1: Main.Preset2.Value = priset.textArea.text; break;
-                                case 2: Main.Preset3.Value = priset.textArea.text; break;
-                                case 3: Main.Preset4.Value = priset.textArea.text; break;
-                                case 4: Main.Preset5.Value = priset.textArea.text; break;
-                                case 5: Main.Preset6.Value = priset.textArea.text; break;
-                                case 6: Main.Preset7.Value = priset.textArea.text; break;
-                                case 7: Main.Preset8.Value = priset.textArea.text; break;
-                                case 8: Main.Preset9.Value = priset.textArea.text; break;
-                                case 9: Main.Preset10.Value = priset.textArea.text; break;
-                                case 10: Main.Preset11.Value = priset.textArea.text; break;
-                                case 11: Main.Preset12.Value = priset.textArea.text; break;
-                                case 12: Main.Preset13.Value = priset.textArea.text; break;
-                                case 13: Main.Preset14.Value = priset.textArea.text; break;
-                                case 14: Main.Preset15.Value = priset.textArea.text; break;
-                                case 15: Main.Preset16.Value = priset.textArea.text; break;
-
-                            }
+                            Main.SetPresetName(pr.CurrentValue, priset.textArea.text);
                             priset.textArea.Clear();
                         }
                     });
@@ -487,26 +469,7 @@ namespace TownOfHost
                 {
                     OptionItem.AllOptions.ToArray().Where(x => x.Id > 0 && x.Id is not 2 and not 3 && 1_000_000 > x.Id && x.CurrentValue != x.DefaultValue).Do(x => x.SetValue(x.DefaultValue, false, false));
                     var pr = OptionItem.AllOptions.Where(op => op.Id == 0).FirstOrDefault();
-                    switch (pr.CurrentValue)
-                    {
-                        case 0: Main.Preset1.Value = GetString("Preset_1"); break;
-                        case 1: Main.Preset2.Value = GetString("Preset_2"); break;
-                        case 2: Main.Preset3.Value = GetString("Preset_3"); break;
-                        case 3: Main.Preset4.Value = GetString("Preset_4"); break;
-                        case 4: Main.Preset5.Value = GetString("Preset_5"); break;
-                        case 5: Main.Preset6.Value = GetString("Preset_6"); break;
-                        case 6: Main.Preset7.Value = GetString("Preset_7"); break;
-                        case 7: Main.Preset8.Value = GetString("Preset_8"); break;
-                        case 8: Main.Preset9.Value = GetString("Preset_9"); break;
-                        case 9: Main.Preset10.Value = GetString("Preset_10"); break;
-                        case 10: Main.Preset11.Value = GetString("Preset_11"); break;
-                        case 11: Main.Preset12.Value = GetString("Preset_12"); break;
-                        case 12: Main.Preset13.Value = GetString("Preset_13"); break;
-                        case 13: Main.Preset14.Value = GetString("Preset_14"); break;
-                        case 14: Main.Preset15.Value = GetString("Preset_15"); break;
-                        case 15: Main.Preset16.Value = GetString("Preset_16"); break;
-
-                    }
+                    Main.ResetPresetName(pr.CurrentValue);
                     GameSettingMenuChangeTabPatch.meg = GetString("OptionResetMeg");
                     timer = 3;
                     VanillaOptionHolder.ResetVanilla();
@@ -701,6 +664,7 @@ namespace TownOfHost
                         var transform = stringOption.ValueText.transform;
                         var pos = transform.localPosition;
                         transform.localPosition = new Vector3(pos.x + 0.7322f, pos.y, pos.z);
+                        NumericOptionInput.Attach(option, stringOption);
                         stringOption.SetClickMask(optionsMenu.ButtonClickMask);
                         option.OptionBehaviour = stringOption;
                     }
@@ -936,6 +900,7 @@ namespace TownOfHost
                         var transform = stringOption.ValueText.transform;
                         var pos = transform.localPosition;
                         transform.localPosition = new Vector3((pos.x + 0.7322f), pos.y, pos.z);
+                        NumericOptionInput.Attach(option, stringOption);
                         stringOption.SetClickMask(optionsMenu.ButtonClickMask);
                         option.OptionBehaviour = stringOption;
                     }

@@ -108,7 +108,8 @@ namespace TownOfHost
                 CustomRoles.News or
                 CustomRoles.Sunglasses or
                 CustomRoles.Securer or
-                CustomRoles.Sealer
+                CustomRoles.Sealer or
+                CustomRoles.SilverBuzzer
                 ;
         }
         public static bool IsBuffAddon(this CustomRoles roles)
@@ -153,7 +154,8 @@ namespace TownOfHost
                 CustomRoles.News or
                 CustomRoles.Sunglasses or
                 CustomRoles.Securer or
-                CustomRoles.Sealer
+                CustomRoles.Sealer or
+                CustomRoles.SilverBuzzer
                 ;
         }
         public static bool IsCombinationRole(this CustomRoles role) => role is
@@ -187,6 +189,15 @@ namespace TownOfHost
                     RoleTypes.Engineer or RoleTypes.GuardianAngel or
                     RoleTypes.Noisemaker or RoleTypes.Scientist or RoleTypes.Tracker or RoleTypes.Detective;
         public static bool IsSubRole(this CustomRoles role) => role.IsAddOn() || role.IsLovers() || role.IsGhostRole() || role is CustomRoles.Amanojaku or CustomRoles.Twins or CustomRoles.Triplets or CustomRoles.Faction;
+        static readonly CustomRoles[] GuesserDenyRoles =
+        {
+            CustomRoles.God,
+        };
+        public static bool CanHaveSubRole(CustomRoles role, CustomRoles subRole)
+        {
+            if (subRole == CustomRoles.Guesser && GuesserDenyRoles.Contains(role)) return false;
+            return true;
+        }
         public static bool IsLovers(this CustomRoles roles, bool checkonelover = true)
         {
             if (roles is CustomRoles.OneLove && checkonelover) return true;

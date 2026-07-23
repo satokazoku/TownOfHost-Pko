@@ -13,6 +13,7 @@ namespace TownOfHost
         private static float _timer = 1f;
         public static void Postfix(GameOptionsMenu __instance)
         {
+            NumericOptionInput.Tick();
             _timer += Time.deltaTime;
             if (_timer < 0.1f) return;
             _timer = 0f;

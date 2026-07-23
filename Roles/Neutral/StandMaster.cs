@@ -461,7 +461,7 @@ public sealed class Stand : RoleBase, ILNKiller
             CustomRoles.Stand,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Neutral,
-            184700,
+            54500,
             SetupOptionItem,
             "st",
             "#8B4513",

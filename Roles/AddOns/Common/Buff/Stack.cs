@@ -30,8 +30,10 @@ namespace TownOfHost.Roles.AddOns.Common
             if (AmongUsClient.Instance.AmHost)
             {
                 var pc = PlayerCatch.GetPlayerById(playerId);
+                if (pc == null) return;
                 foreach (var addon in AssignAddon.GetNowRoleValue())
                 {
+                    if (!CustomRolesHelper.CanHaveSubRole(pc.GetCustomRole(), addon)) continue;
                     if (pc.Is(addon) is false)
                     {
                         PlayerState.GetByPlayerId(playerId).SetSubRole(addon);

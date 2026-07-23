@@ -14,6 +14,7 @@ using static TownOfHost.Options;
 using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.AddOns.Common;
 using TownOfHost.Roles.Madmate;
+using TownOfHost.Roles.Neutral;
 using TownOfHost.Roles.Vanilla;
 
 namespace TownOfHost.Modules
@@ -291,6 +292,7 @@ namespace TownOfHost.Modules
                 {
                     //キルボタンが使用可能の時は最小0.000...1　設定無効 or キルボタンが使用不可なら最小0
                     AURoleOptions.KillCooldown = Mathf.Max(((roleClass as IKiller)?.CanUseKillButton() == true) ? 0.00000000000000000000000000000000000000000001f : 0f, killCooldown);
+                    AURoleOptions.KillCooldown = Ruler.ApplyKillCooldownRule(AURoleOptions.KillCooldown);
                 }
 
                 state.taskState.hasTasks = UtilsTask.HasTasks(player.Data, false);
@@ -389,6 +391,7 @@ namespace TownOfHost.Modules
             }
 
             MeetingTimeManager.ApplyGameOptions(opt);
+            Ruler.ApplyVisionRule(player, opt);
 
             AURoleOptions.ShapeshifterCooldown = Mathf.Max(1f, AURoleOptions.ShapeshifterCooldown);
             AURoleOptions.PhantomCooldown = Mathf.Max(1f, AURoleOptions.PhantomCooldown);

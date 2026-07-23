@@ -219,6 +219,7 @@ namespace TownOfHost
                 case CustomWinner.OneLove: CustomWinnerText = ColorString(GetRoleColor(CustomRoles.OneLove), GetString("OneLoveWin")); barColor = GetRoleColor(CustomRoles.OneLove); break;
                 case CustomWinner.God: CustomWinnerText = GetString("GodWinText"); barColor = GetRoleColor(CustomRoles.God); break;
                 case CustomWinner.Amateras: CustomWinnerText = GetString("AmaterasWinText"); barColor = GetRoleColor(CustomRoles.Amateras); break;
+                case CustomWinner.Ruler: CustomWinnerText = GetString("RulerWinText"); barColor = GetRoleColor(CustomRoles.Ruler); break;
                 case CustomWinner.MilkyWay: var MilkyWayColor = StringHelper.CodeColor(Roles.Neutral.Vega.TeamColor); CustomWinnerText = ColorString(MilkyWayColor, GetString("TeamMilkyWay")); barColor = MilkyWayColor; break;
                 case CustomWinner.TaskPlayerB:
                     if (winnerList.Count is 0) break;
@@ -298,6 +299,14 @@ namespace TownOfHost
                     CustomWinnerColor = StringHelper.ColorCode(Color.gray);
                     break;
             }
+            if (CustomWinnerHolder.ForceEveryoneWinsText)
+            {
+                CustomWinnerColor = GetRoleColorCode(CustomRoles.Ruler);
+                barColor = GetRoleColor(CustomRoles.Ruler);
+                CustomWinnerText = $"<{CustomWinnerColor}>{GetString("RulerEveryoneWinsText")}</color>";
+                return (CustomWinnerText, CustomWinnerColor, WinText, barColor, winColor);
+            }
+
             if (isPavlovWinner && !SuddenDeathMode.NowSuddenDeathMode)
             {
                 CustomWinnerText = GetString("TeamPavlov");
@@ -456,6 +465,7 @@ namespace TownOfHost
                     {
                         case CustomWinner.God: meg = GetString("GodWinText"); break;
                         case CustomWinner.Amateras: meg = GetString("AmaterasWinText"); break;
+                        case CustomWinner.Ruler: meg = GetString("RulerWinText"); break;
                         case CustomWinner.Draw: meg = GetString("ForceEnd"); break;
                         case CustomWinner.None: meg = GetString("EveryoneDied"); break;
                         case CustomWinner.SuddenDeathRed: meg = GetString("SuddenDeathRed"); winnerColor = ModColors.Red; break;
@@ -463,6 +473,12 @@ namespace TownOfHost
                         case CustomWinner.SuddenDeathYellow: meg = GetString("SuddenDeathYellow"); winnerColor = ModColors.Yellow; break;
                         case CustomWinner.SuddenDeathGreen: meg = GetString("SuddenDeathGreen"); winnerColor = ModColors.Green; break;
                         case CustomWinner.SuddenDeathPurple: meg = GetString("SuddenDeathPurple"); winnerColor = ModColors.Purple; break;
+                    }
+
+                    if (CustomWinnerHolder.ForceEveryoneWinsText)
+                    {
+                        meg = GetString("RulerEveryoneWinsText");
+                        winnerColor = GetRoleColor(CustomRoles.Ruler);
                     }
 
                     var Star = "★";

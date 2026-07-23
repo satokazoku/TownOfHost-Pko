@@ -51,6 +51,8 @@ namespace TownOfHost
                 {
                     if (role.IsEnable())
                     {
+                        if (!Event.CheckRole(role)) continue;
+
                         if (role.GetRoleInfo()?.Description is { } description)
                         {
                             SendMessage(description.FullFormatHelp, PlayerId, checkl: true);
@@ -59,6 +61,7 @@ namespace TownOfHost
                             if (addhaverole is not null and not CustomRoles.NotAssigned)
                             {
                                 if (addhaverole.Value.IsEnable()) continue;
+                                if (!Event.CheckRole(addhaverole.Value)) continue;
                                 var addroleInfo = addhaverole.Value.GetRoleInfo();
                                 if (addroleInfo != null && addroleInfo.Description != null)
                                     SendMessage(addroleInfo.Description.FullFormatHelp, PlayerId, ColorString(GetRoleColor(role), GetString("AddRoleInfoTitle")), checkl: true);
@@ -74,6 +77,7 @@ namespace TownOfHost
                 foreach (var role in CustomRolesHelper.AllAddOns)
                     if (role.IsEnable())
                     {
+                        if (!Event.CheckRole(role)) continue;
                         SendMessage(GetAddonsHelp(role), PlayerId, checkl: true);
                     }
             }
@@ -138,7 +142,7 @@ namespace TownOfHost
                 if (nowcount.addon > 0) sb.Append(ColorString(ModColors.AddonsColor, "\n☆Add-Ons☆" + $"({nowcount.addon})" + "\n"));
 
                 sb.Append("\n");
-                if (Options.CustomRoleCounts.Where(x => x.Key.IsEnable()).Count() > 30)
+                if (Options.CustomRoleCounts.Where(x => x.Key.IsEnable() && Event.CheckRole(x.Key)).Count() > 30)
                 {
                     sb.Append(GetString("Warning.OverRole") + "\n");
                 }
@@ -149,6 +153,7 @@ namespace TownOfHost
                         var role = roleop.Key;
                         if (role is not CustomRoles.Jackaldoll || JackalDoll.GetSideKickCount() is 0)
                             if (!role.IsEnable()) continue;
+                        if (!Event.CheckRole(role)) continue;
                         if (role is CustomRoles.HASFox or CustomRoles.HASTroll) continue;
 
                         var mark = "";
@@ -243,6 +248,8 @@ namespace TownOfHost
             Dictionary<CustomRoles, int> sort = new();
             foreach (var date in SoloWinOption.AllData)
             {
+                if (!Event.CheckRole(date.Key)) continue;
+
                 if (date.Key.IsEnable() || date.Key is CustomRoles.Impostor or CustomRoles.Crewmate ||
                 (date.Key is CustomRoles.MadonnaLovers && CustomRoles.Madonna.IsEnable()) ||
                 (date.Key is CustomRoles.CupidLovers && CustomRoles.Cupid.IsEnable()) ||
@@ -270,6 +277,7 @@ namespace TownOfHost
             foreach (var role in Options.CustomRoleCounts)
             {
                 if (!role.Key.IsEnable()) continue;
+                if (!Event.CheckRole(role.Key)) continue;
                 sb.Append($"\n【{UtilsRoleText.GetCombinationName(role.Key)}×{role.Key.GetCount()}】\n");
                 ShowChildrenSettings(Options.CustomRoleSpawnChances[role.Key], ref sb);
                 var text = sb.ToString();
@@ -325,6 +333,7 @@ namespace TownOfHost
                     //Roles
                     if (role.IsEnable())
                     {
+                        if (!Event.CheckRole(role)) continue;
                         if (role.IsCombinationRole() || SlotRoleAssign.IsSeted(role)) continue;
                         if (farst && role.IsImpostor())
                         {
@@ -368,7 +377,7 @@ namespace TownOfHost
                 }
                 //コンビ
                 nowcount = 3;
-                foreach (CustomRoles role in roles.Where(role => role.IsCombinationRole() && role.IsEnable()))
+                foreach (CustomRoles role in roles.Where(role => role.IsCombinationRole() && role.IsEnable() && Event.CheckRole(role)))
                 {
                     if (nowcount is 3)
                     {
@@ -392,13 +401,13 @@ namespace TownOfHost
             }
             if (addons != null && addons?.Length != 0)
             {
-                if (addons.Any(add => add.IsEnable()))
+                if (addons.Any(add => add.IsEnable() && Event.CheckRole(add)))
                 {
                     sb.Append("\n<size=100%>\n").Append(GetString("Addons")).Append("</size>");
                     sb.AppendFormat("<size={0}>", "70%");
 
                     nowcount = 1;
-                    foreach (CustomRoles Addon in addons.Where(a => a.IsEnable()))
+                    foreach (CustomRoles Addon in addons.Where(a => a.IsEnable() && Event.CheckRole(a)))
                     {
                         nowcount++;
                         var m = AdditionalWinnerMark;
@@ -934,7 +943,7 @@ namespace TownOfHost
                 case From.TownOfUs: Fromtext += $"<#daa520>{from}</color>"; break;
                 case From.TownOfHost: Fromtext += $"<#00bfff>{from}</color>"; break;
                 case From.TownOfHost_Y: Fromtext += $"<#dddd00>TownOfHost_Y</color>"; break;
-                case From.TownOfHost_K: Fromtext += $"<#00bfff>TownOfHost K</color>"; break;
+                case From.TownOfHost_K: Fromtext += $"<#00bfff>TownOfHost_K</color>"; break;
                 case From.TownOfHost_for_E: Fromtext += $"<#18e744>TownOfHost for E</color>"; break;
                 case From.Speyrp: Fromtext = $"<#7fffbf>From:Yoran★</color>"; break;
                 case From.TownOfHost_Enhanced: Fromtext += $"<#ffc0cb>TownOfHost Enhanced</color>"; break;

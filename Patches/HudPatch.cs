@@ -164,6 +164,19 @@ namespace TownOfHost
                     bool CanUseVent = player.CanUseImpostorVentButton();
                     __instance.ImpostorVentButton.ToggleVisible(CanUseVent);
                     player.Data.Role.CanVent = CanUseVent;
+
+                    //ダミーハンター：キルボタンは使わないのでキルクール表示に制限時間を出す
+                    if (DummyHunter.IsThisMode && DummyHunter.IsActive)
+                    {
+                        __instance.KillButton.ToggleVisible(GameStates.IsInTask);
+                        __instance.KillButton.SetDisabled();
+                        if (__instance.KillButton.cooldownTimerText != null)
+                        {
+                            __instance.KillButton.cooldownTimerText.gameObject.SetActive(true);
+                            __instance.KillButton.cooldownTimerText.text =
+                                UnityEngine.Mathf.CeilToInt(UnityEngine.Mathf.Max(0f, DummyHunter.TimeLeft)).ToString();
+                        }
+                    }
                 }
                 else
                 {

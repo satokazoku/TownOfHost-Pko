@@ -314,7 +314,7 @@ namespace TownOfHost
         }
 
         // 外部からの操作
-        public virtual void Refresh()
+        public virtual void Refresh(bool updateOptionShower = true)
         {
             if (OptionBehaviour is not null and StringOption opt)
             {
@@ -335,7 +335,10 @@ namespace TownOfHost
                 opt.ValueText.text = GetString();
                 opt.oldValue = opt.Value = CurrentValue;
             }
-            OptionShower.Update = true;
+            if (updateOptionShower)
+            {
+                OptionShower.Update = true;
+            }
         }
         public virtual void SetValue(int afterValue, bool doSave, bool doSync = true)
         {
@@ -366,7 +369,11 @@ namespace TownOfHost
         }
         public void SetAllValues(int[] values)  // プリセット読み込み専用
         {
-            AllValues = values;
+            AllValues = new int[NumPresets];
+            for (var i = 0; i < AllValues.Length; i++)
+            {
+                AllValues[i] = values != null && i < values.Length ? values[i] : DefaultValue;
+            }
         }
 
         // 演算子オーバーロード
@@ -376,14 +383,21 @@ namespace TownOfHost
             => item.Do(item => item.SetValue(item.CurrentValue - 1));
 
         // 全体操作用
-        public static void SwitchPreset(int newPreset)
+        public static void SwitchPreset(int newPreset, bool doSync = true)
         {
-            CurrentPreset = Math.Clamp(newPreset, 0, NumPresets - 1);
+            var preset = Math.Clamp(newPreset, 0, NumPresets - 1);
+            if (CurrentPreset == preset) return;
+
+            CurrentPreset = preset;
 
             foreach (var op in AllOptions)
-                op.Refresh();
+                op.Refresh(updateOptionShower: false);
 
-            SyncAllOptions();
+            OptionShower.Update = true;
+            if (doSync)
+            {
+                SyncAllOptions();
+            }
         }
         public static void SyncAllOptions()
         {

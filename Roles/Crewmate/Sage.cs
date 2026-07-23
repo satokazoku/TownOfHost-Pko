@@ -68,6 +68,7 @@ public sealed class Sage : RoleBase
         PetActionManager.Register(Player.PlayerId, ActivateBarrier);
 
         if (!AmongUsClient.Instance.AmHost) return;
+        if (!PetActionManager.AutoGrantPetEnabled) return;
 
         for (int i = 1; i <= 3; i++)
         {
@@ -76,6 +77,7 @@ public sealed class Sage : RoleBase
             {
                 try
                 {
+                    if (!PetActionManager.AutoGrantPetEnabled) return;
                     if (Player == null) return;
 
                     string currentPet = Player.Data?.DefaultOutfit?.PetId ?? Player.CurrentOutfit?.PetId ?? "";

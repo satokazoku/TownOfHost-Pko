@@ -1,4 +1,5 @@
 using Hazel;
+using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
 using UnityEngine;
@@ -46,9 +47,13 @@ namespace TownOfHost.Roles.Neutral
         public static OptionItem OptionHasImpostorVision;
         public static OptionItem OptionDieKiller;
         public static OptionItem OptionDieKillerTIme;
+        static OptionItem OptionShowRoleNameToKiller;
+        static OptionItem OptionShowRoleNameToKillerTeam;
         static OptionItem OptionCountChenge;
         static OptionItem OptionCanSeeKillableTeammate;
         PlayerControl Killer;
+        byte KillerId = byte.MaxValue;
+        readonly HashSet<byte> RoleNameSeerIds = [];
         /// <summary>
         /// 自分をキルしてきた人のロール
         /// </summary>
@@ -72,7 +77,12 @@ namespace TownOfHost.Roles.Neutral
         private static LogHandler logger = Logger.Handler(nameof(BakeCat));
         enum Op
         {
-            BakeCatDieKiller, BakeCatDieKillerTime, BakeCatCountChenge, SchrodingerCatCanSeeKillableTeammate
+            BakeCatDieKiller,
+            BakeCatDieKillerTime,
+            BakeCatShowRoleNameToKiller,
+            BakeCatShowRoleNameToKillerTeam,
+            BakeCatCountChenge,
+            SchrodingerCatCanSeeKillableTeammate
         }
         public static void SetupOptionItem()
         {
@@ -85,6 +95,8 @@ namespace TownOfHost.Roles.Neutral
             OptionDieKillerTIme = FloatOptionItem.Create(RoleInfo, 15, Op.BakeCatDieKillerTime, new(0, 180, 1), 1, false, OptionDieKiller).SetValueFormat(OptionFormat.Seconds);
             OptionCountChenge = BooleanOptionItem.Create(RoleInfo, 16, Op.BakeCatCountChenge, false, false);
             OptionCanSeeKillableTeammate = BooleanOptionItem.Create(RoleInfo, 17, Op.SchrodingerCatCanSeeKillableTeammate, false, false);
+            OptionShowRoleNameToKiller = BooleanOptionItem.Create(RoleInfo, 18, Op.BakeCatShowRoleNameToKiller, true, false);
+            OptionShowRoleNameToKillerTeam = BooleanOptionItem.Create(RoleInfo, 19, Op.BakeCatShowRoleNameToKillerTeam, false, false, OptionShowRoleNameToKiller);
         }
         public override void ApplyGameOptions(IGameOptions opt)
         {
@@ -131,7 +143,9 @@ namespace TownOfHost.Roles.Neutral
             if (MagicalGirl.TryGetEffectiveRole<ISchrodingerCatOwner>(killer, out var catOwner))
             {
                 catOwner.OnBakeCatKill(this);
-                RpcSetTeam((TeamType)catOwner.SchrodingerCatChangeTo);
+                var newTeam = (TeamType)catOwner.SchrodingerCatChangeTo;
+                SetRoleNameSeers(killer, newTeam);
+                RpcSetTeam(newTeam);
                 owner = catOwner;
 
                 if (AmongUsClient.Instance.AmHost)
@@ -179,7 +193,7 @@ namespace TownOfHost.Roles.Neutral
 
             RevealNameColors(killer);
 
-            UtilsNotifyRoles.NotifyRoles();
+            UtilsNotifyRoles.NotifyRoles(ForceLoop: true);
             UtilsOption.MarkEveryoneDirtySettings();
 
             if (PlayerControl.LocalPlayer.PlayerId == Player.PlayerId)
@@ -191,11 +205,67 @@ namespace TownOfHost.Roles.Neutral
         {
             if (OptionDieKiller.GetBool())
             {
-                if (!Killer.IsAlive()) return;
+                if (Killer?.IsAlive() is not true) return;
                 Killer.RpcMurderPlayerV2(Killer);
             }
         }
         public override RoleTypes? AfterMeetingRole => CanKill ? RoleTypes.Impostor : RoleTypes.Crewmate;
+
+        private void SetRoleNameSeers(PlayerControl killer, TeamType team)
+        {
+            RoleNameSeerIds.Clear();
+            KillerId = killer?.PlayerId ?? byte.MaxValue;
+
+            if (!OptionShowRoleNameToKiller.GetBool() || killer == null)
+            {
+                return;
+            }
+
+            RoleNameSeerIds.Add(killer.PlayerId);
+
+            if (!OptionShowRoleNameToKillerTeam.GetBool())
+            {
+                return;
+            }
+
+            foreach (var member in PlayerCatch.AllPlayerControls.Where(member => IsRoleNameRevealTeamMember(member, team)))
+            {
+                RoleNameSeerIds.Add(member.PlayerId);
+            }
+        }
+
+        private static bool IsRoleNameRevealTeamMember(PlayerControl player, TeamType team)
+        {
+            if (player == null || player.Data?.Disconnected == true)
+            {
+                return false;
+            }
+
+            return team switch
+            {
+                TeamType.Mad => player.Is(CustomRoleTypes.Impostor) || player.Is(CustomRoleTypes.Madmate) || player.Is(CustomRoles.WolfBoy),
+                TeamType.Crew => player.Is(CountTypes.Crew),
+                TeamType.Jackal => player.Is(CountTypes.Jackal) || player.Is(CustomRoles.Jackaldoll),
+                TeamType.Egoist => player.Is(CustomRoles.Egoist),
+                TeamType.CountKiller => player.Is(CustomRoles.CountKiller),
+                TeamType.Remotekiller => player.Is(CountTypes.Remotekiller),
+                TeamType.DoppelGanger => player.Is(CustomRoles.DoppelGanger),
+                TeamType.MilkyWay => player.Is(CountTypes.MilkyWay),
+                TeamType.Betrayer => player.Is(CustomRoles.MadBetrayer),
+                TeamType.Pavlov => player.Is(CountTypes.Pavlov),
+                TeamType.Opportunist => player.Is(CustomRoles.Opportunist),
+
+                _ => false,
+            };
+        }
+
+        private bool CanSeeRoleName(PlayerControl seer)
+        {
+            return Team != TeamType.None
+                && OptionShowRoleNameToKiller.GetBool()
+                && seer != null
+                && RoleNameSeerIds.Contains(seer.PlayerId);
+        }
 
         private void RevealNameColors(PlayerControl killer)
         {
@@ -242,6 +312,15 @@ namespace TownOfHost.Roles.Neutral
         }
         public override void OverrideDisplayRoleNameAsSeen(PlayerControl seer, ref bool enabled, ref Color roleColor, ref string roleText, ref bool addon)
         {
+            if (CanSeeRoleName(seer))
+            {
+                enabled = true;
+                roleColor = DisplayRoleColor;
+                roleText = GetString(nameof(CustomRoles.BakeCat));
+                addon = false;
+                return;
+            }
+
             if (seer.IsAlive() is false && Team == TeamType.None)
             {
                 roleText += $"{UtilsRoleText.GetRoleColorAndtext(CustomRoles.BakeCat)}";
@@ -262,6 +341,7 @@ namespace TownOfHost.Roles.Neutral
                 TeamType.MilkyWay => CustomWinnerHolder.winners.Contains(CustomWinner.MilkyWay),
                 TeamType.Betrayer => CustomWinnerHolder.winners.Contains(CustomWinner.MadBetrayer),
                 TeamType.Pavlov => CustomWinnerHolder.winners.Contains(CustomWinner.Pavlov),
+
                 _ => null,
             };
             if (!won.HasValue)
@@ -287,11 +367,39 @@ namespace TownOfHost.Roles.Neutral
             {
                 using var sender = CreateSender();
                 sender.Writer.Write((byte)team);
+                sender.Writer.Write(KillerId);
+                sender.Writer.Write((byte)RoleNameSeerIds.Count);
+                foreach (var seerId in RoleNameSeerIds.OrderBy(id => id))
+                {
+                    sender.Writer.Write(seerId);
+                }
             }
         }
         public override void ReceiveRPC(MessageReader reader)
         {
             Team = (TeamType)reader.ReadByte();
+            KillerId = byte.MaxValue;
+            Killer = null;
+            RoleNameSeerIds.Clear();
+
+            if (reader.BytesRemaining <= 0)
+            {
+                return;
+            }
+
+            KillerId = reader.ReadByte();
+            Killer = KillerId == byte.MaxValue ? null : PlayerCatch.GetPlayerById(KillerId);
+
+            if (reader.BytesRemaining <= 0)
+            {
+                return;
+            }
+
+            var count = reader.ReadByte();
+            for (var i = 0; i < count && reader.BytesRemaining > 0; i++)
+            {
+                RoleNameSeerIds.Add(reader.ReadByte());
+            }
         }
         public static Color GetCatColor(TeamType catType)
         {
@@ -308,6 +416,7 @@ namespace TownOfHost.Roles.Neutral
                 TeamType.MilkyWay => StringHelper.CodeColor(Vega.TeamColor),
                 TeamType.Betrayer => UtilsRoleText.GetRoleColor(CustomRoles.MadBetrayer),
                 TeamType.Pavlov => UtilsRoleText.GetRoleColor(CustomRoles.PavlovDog),
+                TeamType.Opportunist => UtilsRoleText.GetRoleColor(CustomRoles.Opportunist),
                 _ => null,
             };
             if (!color.HasValue)

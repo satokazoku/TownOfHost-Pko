@@ -50,8 +50,8 @@ class GameModeManager
                 result.Add(CustomOptionTags.GameOption);
                 result.Add(CustomOptionTags.OtherOption);
                 break;
-            case CustomGameMode.DummyBattleRoyale:
-                result.Add(CustomOptionTags.DummyBattleRoyale);
+            case CustomGameMode.DummyHunter:
+                result.Add(CustomOptionTags.DummyHunter);
                 result.Add(CustomOptionTags.GameOption);
                 result.Add(CustomOptionTags.OtherOption);
                 break;

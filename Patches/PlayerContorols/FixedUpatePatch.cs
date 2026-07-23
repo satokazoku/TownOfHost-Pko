@@ -135,6 +135,8 @@ namespace TownOfHost
                             if (SuddenDeathMode.SuddenPlayerArrow.GetBool()) SuddenDeathMode.ItijohoSend();
                         }
                         MurderMystery.OnFixedUpdate();
+                        DummyHunter.OnFixedUpdate();
+
 
                         if (!GameStates.IsMeeting && timer is 7)
                         {
