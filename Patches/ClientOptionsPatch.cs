@@ -182,6 +182,7 @@ namespace TownOfHost
         }
         private static void ForceEndProcess()
         {
+            if (CustomSpawnEditor.ActiveEditMode) return;
             //左シフトが押されているなら強制廃村
             if (Input.GetKey(KeyCode.LeftShift) || ((Main.ForcedGameEndColl != 0) && !GameStates.IsLobby))
             {

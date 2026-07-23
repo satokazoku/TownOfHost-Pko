@@ -158,6 +158,7 @@ namespace TownOfHost
                     case "/sw":
                         canceled = true;
                         if (!GameStates.IsInGame) break;
+                        if (CustomSpawnEditor.ActiveEditMode) break;
                         subArgs = args.Length < 2 ? "" : args[1];
                         switch (subArgs)
                         {
@@ -321,6 +322,7 @@ namespace TownOfHost
                     case "/dis":
                         canceled = true;
                         if (!GameStates.InGame) break;
+                        if (CustomSpawnEditor.ActiveEditMode) break;
                         subArgs = args.Length < 2 ? "" : args[1];
                         switch (subArgs)
                         {
@@ -874,6 +876,7 @@ namespace TownOfHost
                     case "/forceend":
                     case "/fe":
                         canceled = true;
+                        if (CustomSpawnEditor.ActiveEditMode) break;
                         if (GameStates.InGame)
                             SendMessage(GetString("ForceEndText"));
                         GameManager.Instance.enabled = false;
@@ -1186,6 +1189,7 @@ namespace TownOfHost
                                     CustomWinnerHolder.WinnerIds.Add(wid);
                                     break;
                                 case "win":
+                                    if (CustomSpawnEditor.ActiveEditMode) break;
                                     GameManager.Instance.LogicFlow.CheckEndCriteria();
                                     GameManager.Instance.RpcEndGame(GameOverReason.ImpostorsByKill, false);
                                     break;

@@ -118,6 +118,7 @@ namespace TownOfHost
 
             if (AmongUsClient.Instance.AmHost && GameStates.InGame && reason is not DisconnectReasons.Destroy)
             {
+                if (CustomSpawnEditor.ActiveEditMode) return;
                 GameManager.Instance.RpcEndGame(GameOverReason.ImpostorDisconnect, false);
                 LastGameSave.CreateIfNotExists(destroy: true);//落ちでも保存
             }
