@@ -1,4 +1,4 @@
-using AmongUs.GameOptions;
+/*using AmongUs.GameOptions;
 using Hazel;
 using HarmonyLib;
 using System.Collections.Generic;
@@ -378,4 +378,4 @@ public static class SwooperInvisibilityPatch
         if (__instance.AmOwner) return;
         if (__instance.Visible) __instance.Visible = false;
     }
-}
+}*/

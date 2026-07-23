@@ -1,4 +1,4 @@
-using System.Linq;
+/*using System.Linq;
 using AmongUs.GameOptions;
 using TownOfHost.Roles.Core;
 using UnityEngine;
@@ -161,4 +161,4 @@ public sealed class PokerFace : RoleBase
 
         return $"{size}<color={color}>生存している仲間: {alivePartners}人</color>";
     }
-}
+}*/

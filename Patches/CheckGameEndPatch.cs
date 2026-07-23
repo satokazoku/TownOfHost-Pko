@@ -146,7 +146,6 @@ namespace TownOfHost
                 foreach (var victim in CustomRoleManager.AllActiveRoles.Values.OfType<Victim>())
                     victim.EnforceFactionWin();
 
-
                 if (!lockWinner && SuddenDeathMode.NowSuddenDeathTemeMode && !(CustomWinnerHolder.WinnerTeam is CustomWinner.SuddenDeathRed or CustomWinner.SuddenDeathBlue or CustomWinner.SuddenDeathGreen or CustomWinner.SuddenDeathYellow or CustomWinner.PurpleLovers))
                 {
                     SuddenDeathMode.TeamAllWin();

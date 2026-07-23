@@ -254,7 +254,6 @@ namespace TownOfHost.Roles.Neutral
                 TeamType.Betrayer => player.Is(CustomRoles.MadBetrayer),
                 TeamType.Pavlov => player.Is(CountTypes.Pavlov),
                 TeamType.Opportunist => player.Is(CustomRoles.Opportunist),
-
                 _ => false,
             };
         }

@@ -64,7 +64,7 @@ public sealed class EvilLinker : RoleBase, IImpostor, IUsePhantomButton
             new(1f, 60f, 1f), 10f, false).SetValueFormat(OptionFormat.Seconds);
     }
 
-    public float CalculateKillCooldown() => Main.AllPlayerKillCooldown.GetValueOrDefault(Player.PlayerId, Main.NormalOptions.KillCooldown);
+    public float CalculateKillCooldown() => Options.DefaultKillCooldown;
     public bool CanUseSabotageButton() => true;
     public bool CanUseImpostorVentButton() => true;
     bool IUsePhantomButton.IsPhantomRole => true;

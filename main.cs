@@ -59,6 +59,7 @@ namespace TownOfHost
         public static ConfigEntry<string> ExplosionKeyInput { get; private set; }
 
         public const string PluginGuid = "com.satokazoku.TownOfHost-Pko";
+
         public const string BepInExPluginVersion = "5.33.18.93";
         public const string PluginVersion = "5.33.18.93";//ほんとはx.y.z表記にしたかったけどx.y.z.km.ks表記だと警告だされる
         public const string PluginShowVersion = "5.33.18.93";
