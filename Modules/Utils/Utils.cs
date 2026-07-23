@@ -347,7 +347,6 @@ namespace TownOfHost
                 {
                     if ((sendtext.Length + alltext[i].Length > 280 || ((sendtext.Split("\n")?.Count() ?? 0) > 10)) && i > 0)
                     {
-                        i--;
                         break;
                     }
                     sendtext += $"{alltext[i]}\n";
@@ -373,6 +372,7 @@ namespace TownOfHost
                         }
                     }
                 }
+                i--;
                 var send = "";
                 for (var ii = i + 1; ii < alltext.Count(); ii++)
                 {
