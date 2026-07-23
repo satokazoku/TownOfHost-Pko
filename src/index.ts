@@ -24,14 +24,14 @@ export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
 		const url = new URL(request.url);
 
-		//プリセット共有・バグ報告API
+		// ★ プリセット共有・バグ報告API (新規追加分)
 		const presetResponse = await handlePresetRequest(request, env);
 		if (presetResponse) return presetResponse;
 
 		const bugReportResponse = await handleBugReportRequest(request, env);
 		if (bugReportResponse) return bugReportResponse;
 
-		//AI応答API (/ai)
+		// ★ AI応答API (/ai)
 		if (url.pathname === '/ai' && request.method === 'POST') {
 			try {
 				const body = await request.json() as { message?: string };

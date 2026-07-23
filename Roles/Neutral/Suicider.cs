@@ -188,4 +188,9 @@ public sealed class Suicider : RoleBase
         string color = timer > InitialTimer * 0.5f ? RoleInfo.RoleColorCode : "#ff4444";
         return $"<color={color}>({sec}s)</color>";
     }
+    public bool OverrideImpVentButton(out string text)
+    {
+        text = "Suicider_Vent";
+        return true;
+    }
 }

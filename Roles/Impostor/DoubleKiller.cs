@@ -151,4 +151,10 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
 
     public override string GetProgressText(bool comms = false, bool GameLog = false)
         => hasUsedPhantom ? "" : $"<#ff0000>(1)</color>";
+
+    public override bool OverrideAbilityButton(out string text)
+    {
+        text = "DoubleKiller_Ability";
+        return true;
+    }
 }

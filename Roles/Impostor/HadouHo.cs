@@ -387,4 +387,9 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
     }
 
     public override string GetAbilityButtonText() => "発射";
+    public override bool OverrideAbilityButton(out string text)
+    {
+        text = "HadouHo_Ability";
+        return true;
+    }
 }

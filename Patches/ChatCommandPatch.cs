@@ -948,6 +948,24 @@ namespace TownOfHost
                             case "guard":
                                 SendGuardDate();
                                 break;
+                            case "i":
+                                ShowActiveRoles(filter: RoleListFilter.Impostor);
+                                break;
+                            case "md":
+                                ShowActiveRoles(filter: RoleListFilter.Madmate);
+                                break;
+                            case "c":
+                                ShowActiveRoles(filter: RoleListFilter.Crewmate);
+                                break;
+                            case "n":
+                                ShowActiveRoles(filter: RoleListFilter.Neutral);
+                                break;
+                            case "gh":
+                                ShowActiveRoles(filter: RoleListFilter.Ghost);
+                                break;
+                            case "a":
+                                ShowActiveRoles(filter: RoleListFilter.Addon);
+                                break;
                             default:
                                 ShowActiveSettings();
                                 break;
@@ -2359,6 +2377,24 @@ namespace TownOfHost
                         case "g":
                         case "guard":
                             SendGuardDate(player.PlayerId);
+                            break;
+                        case "i":
+                            ShowActiveRoles(player.PlayerId, filter: RoleListFilter.Impostor);
+                            break;
+                        case "md":
+                            ShowActiveRoles(player.PlayerId, filter: RoleListFilter.Madmate);
+                            break;
+                        case "c":
+                            ShowActiveRoles(player.PlayerId, filter: RoleListFilter.Crewmate);
+                            break;
+                        case "n":
+                            ShowActiveRoles(player.PlayerId, filter: RoleListFilter.Neutral);
+                            break;
+                        case "gh":
+                            ShowActiveRoles(player.PlayerId, filter: RoleListFilter.Ghost);
+                            break;
+                        case "a":
+                            ShowActiveRoles(player.PlayerId, filter: RoleListFilter.Addon);
                             break;
                         default:
                             if (Options.OptionCommandSetting.GetBool() && Options.OptionCommandNow.GetBool())

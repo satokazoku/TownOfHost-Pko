@@ -1,4 +1,4 @@
-/*using AmongUs.GameOptions;
+using AmongUs.GameOptions;
 using Hazel;
 using HarmonyLib;
 using System.Collections.Generic;
@@ -366,6 +366,11 @@ public sealed class Swooper : RoleBase, IImpostor, IUsePhantomButton
             return $"<color=#888888>(CD: {Mathf.CeilToInt(cooldownTimer)}s)</color>";
         return $"<color={RoleInfo.RoleColorCode}>(透明OK)</color>";
     }
+    public bool OverrideImpVentButton(out string text)
+    {
+        text = "Swooper_Vent";
+        return true;
+    }
 }
 
 [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.FixedUpdate))]
@@ -378,4 +383,4 @@ public static class SwooperInvisibilityPatch
         if (__instance.AmOwner) return;
         if (__instance.Visible) __instance.Visible = false;
     }
-}*/
+}

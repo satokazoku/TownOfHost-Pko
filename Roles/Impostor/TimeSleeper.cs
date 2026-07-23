@@ -286,4 +286,9 @@ public sealed class TimeSleeper : RoleBase, IImpostor, IUsePhantomButton
     }
 
     public override string GetAbilityButtonText() => "タイムスリープ";
+    public override bool OverrideAbilityButton(out string text)
+    {
+        text = "TimeSleeper_Ability";
+        return true;
+    }
 }

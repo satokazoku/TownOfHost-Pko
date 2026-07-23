@@ -20,6 +20,16 @@ using Rewired;
 namespace TownOfHost
 {
     #region  ShowOption
+    public enum RoleListFilter
+    {
+        All,
+        Impostor,
+        Madmate,
+        Crewmate,
+        Neutral,
+        Ghost,
+        Addon,
+    }
     public static class UtilsShowOption
     {
 
@@ -297,24 +307,24 @@ namespace TownOfHost
             sb.Append($"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
             ClipboardHelper.PutClipboardString(sb.ToString());
         }
-        public static void ShowActiveRoles(byte PlayerId = byte.MaxValue, bool IsMonochrome = false)
+        public static void ShowActiveRoles(byte PlayerId = byte.MaxValue, bool IsMonochrome = false, RoleListFilter filter = RoleListFilter.All)
         {
             if ((Options.HideGameSettings.GetBool() || (Options.HideSettingsDuringGame.GetBool() && GameStates.IsInGame)) && PlayerId != byte.MaxValue)
             {
                 SendMessage(GetString("Message.HideGameSettings"), PlayerId);
                 return;
             }
-            var m = GetActiveRoleText(PlayerId);
+            var m = GetActiveRoleText(PlayerId, filter);
             if (m.RemoveHtmlTags() != "")
             {
                 if (Options.ExChatMonochrome.GetBool() || IsMonochrome) m = m.RemoveColorTags();
                 SendMessage(m, PlayerId, checkl: true);
             }
         }
-        public static string GetActiveRoleText(byte pc)
+        public static string GetActiveRoleText(byte pc, RoleListFilter filter = RoleListFilter.All)
         {
             var sb = new StringBuilder().AppendFormat("<line-height={0}>", ActiveSettingsLineHeight);
-            sb.AppendFormat("\n◆{0}:{1}", GetRoleName(CustomRoles.GM), Options.EnableGM.GetString());
+            if (filter is RoleListFilter.All) sb.AppendFormat("\n◆{0}:{1}", GetRoleName(CustomRoles.GM), Options.EnableGM.GetString());
             sb.Append("\n<size=100%>\n").Append(GetString("Roles")).Append("</size>");
             sb.AppendFormat("<size={0}>", "70%");
             CustomRoles[] roles = null;
@@ -323,7 +333,7 @@ namespace TownOfHost
             if (GameModeManager.IsStandardClass()) addons = CustomRolesHelper.AllAddOns;
             if (Options.CurrentGameMode == CustomGameMode.HideAndSeek) roles = CustomRolesHelper.AllHASRoles;
             var nowcount = 3;
-            if (roles != null)
+            if (roles != null && filter is RoleListFilter.All or RoleListFilter.Impostor or RoleListFilter.Madmate or RoleListFilter.Crewmate or RoleListFilter.Neutral)
             {
                 var roleType = CustomRoleTypes.Impostor;
                 var farst = true;
@@ -335,6 +345,18 @@ namespace TownOfHost
                     {
                         if (!Event.CheckRole(role)) continue;
                         if (role.IsCombinationRole() || SlotRoleAssign.IsSeted(role)) continue;
+                        if (filter is not RoleListFilter.All)
+                        {
+                            var roleMatches = filter switch
+                            {
+                                RoleListFilter.Impostor => role.IsImpostor(),
+                                RoleListFilter.Madmate => role.IsMadmate(),
+                                RoleListFilter.Crewmate => role.IsCrewmate(),
+                                RoleListFilter.Neutral => role.IsNeutral(),
+                                _ => false,
+                            };
+                            if (!roleMatches) continue;
+                        }
                         if (farst && role.IsImpostor())
                         {
                             var maxtext = $"({imp})";
@@ -376,38 +398,47 @@ namespace TownOfHost
                     }
                 }
                 //コンビ
-                nowcount = 3;
-                foreach (CustomRoles role in roles.Where(role => role.IsCombinationRole() && role.IsEnable() && Event.CheckRole(role)))
+                if (filter is RoleListFilter.All)
                 {
-                    if (nowcount is 3)
+                    nowcount = 3;
+                    foreach (CustomRoles role in roles.Where(role => role.IsCombinationRole() && role.IsEnable() && Event.CheckRole(role)))
                     {
-                        sb.Append($"<#f7c114>\n<b>☆Combinations</b>\n</color>");
+                        if (nowcount is 3)
+                        {
+                            sb.Append($"<#f7c114>\n<b>☆Combinations</b>\n</color>");
+                        }
+                        nowcount++;
+                        sb.AppendFormat($"{(nowcount is 1 ? "　" : (nowcount is 2 ? "\n" : ""))}" + "Ⓞ" + "{0}</color>:{1}", role.GetCombinationName(false), role.GetChance() is 100 ? role.GetCount() : $"{role.GetChance()}%x{role.GetCount()}");
+                        if (nowcount > 1) nowcount = 0;
                     }
-                    nowcount++;
-                    sb.AppendFormat($"{(nowcount is 1 ? "　" : (nowcount is 2 ? "\n" : ""))}" + "Ⓞ" + "{0}</color>:{1}", role.GetCombinationName(false), role.GetChance() is 100 ? role.GetCount() : $"{role.GetChance()}%x{role.GetCount()}");
-                    if (nowcount > 1) nowcount = 0;
-                }
-                nowcount = 3;
-                foreach (var info in SlotRoleAssign.SlotRoles.Where(info => info.AssignOption.GetBool()))
-                {
-                    if (nowcount is 3)
+                    nowcount = 3;
+                    foreach (var info in SlotRoleAssign.SlotRoles.Where(info => info.AssignOption.GetBool()))
                     {
-                        sb.Append($"<#efd87f>\n<b>☆SlotRoles</b>\n</color>");
+                        if (nowcount is 3)
+                        {
+                            sb.Append($"<#efd87f>\n<b>☆SlotRoles</b>\n</color>");
+                        }
+                        nowcount++;
+                        sb.AppendFormat($"{(nowcount is 1 ? "　" : (nowcount is 2 ? "\n" : ""))}" + "Ⓢ" + "{0}</color>", info.AssignChanceRolestring());
+                        if (nowcount > 1) nowcount = 0;
                     }
-                    nowcount++;
-                    sb.AppendFormat($"{(nowcount is 1 ? "　" : (nowcount is 2 ? "\n" : ""))}" + "Ⓢ" + "{0}</color>", info.AssignChanceRolestring());
-                    if (nowcount > 1) nowcount = 0;
                 }
             }
-            if (addons != null && addons?.Length != 0)
+            var showAddonsSection = filter is RoleListFilter.All or RoleListFilter.Ghost or RoleListFilter.Addon;
+            if (showAddonsSection && addons != null && addons?.Length != 0)
             {
-                if (addons.Any(add => add.IsEnable() && Event.CheckRole(add)))
+                var filteredAddons = addons.Where(a => a.IsEnable() && Event.CheckRole(a));
+                if (filter is RoleListFilter.Ghost) filteredAddons = filteredAddons.Where(a => a.IsGhostRole());
+                else if (filter is RoleListFilter.Addon) filteredAddons = filteredAddons.Where(a => !a.IsGhostRole() && !a.IsLovers());
+                filteredAddons = filteredAddons.ToArray();
+
+                if (filteredAddons.Any())
                 {
                     sb.Append("\n<size=100%>\n").Append(GetString("Addons")).Append("</size>");
                     sb.AppendFormat("<size={0}>", "70%");
 
                     nowcount = 1;
-                    foreach (CustomRoles Addon in addons.Where(a => a.IsEnable() && Event.CheckRole(a)))
+                    foreach (CustomRoles Addon in filteredAddons)
                     {
                         nowcount++;
                         var m = AdditionalWinnerMark;

@@ -7,12 +7,12 @@ using static TownOfHost.Translator;
 
 namespace TownOfHost.Roles.Impostor;
 
-public sealed class MassmMurder : RoleBase, IKiller, IUsePhantomButton
+public sealed class MassMueder : RoleBase, IKiller, IUsePhantomButton
 {
     public static readonly SimpleRoleInfo RoleInfo =
         SimpleRoleInfo.Create(
-            typeof(MassmMurder),
-            player => new MassmMurder(player),
+            typeof(MassMueder),
+            player => new MassMueder(player),
             CustomRoles.MassMurder,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
@@ -23,7 +23,7 @@ public sealed class MassmMurder : RoleBase, IKiller, IUsePhantomButton
             introSound: () => GetIntroSound(RoleTypes.Impostor)
         );
 
-    public MassmMurder(PlayerControl player)
+    public MassMueder(PlayerControl player)
         : base(RoleInfo, player)
     {
         KillCooldown_ = OptionKillCooldown.GetFloat();
@@ -188,5 +188,10 @@ public sealed class MassmMurder : RoleBase, IKiller, IUsePhantomButton
         bool hasRoom = reader.ReadBoolean();
         deathBedRoom = hasRoom ? (SystemTypes?)((SystemTypes)reader.ReadInt32()) : null;
         remainingSetCount = reader.ReadInt32();
+    }
+    public override bool OverrideAbilityButton(out string text)
+    {
+        text = "MassMurder_Ability";
+        return true;
     }
 }

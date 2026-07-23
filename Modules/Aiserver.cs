@@ -28,7 +28,7 @@ namespace TownOfHost.Modules
                     Logger.Info("[AI] Sending request...", "AI");
                     var res = await client.PostAsync(Url, content);
 
-                    // ★【超重要】通信が正常(200番台)じゃない場合、ここで弾く！（HTMLを解析させない）
+                    //【超重要】通信が正常(200番台)じゃない場合、ここで弾く！（HTMLを解析させない）
                     if (!res.IsSuccessStatusCode)
                     {
                         Logger.Info($"[AI] Server Error: {res.StatusCode}", "AI");
@@ -46,7 +46,6 @@ namespace TownOfHost.Modules
                     string playerName = sender?.Data?.PlayerName ?? "Unknown";
                     bool isDead = sender == null || !sender.IsAlive();
 
-                    // スパム判定のキックを避けるため、少し（0.2秒）遅らせてチャットを送信
                     _ = new LateTask(() => {
                         if (isDead)
                         {
@@ -54,7 +53,6 @@ namespace TownOfHost.Modules
                             {
                                 if (pc.IsAlive()) continue;
                                 Main.MessagesToSend.Add(($"{playerName}: {prompt}", pc.PlayerId, playerName));
-                                // 送信者名はシンプルに "ぴけおAI" にする（カラーコードを入れると文字数オーバーでキックされるため）
                                 Main.MessagesToSend.Add(($"<color=#FFA500>ぴけおAI</color>: {reply}", pc.PlayerId, "ぴけおAI"));
                             }
                         }
@@ -63,7 +61,7 @@ namespace TownOfHost.Modules
                             Main.MessagesToSend.Add(($"{playerName}: {prompt}", byte.MaxValue, playerName));
                             Main.MessagesToSend.Add(($"<color=#FFA500>ぴけおAI</color>: {reply}", byte.MaxValue, "ぴけおAI"));
                         }
-                    }, 0.2f, "AI_Reply_Task", true);
+                    }, 0f, "AI_Reply_Task", true);
                 }
                 catch (System.Exception e)
                 {

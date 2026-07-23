@@ -440,4 +440,9 @@ public sealed class Cupid : RoleBase, IKiller, IAdditionalWinner
         achievements.Add(1, l1);
         achievements.Add(2, l2);
     }
+    public bool OverrideKillButton(out string text)
+    {
+        text = "Cupid_Kill";
+        return true;
+    }
 }

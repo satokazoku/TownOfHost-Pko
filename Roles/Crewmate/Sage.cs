@@ -296,4 +296,9 @@ public sealed class Sage : RoleBase
         float y = reader.ReadSingle();
         savedPosition = new Vector2(x, y);
     }
+    public bool OverrideImpVentButton(out string text)
+    {
+        text = "Sage_Vent";
+        return true;
+    }
 }

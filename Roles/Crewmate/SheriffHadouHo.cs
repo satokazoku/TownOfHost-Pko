@@ -545,14 +545,6 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton
         return $"{shots}{mode}{cd}";
     }
 
-    public override string GetAbilityButtonText() => "発射";
-
-    public override bool OverrideAbilityButton(out string text)
-    {
-        text = "SheriffHadouHo_Fire";
-        return true;
-    }
-
     void SendRpc()
     {
         using var sender = CreateSender();
@@ -578,5 +570,12 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton
         ShowBeamMark = reader.ReadBoolean();
         ShotLimit = reader.ReadInt32();
         beamMode = reader.ReadBoolean();
+    }
+    public override string GetAbilityButtonText() => "発射";
+
+    public override bool OverrideAbilityButton(out string text)
+    {
+        text = "HadouHo_Ability";
+        return true;
     }
 }

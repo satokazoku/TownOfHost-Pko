@@ -369,6 +369,11 @@ public sealed class EvilLinker : RoleBase, IImpostor, IUsePhantomButton
                 PerformPlacePortal();
         }
     }
+    public override bool OverrideAbilityButton(out string text)
+    {
+        text = "EvilLinker_Ability";
+        return true;
+    }
 }
 
 public sealed class EvilLinkerDummy : CustomNetObject

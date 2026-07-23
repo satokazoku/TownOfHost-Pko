@@ -275,4 +275,9 @@ public sealed class Teleporter : RoleBase, IImpostor, IUsePhantomButton
         pendingTimer = reader.ReadSingle();
         destPlayerId = reader.ReadByte();
     }
+    public override bool OverrideAbilityButton(out string text)
+    {
+        text = "Teleporter_Ability";
+        return true;
+    }
 }

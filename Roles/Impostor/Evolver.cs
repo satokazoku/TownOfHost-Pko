@@ -431,4 +431,9 @@ public sealed class Evolver : RoleBase, IImpostor, IUsePhantomButton
         CurrentKillCooldown = reader.ReadSingle();
         EvolveCount = reader.ReadInt32();
     }
+    public override bool OverrideAbilityButton(out string text)
+    {
+        text = "DeadBodyEat_Ability";
+        return true;
+    }
 }

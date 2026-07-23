@@ -1,3 +1,7 @@
+// ===== バグ報告API =====
+// workers/src/index.ts から import して既存ルーターに接続してください。
+// presets.tsと同じ自己完結スタイルにしています。
+
 export interface Env {
     RELAY_SECRET?: string;
     BUG_REPORT_WEBHOOK_URL?: string; // Discordの「バグ報告」チャンネル用Webhook URL(要設定)

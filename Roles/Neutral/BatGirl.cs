@@ -503,4 +503,9 @@ public sealed class BatGirl : RoleBase, ISelfVoter, IUsePhantomButton, IAddition
         soloDeathSatisfied = reader.ReadBoolean();
         followQueued = reader.ReadBoolean();
     }
+    public override bool OverrideAbilityButton(out string text)
+    {
+        text = "BatGirl_Ability";
+        return true;
+    }
 }

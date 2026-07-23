@@ -933,7 +933,7 @@
 "ApprenticeInfoLong","","親方みたいな立派なクルーメイトになろうと努力するクルーメイト。\n試合開始時にクルー陣営の中からランダムで親方を決める。\n条件をすべて満たすことで親方の役職になることができる。\n①子方がタスクを完了させる\n②親方が死亡する\n子方は親方が誰かわからない\n親方は子方が誰かわからず、自身が親方であることも認識できない\n継承後の子方の役職設定は親方の役職設定と合わせ、能力使用回数はリセットされる\n親方がサイドキックなどで役職が変わった場合、継承役は変更前のクルー役になる"
 "MilkmanInfoLong","","ペットを撫でることでタスクモードと配達モードを切替えられる。\n配達モード中プレイヤーにキルボタンをクリックすることで牛乳を配達することができる。(１人につき１回まで)\n牛乳を配られると会議開始時に生存通知を送る。(その会議の１度のみ)\nただし一定確率で腐った牛乳を配達することがある。腐った牛乳を配達された人は会議開始時に死亡する。"
 "NiceWorkaholicInfoLong","If you complete all tasks while alive, you achieve Crew win.","生存中にタスクを全て完了することでクルー陣営が即勝利できる。\nナイスワーカホリックはクルー陣営のタスク勝利にタスクを必要としない。"
-"JailerInfoLong","","ペットアクションと特殊ボタンを組み合わせることで、フィールド上の任意の場所に鉄格子を出現させ、容疑者をその中に一定時間閉じ込める（移動不可）ことができます。\nファントムボタンで位置を設定、その後プレイヤーにキルボタンをワンクリックで閉じ込め"
+"JailerInfoLong","","ペットアクションとファントムボタンを組み合わせることで、フィールド上の任意の場所に鉄格子を出現させ、容疑者をその中に一定時間閉じ込める（移動不可）ことができます。\nファントムボタンで位置を設定、その後プレイヤーにキルボタンをワンクリックで閉じ込める。\nジェイラーが死亡すると鉄格子は消える。"
 "PoliceInfoLong","Crewmate role. Use the Pet Action to toggle Handcuff Mode. In Handcuff Mode, use the Kill button to mark targets, then press the Ability button to place handcuffs on all marked players. Handcuffed players cannot kill for a set number of turns. Marked targets are cleared when a meeting starts.","ペットアクションで手錠モードに切り替えます。手錠モード中にキルボタンで対象をマークし、ファントムボタンを押すことでマークした全員に手錠をかけます。手錠をかけられたプレイヤーは指定されたターン数の間キルができなくなります。マーク状態は会議が始まるとリセットされます。"
 "#CrewmateInfoLong"
 
@@ -3748,7 +3748,6 @@
 "DeathReason.Retaliation","Retaliation","報復"
 "WorkaholicRevealIfIdle","Reveal role if you don't do tasks for a while","一定時間タスクをしないと役職が見える"
 "WorkaholicRevealDelay","Time until the role is revealed","見えるまでの時間"
-<<<<<<< HEAD
 "GameModeInfo_DummyHunter","<DummyHunter>\n<size=60%>Dummies spawn at random locations on the map.\nUse the Phantom button to kill nearby dummies (you warp to them).\nKilled dummies respawn elsewhere.\nThe player who kills the most dummies within the time limit wins.","＜ダミーハンター＞\n<size=60%>マップのランダムな場所にダミーが出現します。\nファントムボタンで近くのダミーをキルできます(その場所へワープ)。\nキルされたダミーは別の場所に再出現します。\n制限時間内に一番ダミーをキルしたプレイヤーが勝利です。"
 "DummyHunter","DummyHunter","ダミーハンター","傀儡猎人","傀儡獵人","ОхотникЗаКуклами","ChasseurDeMannequins",""
 "DummyHunterTimeLimit","Time Limit","制限時間"
@@ -3760,5 +3759,3 @@
 "DummyHunterTimeLeftText","Time Left","残り時間"
 "DummyHunterMyKillText","My Kills","自分のキル数"
 "DummyHunterTopText","Top","トップ"
-=======
->>>>>>> 210db1724a63eb6be3a56e5154cceeafb2234ed9

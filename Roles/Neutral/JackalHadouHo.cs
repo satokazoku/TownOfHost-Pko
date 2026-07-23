@@ -929,7 +929,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
     public override string GetAbilityButtonText() => IsLoaded ? "超発射" : "発射";
     public override bool OverrideAbilityButton(out string text)
     {
-        text = IsLoaded ? "JackalHadouHo_SuperFire" : "JackalHadouHo_Fire";
+        text = IsLoaded ? "JackalHadouHo_SuperFire" : "HadouHo_Ability";
         return true;
     }
 }

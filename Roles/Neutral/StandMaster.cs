@@ -450,6 +450,16 @@ public sealed class StandMaster : RoleBase, ILNKiller, IUsePhantomButton
         bool hasPos = reader.ReadBoolean();
         standReturnPos = hasPos ? new Vector2(reader.ReadSingle(), reader.ReadSingle()) : null;
     }
+    public override bool OverrideAbilityButton(out string text)
+    {
+        text = "StandMaster_Ability";
+        return true;
+    }
+    public bool OverrideKillButton(out string text)
+    {
+        text = "StandMaster_Kill";
+        return true;
+    }
 }
 
 public sealed class Stand : RoleBase, ILNKiller

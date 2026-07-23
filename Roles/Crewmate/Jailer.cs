@@ -302,6 +302,12 @@ public sealed class Jailer : RoleBase, IUsePhantomButton, IKiller
     {
         if (!AmongUsClient.Instance.AmHost) return;
 
+        if (!Player.IsAlive())
+        {
+            FreePrisoner();
+            return;
+        }
+
         if (!spawnCooldownStarted && Player.IsAlive()
             && !GameStates.Intro && GameStates.IsInTask && !GameStates.IsMeeting)
         {
