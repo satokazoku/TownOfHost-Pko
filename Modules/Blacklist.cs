@@ -59,6 +59,7 @@ public static class Blacklist
     }
     public const string BlacklistServerURL = "https://blacklist.supernewroles.com/api/get_list?hash=true";
     static bool downloaded = false;
+    static int downloadtime;
     /// <summary>
     /// 起動時などで予め取得しておく
     /// </summary>
@@ -93,6 +94,18 @@ public static class Blacklist
             BlackPlayer player = new(
                 user["PUID"]?.ToString(), user["AddedMod"]?.ToString(), user["Reason"]?["Code"]?.ToString(),
                 user["Reason"]?["Title"]?.ToString(), user["Reason"]?["Description"]?.ToString(), true, endbantime == "never" ? null : (DateTime.TryParse(endbantime, out DateTime resulttime) ? (resulttime - new TimeSpan(9, 0, 0)) : null));
+        }
+        var now = DateTime.Now;
+        downloadtime = now.Hour * 100 + now.Minute;
+    }
+    public static void CheckTimeout()
+    {
+        var time = (DateTime.Now.Hour * 100 + DateTime.Now.Minute) - downloadtime;
+        if (30 <= time || time < -1)
+        {
+            Logger.Info("Load", "Blist");
+            var now = DateTime.Now;
+            downloadtime = now.Hour * 100 + now.Minute;
         }
     }
     public static IEnumerator Check(ClientData clientData = null, int ClientId = -1)
@@ -240,3 +253,13 @@ public static class BlacklistRead//動かなかったら嫌なのでYのも参�
         __instance.StartCoroutine(Blacklist.FetchBlacklist().WrapToIl2Cpp());
     }
 }
+/*
+[HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnGameEnd))]
+public static class BlacklistEndGameLoad
+{
+    public static void Postfix(AmongUsClient __instance)
+    {
+        Blacklist.CheckTimeout();
+        __instance.StartCoroutine(Blacklist.FetchBlacklist().WrapToIl2Cpp());
+    }
+}*/

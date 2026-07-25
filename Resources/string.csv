@@ -1039,6 +1039,7 @@
 "LightOutDonttouch","LightOut Don't touchTime","一定時間停電を修復できない"
 "LightOutDonttouchTime","Light Out Don't touch Time","修復できない時間"
 "AllowCloseDoors","Allow Door Sabotage","ドア閉鎖が出来ない","允许关门","可以關門","Разрешить закрытие дверей","Permitir Sabotar Portas",""
+"AfterTurnCantCloseDoor","AfterTurnCantCloseDoor","ターン開始から一定時間ドア閉鎖ができない"
 
 "### 会議系"
 "MeetingAndVoteOpt","Meeting And Vote Options","会議と追放の設定"

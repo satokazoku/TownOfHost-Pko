@@ -179,6 +179,7 @@ namespace TownOfHost
 
         // HideAndSeek
         public static OptionItem AllowCloseDoors;
+        public static OptionItem AfterTurnCantCloseDoor;
         public static OptionItem KillDelay;
         public static OptionItem IgnoreVent;
         public static float HideAndSeekKillDelayTimer = 0f;
@@ -992,6 +993,7 @@ namespace TownOfHost
                 .SetEnabled(() => IsActiveAirship);
             AllowCloseDoors = BooleanOptionItem.Create(108114, "AllowCloseDoors", false, TabGroup.MainSettings, false)
                 .SetParent(Sabotage);
+            AfterTurnCantCloseDoor = FloatOptionItem.Create(108115, "AfterTurnCantCloseDoor", new(0, 300, 1), 0f, TabGroup.MainSettings, false).SetParent(Sabotage).SetZeroNotation(OptionZeroNotation.Off).SetValueFormat(OptionFormat.Seconds);
             // ランダムマップ
             RandomMapsMode = BooleanOptionItem.Create(108700, "RandomMapsMode", false, TabGroup.MainSettings, false)
                 .SetHeader(true)
