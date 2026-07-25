@@ -324,7 +324,7 @@ public sealed class PavlovOwner : RoleBase, IKiller, IAdditionalWinner, ISchrodi
 
     public bool OverrideKillButton(out string text)
     {
-        text = "Pavlov_Imprint";
+        text = "Pavlov_Kill";
         return true;
     }
 

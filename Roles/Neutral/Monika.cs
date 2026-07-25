@@ -96,7 +96,7 @@ public sealed class Monika : RoleBase, ILNKiller
     public override bool CanClickUseVentButton => OptionCanVent.GetBool() && !IsTrashed(Player);
     public override bool OnEnterVent(PlayerPhysics p, int id) => OptionCanVent.GetBool() && !IsTrashed(Player);
 
-    public bool OverrideKillButton(out string text) { text = "Monika_Erase"; return true; }
+    public bool OverrideKillButton(out string text) { text = "Monika_Kill"; return true; }
     public bool OverrideKillButtonText(out string text) { text = GetString("MonikaEraseButton"); return true; }
 
     public override void Add()

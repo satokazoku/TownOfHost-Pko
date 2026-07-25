@@ -391,15 +391,15 @@ public sealed class Milkman : RoleBase, IKiller
         return $"{size}<color={color}>タスク完了で牛乳獲得 | ペット → 配達モードへ (牛乳:{milkCount}本)</color>";
     }
 
-    public bool OverrideKillButton(out string text)
-    {
-        text = "Milkman_Deliver";
-        return true;
-    }
-
     public bool OverrideKillButtonText(out string text)
     {
         text = "配達";
+        return true;
+    }
+
+    public bool OverrideKillButton(out string text)
+    {
+        text = "Milkman_Kill";
         return true;
     }
 }

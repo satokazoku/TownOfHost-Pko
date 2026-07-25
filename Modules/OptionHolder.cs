@@ -1526,10 +1526,11 @@ namespace TownOfHost
                     foreach (var info in RoleList.OrderBy(role => role.OptionSort.SortNumber))
                     {
                         if (info.RoleName is CustomRoles.AlienHijack) continue;
+                        if (info.RoleName is CustomRoles.DummyHunterPlayer) continue;
                         SetupRoleOptions(info);
                         info.OptionCreator?.Invoke();
-                        MonkeyBehaviorBanOption.Create(info);
                     }
+
                     NowTabNum++;
                 }
             }

@@ -162,6 +162,8 @@ public sealed class EvilMoving : RoleBase, IImpostor, IUsePhantomButton
             ? new Vector2(reader.ReadSingle(), reader.ReadSingle())
             : null;
     }
+    public override string GetAbilityButtonText() => GetString("テレポート");
+
     public override bool OverrideAbilityButton(out string text)
     {
         text = "Moving_Ability";

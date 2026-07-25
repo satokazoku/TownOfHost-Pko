@@ -393,7 +393,7 @@ public sealed class VillageChief : RoleBase, IKiller, ISelfVoter
 
     public bool OverrideKillButton(out string text)
     {
-        text = "VillageChief_Appoint";
+        text = "VillageChief_Kill";
         return true;
     }
 }

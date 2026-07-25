@@ -165,8 +165,6 @@ public sealed class Samurai : RoleBase, IImpostor, IUsePhantomButton
         return forwardDot >= 0.35f;
     }
 
-    public override string GetAbilityButtonText() => GetString("SamuraiAbilityButtonText");
-
     public override string GetLowerText(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
     {
         seen ??= seer;
@@ -175,5 +173,13 @@ public sealed class Samurai : RoleBase, IImpostor, IUsePhantomButton
 
         if (isForHud) return GetString("SamuraiLowerText");
         return $"<size=50%>{GetString("SamuraiLowerText")}</size>";
+    }
+
+    public override string GetAbilityButtonText() => GetString("必殺技");
+
+    public override bool OverrideAbilityButton(out string text)
+    {
+        text = "Samurai_Ability";
+        return true;
     }
 }

@@ -85,6 +85,7 @@ public sealed class Hitchhiker : RoleBase
         OptionTargetSpeedUp = BooleanOptionItem.Create(RoleInfo, 13, OptionName.HitchhikerTargetSpeedUp, false, false);
         OptionTargetSpeedMultiplier = FloatOptionItem.Create(RoleInfo, 14, OptionName.HitchhikerTargetSpeedMultiplier, new(1.1f, 3f, 0.1f), 1.5f, false, OptionTargetSpeedUp)
             .SetValueFormat(OptionFormat.Multiplier);
+        OverrideTasksData.Create(RoleInfo, 17);
     }
 
     public override void Add()

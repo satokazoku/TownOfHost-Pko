@@ -369,6 +369,9 @@ public sealed class EvilLinker : RoleBase, IImpostor, IUsePhantomButton
                 PerformPlacePortal();
         }
     }
+
+    public override string GetAbilityButtonText() => GetString("ポータル設置");
+
     public override bool OverrideAbilityButton(out string text)
     {
         text = "EvilLinker_Ability";

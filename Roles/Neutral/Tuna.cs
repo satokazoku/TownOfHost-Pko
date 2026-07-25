@@ -98,7 +98,6 @@ public sealed class Tuna : RoleBase
             return;
         }
 
-        // ★ 梯子・ぬーん・ジップラインはカウントしない
         if (IsUsingMovingPlatform(player))
         {
             stopTimer = 0f;

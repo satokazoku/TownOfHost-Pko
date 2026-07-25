@@ -143,7 +143,15 @@ public static class DummyHunter
         }, 0.2f, "DummyHunter.Respawn", true);
 
         Utils.AllPlayerKillFlash();
+
+        _ = new LateTask(() =>
+        {
+            if (!IsActive) return;
+            try { UtilsNotifyRoles.NotifyRoles(NoCache: true); } catch { }
+        }, 0.3f, "DummyHunter.NotifyScore", true);
     }
+
+    private static Vector3? _arrowPos = null;
 
     public static void OnFixedUpdate()
     {
@@ -153,6 +161,7 @@ public static class DummyHunter
         ElapsedTime += Time.fixedDeltaTime;
         TimeLeft -= Time.fixedDeltaTime;
 
+        UpdateArrow();
         UpdateUI();
 
         if (!AmongUsClient.Instance.AmHost) return;
@@ -253,27 +262,62 @@ public static class DummyHunter
                 text += $"\n<color=#ffd700>{GetString("DummyHunterTopText")}: {topPc.GetRealName()} ({top})</color>";
         }
 
-        if (OptionShowArrow.GetBool() && ElapsedTime >= OptionArrowDelay.GetFloat() && ActiveDummies.Count > 0)
-        {
-            var myPos = PlayerControl.LocalPlayer.GetTruePosition();
-            var closest = ActiveDummies.OrderBy(d => Vector2.Distance(myPos, d.Position)).FirstOrDefault();
-            if (closest != null)
-            {
-                float dist = Vector2.Distance(myPos, closest.Position);
-                string arrow = GetArrowDirection(myPos, closest.Position);
-                text += $"\n<color=#00ccff>{arrow} {dist:F0}m</color>";
-            }
-        }
-
         lower.enabled = true;
         lower.text = text;
+    }
+
+    public static Vector3? GetClosestDummyPosition(PlayerControl seer)
+    {
+        if (seer == null) return null;
+        if (seer.PlayerId == (PlayerControl.LocalPlayer?.PlayerId ?? byte.MaxValue))
+            return _arrowPos;
+        return null;
+    }
+
+    private static void UpdateArrow()
+    {
+        var me = PlayerControl.LocalPlayer;
+        if (me == null) return;
+
+        if (!OptionShowArrow.GetBool() || ElapsedTime < OptionArrowDelay.GetFloat() || ActiveDummies.Count == 0)
+        {
+            if (_arrowPos.HasValue)
+            {
+                GetArrow.Remove(me.PlayerId, _arrowPos.Value);
+                _arrowPos = null;
+            }
+            return;
+        }
+
+        var myPos = me.GetTruePosition();
+        var closest = ActiveDummies
+            .Where(d => d?.PlayerControl != null)
+            .OrderBy(d => Vector2.Distance(myPos, d.Position))
+            .FirstOrDefault();
+        if (closest == null)
+        {
+            if (_arrowPos.HasValue)
+            {
+                GetArrow.Remove(me.PlayerId, _arrowPos.Value);
+                _arrowPos = null;
+            }
+            return;
+        }
+
+        Vector3 newPos = closest.Position;
+        if (!_arrowPos.HasValue || Vector2.Distance((Vector2)_arrowPos.Value, closest.Position) > 0.01f)
+        {
+            if (_arrowPos.HasValue)
+                GetArrow.Remove(me.PlayerId, _arrowPos.Value);
+            GetArrow.Add(me.PlayerId, newPos);
+            _arrowPos = newPos;
+        }
     }
 
     public static void RpcSyncScore(byte playerId, int score)
     {
         if (!AmongUsClient.Instance.AmHost) return;
         KillCounts[playerId] = score;
-        UtilsNotifyRoles.NotifyRoles();
 
         var writer = AmongUsClient.Instance.StartRpcImmediately(
             PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SyncDummyHunterScore, SendOption.Reliable, -1);
@@ -287,7 +331,6 @@ public static class DummyHunter
         byte playerId = reader.ReadByte();
         int score = reader.ReadInt32();
         KillCounts[playerId] = score;
-        UtilsNotifyRoles.NotifyRoles();
     }
 
     public static string GetScoreMark(byte playerId)
@@ -320,17 +363,6 @@ public static class DummyHunter
             4 => new Vector2(rng.Next(-20, 20), rng.Next(-15, 10)),
             _ => new Vector2(rng.Next(-20, 20), rng.Next(-10, 10)),
         };
-    }
-
-    private static string GetArrowDirection(Vector2 from, Vector2 to)
-    {
-        var dir = (Vector3)to - (Vector3)from;
-        dir.z = 0;
-        if (dir.magnitude < 2) return "・";
-        var angle = Vector3.SignedAngle(Vector3.down, dir, Vector3.back) + 180f + 22.5f;
-        int index = ((int)(angle / 45f)) % 8;
-        string[] arrows = { "↑", "↗", "→", "↘", "↓", "↙", "←", "↖" };
-        return arrows[index];
     }
 
     public class DummyHunterGameEndPredicate : GameEndPredicate

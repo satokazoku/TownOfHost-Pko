@@ -2,7 +2,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
-using TownOfHost; // LateTaskを使うため
+using TownOfHost;
 
 namespace TownOfHost.Modules
 {
@@ -28,14 +28,13 @@ namespace TownOfHost.Modules
                     Logger.Info("[AI] Sending request...", "AI");
                     var res = await client.PostAsync(Url, content);
 
-                    //【超重要】通信が正常(200番台)じゃない場合、ここで弾く！（HTMLを解析させない）
                     if (!res.IsSuccessStatusCode)
                     {
                         Logger.Info($"[AI] Server Error: {res.StatusCode}", "AI");
                         _ = new LateTask(() => {
                             Main.MessagesToSend.Add(($"<color=#FFA500>ぴけおAI</color>: ふぁ…今寝てるぴけ。（※AIサーバーが起動していません）", byte.MaxValue, "ぴけおAI"));
                         }, 0.2f, "AI_Error_Task", true);
-                        return; // これ以上下の処理（JSON解析）には進まずに終了
+                        return;
                     }
 
                     var body = await res.Content.ReadAsStringAsync();
@@ -66,7 +65,6 @@ namespace TownOfHost.Modules
                 catch (System.Exception e)
                 {
                     Logger.Info("[AI] Exception: " + e.Message, "AI");
-                    // 予期せぬエラーの時
                     _ = new LateTask(() => {
                         Main.MessagesToSend.Add(($"<color=#FFA500>ぴけおAI</color>: むにゃ…通信エラーだっぴけ…", byte.MaxValue, "ぴけおAI"));
                     }, 0.2f, "AI_Exception_Task", true);

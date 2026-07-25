@@ -607,7 +607,7 @@ public sealed class Onmyoji : RoleBase, IKiller, ISelfVoter
     }
 
     public override string GetAbilityButtonText() => GetString("OnmyojiAbilityButtonText");
-    public bool OverrideKillButton(out string text) { text = "Onmyoji_Nominate"; return true; }
+    public bool OverrideKillButton(out string text) { text = "Onmyoji_Kill"; return true; }
 
     bool IsStarReadingTarget(PlayerControl target)
     {

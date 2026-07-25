@@ -234,5 +234,13 @@
     "5.33.18.91": {
         "Unavailable": false,
         "NotAvailableOnline": false
+    },
+    "5.33.18.92": {
+        "Unavailable": false,
+        "NotAvailableOnline": false
+    },
+    "5.34.18.93": {
+        "Unavailable": false,
+        "NotAvailableOnline": false
     }
 }

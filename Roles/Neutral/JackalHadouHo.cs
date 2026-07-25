@@ -436,6 +436,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
             _ = new LateTask(() =>
             {
                 if (IsDead || !Player.IsAlive() || !IsSuperCharging) return;
+                if (GameStates.IsMeeting || GameStates.CalledMeeting) return;
                 Utils.AllPlayerKillFlash();
             }, t, null, null);
         }
@@ -469,6 +470,11 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         Player.SyncSettings();
         Player.RpcSetColor((byte)PlayerColor);
         SetRoleTextHeight(false);
+        if (AmongUsClient.Instance.AmHost && ShipStatus.Instance != null)
+        {
+            try { ShipStatus.Instance.RpcUpdateSystem(Utils.GetCriticalSabotageSystemType(), 16); } catch { }
+        }
+        Utils.NowKillFlash = false;
     }
 
     public override void OnFixedUpdate(PlayerControl player)
@@ -929,7 +935,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
     public override string GetAbilityButtonText() => IsLoaded ? "超発射" : "発射";
     public override bool OverrideAbilityButton(out string text)
     {
-        text = IsLoaded ? "JackalHadouHo_SuperFire" : "HadouHo_Ability";
+        text = IsLoaded ? "SuperHadouHo_Ability" : "HadouHo_Ability";
         return true;
     }
 }
@@ -1144,7 +1150,7 @@ public sealed class Tama : RoleBase, IKiller
 
     public bool OverrideKillButton(out string text)
     {
-        text = "Tama_Load";
+        text = "Tama_Kill";
         return true;
     }
 }

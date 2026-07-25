@@ -1,4 +1,4 @@
-/*
+
 using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
@@ -492,9 +492,15 @@ public sealed class Rocket : RoleBase, IImpostor, IUsePhantomButton
     public override string GetAbilityButtonText() =>
         GrabbedPlayers.Count > 0 ? "打ち上げ" : "掴む";
 
+    public bool OverrideKillButton(out string text)
+    {
+        text = "Rocket_Kill";
+        return true;
+    }
+
     public override bool OverrideAbilityButton(out string text)
     {
-        text = GrabbedPlayers.Count > 0 ? "Rocket_Launch" : "Rocket_Grab";
+        text = "Rocket_Ability";
         return true;
     }
 }
@@ -605,4 +611,3 @@ public class RocketFlyDummy : CustomNetObject
         ActiveDummies.Clear();
     }
 }
-*/

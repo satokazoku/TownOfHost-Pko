@@ -450,6 +450,7 @@ public sealed class StandMaster : RoleBase, ILNKiller, IUsePhantomButton
         bool hasPos = reader.ReadBoolean();
         standReturnPos = hasPos ? new Vector2(reader.ReadSingle(), reader.ReadSingle()) : null;
     }
+    public override string GetAbilityButtonText() => GetString("召喚");
     public override bool OverrideAbilityButton(out string text)
     {
         text = "StandMaster_Ability";

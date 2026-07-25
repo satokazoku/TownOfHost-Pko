@@ -238,13 +238,6 @@ namespace TownOfHost
         {
             if (AmongUsClient.Instance.AmHost is false) return false;
 
-            //ダミーハンター：ファントムで一番近いダミーの位置へワープしてキル(キルワープ再現)
-            if (DummyHunter.IsThisMode && DummyHunter.IsActive)
-            {
-                DummyHunter.OnPhantomClick(__instance);
-                return false;
-            }
-
             if (__instance.PlayerId == PlayerControl.LocalPlayer.PlayerId) return false;
 
             var AdjustKillCooldown = true;

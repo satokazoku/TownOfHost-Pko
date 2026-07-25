@@ -366,6 +366,7 @@ public sealed class Swooper : RoleBase, IImpostor, IUsePhantomButton
             return $"<color=#888888>(CD: {Mathf.CeilToInt(cooldownTimer)}s)</color>";
         return $"<color={RoleInfo.RoleColorCode}>(透明OK)</color>";
     }
+
     public bool OverrideImpVentButton(out string text)
     {
         text = "Swooper_Vent";

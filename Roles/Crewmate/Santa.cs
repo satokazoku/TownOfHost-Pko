@@ -385,7 +385,7 @@ public sealed class Santa : RoleBase, IKiller
 
     public bool OverrideKillButton(out string text)
     {
-        text = "Santa_Gift";
+        text = "Santa_Kill";
         return true;
     }
 }

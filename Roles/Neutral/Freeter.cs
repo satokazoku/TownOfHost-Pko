@@ -96,17 +96,6 @@ public sealed class Freeter : RoleBase, IKiller, IAdditionalWinner
     public float CalculateKillCooldown() =>
         hasBeenEmployed ? OptFinalCooldown.GetFloat() : OptInitialCooldown.GetFloat();
 
-    public bool OverrideKillButtonText(out string text)
-    {
-        text = BetTargetId == byte.MaxValue ? "就職" : "就職済み";
-        return true;
-    }
-    public bool OverrideKillButton(out string text)
-    {
-        text = "Freeter_Job";
-        return true;
-    }
-
     public override void OverrideDisplayRoleNameAsSeer(
         PlayerControl seen,
         ref bool enabled,
@@ -346,5 +335,15 @@ public sealed class Freeter : RoleBase, IKiller, IAdditionalWinner
         BetTargetId = reader.ReadByte();
         hasBeenEmployed = reader.ReadBoolean();
         unemployedTurns = reader.ReadInt32();
+    }
+    public bool OverrideKillButtonText(out string text)
+    {
+        text = BetTargetId == byte.MaxValue ? "就職" : "就職済み";
+        return true;
+    }
+    public bool OverrideKillButton(out string text)
+    {
+        text = "Freeter_Kill";
+        return true;
     }
 }

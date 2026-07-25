@@ -699,6 +699,19 @@ public class ModNewsHistory
                 };
                 AllModNews.Add(news);
             }
+            {
+                var news = new ModNews
+                {
+                    Number = 100099,
+                    Title = "外暑すぎ!",
+                    SubTitle = "<color=#FF9631>●TOH-Pko v5.34.18.93</color>",
+                    ShortTitle = "<color=#FF9631>●TOH-Pko v5.34.18.93</color>",
+                    Text = "・helpコマンドの秘匿チャットを新コマンドに変更(?\r\n・シェリフ　キルモードで死亡するとタスクできないバグを修正\r\n・イビルリンカーのキルク増えるバグを修正..?\r\n・波動砲ジャッカル超波動砲チャージ中に会議に入ったらキルフラが止まらないバグを修正\r\n・波動砲シェリフバグ修正\r\n・侍ボタン翻訳\r\n・自爆魔ボタン翻訳\r\n・タブの画像を追加\r\n・全役職のボタンの画像の追加\r\n・スモークメーカー復活\r\n・/h rで波動砲役職が表示されないバグを修正\r\n・フリーターほんのちょびっとだけ仕様変更\r\n・スクラッチャーや/helpの説明の/cmdを削除\r\n・ジェイラーが死亡すると鉄格子が消えるように仕様変更　あと役職説明の特殊ボタン→ファントムボタンに変更\r\n・スタッフのたすを個別に設定可能に仕様変更\r\n・ヒッチハイカーのタスクを個別に設定可能に仕様変更\r\n・ぴけおAIをサーバーレス化し24時間駆動になりました\r\n"
+                    ,
+                    Date = "2026-7-25"
+                };
+                AllModNews.Add(news);
+            }
             AnnouncementPopUp.UpdateState = AnnouncementPopUp.AnnounceState.NotStarted;
         }
     }

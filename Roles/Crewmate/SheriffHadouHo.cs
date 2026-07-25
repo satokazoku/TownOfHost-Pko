@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace TownOfHost.Roles.Crewmate;
 
-public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton
+public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
 {
     public static readonly SimpleRoleInfo RoleInfo =
         SimpleRoleInfo.Create(
@@ -149,6 +149,9 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton
     bool IUsePhantomButton.SyncAbilityCooldownWithKillCooldown => false;
     public override bool CanClickUseVentButton => !beamMode;
 
+    public bool CanUseKillButton() => false;
+    public bool CanUseSabotageButton() => false;
+
     public override bool OnEnterVent(PlayerPhysics physics, int ventId)
     {
         if (IsCharging || ShowBeamMark) return false;
@@ -262,9 +265,11 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton
             return;
         }
 
-        if (!Player.IsAlive() && (IsCharging || ShowBeamMark))
+        if (!Player.IsAlive() && (IsCharging || ShowBeamMark || beamMode))
         {
             ResetBeamState();
+            beamMode = false;
+            Player.RpcSetRoleDesync(RoleTypes.Engineer, Player.GetClientId());
             Player.RpcSetColor((byte)PlayerColor);
             UtilsNotifyRoles.NotifyRoles(); SendRpc();
             return;
@@ -388,7 +393,7 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton
             var perp = toTarget - proj;
             if (perp.magnitude > 1.3f) continue;
 
-            CustomRoleManager.OnCheckMurder(Player, target, target, target,
+            CustomRoleManager.OnCheckMurder(Player, target, Player, target,
                 true, deathReason: CustomDeathReason.Hit);
             HasHit = true;
         }

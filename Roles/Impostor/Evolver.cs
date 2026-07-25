@@ -385,8 +385,6 @@ public sealed class Evolver : RoleBase, IImpostor, IUsePhantomButton
         lastAppliedKillCooldown = -1f;
         ApplyKillCooldown(delay: true);
 
-        // ★ 会議後は常に EvolveCooldown でリセット（キルクールと同じ挙動）
-        //    タイマー残量にかかわらず上書きし、即捕食できないようにする
         evolveCooldownTimer = EvolveCooldown;
         SyncPhantomCooldown();
     }
@@ -431,6 +429,9 @@ public sealed class Evolver : RoleBase, IImpostor, IUsePhantomButton
         CurrentKillCooldown = reader.ReadSingle();
         EvolveCount = reader.ReadInt32();
     }
+
+    public override string GetAbilityButtonText() => GetString("進化");
+
     public override bool OverrideAbilityButton(out string text)
     {
         text = "DeadBodyEat_Ability";

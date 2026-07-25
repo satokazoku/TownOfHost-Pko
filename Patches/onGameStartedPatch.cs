@@ -461,7 +461,7 @@ namespace TownOfHost
 
                 if (TaskBattle.IsTaskBattleTeamMode)
                 {
-                    foreach (var pc in PlayerCatch.AllPlayerControls.Where(pc => !pc.IsTestBot()))
+                    foreach (var pc in PlayerCatch.AllPlayerControls)
                         foreach (var (team, players) in TaskBattle.TaskBattleTeams)
                         {
                             if (!players.Contains(pc.PlayerId)) continue;
@@ -474,12 +474,10 @@ namespace TownOfHost
             }
             else if (Options.CurrentGameMode == CustomGameMode.DummyHunter)
             {
-                //ダミーハンター：全員をファントムにしてダミーをキルさせる
                 foreach (var pc in PlayerCatch.AllPlayerControls)
                 {
                     if (pc.Is(CustomRoles.GM)) continue;
-                    PlayerState.GetByPlayerId(pc.PlayerId).SetMainRole(CustomRoles.Phantom);
-                    pc.RpcSetRole(RoleTypes.Phantom);
+                    PlayerState.GetByPlayerId(pc.PlayerId).SetMainRole(CustomRoles.DummyHunterPlayer);
                 }
                 foreach (var pair in PlayerState.AllPlayerStates)
                 {

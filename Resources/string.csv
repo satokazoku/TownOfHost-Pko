@@ -3759,3 +3759,5 @@
 "DummyHunterTimeLeftText","Time Left","残り時間"
 "DummyHunterMyKillText","My Kills","自分のキル数"
 "DummyHunterTopText","Top","トップ"
+"DummyHunterPlayer","DummyHunter","ダミーハンター","傀儡猎人","傀儡獵人","ОхотникЗаКуклами","ChasseurDeMannequins",""
+"DummyHunterPlayerInfo","Use the Phantom button to hunt dummies.","ファントムボタンでダミーを狩れ。"

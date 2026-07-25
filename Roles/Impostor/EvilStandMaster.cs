@@ -169,11 +169,11 @@ public sealed class EvilStandMaster : RoleBase, IImpostor, IUsePhantomButton
 
     public override bool OverrideAbilityButton(out string text)
     {
-        text = "EvilStandMaster_Warp";
+        text = "EvilStandMaster_Ability";
         return true;
     }
 
-    public override string GetAbilityButtonText() => GetString("EvilStandMasterButtonText");
+    public override string GetAbilityButtonText() => GetString("召喚");
 
     public override string GetLowerText(PlayerControl seer, PlayerControl seen = null,
         bool isForMeeting = false, bool isForHud = false)

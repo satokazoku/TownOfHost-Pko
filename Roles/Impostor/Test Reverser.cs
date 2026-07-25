@@ -167,7 +167,6 @@ public sealed class Reverser : RoleBase, IImpostor, IUsePhantomButton
         speedBeforeEffect.Remove(player.PlayerId);
     }
 
-    // ボタンのテキストを日本語化
     public override string GetAbilityButtonText() => "反転";
 
     // LowerTextを日本語化し、状態によって表示を切り替え
