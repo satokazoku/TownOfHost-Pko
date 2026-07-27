@@ -43,7 +43,7 @@ namespace TownOfHost.Patches
             {
                 timer = 0f;
 
-                // ★ 自動スタート前にモデレーター名プレフィックスを除去（暗転防止）
+                // 自動スタート前にモデレーター名プレフィックスを除去（暗転防止）
                 Moderator.StripModeratorDisplayNamesForGame();
 
                 _ = new LateTask(() =>

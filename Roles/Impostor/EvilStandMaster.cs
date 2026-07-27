@@ -173,7 +173,7 @@ public sealed class EvilStandMaster : RoleBase, IImpostor, IUsePhantomButton
         return true;
     }
 
-    public override string GetAbilityButtonText() => GetString("召喚");
+    public override string GetAbilityButtonText() => "召喚";
 
     public override string GetLowerText(PlayerControl seer, PlayerControl seen = null,
         bool isForMeeting = false, bool isForHud = false)

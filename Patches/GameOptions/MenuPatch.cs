@@ -217,7 +217,7 @@ namespace TownOfHost
 
                         prisettext = Object.Instantiate(HudManager.Instance.TaskPanel.taskText, priset.transform);
                         prisettext.text = $"<size=120%><#cccccc><b>{GetString("SetPresetName")}</b></color></size>";
-                        prisettext.transform.localPosition = new Vector3(-2f, -1.1f);
+                        prisettext.transform.localPosition = new Vector3(-2, -1.1f);
                         searchtext = Object.Instantiate(HudManager.Instance.TaskPanel.taskText, priset.transform);
                         searchtext.text = $"<size=120%><#ffa826><b>{GetString("Search")}</b></color></size>";
                         searchtext.transform.localPosition = new Vector3(-2f, -0.3f);
@@ -233,7 +233,7 @@ namespace TownOfHost
                 ErrorNumber = 3;
                 if (priset)
                 {
-                    priset.transform.localPosition = new Vector3(0f, 3.2f);
+                    priset.transform.localPosition = new Vector3(0.3f, 3.2f);
                     priset.transform.localScale = new Vector3(0.4f, 0.4f, 0f);
                     priset?.gameObject?.SetActive(true);
                     priset.submitButton.OnPressed = (Action)(() =>
@@ -376,7 +376,7 @@ namespace TownOfHost
                 ErrorNumber = 10;
                 if (search)
                 {
-                    search.transform.localPosition = new Vector3(0f, 3.5f);
+                    search.transform.localPosition = new Vector3(0.3f, 3.5f);
                     search.transform.localScale = new Vector3(0.4f, 0.4f, 0f);
                     search?.gameObject?.SetActive(true);
                     search.submitButton.OnPressed = (Action)(() =>

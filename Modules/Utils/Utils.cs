@@ -336,6 +336,12 @@ namespace TownOfHost
 
             if (Show(Options.OptionCommandNowRole))
                 text += $"\n/now role(n r) - {GetString("Command.nowrole")}";
+                text += $"\n/now imposter(n i) - {GetString("Command.nowimposter")}";
+                text += $"\n/now madmate(n md) - {GetString("Command.nowmadmate")}";
+                text += $"\n/now crewmate(n c) - {GetString("Command.nowcrewmate")}";
+                text += $"\n/now neutral(n n) - {GetString("Command.nowneutral")}";
+                text += $"\n/now ghost(n gh) - {GetString("Command.nowghost")}";
+                text += $"\n/now addon(n a) - {GetString("Command.nowaddon")}";
             if (Show(Options.OptionCommandNowSet))
                 text += $"\n/now set(n s) - {GetString("Command.nowset")}";
             if (Show(Options.OptionCommandNowW))

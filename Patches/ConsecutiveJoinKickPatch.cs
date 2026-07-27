@@ -250,7 +250,7 @@ public static class PreviousSessionDetector
             "black" or "ブラック" or "黒" => 6,
             "white" or "ホワイト" or "白" => 7,
             "purple" or "パープル" or "紫" => 8,
-            "brown" or "ブラウン" => 9,
+            "brown" or "ブラウン" or "茶"=> 9,
             "cyan" or "シアン" => 10,
             "lime" or "ライム" => 11,
             "maroon" or "マルーン" => 12,

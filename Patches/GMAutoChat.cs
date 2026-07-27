@@ -15,7 +15,7 @@ public static class GMAutoChatPatch
         if (!Options.OptionGMAutoChat.GetBool()) return;
         if (!PlayerControl.LocalPlayer.Is(CustomRoles.GM)) return;
 
-        // ★ ChatController.Toggle() でチャットを開く
+        // ChatController.Toggle() でチャットを開く
         var chat = DestroyableSingleton<HudManager>.Instance?.Chat;
         if (chat == null) return;
 

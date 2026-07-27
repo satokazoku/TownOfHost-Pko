@@ -24,7 +24,7 @@ namespace TownOfHost
                 {
                     search.transform.localScale = priset.transform.localScale = new Vector3(0.4f, 0.4f, 0f);
 
-                    activeonly.transform.localPosition = new Vector3(-2.05f, 3.3f);
+                    activeonly.transform.localPosition = new Vector3(-1.7f, 3.3f);
                     activeonly.transform.localScale = new Vector3(0.6f, 0.6f, 0f);
 
                     searchtext.enabled = search.textArea.text == "";
