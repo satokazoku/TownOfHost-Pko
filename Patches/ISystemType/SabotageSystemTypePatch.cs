@@ -25,7 +25,7 @@ public static class SabotageSystemTypeUpdateSystemPatch
         if (Options.CurrentGameMode == CustomGameMode.HideAndSeek || Options.IsStandardHAS) return false;
 
         if (Options.CurrentGameMode is CustomGameMode.SuddenDeath or CustomGameMode.MurderMystery) return false;
-        if (GameStates.CalledMeeting && amount.HasBit(SwitchSystem.DamageSystem)) return false;
+        if (GameStates.CalledMeeting && !Utils.IsActive(nextSabotage)) return false;
 
         if (!CustomRoleManager.OnSabotage(player, nextSabotage))
         {

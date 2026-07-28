@@ -33,7 +33,7 @@ public abstract class GameEndPredicate
     {
         reason = GameOverReason.ImpostorsByKill;
         if (ShipStatus.Instance.Systems == null) return false;
-        if (GameStates.IsMeeting) return false;
+        if (GameStates.IsMeeting || GameStates.CalledMeeting) return false;
 
         // TryGetValueは使用不可
         var systems = ShipStatus.Instance.Systems;
