@@ -36,6 +36,10 @@ namespace TownOfHost.Patches
                 __instance.SetLeft();
                 __instance.SetCosmetics(__instance.playerInfo);
             }
+            else if (__instance.TextArea.text != string.Empty)//投票通知じゃない
+            {
+                __instance.NameText.text = __instance.playerInfo.GetLogPlayerName().RemoveColorTags().ApplyNameColorData(PlayerControl.LocalPlayer, __instance.playerInfo._object, true);
+            }
         }
     }
 }
