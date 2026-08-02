@@ -36,7 +36,7 @@ namespace TownOfHost
                     pingTrackerCredential = uselessPingTracker.GetComponent<TextMeshPro>();
                     Object.Destroy(uselessPingTracker);
                     pingTrackerCredential.alignment = TextAlignmentOptions.TopRight;
-                    pingTrackerCredential.rectTransform.pivot = new(1f, 0.8f);  // 中心を右上角に設定
+                    pingTrackerCredential.rectTransform.pivot = new(1f, 0.7f);  // 中心を右上角に設定
                     pingTrackerCredentialAspectPos = pingTrackerCredential.GetComponent<AspectPosition>();
                     pingTrackerCredentialAspectPos.Alignment = AspectPosition.EdgeAlignments.RightTop;
                     pingTrackerCredential.gameObject.name = "CredentialText";
