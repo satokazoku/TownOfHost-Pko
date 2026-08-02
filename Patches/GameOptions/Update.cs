@@ -201,6 +201,8 @@ namespace TownOfHost
                             break;
                     }
 
+                    option.OptionBehaviour.transform.localScale = Vector3.one;
+
                     option.OptionBehaviour.gameObject.SetActive(enabled);
                     if (enabled)
                     {
@@ -296,6 +298,15 @@ namespace TownOfHost
                 float numItems = __instance.Children.Count;
                 var offset = 2.7f;
                 var y = 0.713f;
+
+                // ▼役職タイルのグリッド化
+                const int RoleGridColumns = 3;       // 横に並べる数(3推奨。4は文字が小さくなる)
+                const float RoleGridScale = 0.60f;  // タイル縮小率
+                const float RoleColStep = 1.62f;  // 列間隔X(=タイル実幅に合わせる。重なるなら増やす)
+                const float RoleGridBaseX = -1.55f; // 左端列のX
+                const float RoleRowStep = 0.62f;  // 行間隔Y
+                int roleCol = 0;
+
 
                 foreach (var option in OptionItem.AllOptions)
                 {
@@ -478,12 +489,42 @@ namespace TownOfHost
                     {
                         opt.color = color;
                         opt.size = size;
-                        offset -= option.IsHeader ? 0.68f : 0.45f;
-                        option.OptionBehaviour.transform.localPosition = new Vector3(
-                            option.OptionBehaviour.transform.localPosition.x,//0.952f,
-                            offset - 1.5f,//y,
-                            option.OptionBehaviour.transform.localPosition.z);//-120f);
-                        y -= option.IsHeader ? 0.68f : 0.45f;
+
+                        bool gridTile = isroleoption && option.Name != "Maximum";
+                        if (gridTile)
+                        {
+                            if (roleCol == 0)
+                            {
+                                offset -= RoleRowStep;
+                                y -= RoleRowStep;
+                            }
+                            var gx = RoleGridBaseX + roleCol * RoleColStep;
+                            option.OptionBehaviour.transform.localScale = new Vector3(RoleGridScale, RoleGridScale, 1f);
+                            option.OptionBehaviour.transform.localPosition = new Vector3(
+                                gx,
+                                offset - 1.5f,
+                                option.OptionBehaviour.transform.localPosition.z);
+
+                            roleCol++;
+                            if (roleCol >= RoleGridColumns) roleCol = 0;
+                        }
+                        else
+                        {
+                            // ヘッダー/通常行は等倍・従来レイアウト。グリッド行の途中なら改行してリセット。
+                            if (roleCol != 0)
+                            {
+                                offset -= RoleRowStep;
+                                y -= RoleRowStep;
+                                roleCol = 0;
+                            }
+                            option.OptionBehaviour.transform.localScale = Vector3.one;
+                            offset -= option.IsHeader ? 0.68f : 0.45f;
+                            option.OptionBehaviour.transform.localPosition = new Vector3(
+                                option.OptionBehaviour.transform.localPosition.x,
+                                offset - 1.5f,
+                                option.OptionBehaviour.transform.localPosition.z);
+                            y -= option.IsHeader ? 0.68f : 0.45f;
+                        }
 
                         if (option.IsHeader)
                         {
@@ -494,6 +535,7 @@ namespace TownOfHost
                     {
                         numItems--;
                     }
+
                 }
                 __instance.GetComponentInParent<Scroller>().ContentYBounds.max = -offset + 0.75f;
             }

@@ -51,32 +51,53 @@ public static class PresetShareMenu
     const int SlotMin = 1;
     const int SlotMax = 7;
 
+    // ---- 描画順(sortingOrder) ----
+    // Among Us の PassiveButton は「重なっているCollider2Dのうち sortingOrder が
+    // 最も大きいもの」をヒット対象に選ぶ。役職一覧側のボタンより確実に大きい値に
+    // することで「判定を吸われる」のを防ぐ。Zは描画の前後(見た目)用。
+    //
+    // 役職一覧UI / GameSettingMenu 系はおおむね 0〜60 程度の sortingOrder を使うため、
+    // それを大きく上回る値にする。パネル本体 → その上の要素 → さらに上のポップアップ、
+    // の順で階層ごとにベース値を分けて、パネルより要素が必ず前に来るようにする。
+    const int BlockerSortingOrder = 500;   // クリック遮断(パネル背後の透明フルスクリーン)
+    const int MainPanelSortingOrder = 1000; // メインパネル背景
+    const int MainContentSortingOrder = 1010; // メインパネル上の文字/入力/ボタン
+    const int UploadPanelSortingOrder = 2000;
+    const int UploadContentSortingOrder = 2010;
+    const int SlotPickerPanelSortingOrder = 3000;
+    const int SlotPickerContentSortingOrder = 3010;
+
     // Zは値が小さい(よりマイナス)ほど手前に描画される。設定画面のツールチップ等が
     // -255あたりまで使っているのを確認したので、確実に前面に出るよう大きく離す。
+    const float BlockerZ = -390f;
     const float MainPanelZ = -400f;
     const float UploadPanelZ = -450f;
     const float SlotPickerZ = -500f;
-    const int MainSortingOrder = 1000;
-    const int UploadSortingOrder = 2000;
-    const int SlotPickerSortingOrder = 3000;
+    // パネルより手前に置く子要素のローカルZ(パネルからの相対)
+    const float ContentLocalZ = -1f;
+    const float PopupLocalZ = -1f;
 
-    const float PanelWidth = 6.4f;
-    const float PanelHeight = 5.2f;
-    const float UploadPanelWidth = 6.0f;
-    const float UploadPanelHeight = 4.6f;
-    const float SlotPickerWidth = 5.0f;
-    const float SlotPickerHeight = 2.0f;
+    // ---- サイズ(重なり解消のため全体的に拡大) ----
+    const float PanelWidth = 8.0f;
+    const float PanelHeight = 5.8f;
+    const float UploadPanelWidth = 6.6f;
+    const float UploadPanelHeight = 5.0f;
+    const float SlotPickerWidth = 6.0f;
+    const float SlotPickerHeight = 2.2f;
 
-    const float RowStartY = 1.10f;
-    const float RowSpacing = 0.55f;
+    // 行レイアウト(間隔を広げて被りを解消)
+    const float RowStartY = 1.20f;
+    const float RowSpacing = 0.62f;
 
     static PassiveButton _openButton;
     static SpriteRenderer _panel;
+    static SpriteRenderer _blocker;   // パネル背後のフルスクリーン クリック遮断
     static bool _built;
     static bool _open;
 
-    // 位置を毎フレーム強制する対象(Transform → 固定したいlocalPosition)
+    // 位置/スケールを毎フレーム強制する対象
     static readonly Dictionary<Transform, Vector3> _fixedPositions = new();
+    static readonly Dictionary<Transform, Vector3> _fixedScales = new();
     // 入力欄 → プレースホルダーのラベル(中身が空の間だけ表示する)
     static readonly Dictionary<FreeChatInputField, TextMeshPro> _placeholders = new();
 
@@ -101,14 +122,14 @@ public static class PresetShareMenu
 
     // アップロードパネル
     static SpriteRenderer _uploadPanel;
-    static FreeChatInputField _uploadDataInput;   // 貼り付け or スロット読込先(1つのテキスト欄を共用)
+    static FreeChatInputField _uploadDataInput;
     static FreeChatInputField _uploadNameInput;
     static FreeChatInputField _uploadTagsInput;
     static PassiveButton _uploadSubmitButton;
     static PassiveButton _uploadCancelButton;
     static TextMeshPro _uploadStatusText;
 
-    // 「どの枠にロードしますか」共通オーバーレイ(ダウンロード後のLoadアクションで使う)
+    // 「どの枠にロードしますか」共通オーバーレイ
     static SpriteRenderer _slotPickerPanel;
     static TextMeshPro _slotPickerTitle;
     static readonly PassiveButton[] _slotPickerButtons = new PassiveButton[SlotMax - SlotMin + 1];
@@ -154,6 +175,7 @@ public static class PresetShareMenu
     public static void HideAll()
     {
         _open = false;
+        _blocker?.gameObject?.SetActive(false);
         _panel?.gameObject?.SetActive(false);
         _uploadPanel?.gameObject?.SetActive(false);
         _slotPickerPanel?.gameObject?.SetActive(false);
@@ -162,13 +184,17 @@ public static class PresetShareMenu
     static void Toggle()
     {
         _open = !_open;
+        _blocker.gameObject.SetActive(_open);
         _panel.gameObject.SetActive(_open);
         _uploadPanel.gameObject.SetActive(false);
         _slotPickerPanel.gameObject.SetActive(false);
         if (_open) RefreshResults();
     }
 
-    // 毎フレーム、位置がズレていないか強制的に戻す + プレースホルダーの表示切替
+    // 毎フレーム、位置/スケールがズレていないか強制的に戻す + プレースホルダーの表示切替。
+    // FreeChatInputField はフォーカスや文字入力のタイミングで自分の transform を
+    // 書き換えてくる(=下のチャット欄付近に一瞬飛ぶ)ので、位置だけでなくスケールも
+    // 固定して見た目のガタつきを消す。
     public static void ReassertLayout()
     {
         if (_panel == null || !_panel.gameObject.activeSelf) return;
@@ -178,6 +204,13 @@ public static class PresetShareMenu
             if (kv.Key == null) continue;
             if (kv.Key.localPosition != kv.Value)
                 kv.Key.localPosition = kv.Value;
+        }
+
+        foreach (var kv in _fixedScales)
+        {
+            if (kv.Key == null) continue;
+            if (kv.Key.localScale != kv.Value)
+                kv.Key.localScale = kv.Value;
         }
 
         foreach (var kv in _placeholders)
@@ -195,6 +228,12 @@ public static class PresetShareMenu
     {
         t.localPosition = pos;
         _fixedPositions[t] = pos;
+    }
+
+    static void SetFixedScale(Transform t, Vector3 scale)
+    {
+        t.localScale = scale;
+        _fixedScales[t] = scale;
     }
 
     static Sprite MakeFlatSprite(Color color, float worldWidth, float worldHeight)
@@ -222,36 +261,53 @@ public static class PresetShareMenu
         return sr;
     }
 
+    // 指定パネル(SpriteRenderer)全面に「クリックを飲み込む」当たり判定を付ける。
+    // これがないと trigger Collider だけでは PassiveButton のレイキャストを止められず、
+    // 背後の役職一覧ボタンに判定を吸われる。空の OnClick を持つ PassiveButton を付け、
+    // sortingOrder を役職一覧より大きくして最優先でヒットさせる。
+    static void AttachClickBlocker(SpriteRenderer panel, float width, float height, int sortingOrder)
+    {
+        var col = panel.gameObject.AddComponent<BoxCollider2D>();
+        col.size = new Vector2(width, height);
+        col.isTrigger = false;
+
+        var btn = panel.gameObject.AddComponent<PassiveButton>();
+        btn.Colliders = new Collider2D[] { col };
+        btn.OnClick = new();
+        btn.OnClick.AddListener((Action)(() => { /* パネル自身をクリックしても何もしない=背後に貫通させない */ }));
+        btn.OnMouseOver = new();
+        btn.OnMouseOut = new();
+        // sortingOrder は SpriteRenderer 側で既に設定済み。念のため確実に前面に。
+        panel.sortingOrder = sortingOrder;
+    }
+
     static void Build(GameSettingMenu instance)
     {
         _built = true;
         var parent = HudManager.Instance != null ? HudManager.Instance.transform : instance.transform;
 
+        // ===== パネル背後のフルスクリーン クリック遮断 =====
+        // パネルの外側をクリックしても背後の役職一覧に触れないよう、画面全体を覆う
+        // ほぼ透明の板を敷く。これで「役職側に判定を吸われる」問題を根本的に潰す。
+        _blocker = CreateSolidPanel("PresetShareBlocker", parent, BlockerZ, 30f, 20f,
+            BlockerSortingOrder, new Color(0f, 0f, 0f, 0.35f));
+        AttachClickBlocker(_blocker, 30f, 20f, BlockerSortingOrder);
+        _blocker.gameObject.SetActive(false);
+
         // ===== メインパネル(完全不透明) =====
-        // 修正箇所：アルファ値を1.0fにして完全に不透明にし、役職一覧の背景画像のように真っ黒にする。
         _panel = CreateSolidPanel("PresetSharePanel", parent, MainPanelZ, PanelWidth, PanelHeight,
-            MainSortingOrder, new Color(0f, 0f, 0f, 1.0f));
-
-        // 修正箇所：背後のUIへのクリック判定を遮断するためのColliderを追加。
-        var panelCollider = _panel.gameObject.AddComponent<BoxCollider2D>();
-        panelCollider.size = new Vector2(PanelWidth, PanelHeight);
-        panelCollider.isTrigger = true; // 他の物理オブジェクトとの衝突を防ぐためにトリガーに設定
-
+            MainPanelSortingOrder, new Color(0.06f, 0.07f, 0.10f, 1f));
+        AttachClickBlocker(_panel, PanelWidth, PanelHeight, MainPanelSortingOrder);
         _panel.gameObject.SetActive(false);
 
-        // 修正箇所：アップロードパネルもアルファ値を1.0fにして完全に不透明にする。
         _uploadPanel = CreateSolidPanel("PresetShareUploadPanel", parent, UploadPanelZ, UploadPanelWidth, UploadPanelHeight,
-            UploadSortingOrder, new Color(0.05f, 0.07f, 0.05f, 1.0f));
-
-        // 修正箇所：アップロードパネルにも Collider を追加して入力を遮断。
-        var uploadCollider = _uploadPanel.gameObject.AddComponent<BoxCollider2D>();
-        uploadCollider.size = new Vector2(UploadPanelWidth, UploadPanelHeight);
-        uploadCollider.isTrigger = true;
-
+            UploadPanelSortingOrder, new Color(0.05f, 0.09f, 0.06f, 1f));
+        AttachClickBlocker(_uploadPanel, UploadPanelWidth, UploadPanelHeight, UploadPanelSortingOrder);
         _uploadPanel.gameObject.SetActive(false);
 
         _slotPickerPanel = CreateSolidPanel("PresetShareSlotPicker", parent, SlotPickerZ, SlotPickerWidth, SlotPickerHeight,
-            SlotPickerSortingOrder, new Color(0.07f, 0.05f, 0.05f, 1f));
+            SlotPickerPanelSortingOrder, new Color(0.10f, 0.06f, 0.06f, 1f));
+        AttachClickBlocker(_slotPickerPanel, SlotPickerWidth, SlotPickerHeight, SlotPickerPanelSortingOrder);
         _slotPickerPanel.gameObject.SetActive(false);
 
         BuildMainPanel(instance);
@@ -262,14 +318,16 @@ public static class PresetShareMenu
     static void BuildMainPanel(GameSettingMenu instance)
     {
         var t = _panel.transform;
+        int so = MainContentSortingOrder;
 
-        _titleText = MakeLabel(t, "<size=140%><b>プリセット共有</b></size>", new Vector3(0f, 2.30f, -1f), 0.6f, TextAlignmentOptions.Center);
+        _titleText = MakeLabel(t, "<size=150%><b>プリセット共有</b></size>", new Vector3(0f, 2.55f, ContentLocalZ), 0.6f, TextAlignmentOptions.Center, so);
 
-        _searchInput = CreateInput(t, new Vector3(-2.20f, 1.85f, -1f), "検索(名前)");
-        _tagInput = CreateInput(t, new Vector3(-0.75f, 1.85f, -1f), "タグ(,区切り)");
-        _versionInput = CreateInput(t, new Vector3(0.55f, 1.85f, -1f), "バージョン");
+        // ---- 検索行(横に広げて被り解消) ----
+        _searchInput = CreateInput(t, new Vector3(-3.05f, 2.00f, ContentLocalZ), "検索(名前)", so);
+        _tagInput = CreateInput(t, new Vector3(-1.35f, 2.00f, ContentLocalZ), "タグ(,区切り)", so);
+        _versionInput = CreateInput(t, new Vector3(0.35f, 2.00f, ContentLocalZ), "バージョン", so);
 
-        _sortButton = CreateSmallButton(instance, t, new Vector3(1.65f, 1.85f, -1f), "新着順", () =>
+        _sortButton = CreateSmallButton(instance, t, new Vector3(2.10f, 2.00f, ContentLocalZ), "新着順", so, () =>
         {
             _sort = _sort == PresetSortOrder.Recent ? PresetSortOrder.Popular : PresetSortOrder.Recent;
             _sortButton.buttonText.text = _sort == PresetSortOrder.Recent ? "新着順" : "人気順";
@@ -277,39 +335,39 @@ public static class PresetShareMenu
             RefreshResults();
         });
 
-        _searchButton = CreateSmallButton(instance, t, new Vector3(2.55f, 1.85f, -1f), "検索", () =>
+        _searchButton = CreateSmallButton(instance, t, new Vector3(3.15f, 2.00f, ContentLocalZ), "検索", so, () =>
         {
             _page = 1;
             RefreshResults();
         });
 
-        _statusText = MakeLabel(t, "", new Vector3(0f, 1.50f, -1f), 0.38f, TextAlignmentOptions.Center);
+        _statusText = MakeLabel(t, "", new Vector3(0f, 1.58f, ContentLocalZ), 0.38f, TextAlignmentOptions.Center, so);
 
         for (var i = 0; i < RowCount; i++)
         {
             var y = RowStartY - i * RowSpacing;
 
-            var rowText = MakeLabel(t, "", new Vector3(-2.20f, y, -1f), 0.34f, TextAlignmentOptions.MidlineLeft);
+            var rowText = MakeLabel(t, "", new Vector3(-3.55f, y, ContentLocalZ), 0.34f, TextAlignmentOptions.MidlineLeft, so);
             _rowTexts[i] = rowText;
 
             var idx = i;
-            _rowCopyButtons[i] = CreateSmallButton(instance, t, new Vector3(1.50f, y, -1f), "Copy", () => OnCopyClicked(idx));
-            _rowFileButtons[i] = CreateSmallButton(instance, t, new Vector3(2.20f, y, -1f), "File", () => OnFileClicked(idx));
-            _rowLoadButtons[i] = CreateSmallButton(instance, t, new Vector3(2.90f, y, -1f), "Load", () => OnLoadClicked(idx));
+            _rowCopyButtons[i] = CreateSmallButton(instance, t, new Vector3(2.10f, y, ContentLocalZ), "Copy", so, () => OnCopyClicked(idx));
+            _rowFileButtons[i] = CreateSmallButton(instance, t, new Vector3(2.90f, y, ContentLocalZ), "File", so, () => OnFileClicked(idx));
+            _rowLoadButtons[i] = CreateSmallButton(instance, t, new Vector3(3.60f, y, ContentLocalZ), "Load", so, () => OnLoadClicked(idx));
         }
 
-        var pagingY = RowStartY - RowCount * RowSpacing - 0.25f;
+        var pagingY = RowStartY - RowCount * RowSpacing - 0.35f;
 
-        _prevButton = CreateSmallButton(instance, t, new Vector3(-0.55f, pagingY, -1f), "< 前", () =>
+        _prevButton = CreateSmallButton(instance, t, new Vector3(-0.95f, pagingY, ContentLocalZ), "< 前", so, () =>
         {
             if (_page <= 1) return;
             _page--;
             RefreshResults();
         });
 
-        _pageText = MakeLabel(t, "1/1", new Vector3(0f, pagingY, -1f), 0.32f, TextAlignmentOptions.Center);
+        _pageText = MakeLabel(t, "1/1", new Vector3(0f, pagingY, ContentLocalZ), 0.32f, TextAlignmentOptions.Center, so);
 
-        _nextButton = CreateSmallButton(instance, t, new Vector3(0.55f, pagingY, -1f), "次 >", () =>
+        _nextButton = CreateSmallButton(instance, t, new Vector3(0.95f, pagingY, ContentLocalZ), "次 >", so, () =>
         {
             var maxPage = Math.Max(1, (int)Math.Ceiling(_totalCount / (double)RowCount));
             if (_page >= maxPage) return;
@@ -317,45 +375,45 @@ public static class PresetShareMenu
             RefreshResults();
         });
 
-        var bottomY = pagingY - 0.45f;
-        _uploadOpenButton = CreateSmallButton(instance, t, new Vector3(-1.55f, bottomY, -1f), "アップロード", () =>
+        var bottomY = pagingY - 0.60f;
+        _uploadOpenButton = CreateSmallButton(instance, t, new Vector3(-2.00f, bottomY, ContentLocalZ), "アップロード", so, () =>
         {
             _uploadPanel.gameObject.SetActive(true);
         });
 
-        _closeButton = CreateSmallButton(instance, t, new Vector3(1.55f, bottomY, -1f), "閉じる", () =>
+        _closeButton = CreateSmallButton(instance, t, new Vector3(2.00f, bottomY, ContentLocalZ), "閉じる", so, () =>
         {
-            _open = false;
-            _panel.gameObject.SetActive(false);
+            HideAll();
         });
     }
 
     static void BuildUploadPanel(GameSettingMenu instance)
     {
         var t = _uploadPanel.transform;
+        int so = UploadContentSortingOrder;
 
-        MakeLabel(t, "<size=130%><b>プリセットをアップロード</b></size>", new Vector3(0f, 2.00f, -1f), 0.7f, TextAlignmentOptions.Center);
+        MakeLabel(t, "<size=130%><b>プリセットをアップロード</b></size>", new Vector3(0f, 2.15f, PopupLocalZ), 0.7f, TextAlignmentOptions.Center, so);
 
-        _uploadDataInput = CreateInput(t, new Vector3(0f, 1.15f, -1f), "ここに貼り付け、またはスロット番号を押して読込", wide: true, tall: true);
+        _uploadDataInput = CreateInput(t, new Vector3(0f, 1.25f, PopupLocalZ), "ここに貼り付け、またはスロット番号を押して読込", so, wide: true, tall: true);
 
-        MakeLabel(t, "スロットから読込:", new Vector3(-2.55f, 0.35f, -1f), 0.34f, TextAlignmentOptions.MidlineLeft);
+        MakeLabel(t, "スロットから読込:", new Vector3(-2.75f, 0.45f, PopupLocalZ), 0.34f, TextAlignmentOptions.MidlineLeft, so);
         for (var slot = SlotMin; slot <= SlotMax; slot++)
         {
             var s = slot;
-            var x = -2.4f + (slot - SlotMin) * 0.8f;
-            CreateSmallButton(instance, t, new Vector3(x, 0.05f, -1f), s.ToString(), () =>
+            var x = -2.55f + (slot - SlotMin) * 0.85f;
+            CreateSmallButton(instance, t, new Vector3(x, 0.10f, PopupLocalZ), s.ToString(), so, () =>
             {
                 _uploadDataInput.textArea.text = GetPresetSlotValue(s);
             });
         }
 
-        _uploadNameInput = CreateInput(t, new Vector3(0f, -0.55f, -1f), "名前(必須)", wide: true);
-        _uploadTagsInput = CreateInput(t, new Vector3(0f, -0.95f, -1f), "タグ(,区切り 例:闇鍋,人外)", wide: true);
+        _uploadNameInput = CreateInput(t, new Vector3(0f, -0.55f, PopupLocalZ), "名前(必須)", so, wide: true);
+        _uploadTagsInput = CreateInput(t, new Vector3(0f, -1.05f, PopupLocalZ), "タグ(,区切り 例:闇鍋,人外)", so, wide: true);
 
-        _uploadStatusText = MakeLabel(t, "", new Vector3(0f, -1.35f, -1f), 0.40f, TextAlignmentOptions.Center);
+        _uploadStatusText = MakeLabel(t, "", new Vector3(0f, -1.50f, PopupLocalZ), 0.40f, TextAlignmentOptions.Center, so);
 
-        _uploadSubmitButton = CreateSmallButton(instance, t, new Vector3(-0.75f, -1.80f, -1f), "送信", OnUploadSubmit);
-        _uploadCancelButton = CreateSmallButton(instance, t, new Vector3(0.75f, -1.80f, -1f), "キャンセル", () =>
+        _uploadSubmitButton = CreateSmallButton(instance, t, new Vector3(-0.90f, -2.00f, PopupLocalZ), "送信", so, OnUploadSubmit);
+        _uploadCancelButton = CreateSmallButton(instance, t, new Vector3(0.90f, -2.00f, PopupLocalZ), "キャンセル", so, () =>
         {
             _uploadPanel.gameObject.SetActive(false);
         });
@@ -364,14 +422,15 @@ public static class PresetShareMenu
     static void BuildSlotPicker(GameSettingMenu instance)
     {
         var t = _slotPickerPanel.transform;
+        int so = SlotPickerContentSortingOrder;
 
-        _slotPickerTitle = MakeLabel(t, "", new Vector3(0f, 0.65f, -1f), 0.42f, TextAlignmentOptions.Center);
+        _slotPickerTitle = MakeLabel(t, "", new Vector3(0f, 0.72f, PopupLocalZ), 0.42f, TextAlignmentOptions.Center, so);
 
         for (var slot = SlotMin; slot <= SlotMax; slot++)
         {
             var s = slot;
-            var x = -2.1f + (slot - SlotMin) * 0.7f;
-            _slotPickerButtons[slot - SlotMin] = CreateSmallButton(instance, t, new Vector3(x, -0.15f, -1f), s.ToString(), () =>
+            var x = -2.4f + (slot - SlotMin) * 0.8f;
+            _slotPickerButtons[slot - SlotMin] = CreateSmallButton(instance, t, new Vector3(x, -0.15f, PopupLocalZ), s.ToString(), so, () =>
             {
                 _slotPickerPanel.gameObject.SetActive(false);
                 _onSlotChosen?.Invoke(s);
@@ -379,7 +438,7 @@ public static class PresetShareMenu
             });
         }
 
-        CreateSmallButton(instance, t, new Vector3(0f, -0.75f, -1f), "キャンセル", () =>
+        CreateSmallButton(instance, t, new Vector3(0f, -0.80f, PopupLocalZ), "キャンセル", so, () =>
         {
             _slotPickerPanel.gameObject.SetActive(false);
             _onSlotChosen = null;
@@ -393,41 +452,51 @@ public static class PresetShareMenu
         _slotPickerPanel.gameObject.SetActive(true);
     }
 
-    static TextMeshPro MakeLabel(Transform parent, string text, Vector3 localPos, float scale, TextAlignmentOptions align)
+    static TextMeshPro MakeLabel(Transform parent, string text, Vector3 localPos, float scale, TextAlignmentOptions align, int sortingOrder)
     {
         var label = Object.Instantiate(HudManager.Instance.TaskPanel.taskText, parent);
         label.text = text;
         SetFixedPosition(label.transform, localPos);
-        label.transform.localScale = new Vector3(scale, scale, 1f);
+        SetFixedScale(label.transform, new Vector3(scale, scale, 1f));
         label.alignment = align;
+        label.sortingOrder = sortingOrder;
+        label.fontSizeMax = 3f;
         return label;
     }
 
-    static FreeChatInputField CreateInput(Transform parent, Vector3 localPos, string placeholder, bool wide = false, bool tall = false)
+    static FreeChatInputField CreateInput(Transform parent, Vector3 localPos, string placeholder, int sortingOrder, bool wide = false, bool tall = false)
     {
         var input = Object.Instantiate(HudManager.Instance.Chat.freeChatField, parent);
         input.name = $"PresetShareInput_{placeholder}";
         SetFixedPosition(input.transform, localPos);
         var scaleY = tall ? 3.2f : 1.1f;
-        input.transform.localScale = wide ? new Vector3(0.85f, scaleY, 1f) : new Vector3(0.5f, scaleY, 1f);
+        var scale = wide ? new Vector3(0.85f, scaleY, 1f) : new Vector3(0.5f, scaleY, 1f);
+        SetFixedScale(input.transform, scale);
         input.gameObject.SetActive(true);
         if (input.submitButton != null) input.submitButton.gameObject.SetActive(false);
         if (input.charCountText != null) input.charCountText.gameObject.SetActive(false);
+
+        // 入力欄本体(背景/文字)を確実に前面へ。子の SpriteRenderer / TMP をまとめて底上げ。
+        foreach (var sr in input.GetComponentsInChildren<SpriteRenderer>(true))
+            sr.sortingOrder = sortingOrder;
+        foreach (var tmp in input.GetComponentsInChildren<TextMeshPro>(true))
+            tmp.sortingOrder = sortingOrder + 1;
 
         // プレースホルダー(薄いヒント文字)。inputの子ではなく同じ親に置いて
         // inputのスケールに巻き込まれないようにする。
         var placeholderLabel = Object.Instantiate(HudManager.Instance.TaskPanel.taskText, parent);
         placeholderLabel.text = $"<color=#888888>{placeholder}</color>";
-        SetFixedPosition(placeholderLabel.transform, localPos + new Vector3(0f, 0f, 0.02f));
-        placeholderLabel.transform.localScale = new Vector3(0.32f, 0.32f, 1f);
+        SetFixedPosition(placeholderLabel.transform, localPos + new Vector3(0f, 0f, -0.02f));
+        SetFixedScale(placeholderLabel.transform, new Vector3(0.32f, 0.32f, 1f));
         placeholderLabel.alignment = TextAlignmentOptions.MidlineLeft;
         placeholderLabel.raycastTarget = false;
+        placeholderLabel.sortingOrder = sortingOrder + 2;
         _placeholders[input] = placeholderLabel;
 
         return input;
     }
 
-    static PassiveButton CreateSmallButton(GameSettingMenu instance, Transform parent, Vector3 localPos, string text, Action onClick)
+    static PassiveButton CreateSmallButton(GameSettingMenu instance, Transform parent, Vector3 localPos, string text, int sortingOrder, Action onClick)
     {
         var template = instance.GamePresetsButton;
         var btn = Object.Instantiate(template, parent);
@@ -437,12 +506,19 @@ public static class PresetShareMenu
         if (aspect != null) Object.Destroy(aspect);
 
         SetFixedPosition(btn.transform, localPos);
-        btn.transform.localScale = new Vector3(0.32f, 0.32f, 1f);
+        SetFixedScale(btn.transform, new Vector3(0.32f, 0.32f, 1f));
         if (btn.buttonText != null)
         {
             btn.buttonText.text = text;
             btn.buttonText.DestroyTranslator();
         }
+
+        // ボタンの見た目(背景スプライト)と文字を確実に前面へ。
+        foreach (var sr in btn.GetComponentsInChildren<SpriteRenderer>(true))
+            sr.sortingOrder = sortingOrder;
+        foreach (var tmp in btn.GetComponentsInChildren<TextMeshPro>(true))
+            tmp.sortingOrder = sortingOrder + 1;
+
         btn.OnClick = new();
         btn.OnClick.AddListener((Action)onClick);
         return btn;
@@ -619,8 +695,7 @@ public static class PresetShareMenu
 
         var tags = (_uploadTagsInput.textArea.text ?? "").Split(',').Select(t => t.Trim()).Where(t => t.Length > 0).ToList();
         var uploaderName = PlayerControl.LocalPlayer?.Data?.PlayerName ?? "Unknown";
-        // TODO: Main.Versionが実際のバージョン文字列を持つ静的プロパティ/フィールドである前提です。
-        // 名前が違う場合はここを実際のフィールド名に合わせてください。
+        // TODO: Main.versionが実際のバージョン文字列を持つ静的プロパティ/フィールドである前提です。
         var version = Main.version?.ToString() ?? "";
 
         _uploadStatusText.text = "アップロード中...";
