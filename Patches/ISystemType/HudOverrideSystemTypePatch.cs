@@ -33,7 +33,7 @@ public static class HudOverrideSystemTypeUpdateSystemPatch
             // マッド属性化時に削除
             (playerRole is SchrodingerCat schrodingerCat && schrodingerCat.AmMadmate);
 
-        if ((isMadmate && !Options.MadmateCanFixComms.GetBool())
+        if ((isMadmate && !Options.MadmateCanFixComms.GetBool() && !player.Is(CustomRoles.NeuMadmate))
         || (player.Is(CustomRoles.Amanojaku) && !Amanojaku.OptCanFixComms.GetBool())
         || (player.Is(CustomRoles.Clumsy)))
         {
@@ -51,6 +51,10 @@ public static class HudOverrideSystemTypeUpdateSystemPatch
             {
                 return false;
             }
+        foreach (var roleclass in CustomRoleManager.AllActiveRoles)
+        {
+            roleclass.Value.OnFixSabotage(player, Main.SabotageType, amount);
+        }
         return true;
     }
     public static void Postfix()

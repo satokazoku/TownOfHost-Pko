@@ -34,14 +34,14 @@ public static class SwitchSystemUpdateSystemPatch
             player.Is(CustomRoleTypes.Madmate) ||
             // マッド属性化時に削除
             (roleclass is SchrodingerCat schrodingerCat && schrodingerCat.AmMadmate);
-        if ((isMadmate && !Options.MadmateCanFixLightsOut.GetBool())
+        if ((isMadmate && !Options.MadmateCanFixLightsOut.GetBool() && !player.Is(CustomRoles.NeuMadmate))
         || (player.Is(CustomRoles.Amanojaku) && !Amanojaku.OptCanFixLightsOut.GetBool())
         || player.Is(CustomRoles.Water))
         {
             return false;
         }
         // ロールの処理
-        if (Roles.AddOns.Common.Amnesia.CheckAbility(player))
+        if (Amnesia.CheckAbility(player))
         {
             if ((roleclass as ISystemTypeUpdateHook)?.UpdateSwitchSystem(__instance, amount) is false)
             {
@@ -65,21 +65,25 @@ public static class SwitchSystemUpdateSystemPatch
             if (Options.DisableAirshipCargoLightsPanel.GetBool() && Vector2.Distance(truePosition, new(30.56f, 2.12f)) <= 2f) return false;
         }
 
+        // amount分だけ1を左にずらす
+        // 各桁が各ツマミに対応する
+        // 一番左のツマミが操作されたら(amount: 0) 00001
+        // 一番右のツマミが操作されたら(amount: 4) 10000
+        // ref: SwitchSystem.RepairDamage, SwitchMinigame.FixedUpdate
+        var switchedKnob = (byte)(0b_00001 << amount);
+        // ExpectedSwitches: すべてONになっているときのスイッチの上下状態
+        // ActualSwitches: 実際のスイッチの上下状態
+        // 操作されたツマミについて，ExpectedとActualで同じならそのツマミは既に直ってる
+        bool IsDisturbancesSwitchs = (__instance.ActualSwitches & switchedKnob) == (__instance.ExpectedSwitches & switchedKnob);
+
         // サボタージュによる破壊ではない && 配電盤を下げられなくするオプションがオン
-        if (Options.BlockDisturbancesToSwitches.GetBool())
+        if (IsDisturbancesSwitchs && Options.BlockDisturbancesToSwitches.GetBool()) return false;
+
+        if (IsDisturbancesSwitchs is false)
         {
-            // amount分だけ1を左にずらす
-            // 各桁が各ツマミに対応する
-            // 一番左のツマミが操作されたら(amount: 0) 00001
-            // 一番右のツマミが操作されたら(amount: 4) 10000
-            // ref: SwitchSystem.RepairDamage, SwitchMinigame.FixedUpdate
-            var switchedKnob = (byte)(0b_00001 << amount);
-            // ExpectedSwitches: すべてONになっているときのスイッチの上下状態
-            // ActualSwitches: 実際のスイッチの上下状態
-            // 操作されたツマミについて，ExpectedとActualで同じならそのツマミは既に直ってる
-            if ((__instance.ActualSwitches & switchedKnob) == (__instance.ExpectedSwitches & switchedKnob))
+            foreach (var activeroleclass in CustomRoleManager.AllActiveRoles)
             {
-                return false;
+                activeroleclass.Value.OnFixSabotage(player, Main.SabotageType, amount);
             }
         }
         return true;

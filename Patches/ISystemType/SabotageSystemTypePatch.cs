@@ -3,6 +3,7 @@ using Hazel;
 using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Madmate;
 
 namespace TownOfHost.Patches.ISystemType;
 
@@ -81,12 +82,14 @@ public static class SabotageSystemTypeUpdateSystemPatch
     }
     public static void Postfix(SabotageSystemType __instance, bool __runOriginal /* Prefixの結果，本体処理が実行されたかどうか */ )
     {
-        if (!__runOriginal || !Options.ModifySabotageCooldown.GetBool() || !AmongUsClient.Instance.AmHost)
+        if (!__runOriginal || (!Options.ModifySabotageCooldown.GetBool() && (NeuMadmate.RemoveSabotageCooldown is 0)) || !AmongUsClient.Instance.AmHost)
         {
             return;
         }
+        var timer = __instance.Timer;
+        if (Options.ModifySabotageCooldown.GetBool()) timer = Options.SabotageCooldown.GetFloat();
         // サボタージュクールダウンを変更
-        __instance.Timer = Options.SabotageCooldown.GetFloat();
+        __instance.Timer = timer + NeuMadmate.RemoveSabotageCooldown;
         __instance.IsDirty = true;
     }
 }

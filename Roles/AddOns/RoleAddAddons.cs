@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Crewmate;
+using TownOfHost.Roles.Madmate;
 
 namespace TownOfHost
 {
@@ -169,6 +170,11 @@ namespace TownOfHost
                 case CustomRoles.Stolener:
                     if (player == null && AllData.TryGetValue(role, out data)) haveaddon = true;
                     else if ((player.GetRoleClass() as Stolener)?.ICanUseaddon == true && AllData.TryGetValue(role, out data) && data?.GiveAddons.GetBool() == true)
+                        haveaddon = true;
+                    break;
+                case CustomRoles.NeuMadmate:
+                    if (player == null && AllData.TryGetValue(role, out data)) haveaddon = true;
+                    else if ((player.GetRoleClass() as NeuMadmate)?.CanUseAddon == true && AllData.TryGetValue(role, out data) && data?.GiveAddons.GetBool() == true)
                         haveaddon = true;
                     break;
                 default:

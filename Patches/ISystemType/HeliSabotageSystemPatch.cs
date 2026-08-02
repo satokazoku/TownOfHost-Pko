@@ -38,6 +38,10 @@ public static class HeliSabotageSystemUpdateSystemPatch
             {
                 return false;
             }
+        foreach (var roleclass in CustomRoleManager.AllActiveRoles)
+        {
+            roleclass.Value.OnFixSabotage(player, Main.SabotageType, amount);
+        }
         return true;
     }
 }

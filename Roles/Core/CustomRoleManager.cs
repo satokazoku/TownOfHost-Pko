@@ -878,6 +878,7 @@ public enum CustomRoles
     MadBetrayer,
     Nue,
     MadHacker,
+    NeuMadmate,
     //DEBUG only Madmate
     //Crewmate(Vanilla)
     Engineer,

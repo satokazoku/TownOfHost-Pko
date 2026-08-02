@@ -93,6 +93,7 @@
 "MadBetrayer","MadBetrayer","マッドベトレイヤー"
 "Betrayer","Betrayer","ベトレイヤー"
 "MadHacker","MadHacker","マッドハッカー"
+"NeuMadmate","NeuMadmate","???"
 "Nue","Nue","鵺"
 "#MadmateName"
 
@@ -390,6 +391,7 @@
 "MadSuicideInfo","For the Impostor...","ご主人様の為なら..."
 "MadBetrayerInfo","To suit one's own convenience","ご主人は我の手駒"
 "MadHackerInfo","","情報で会議を錯乱させよ"
+"NeuMadmateInfo","","ごめんな、ご主人。借りは返すからさ。"
 "NueInfo","Possess me to Impostor","あの愚図を見つけ出し、吸収せよ"
 "#MadmateInfo"
 
@@ -646,6 +648,7 @@
 "MadSuicideInfoLong","You are a crewmate, but you act as the impostors\n You have two suicide ability.","クルーだがインポスターの味方をする。\nインポスターと互いに認識できない。\n2つの自決能力を持つマッドメイト。\nキルボタンを使用することでシェリフ誤爆のように自決する。\n※他視点からはキルターゲットに殺されるがONの場合は、\n　キルターゲットからは自爆、\n　他視点からはキルターゲットがキルしたように見える。\n\nワンクリックボタンを使用することでその場で自決する。"
 "MadBetrayerInfoLong","You are a crewmate, but you act as the impostors\n Possesses the ability to kill an Impostor after completing all tasks.\nWhen the Impostor is killed, the role changes to Betrayer, gaining the ability to kill anyone.\nUpon becoming a Betrayer, the win condition changes to:\n“All harmful killing roles are dead, and the number of surviving Betrayers is equal to or greater than the number of Crewmates.”","クルーだがインポスターの味方をする。\n全てのタスクを完了させるとインポスターをキルできる能力を持つ。\n\nインポスターをキルすると、役職がベトレイヤーに変化し、全員を殺すことができるようになる。\nベトレイヤーになると勝利条件が\n「有害なキル役職が死亡しており、生き残っているベトレイヤーの人数がクルーと同じかそれ以上」に変化する。"
 "MadHackerInfoLong","","クルーだがインポスターの味方をする。\nタスクターン中、シェイプシフト画面から死者の情報を得ることができる。\n設定によって死者の死体位置を得たり死者の死因を得る事もできる。\nインポスターのキルか確認できる設定有効時、×が\n赤=>インポスター　灰=>その他のキラー 橙=>自殺等となる。"
+"NeuMadmateInfoLong","","クルーだがインポスターの見方をする。\nサボタージュを修復するとポイントが手に入る。\nポイントが一定以上たまると、\n・インポスターが誰か　　・サボタージュのクール減少\n・自身にアドオン付与\n等のバフがかかる。\n\nマッドメイト共通設定の「通信妨害」「停電」修復可否設定にかかわらずサボタージュを修復できる。"
 "NueInfoLong","A combination role paired with the <#8b6d61>Fool.</color>\nAlthough a Crewmate, the Nue sides with the Impostors.\nAfter completing a certain number of tasks and voting for themselves during a meeting, the Nue enters Guess Mode.\nWhile in Guess Mode, voting for the Fool will kill the Fool.\nOnce the Fool dies, the meeting immediately ends, and the Nue gains access to a Suicidal Attack ability.\nIf the guess fails, the Nue dies instead.\nAfter the Suicidal Attack is unlocked, the Nue will kill a target but will die by self-destruction shortly afterward.","<#8b6d61>愚か者</color>とのコンビネーション役職。\n\nクルーだがインポスターの味方をする。\n鵺(ぬえ)は一定数タスクを完了させ、会議で自投票することで推測モードになる\n推測モード中に愚か者に投票することで、愚か者が死亡する\n死亡後、会議が即座に終了し、鵺に自爆特攻能力が解放される。\n推測に失敗すると自身が死亡する。\n\n自爆特攻が解放されると、キルを行った後、一定時間後に自身が自殺する。"
 "#MadmateInfoLong"
 
@@ -1502,6 +1505,13 @@
 "MadBetrayerImpostorRevealTaskcount","Impostor RevialTaskCount","インポスターが分かるタスク数"
 "MadHackerCanSeeDeadBodyPosition","CanSee DeadBody Positon","死体位置が見える"
 "MadHackerCheckImposotor","CheckImpsotorKill","インポスターのキルか確認できる"
+"NeuMadmateReactorAddPoint","Reactor AddPoint","緊急サボ(リア,O2,ヘリ)修復のポイント"
+"NeuMadmateLightAddPoint","Light AddPoint","停電修復のポイント"
+"NeuMadmateCommsAddPoint","Comms AddPoint","通信妨害修復のポイント"
+"NeuMadmateKnowImpostorPoint","KnowImposotr Point","インポスターを把握できるポイント数"
+"NeuMadmateCanUseAddon","Give Addon Point","アドオンが付与されるポイント数"
+"NeuMadmateRemoveSabotageCooldown","RemoveSabotageCooldown","サボタージュクール減少秒数"
+"NeuMadmateRemoveSabotagePoint","RemoveSabotageCooldown point","サボタージュクールが減少されるポイント数"
 
 "## CrewMate RoleSetting"
 "BaitReportDelay","report delay","通報までの遅延"
@@ -2526,6 +2536,7 @@
 "MadBetrayerLog","Betrayed Impostor.","インポスターを裏切った。"
 "StrawdollKilledLog","{0}","藁人形が{0}回切られた..."
 "MissioneerAddpoint","Mission Complete. Addpoint{0},Point:{1}({2})","Mission Complete. {2}が{0}p入手し、計{1}pとなった"
+"NeuMadmateGameLog","AddPoint{0}. Now:{1}","{0}p入手した。合計{1}pとなった"
 
 "## つーるちっぷ"
 "InsiderModeOptionInfo","Impostor Can See AllPlayer Role","<#ff1919>インポスター</color>が全員の役職を把握します"
