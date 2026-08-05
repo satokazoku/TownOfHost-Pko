@@ -135,7 +135,7 @@ namespace TownOfHost.Roles.Neutral
                 return;
             }
             var targetrole = target.GetCustomRole();
-            if (target == null || (targetrole is CustomRoles.King or CustomRoles.Jackal or CustomRoles.JackalAlien or CustomRoles.Jackaldoll or CustomRoles.JackalMafia or CustomRoles.Merlin or CustomRoles.JackalWolf) || ((targetrole.IsImpostor() || targetrole is CustomRoles.Egoist) && !OptionImpostorCanSidekick.GetBool()))
+            if (target == null || (targetrole is CustomRoles.King or CustomRoles.Jackal or CustomRoles.JackalAlien or CustomRoles.Jackaldoll or CustomRoles.JackalMafia or CustomRoles.Merlin or CustomRoles.JackalWolf or CustomRoles.AlienHijack) || ((targetrole.IsImpostor() || targetrole is CustomRoles.Egoist) && !OptionImpostorCanSidekick.GetBool()))
             {
                 ResetCooldown = false;
                 return;

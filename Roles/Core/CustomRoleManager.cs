@@ -226,7 +226,7 @@ public static class CustomRoleManager
         //キル可能だった場合のみMurderPlayerに進む
         if (info.CanKill && info.DoKill)//ノイメ対応
         {
-            if (appearanceKiller.GetCustomRole() is CustomRoles.Viper && !info.IsFakeSuicide && !info.IsSuicide)//DesyncImp役職だと死体が溶けないので一瞬だけViperにする。
+            if ((appearanceKiller.GetCustomRole() is CustomRoles.Viper || (appearanceKiller.GetRoleClass()?.HaveAddRole() is CustomRoles.Viper)) && !info.IsFakeSuicide && !info.IsSuicide)//DesyncImp役職だと死体が溶けないので一瞬だけViperにする。
             {
                 if (AmongUsClient.Instance.AmHost)
                     foreach (var pc in PlayerCatch.AllPlayerControls)
