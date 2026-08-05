@@ -1314,12 +1314,14 @@ namespace TownOfHost
             {
                 SendMessage(GetString("Error.CommandFailed"), player.PlayerId);
             }
-            if (args[0] != "/cmd" || args.Length <= 1) return;//cmdが無い場合は処理をしない
+            if (args[0].StartsWith("/cmd") is false) return;//cmdが無い場合は処理をしない
 
             if (GuessManager.GuesserMsg(player, text)) { canceled = true; return; }
 
-            /*
-            args = text.ToLower().Split(' ');*/
+            canceled = true;
+
+            if (args[0] != "/cmd" || args.Length <= 1) return;
+            /*args = text.ToLower().Split(' ');*/
             args = args.Skip(1).ToArray();
             if (args[0].StartsWith("/") is false) args[0] = $"/{args[0]}";
 
