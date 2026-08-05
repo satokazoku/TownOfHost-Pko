@@ -39,7 +39,14 @@ namespace TownOfHost
             {
                 if (pc.GetCustomRole() is CustomRoles.MadBetrayer)
                 {
-                    Roles.Madmate.MadBetrayer.CheckCount(ref Crew, ref MadBetrayer);
+                    if (Roles.Madmate.MadBetrayer.IsMadmate())
+                    {
+                        MadBetrayer++;
+                    }
+                    else
+                    {
+                        Crew++;
+                    }
                     continue;
                 }
                 switch (pc.GetCountTypes())

@@ -693,6 +693,7 @@ namespace TownOfHost
             }
             else
             {
+                Balancer.AfterMeetingReset();
                 if (!Options.firstturnmeeting || !MeetingStates.First)
                 {
                     Amanojaku.Assign();

@@ -390,6 +390,12 @@ public sealed class Balancer : RoleBase, ISelfVoter
         target2 = 255;
         return;
     }
+    public static void AfterMeetingReset()
+    {
+        Id = 255;
+        target1 = 255;
+        target2 = 255;
+    }
     public override string GetLowerText(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
     {
         seen ??= seer;
