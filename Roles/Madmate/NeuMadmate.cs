@@ -99,12 +99,12 @@ public sealed class NeuMadmate : RoleBase, IKillFlashSeeable, IDeathReasonSeeabl
         {
             MyfixAmout = amount;
             Logger.Info($"{player.PlayerId},Fix: {MyfixAmout}", "NeuMadmate");
-        }
+        }/* 別の人が修復した判定が来たら消すのも考えたが2人同時で修復などで検知できなさそう。
         else if (MyfixAmout == amount)
         {
             MyfixAmout = byte.MaxValue;
             Logger.Info($"{player.PlayerId},Reset: {MyfixAmout}", "NeuMadmate");
-        }
+        }*/
     }
 
     public override void AfterSabotage(SystemTypes systemType)

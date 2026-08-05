@@ -169,10 +169,20 @@ namespace TownOfHost
             //実行
             var state = PlayerState.GetByPlayerId(player.PlayerId);
             if (!force && !GameStates.CalledMeeting) state.IsBlackOut = true; //ブラックアウト
-            if (player.PlayerId == 0 && !force)
+            if (player.IsModClient() && !force)
             {
-                FlashColor(new(1f, 0f, 0f, 0.5f));
-                if (Constants.ShouldPlaySfx()) RPC.PlaySound(player.PlayerId, Sounds.KillSound);
+                if (player.PlayerId == 0)
+                {
+                    FlashColor(new(1f, 0f, 0f, 0.5f));
+                    if (Constants.ShouldPlaySfx()) RPC.PlaySound(player.PlayerId, Sounds.KillSound);
+                }
+                else
+                {
+                    var sender = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SyncModSystem, SendOption.None);
+                    sender.Write((int)RPC.ModSystem.ShowKillFlash);
+                    sender.Write(player.PlayerId);
+                    AmongUsClient.Instance.FinishRpcImmediately(sender);
+                }
             }
             else if (!ReactorCheck) player.ReactorFlash(0f); //リアクターフラッシュ
             player.MarkDirtySettings();
