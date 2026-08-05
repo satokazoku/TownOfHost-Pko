@@ -247,9 +247,12 @@ public sealed class JackalDoll : RoleBase
             {
                 case Diemode.FollowingSuicide:
                     //ガードなどは無視
-                    PlayerState.GetByPlayerId(Jd.PlayerId).DeathReason = CustomDeathReason.FollowingSuicide;
-                    Jd.RpcExileV3();
-                    PlayerState.GetByPlayerId(Jd.PlayerId).SetDead();
+                    _ = new LateTask(() =>
+                    {
+                        PlayerState.GetByPlayerId(Jd.PlayerId).DeathReason = CustomDeathReason.FollowingSuicide;
+                        Jd.RpcExileV3();
+                        PlayerState.GetByPlayerId(Jd.PlayerId).SetDead();
+                    }, 3, "JackalDoolFollowSuicide", true);
                     break;
                 case Diemode.ChangeRole:
                     UtilsGameLog.AddGameLog($"JackalDool", UtilsName.GetPlayerColor(Jd) + ":  " + string.Format(GetString("Executioner.ch"), Utils.ColorString(UtilsRoleText.GetRoleColor(CustomRoles.Jackal), GetString("Jackal")), Translator.GetRoleString($"{ChangeRoles[OptionChangeRole.GetValue()]}").Color(UtilsRoleText.GetRoleColor(ChangeRoles[OptionChangeRole.GetValue()]))));
