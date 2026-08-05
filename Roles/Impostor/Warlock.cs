@@ -75,7 +75,7 @@ public sealed class Warlock : RoleBase, IImpostor
                 CursedPlayer = target;
                 //呪える相手は一人だけなのでキルボタン無効化
                 killer.SetKillCooldown(255f);
-                killer.RpcResetAbilityCooldown();
+                _ = new LateTask(() => killer.RpcResetAbilityCooldown(), 0.5f, "WarlockAbility", true);
             }
             //どちらにしてもキルは無効
             info.DoKill = false;
