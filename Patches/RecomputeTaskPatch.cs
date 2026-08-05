@@ -22,11 +22,16 @@ namespace TownOfHost
                     {
                         Logger.Warn("警告:" + p.PlayerName + "のタスクがnullです", "RecompteTaskPatch");
                         continue;//これより下を実行しない
-                    }
+                    }/*
                     foreach (var task in p.Tasks)
                     {
                         __instance.TotalTasks++;
                         if (task.Complete) __instance.CompletedTasks++;
+                    }*/
+                    {
+                        var task = PlayerState.GetByPlayerId(p.PlayerId).GetTaskState();
+                        __instance.TotalTasks += task.AllTasksCount;
+                        __instance.CompletedTasks += task.CompletedTasksCount;
                     }
 
                     if (p._object is null) continue;
