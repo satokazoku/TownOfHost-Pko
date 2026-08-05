@@ -82,11 +82,30 @@ namespace TownOfHost.Roles.Ghost
                     UtilsGameLog.AddGameLog($"{role}", string.Format(GetString("GhostRole.log"), UtilsName.GetPlayerColor(pc), Utils.ColorString(UtilsRoleText.GetRoleColor(role), UtilsRoleText.GetRoleName(role))));
                     UtilsGameLog.LastLogRole[pc.PlayerId] += $"<size=45%>=> {Utils.ColorString(UtilsRoleText.GetRoleColor(role), UtilsRoleText.GetRoleName(role))}</size>";
 
-                    if (role is CustomRoles.DemonicSupporter)
+                    if (!AntiBlackout.IsSet)
                     {
+                        if (role is CustomRoles.DemonicSupporter)
+                        {
+                            if (!IsDead)
+                            {
+                                pc.RpcSetRole(RoleTypes.ImpostorGhost, true);
+                            }
+                            else
+                            {
+                                _ = new LateTask(() =>
+                                    {
+                                        if (!GameStates.CalledMeeting)
+                                        {
+                                            pc.RpcSetRole(RoleTypes.ImpostorGhost, true);
+                                        }
+                                    }, 1.4f, "Fix sabotage");
+                            }
+                            return;
+                        }
                         if (!IsDead)
                         {
-                            pc.RpcSetRole(RoleTypes.ImpostorGhost, true);
+                            pc.RpcSetRole(RoleTypes.GuardianAngel, true);
+                            _ = new LateTask(() => pc.RpcResetAbilityCooldown(Sync: true), 0.5f, "GhostRoleResetAbilty");
                         }
                         else
                         {
@@ -94,27 +113,11 @@ namespace TownOfHost.Roles.Ghost
                                 {
                                     if (!GameStates.CalledMeeting)
                                     {
-                                        pc.RpcSetRole(RoleTypes.ImpostorGhost, true);
+                                        pc.RpcSetRole(RoleTypes.GuardianAngel, true);
+                                        _ = new LateTask(() => pc.RpcResetAbilityCooldown(Sync: true), 0.5f, "GhostRoleResetAbilty");
                                     }
                                 }, 1.4f, "Fix sabotage");
                         }
-                        return;
-                    }
-                    if (!IsDead)
-                    {
-                        pc.RpcSetRole(RoleTypes.GuardianAngel, true);
-                        _ = new LateTask(() => pc.RpcResetAbilityCooldown(Sync: true), 0.5f, "GhostRoleResetAbilty");
-                    }
-                    else
-                    {
-                        _ = new LateTask(() =>
-                            {
-                                if (!GameStates.CalledMeeting)
-                                {
-                                    pc.RpcSetRole(RoleTypes.GuardianAngel, true);
-                                    _ = new LateTask(() => pc.RpcResetAbilityCooldown(Sync: true), 0.5f, "GhostRoleResetAbilty");
-                                }
-                            }, 1.4f, "Fix sabotage");
                     }
                 }
             }
@@ -127,14 +130,14 @@ namespace TownOfHost.Roles.Ghost
             var rnd = IRandom.Instance;
             var candidates = new List<PlayerControl>();
             var AP = new List<PlayerControl>(PlayerCatch.AllPlayerControls.Where(x => !x.IsGhostRole() && !x.IsAlive() && (x.Is(data.RoleType) || x.Is(data.SubRoleType)) && !x.CanUseSabotageButton()));
-            var APc = new List<PlayerControl>(PlayerCatch.AllPlayerControls.Where(x => !x.IsGhostRole() && !x.IsAlive() && (x.Is(data.RoleType) || x.Is(data.SubRoleType)) && !x.CanUseSabotageButton()));
+            var APcount = AP.Count;
 
             if (!GhostAssingCount.ContainsKey(data.Role))//データ内なら0
             {
                 GhostAssingCount[data.Role] = 0;
             }
 
-            for (var i = 0; i < APc.Count; i++)
+            for (var i = 0; i < APcount; i++)
             {
                 if (AP.Count == 0) continue;
                 var pc = AP[rnd.Next(AP.Count)];
