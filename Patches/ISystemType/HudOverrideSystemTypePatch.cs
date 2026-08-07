@@ -33,7 +33,7 @@ public static class HudOverrideSystemTypeUpdateSystemPatch
             // マッド属性化時に削除
             (playerRole is SchrodingerCat schrodingerCat && schrodingerCat.AmMadmate);
 
-        if ((isMadmate && !Options.MadmateCanFixComms.GetBool() && !player.Is(CustomRoles.NeuMadmate))
+        if ((isMadmate && !Options.MadmateCanFixComms.GetBool() && !player.Is(CustomRoles.MadWare))
         || (player.Is(CustomRoles.Amanojaku) && !Amanojaku.OptCanFixComms.GetBool())
         || (player.Is(CustomRoles.Clumsy)))
         {

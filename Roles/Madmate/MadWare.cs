@@ -5,21 +5,21 @@ using TownOfHost.Roles.Core.Interfaces;
 
 namespace TownOfHost.Roles.Madmate;
 
-public sealed class NeuMadmate : RoleBase, IKillFlashSeeable, IDeathReasonSeeable
+public sealed class MadWare : RoleBase, IKillFlashSeeable, IDeathReasonSeeable
 {
     public static readonly SimpleRoleInfo RoleInfo =
         SimpleRoleInfo.Create(
-            typeof(NeuMadmate),
-            player => new NeuMadmate(player),
-            CustomRoles.NeuMadmate,
+            typeof(MadWare),
+            player => new MadWare(player),
+            CustomRoles.MadWare,
             () => OptionCanVent.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate,
             CustomRoleTypes.Madmate,
             25000,
             SetupOptionItem,
-            "mw",
+            "MWa",
             OptionSort: (4, 3)
         );
-    public NeuMadmate(PlayerControl player)
+    public MadWare(PlayerControl player)
     : base(
         RoleInfo,
         player,
@@ -56,9 +56,9 @@ public sealed class NeuMadmate : RoleBase, IKillFlashSeeable, IDeathReasonSeeabl
     public bool CanUseAddon;
     enum OptionName
     {
-        NeuMadmateReactorAddPoint, NeuMadmateLightAddPoint, NeuMadmateCommsAddPoint,
-        NeuMadmateKnowImpostorPoint, NeuMadmateCanUseAddon,
-        NeuMadmateRemoveSabotageCooldown, NeuMadmateRemoveSabotagePoint
+        MadWareReactorAddPoint, MadWareLightAddPoint, MadWareCommsAddPoint,
+        MadWareKnowImpostorPoint, MadWareCanUseAddon,
+        MadWareRemoveSabotageCooldown, MadWareRemoveSabotagePoint
     }
 
     byte MyfixAmout;
@@ -67,15 +67,15 @@ public sealed class NeuMadmate : RoleBase, IKillFlashSeeable, IDeathReasonSeeabl
     private static void SetupOptionItem()
     {
         OptionCanVent = BooleanOptionItem.Create(RoleInfo, 10, GeneralOption.CanVent, false, false);
-        ObjectOptionitem.Create(RoleInfo, 11, "NeuMadmate_AddPotint", true, null).SetOptionName(() => "Sabotage Point");
-        OptionReactorAddPoint = IntegerOptionItem.Create(RoleInfo, 12, OptionName.NeuMadmateReactorAddPoint, new(0, 30, 1), 0, false);
-        OptionCommsAddPoint = IntegerOptionItem.Create(RoleInfo, 13, OptionName.NeuMadmateCommsAddPoint, new(0, 30, 1), 1, false);
-        OptionLightSabotageAddPoint = IntegerOptionItem.Create(RoleInfo, 14, OptionName.NeuMadmateLightAddPoint, new(0, 30, 1), 1, false);
-        ObjectOptionitem.Create(RoleInfo, 15, "NeuMadmate_Buff", true, null).SetOptionName(() => "Buff Option");
-        OptionKnowImposotrPoint = IntegerOptionItem.Create(RoleInfo, 16, OptionName.NeuMadmateKnowImpostorPoint, new(0, 100, 1), 2, false).SetZeroNotation(OptionZeroNotation.Off);
-        OptionRemoveSabotageCooldownPoint = IntegerOptionItem.Create(RoleInfo, 17, OptionName.NeuMadmateRemoveSabotagePoint, new(0, 100, 1), 5, false).SetZeroNotation(OptionZeroNotation.Off);
-        OptionRemoveSabotageCooldown = FloatOptionItem.Create(RoleInfo, 18, OptionName.NeuMadmateRemoveSabotageCooldown, new(0.5f, 25f, 0.1f), 3, false, OptionRemoveSabotageCooldownPoint).SetValueFormat(OptionFormat.Seconds);
-        OptionAddAddon = IntegerOptionItem.Create(RoleInfo, 19, OptionName.NeuMadmateCanUseAddon, new(0, 100, 1), 3, false).SetZeroNotation(OptionZeroNotation.Off);
+        ObjectOptionitem.Create(RoleInfo, 11, "MadWare_AddPotint", true, null).SetOptionName(() => "Sabotage Point");
+        OptionReactorAddPoint = IntegerOptionItem.Create(RoleInfo, 12, OptionName.MadWareReactorAddPoint, new(0, 30, 1), 0, false);
+        OptionCommsAddPoint = IntegerOptionItem.Create(RoleInfo, 13, OptionName.MadWareCommsAddPoint, new(0, 30, 1), 1, false);
+        OptionLightSabotageAddPoint = IntegerOptionItem.Create(RoleInfo, 14, OptionName.MadWareLightAddPoint, new(0, 30, 1), 1, false);
+        ObjectOptionitem.Create(RoleInfo, 15, "MadWare_Buff", true, null).SetOptionName(() => "Buff Option");
+        OptionKnowImposotrPoint = IntegerOptionItem.Create(RoleInfo, 16, OptionName.MadWareKnowImpostorPoint, new(0, 100, 1), 2, false).SetZeroNotation(OptionZeroNotation.Off);
+        OptionRemoveSabotageCooldownPoint = IntegerOptionItem.Create(RoleInfo, 17, OptionName.MadWareRemoveSabotagePoint, new(0, 100, 1), 5, false).SetZeroNotation(OptionZeroNotation.Off);
+        OptionRemoveSabotageCooldown = FloatOptionItem.Create(RoleInfo, 18, OptionName.MadWareRemoveSabotageCooldown, new(0.5f, 25f, 0.1f), 3, false, OptionRemoveSabotageCooldownPoint).SetValueFormat(OptionFormat.Seconds);
+        OptionAddAddon = IntegerOptionItem.Create(RoleInfo, 19, OptionName.MadWareCanUseAddon, new(0, 100, 1), 3, false).SetZeroNotation(OptionZeroNotation.Off);
         RoleAddAddons.Create(RoleInfo, 30, MadMate: true, DefaaultOn: true);
     }
     public override void ApplyGameOptions(IGameOptions opt)
@@ -98,12 +98,12 @@ public sealed class NeuMadmate : RoleBase, IKillFlashSeeable, IDeathReasonSeeabl
         if (player.PlayerId == Player.PlayerId)
         {
             MyfixAmout = amount;
-            Logger.Info($"{player.PlayerId},Fix: {MyfixAmout}", "NeuMadmate");
+            Logger.Info($"{player.PlayerId},Fix: {MyfixAmout}", "MadWare");
         }/* 別の人が修復した判定が来たら消すのも考えたが2人同時で修復などで検知できなさそう。
         else if (MyfixAmout == amount)
         {
             MyfixAmout = byte.MaxValue;
-            Logger.Info($"{player.PlayerId},Reset: {MyfixAmout}", "NeuMadmate");
+            Logger.Info($"{player.PlayerId},Reset: {MyfixAmout}", "MadWare");
         }*/
     }
 
@@ -133,7 +133,7 @@ public sealed class NeuMadmate : RoleBase, IKillFlashSeeable, IDeathReasonSeeabl
             {
                 CheckAbilityRelese(oldpoint);
                 Player.RpcProtectedMurderPlayer();
-                UtilsGameLog.AddGameLog("NeuMadmate", string.Format(GetString("NeuMadmateGameLog"), HavePoint - oldpoint, HavePoint));
+                UtilsGameLog.AddGameLog("MadWare", string.Format(GetString("MadWareGameLog"), HavePoint - oldpoint, HavePoint));
                 SendRpc();
             }
         }
@@ -142,26 +142,26 @@ public sealed class NeuMadmate : RoleBase, IKillFlashSeeable, IDeathReasonSeeabl
 
     void CheckAbilityRelese(int oldpoint)
     {
-        Logger.Info($"{Player.PlayerId}-{oldpoint}:{HavePoint}", "NeuMadmate");
+        Logger.Info($"{Player.PlayerId}-{oldpoint}:{HavePoint}", "MadWare");
         bool IsSendNotifyRole = false;
         // Offではない 旧ポイントでは付与されていない 新ポイントでは超した
         if (AddAddonPoint is not 0 && oldpoint < AddAddonPoint && AddAddonPoint <= HavePoint)
         {
             IsSendNotifyRole = true;
             CanUseAddon = true;
-            Logger.Info($"{Player.PlayerId}:AddAddon", "NeuMadmate");
+            Logger.Info($"{Player.PlayerId}:AddAddon", "MadWare");
         }
         if (RemoveSabotageCooldownPoint is not 0 && oldpoint < RemoveSabotageCooldownPoint && RemoveSabotageCooldownPoint <= HavePoint)
         {
             IsSendNotifyRole = true;
             RemoveSabotageCooldown -= OptionRemoveSabotageCooldown.GetFloat();
-            Logger.Info($"{Player.PlayerId}:SabotageCooldown{RemoveSabotageCooldown}", "NeuMadmate");
+            Logger.Info($"{Player.PlayerId}:SabotageCooldown{RemoveSabotageCooldown}", "MadWare");
         }
         if (KnowImposotrPoint is not 0 && oldpoint < KnowImposotrPoint && KnowImposotrPoint <= HavePoint)
         {
             IsSendNotifyRole = true;
             IsKnowImposotr = true;
-            Logger.Info($"{Player.PlayerId}:KnowImpostor", "NeuMadmate");
+            Logger.Info($"{Player.PlayerId}:KnowImpostor", "MadWare");
         }
         if (IsSendNotifyRole)
             _ = new LateTask(() => UtilsNotifyRoles.NotifyRoles(SpecifySeer: Player), 1f, "NeuMadNotifyRole", true);

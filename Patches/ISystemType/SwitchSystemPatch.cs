@@ -34,7 +34,7 @@ public static class SwitchSystemUpdateSystemPatch
             player.Is(CustomRoleTypes.Madmate) ||
             // マッド属性化時に削除
             (roleclass is SchrodingerCat schrodingerCat && schrodingerCat.AmMadmate);
-        if ((isMadmate && !Options.MadmateCanFixLightsOut.GetBool() && !player.Is(CustomRoles.NeuMadmate))
+        if ((isMadmate && !Options.MadmateCanFixLightsOut.GetBool() && !player.Is(CustomRoles.MadWare))
         || (player.Is(CustomRoles.Amanojaku) && !Amanojaku.OptCanFixLightsOut.GetBool())
         || player.Is(CustomRoles.Water))
         {
