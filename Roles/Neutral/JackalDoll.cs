@@ -25,8 +25,21 @@ public sealed class JackalDoll : RoleBase
             (1, 4),
                 assignInfo: new RoleAssignInfo(CustomRoles.Jackaldoll, CustomRoleTypes.Neutral)
                 {
-                    AssignCountRule = new(0, 15, 1)
+                    AssignCountRule = new(0, 15, 1),
+                    // 通常配役は，ジャッカルが存在する場合のみ排出する
+                    IsInitiallyAssignableCallBack = () =>
+                    {
+                        var restrict = OptionOnlyWithJackal?.GetBool() ?? false;
+                        if (!restrict) return true;
+                        return CustomRoles.Jackal.IsPresent()
+                            || CustomRoles.JackalAlien.IsPresent()
+                            || CustomRoles.JackalMafia.IsPresent()
+                            || CustomRoles.JackalWolf.IsPresent()
+                            || CustomRoles.JackalHadouHo.IsPresent();
+                    }
                 },
+
+
             from: From.TownOfHost_K
         );
     public JackalDoll(PlayerControl player)
@@ -46,6 +59,7 @@ public sealed class JackalDoll : RoleBase
     static OptionItem OptionCountAsKillerOnlyWhenPromotionEnabled;
     static OptionItem OptionChangeRole;
     static OptionItem OptionSideKickMaxmim;
+    static OptionItem OptionOnlyWithJackal;
     static OptionItem CanVent;
     static OptionItem VentCool;
     static OptionItem VentIntime;
@@ -107,6 +121,7 @@ public sealed class JackalDoll : RoleBase
         VentCool = FloatOptionItem.Create(RoleInfo, 17, GeneralOption.Cooldown, new(0f, 180f, 0.5f), 0f, false, CanVent).SetValueFormat(OptionFormat.Seconds);
         VentIntime = FloatOptionItem.Create(RoleInfo, 18, GeneralOption.EngineerInVentCooldown, new(0f, 180f, 0.5f), 0f, false, CanVent).SetZeroNotation(OptionZeroNotation.Infinity).SetValueFormat(OptionFormat.Seconds);
         CanVentMove = BooleanOptionItem.Create(RoleInfo, 19, "MadmateCanMovedByVent", false, false, CanVent);
+        OptionOnlyWithJackal = BooleanOptionItem.Create(RoleInfo, 21, "JackaldollOnlyWithJackal", false, false);
         RoleAddAddons.Create(RoleInfo, 20, MadMate: true);
     }
     public static bool CountAsJackalKiller => OptionCountAsJackalKiller?.GetBool() == true;
@@ -275,7 +290,7 @@ public sealed class JackalDoll : RoleBase
 
         var id = ExiledPlayerInfo?.PlayerId ?? byte.MaxValue;
 
-        if (PlayerCatch.AllAlivePlayerControls.Any(x => (x.Is(CustomRoles.Jackal) || x.Is(CustomRoles.JackalMafia) || x.Is(CustomRoles.JackalAlien) || BossAndSidekicks.ContainsKey(x.PlayerId)) && x.PlayerId != id)) return;
+        if (PlayerCatch.AllAlivePlayerControls.Any(x => (x.Is(CustomRoles.Jackal) || x.Is(CustomRoles.JackalMafia) || x.Is(CustomRoles.JackalAlien) || x.Is(CustomRoles.JackalWolf) || BossAndSidekicks.ContainsKey(x.PlayerId)) && x.PlayerId != id)) return;
 
         foreach (var Jd in PlayerCatch.AllAlivePlayerControls.Where(x => x.Is(CustomRoles.Jackaldoll) && !BossAndSidekicks.ContainsKey(x.PlayerId)))
         {
@@ -283,9 +298,12 @@ public sealed class JackalDoll : RoleBase
             {
                 case Diemode.FollowingSuicide:
                     //ガードなどは無視
-                    PlayerState.GetByPlayerId(Jd.PlayerId).DeathReason = CustomDeathReason.FollowingSuicide;
-                    Jd.RpcExileV3();
-                    PlayerState.GetByPlayerId(Jd.PlayerId).SetDead();
+                    _ = new LateTask(() =>
+                    {
+                        PlayerState.GetByPlayerId(Jd.PlayerId).DeathReason = CustomDeathReason.FollowingSuicide;
+                        Jd.RpcExileV3();
+                        PlayerState.GetByPlayerId(Jd.PlayerId).SetDead();
+                    }, 3, "JackalDoolFollowSuicide", true);
                     break;
                 case Diemode.ChangeRole:
                     UtilsGameLog.AddGameLog($"JackalDool", UtilsName.GetPlayerColor(Jd) + ":  " + string.Format(GetString("Executioner.ch"), Utils.ColorString(UtilsRoleText.GetRoleColor(CustomRoles.Jackal), GetString("Jackal")), Translator.GetRoleString($"{ChangeRoles[OptionChangeRole.GetValue()]}").Color(UtilsRoleText.GetRoleColor(ChangeRoles[OptionChangeRole.GetValue()]))));

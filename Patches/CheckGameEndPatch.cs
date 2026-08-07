@@ -33,8 +33,11 @@ namespace TownOfHost
 
             if (predicate == null)
             {
-                Logger.Warn("ゲーム終了判定が未初期化のため、現在のゲームモードに合わせて初期化します", "GameEndChecker");
-                EnsurePredicate();
+                if (CustomWinnerHolder.WinnerTeam == CustomWinner.Default)
+                {
+                    Logger.Warn("ゲーム終了判定が未初期化のため、現在のゲームモードに合わせて初期化します", "GameEndChecker");
+                    EnsurePredicate();
+                }
                 return false;
             }
 

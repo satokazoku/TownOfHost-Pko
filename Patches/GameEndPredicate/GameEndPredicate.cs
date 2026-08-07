@@ -34,7 +34,8 @@ public abstract class GameEndPredicate
     public virtual bool CheckGameEndBySabotage(out GameOverReason reason)
     {
         reason = GameOverReason.ImpostorsByKill;
-        if (ShipStatus.Instance.Systems == null || GameStates.IsMeeting) return false;
+        if (ShipStatus.Instance.Systems == null) return false;
+        if (GameStates.IsMeeting || GameStates.CalledMeeting) return false;
 
         // TryGetValueは使用不可
         var systems = ShipStatus.Instance.Systems;

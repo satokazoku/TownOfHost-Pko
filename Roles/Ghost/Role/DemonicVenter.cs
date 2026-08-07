@@ -33,17 +33,12 @@ namespace TownOfHost.Roles.Ghost
             {
                 pc.RpcResetAbilityCooldown();
 
-                Dictionary<Vent, float> Distance = new();
-                Vector2 position = target.transform.position;
-                var pos = pc.transform.position;
-                //一番近いベントを調べる
-                foreach (var vent in ShipStatus.Instance.AllVents)
-                    Distance.Add(vent, Vector2.Distance(position, vent.transform.position));
-                var ve = Distance.OrderByDescending(x => x.Value).Last().Key;
+                var pos = pc.GetTruePosition();
+                var vent = ShipStatus.Instance.AllVents.OrderBy(v => (pc.transform.position - v.transform.position).magnitude).First();
                 foreach (var pl in PlayerCatch.AllPlayerControls)
                 {
-                    pc.RpcSnapToForced(ve.transform.position);
-                    _ = new LateTask(() => pc.MyPhysics.RpcExitVent(ve.Id), 0.2f, "DemonicVenter3");
+                    pc.RpcSnapToForced(vent.transform.position);
+                    _ = new LateTask(() => pc.MyPhysics.RpcBootFromVent(vent.Id), 0.2f, "DemonicVenter3");
                     _ = new LateTask(() => pc.RpcSnapToForced(pos), 0.6f, "DemonicVenter3");
                 }
                 Achievements.RpcCompleteAchievement(pc.PlayerId, 1, achievements[0]);

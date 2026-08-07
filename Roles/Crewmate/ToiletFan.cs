@@ -19,6 +19,11 @@ public sealed class ToiletFan : RoleBase
             "#5f5573",
             (9, 3),
             introSound: () => GetIntroSound(RoleTypes.Crewmate),
+            assignInfo: new RoleAssignInfo(CustomRoles.ToiletFan, CustomRoleTypes.Crewmate)
+            {
+                // トイレファンをエアシップ限定にするオプションがONのときのみエアシップで初期配役可能にする
+                IsInitiallyAssignableCallBack = () => (OptionOnlyAirship?.GetBool() ?? false) ? Main.NormalOptions.MapId is 4 : true
+            },
             from: From.SuperNewRoles
         );
     public ToiletFan(PlayerControl player)
@@ -36,9 +41,11 @@ public sealed class ToiletFan : RoleBase
         AURoleOptions.EngineerInVentMaxTime = 1;
     }
     private static OptionItem OptionCooldown;
+    private static OptionItem OptionOnlyAirship;
     enum OptionName
     {
-        Cooldown
+        Cooldown,
+        OnlyAirship
     }
     private static float Cooldown;
     int flug;
@@ -46,6 +53,7 @@ public sealed class ToiletFan : RoleBase
     {
         OptionCooldown = FloatOptionItem.Create(RoleInfo, 10, OptionName.Cooldown, new(1f, 30f, 1f), 5f, false)
             .SetValueFormat(OptionFormat.Seconds);
+        OptionOnlyAirship = BooleanOptionItem.Create(RoleInfo, 11, OptionName.OnlyAirship, false, false);
     }
     public override bool OnEnterVent(PlayerPhysics physics, int ventId)
     {

@@ -108,6 +108,7 @@ namespace TownOfHost
             //廃村
             if (GetKeysDown(KeyCode.Return, KeyCode.L, KeyCode.LeftShift))
             {
+                if (CustomSpawnEditor.ActiveEditMode) return;
                 if (Main.ForcedGameEndColl != 0 && !GameStates.IsLobby)
                 {
                     GameManager.Instance.enabled = false;

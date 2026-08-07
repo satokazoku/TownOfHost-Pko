@@ -72,9 +72,15 @@ public sealed class Teleporter : RoleBase, IImpostor, IUsePhantomButton
     bool IUsePhantomButton.IsPhantomRole => true;
     bool IUsePhantomButton.IsresetAfterKill => false;
 
+    public override void Add()
+    {
+        PetActionManager.Register(Player.PlayerId, OnPetUsed);
+    }
+
     public override void OnDestroy()
     {
         CustomRoleManager.LowerOthers.Remove(GetLowerTextOthers);
+        PetActionManager.Unregister(Player.PlayerId);
     }
 
     public override void ApplyGameOptions(IGameOptions opt)
@@ -113,19 +119,32 @@ public sealed class Teleporter : RoleBase, IImpostor, IUsePhantomButton
         AdjustKillCooldown = true;
         ResetCooldown = true;
 
-        if (!AmongUsClient.Instance.AmHost) { ResetCooldown = false; return; }
-        if (!Player.IsAlive()) { ResetCooldown = false; return; }
-        if (pendingTimer >= 0f) { ResetCooldown = false; return; }
+        if (!TryStartTeleport())
+            ResetCooldown = false;
+    }
+
+    private void OnPetUsed()
+    {
+        if (!AmongUsClient.Instance.AmHost) return;
+        TryStartTeleport();
+    }
+
+    private bool TryStartTeleport()
+    {
+        if (!AmongUsClient.Instance.AmHost) return false;
+        if (!Player.IsAlive()) return false;
+        if (pendingTimer >= 0f) return false;
 
         var candidates = PlayerCatch.AllAlivePlayerControls
             .Where(pc => pc.PlayerId != Player.PlayerId)
             .ToArray();
-        if (candidates.Length == 0) { ResetCooldown = false; return; }
+        if (candidates.Length == 0) return false;
 
         var dest = candidates[IRandom.Instance.Next(candidates.Length)];
         destPlayerId = dest.PlayerId;
         pendingTimer = WaitingTime;
 
+        Player.RpcResetAbilityCooldown(Sync: true);
         SendRpc();
         UtilsNotifyRoles.NotifyRoles();
 
@@ -134,6 +153,8 @@ public sealed class Teleporter : RoleBase, IImpostor, IUsePhantomButton
 
         if (WaitingTime <= 0f)
             ExecuteTeleport();
+
+        return true;
     }
 
     public override void OnFixedUpdate(PlayerControl player)

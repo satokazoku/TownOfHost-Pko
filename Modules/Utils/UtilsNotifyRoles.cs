@@ -277,7 +277,10 @@ namespace TownOfHost
                             //seerに関わらず発動するMark
                             TargetMark.Append(CustomRoleManager.GetMarkOthers(seer, target, false));
 
-                            //ハートマークを付ける(相手に)
+                            // Cupid視点でCupidLoversにハートを付ける
+                            if (seer.Is(CustomRoles.Cupid) && target.Is(CustomRoles.CupidLovers))
+                                TargetMark.Append(ColorString(GetRoleColor(CustomRoles.CupidLovers), "♥"));
+
                             var seerri = seer.GetLoverRole();
                             var tageri = target.GetLoverRole();
                             var seerisone = seerSubrole.Contains(CustomRoles.OneLove);

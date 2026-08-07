@@ -70,6 +70,7 @@ public sealed class Observer : RoleBase
     {
         if (RemainingMonitoring <= 0) return;
         if (ObserverTarget == byte.MaxValue) return;
+        if (Player.IsAlive() is false) return;
 
         var target = PlayerCatch.GetPlayerById(ObserverTarget);
         if (target == null) return;

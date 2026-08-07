@@ -54,7 +54,8 @@ namespace TownOfHost
                         || (Options.InsiderMode.GetBool() && seerrole.IsImpostor())
                         || (Options.CanSeeImpostorRole.GetBool() && seerrole.IsImpostor() && seen.GetCustomRole().IsImpostor())
                         || seen.Is(CustomRoles.MadonnaLovers) && seer.Is(CustomRoles.MadonnaLovers) && Madonna.IsKnowRole
-                        || seen.Is(CustomRoles.CupidLovers) && seer.Is(CustomRoles.CupidLovers) && Cupid.IsKnowRole
+                        || (seen.Is(CustomRoles.CupidLovers) && seer.Is(CustomRoles.CupidLovers) && Cupid.IsKnowRole)
+                        || (seen.Is(CustomRoles.CupidLovers) && seer.Is(CustomRoles.Cupid) && Cupid.IsKnowRole)
                         ;
 
             foreach (var data in ColorLovers.Alldatas.Values)

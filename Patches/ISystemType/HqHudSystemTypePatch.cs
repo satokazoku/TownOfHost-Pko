@@ -35,9 +35,9 @@ public static class HqHudSystemTypeUpdateSystemPatch
             // マッド属性化時に削除
             (playerRole is SchrodingerCat schrodingerCat && schrodingerCat.AmMadmate);
 
-        if ((isMadmate && !Options.MadmateCanFixComms.GetBool())
+        if ((isMadmate && !Options.MadmateCanFixComms.GetBool() && !player.Is(CustomRoles.MadWare))
         || (player.Is(CustomRoles.Amanojaku) && !Amanojaku.OptCanFixComms.GetBool())
-        || (player.Is(CustomRoles.Clumsy)))
+        || player.Is(CustomRoles.Clumsy))
         {
             return false;
         }
@@ -48,11 +48,15 @@ public static class HqHudSystemTypeUpdateSystemPatch
 
         if (RoleAddAddons.GetRoleAddon(player.GetCustomRole(), out var data, player, subrole: CustomRoles.Clumsy) && data.GiveClumsy.GetBool()) return false;
 
-        if (Roles.AddOns.Common.Amnesia.CheckAbility(player))
+        if (Amnesia.CheckAbility(player))
             if (playerRole is ISystemTypeUpdateHook systemTypeUpdateHook && !systemTypeUpdateHook.UpdateHqHudSystem(__instance, amount))
             {
                 return false;
             }
+        foreach (var roleclass in CustomRoleManager.AllActiveRoles)
+        {
+            roleclass.Value.OnFixSabotage(player, Main.SabotageType, amount);
+        }
         return true;
     }
     public static void Postfix()

@@ -785,6 +785,7 @@ namespace TownOfHost
                     case "/sw":
                         canceled = true;
                         if (!GameStates.IsInGame) break;
+                        if (CustomSpawnEditor.ActiveEditMode) break;
                         subArgs = args.Length < 2 ? "" : args[1];
                         switch (subArgs)
                         {
@@ -975,6 +976,7 @@ namespace TownOfHost
                     case "/dis":
                         canceled = true;
                         if (!GameStates.InGame) break;
+                        if (CustomSpawnEditor.ActiveEditMode) break;
                         subArgs = args.Length < 2 ? "" : args[1];
                         switch (subArgs)
                         {
@@ -1778,6 +1780,7 @@ namespace TownOfHost
                     case "/forceend":
                     case "/fe":
                         canceled = true;
+                        if (CustomSpawnEditor.ActiveEditMode) break;
                         if (GameStates.InGame)
                             SendMessage(GetString("ForceEndText"));
                         GameManager.Instance.enabled = false;
@@ -2095,6 +2098,7 @@ namespace TownOfHost
                                     CustomWinnerHolder.WinnerIds.Add(wid);
                                     break;
                                 case "win":
+                                    if (CustomSpawnEditor.ActiveEditMode) break;
                                     GameManager.Instance.LogicFlow.CheckEndCriteria();
                                     GameManager.Instance.RpcEndGame(GameOverReason.ImpostorsByKill, false);
                                     break;
@@ -2272,12 +2276,14 @@ namespace TownOfHost
             {
                 SendMessage(GetString("Error.CommandFailed"), player.PlayerId);
             }
-            if (args[0] != "/cmd" || args.Length <= 1) return;//cmdが無い場合は処理をしない
+            if (args[0].StartsWith("/cmd") is false) return;//cmdが無い場合は処理をしない
 
             if (GuessManager.GuesserMsg(player, text)) { canceled = true; return; }
 
-            /*
-            args = text.ToLower().Split(' ');*/
+            canceled = true;
+
+            if (args[0] != "/cmd" || args.Length <= 1) return;
+            /*args = text.ToLower().Split(' ');*/
             args = args.Skip(1).ToArray();
             if (args[0].StartsWith("/") is false) args[0] = $"/{args[0]}";
 

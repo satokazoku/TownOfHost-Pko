@@ -3,6 +3,7 @@ using Hazel;
 
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+using UnityEngine;
 
 namespace TownOfHost.Roles.Impostor;
 
@@ -35,6 +36,9 @@ public sealed class Mare : RoleBase, IImpostor
     {
         KillCooldownInLightsOut = OptionKillCooldownInLightsOut.GetFloat();
         SpeedInLightsOut = OptionSpeedInLightsOut.GetFloat();
+        CanSeeNameColor = OptionCanSeeNameColor.GetBool();
+        AllCanKill = OptionAllCanKill.GetBool();
+        NomalKillCooldown = NowKillCoolDown = OptionKillCooldown.GetFloat();
 
         IsActivateKill = false;
         IsAccelerated = false;
@@ -45,9 +49,9 @@ public sealed class Mare : RoleBase, IImpostor
 
     private static OptionItem OptionKillCooldownInLightsOut;
     private static OptionItem OptionSpeedInLightsOut;
-    private static OptionItem OptionCanSeeNameColor;
-    private static OptionItem OptionAllCanKill;
-    private static OptionItem OptionKillCooldown;
+    private static OptionItem OptionCanSeeNameColor; static bool CanSeeNameColor;
+    private static OptionItem OptionAllCanKill; static bool AllCanKill;
+    private static OptionItem OptionKillCooldown; static float NomalKillCooldown;
     private static OptionItem OptionDarkKilldis;
     enum OptionName
     {
@@ -61,6 +65,7 @@ public sealed class Mare : RoleBase, IImpostor
     private float SpeedInLightsOut;
     private static bool IsActivateKill;
     private bool IsAccelerated;  //加速済みかフラグ
+    float NowKillCoolDown;
 
     public static void SetupCustomOption()
     {
@@ -73,8 +78,8 @@ public sealed class Mare : RoleBase, IImpostor
             .SetValueFormat(OptionFormat.Seconds);
         OptionDarkKilldis = StringOptionItem.Create(RoleInfo, 15, OptionName.MareDarkKilldistance, EnumHelper.GetAllNames<OverrideKilldistance.KillDistance>(), 0, false);
     }
-    public bool CanUseKillButton() => IsActivateKill || OptionAllCanKill.GetBool();
-    public float CalculateKillCooldown() => IsActivateKill ? KillCooldownInLightsOut : OptionKillCooldown.GetFloat();
+    public bool CanUseKillButton() => IsActivateKill || AllCanKill;
+    public float CalculateKillCooldown() => IsActivateKill ? KillCooldownInLightsOut : NomalKillCooldown;
     public override void ApplyGameOptions(IGameOptions opt)
     {
         if (IsActivateKill && !IsAccelerated)
@@ -102,8 +107,7 @@ public sealed class Mare : RoleBase, IImpostor
         if (AmongUsClient.Instance.AmHost)
         {
             SendRPC();
-            Player.SyncSettings();
-            _ = new LateTask(() => Player.SetKillCooldown(delay: true), Main.LagTime, "MareKillCool");
+            _ = new LateTask(() => Player.SetKillCooldown(IsActivateKill ? -1 : (1 < NowKillCoolDown ? NowKillCoolDown : 0.5f), delay: true), 1f, "MareKillCool");
             UtilsNotifyRoles.NotifyRoles();
         }
     }
@@ -119,12 +123,19 @@ public sealed class Mare : RoleBase, IImpostor
 
     public override void OnFixedUpdate(PlayerControl player)
     {
-        if (GameStates.IsInTask && IsActivateKill)
+        if (GameStates.IsInTask)
         {
-            if (!Utils.IsActive(SystemTypes.Electrical))
+            if (IsActivateKill)
             {
-                //停電解除されたらキルモード解除
-                ActivateKill(false);
+                if (!Utils.IsActive(SystemTypes.Electrical))
+                {
+                    //停電解除されたらキルモード解除
+                    ActivateKill(false);
+                }
+            }
+            else if (0 < NowKillCoolDown)//停電中は通常キルクールを進めない
+            {
+                NowKillCoolDown -= Time.fixedDeltaTime;
             }
         }
     }
@@ -142,15 +153,16 @@ public sealed class Mare : RoleBase, IImpostor
                 {
                     ActivateKill(true);
                 }
-            }, OptionCanSeeNameColor.GetBool() ? 0.5f : 4.0f, "Mare Activate Kill");
+            }, CanSeeNameColor ? 0.5f : 4.0f, "Mare Activate Kill");
         }
         return true;
     }
     public static bool KnowTargetRoleColor(PlayerControl target, bool isMeeting)
-        => OptionCanSeeNameColor.GetBool() && !isMeeting && IsActivateKill && target.Is(CustomRoles.Mare);
+        => CanSeeNameColor && !isMeeting && IsActivateKill && target.Is(CustomRoles.Mare);
 
     void IKiller.OnMurderPlayerAsKiller(MurderInfo info)
     {
+        NowKillCoolDown = NomalKillCooldown;
         if (Utils.IsActive(SystemTypes.Electrical))
             flugn1++;
         if (flugn1 is 2) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);
@@ -168,6 +180,7 @@ public sealed class Mare : RoleBase, IImpostor
     }
     public override void AfterMeetingTasks()
     {
+        NowKillCoolDown = NomalKillCooldown;
         flugn1 = 0;
     }
     int flugn1;

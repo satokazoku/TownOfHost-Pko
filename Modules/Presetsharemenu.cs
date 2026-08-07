@@ -1,3 +1,4 @@
+/*
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -274,7 +275,7 @@ public static class PresetShareMenu
         var btn = panel.gameObject.AddComponent<PassiveButton>();
         btn.Colliders = new Collider2D[] { col };
         btn.OnClick = new();
-        btn.OnClick.AddListener((Action)(() => { /* パネル自身をクリックしても何もしない=背後に貫通させない */ }));
+        btn.OnClick.AddListener((Action)(() => {　}));
         btn.OnMouseOver = new();
         btn.OnMouseOut = new();
         // sortingOrder は SpriteRenderer 側で既に設定済み。念のため確実に前面に。
@@ -722,3 +723,4 @@ public static class PresetShareMenu
         });
     }
 }
+*/

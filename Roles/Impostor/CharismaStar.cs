@@ -199,7 +199,7 @@ public sealed class CharismaStar : RoleBase, IImpostor, IUsePhantomButton, IDoub
             }
 
             // ベントに集合
-            target.MyPhysics.RpcExitVent(GetNearestVent().Id);
+            target.MyPhysics.RpcBootFromVent(GetNearestVent().Id);
             count++;
         }
         if (count == PlayerCatch.AllAlivePlayersCount) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);

@@ -191,8 +191,7 @@ namespace TownOfHost
                 {
                     foreach (var kvp in Options.CustomRoleSpawnChances)
                     {
-                        if (!Event.CheckRole(kvp.Key)) continue;
-                        AddRoleOption(kvp);
+                        if (AddRoleOption(kvp) is false) continue;
 
                         if (!kvp.Key.IsEnable()) continue;
 
@@ -206,10 +205,9 @@ namespace TownOfHost
                         }
                     }
 
-                    void AddRoleOption(KeyValuePair<CustomRoles, IntegerOptionItem> kvp, bool isadd = false)
+                    bool AddRoleOption(KeyValuePair<CustomRoles, IntegerOptionItem> kvp, bool isadd = false)
                     {
-                        if (!Event.CheckRole(kvp.Key)) return;
-                        if ((!kvp.Key.IsEnable() && !isadd) || kvp.Value.IsHiddenOn(Options.CurrentGameMode) || (kvp.Value.IsEnabled?.Invoke() == false)) return;
+                        if ((!kvp.Key.IsEnable() && !isadd) || kvp.Value.IsHiddenOn(Options.CurrentGameMode) || (kvp.Value.IsEnabled?.Invoke() == false)) return false;
                         sb.Append('\n');
                         sb.Append($"</size><size=100%>{UtilsRoleText.GetCombinationName(kvp.Key)}: {kvp.Value.GetString()}×{kvp.Key.GetCount()}</size>\n<size=80%>");
                         ShowChildren(kvp.Value, ref sb, UtilsRoleText.GetRoleColor(kvp.Key).ShadeColor(-0.5f), 1);
@@ -220,6 +218,7 @@ namespace TownOfHost
                         {
                             sb.Append($"{ruleFooter}{Options.CanMakeMadmateCount.GetName()}: {Options.CanMakeMadmateCount.GetString()}\n");
                         }
+                        return true;
                     }
                 }
                 else flug = true;

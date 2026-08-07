@@ -76,6 +76,17 @@ public sealed class EvilLinker : RoleBase, IImpostor, IUsePhantomButton
     {
         AdjustKillCooldown = false;
         ResetCooldown = false;
+
+        if (!Player.IsAlive()) return;
+        if (cooldownTimer > 0f) return;
+
+        if (!AmongUsClient.Instance.AmHost)
+        {
+            SendActionRpc();
+            return;
+        }
+
+        PerformPlacePortal();
     }
 
     class LinkPair

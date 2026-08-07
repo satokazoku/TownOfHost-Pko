@@ -97,13 +97,13 @@ namespace TownOfHost
                         if (__instance.CanUseSabotageButton())
                             _ = new LateTask(() =>
                             {
-                                if (!GameStates.CalledMeeting)
+                                if (!GameStates.CalledMeeting && !AntiBlackout.IsSet)
                                 {
                                     __instance.RpcSetRole(RoleTypes.ImpostorGhost, true);
                                 }
-                            }, 1.4f, "Fix sabotage", true);
+                            }, 0.2f, "Fix sabotage", true);
                     }
-                    _ = new LateTask(() => GhostRoleAssingData.AssignAddOnsFromList(), 1.4f, "Fix sabotage", true);
+                    GhostRoleAssingData.AssignAddOnsFromList();
                 }
             }
         }

@@ -55,6 +55,23 @@ public sealed class EvilMoving : RoleBase, IImpostor, IUsePhantomButton
     bool IUsePhantomButton.IsresetAfterKill => false;
     bool IUsePhantomButton.UseOneclickButton => true;
 
+    void IUsePhantomButton.OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
+    {
+        AdjustKillCooldown = false;
+        ResetCooldown = false;
+
+        if (!Player.IsAlive()) return;
+        if (cooldownLeft > 0f) return;
+
+        if (!AmongUsClient.Instance.AmHost)
+        {
+            SendActionRpc();
+            return;
+        }
+
+        OnPet();
+    }
+
     public override void OnSpawn(bool initialState = false)
     {
         cooldownLeft = TeleportCooldown + 1.5f;
@@ -143,6 +160,8 @@ public sealed class EvilMoving : RoleBase, IImpostor, IUsePhantomButton
     void SendRpc()
     {
         using var sender = CreateSender();
+        // rpcType 0 = state sync
+        sender.Writer.Write((byte)0);
         sender.Writer.Write(hasMarked);
         sender.Writer.Write(cooldownLeft);
         sender.Writer.Write(markedPos.HasValue);
@@ -152,15 +171,33 @@ public sealed class EvilMoving : RoleBase, IImpostor, IUsePhantomButton
             sender.Writer.Write(markedPos.Value.y);
         }
     }
+    void SendActionRpc()
+    {
+        using var sender = CreateSender();
+        sender.Writer.Write((byte)1);
+    }
 
     public override void ReceiveRPC(MessageReader reader)
     {
-        hasMarked = reader.ReadBoolean();
-        cooldownLeft = reader.ReadSingle();
-        bool hasPos = reader.ReadBoolean();
-        markedPos = hasPos
-            ? new Vector2(reader.ReadSingle(), reader.ReadSingle())
-            : null;
+        byte rpcType = reader.ReadByte();
+
+        if (rpcType == 0)
+        {
+            hasMarked = reader.ReadBoolean();
+            cooldownLeft = reader.ReadSingle();
+            bool hasPos = reader.ReadBoolean();
+            markedPos = hasPos
+                ? new Vector2(reader.ReadSingle(), reader.ReadSingle())
+                : null;
+        }
+        else if (rpcType == 1)
+        {
+            // client -> host action trigger
+            if (AmongUsClient.Instance.AmHost)
+            {
+                OnPet();
+            }
+        }
     }
     public override string GetAbilityButtonText() => GetString("テレポート");
 

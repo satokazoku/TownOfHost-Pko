@@ -95,7 +95,8 @@ public static class GuessManager
             {
                 return true;
             }
-            if (GameStates.ExiledAnimate)
+            if (GameStates.ExiledAnimate ||
+            ((MeetingHud.Instance?.discussionTimer ?? 500) - Main.NormalOptions.DiscussionTime >= Main.NormalOptions.VotingTime - 3))
             {
                 Utils.SendMessage(GetString("GuessErrorTuiho"), pc.PlayerId, $"<#ab80c2>{GetString("GuessErrorTuihoTitle")}</color>");
                 return true;

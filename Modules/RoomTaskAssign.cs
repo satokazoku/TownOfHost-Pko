@@ -90,6 +90,15 @@ public class RoomTaskAssign
         if (RoomArrow != Vector2.zero) GetArrow.Remove(playerid, RoomArrow);
 
         RoomArrow = TaskPSR.transform.position;
+        if (Main.NormalOptions.MapId is 4)//矢印が変なところにある場所の応急手当。
+        {
+            switch (TaskPSR.RoomId)
+            {
+                case SystemTypes.Brig: RoomArrow = new Vector2(-0.7f, 8.5f); break;
+                case SystemTypes.VaultRoom: RoomArrow = new Vector2(-8.9f, 12.2f); break;
+                case SystemTypes.Ventilation: RoomArrow = new Vector2(27, -1); break;
+            }
+        }
         GetArrow.Add(playerid, RoomArrow);
         TaskRoom = TaskPSR.RoomId;
 

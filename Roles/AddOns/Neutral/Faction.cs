@@ -21,6 +21,7 @@ class Faction
         List<CustomRoles> AddWinners = [CustomRoles.Amanojaku];
         foreach (var role in EnumHelper.GetAllValues<CustomRoles>().Where(role => role.IsNeutral()).OrderBy(x => x.GetRoleInfo()?.ConfigId ?? 100000))
         {
+            if (role.IsCombinationRole()) continue;
             if (role is CustomRoles.Madonna) continue;
             if (role is CustomRoles.Cupid) continue;
             if (SoloWinOption.AllData.ContainsKey(role) is false)

@@ -108,6 +108,10 @@ namespace TownOfHost
                 }
                 else
                 {
+                    if (Main.AllPlayerSpeed[player.PlayerId] == Main.MinSpeed)
+                    {
+                        Main.AllPlayerSpeed[player.PlayerId] = Main.NormalOptions.PlayerSpeedMod;
+                    }
                     player.SyncSettings();
                 }
             }

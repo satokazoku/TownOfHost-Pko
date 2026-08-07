@@ -133,15 +133,6 @@ public sealed class Cupid : RoleBase, IKiller, IAdditionalWinner
 
         return false;
     }
-    public override string GetSuffix(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
-    {
-        seen ??= seer;
-        if (!Is(seer)) return "";
-        if (!Player.IsAlive()) return "";
-        if (seer.PlayerId == seen.PlayerId) return "";
-        if (!IsCupidLoverPlayer(seen.PlayerId)) return "";
-        return $"<color=#f09199>♥</color>";
-    }
 
     private static bool IsCupidLoverPlayer(byte playerId)
     {

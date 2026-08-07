@@ -651,7 +651,8 @@ namespace TownOfHost
             SyncNextSpawn,
             SyncOneLove,
             SyncVoteResult,
-            ShowIntro
+            ShowIntro,
+            ShowKillFlash
         }
 
         public static void RpcModSetting(MessageReader reader)
@@ -733,6 +734,16 @@ namespace TownOfHost
                         HudManagerCoShowIntroPatch.Cancel = false;
                         DestroyableSingleton<HudManager>.Instance.StartCoroutine(DestroyableSingleton<HudManager>.Instance.CoShowIntro());
                         DestroyableSingleton<HudManager>.Instance.HideGameLoader();
+                    }
+                    break;
+                case ModSystem.ShowKillFlash:
+                    {
+                        var playerid = reader.ReadByte();
+                        if (playerid == PlayerControl.LocalPlayer.PlayerId)
+                        {
+                            Utils.FlashColor(new(1f, 0f, 0f, 0.5f));
+                            if (Constants.ShouldPlaySfx()) PlaySound(playerid, Sounds.KillSound);
+                        }
                     }
                     break;
             }
