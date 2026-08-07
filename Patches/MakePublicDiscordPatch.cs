@@ -443,9 +443,10 @@ namespace TownOfHost
 
         private static string BuildPayload(string action, string hostName, string roomCode, string state, int players, int maxPlayers, int progressPercent, string messageId, string reason)
         {
-            var nowUtc = DateTime.UtcNow.ToString("o");
+            var now = DateTime.Now;
+            var nowUtc = now.ToUniversalTime().ToString("o");
             var stateLabel = GetStateLabel(state);
-            var content = BuildRecruitmentContent(hostName, roomCode, stateLabel, players, maxPlayers, state, progressPercent);
+            var content = BuildRecruitmentContent(hostName, roomCode, stateLabel, players, maxPlayers, state, progressPercent, now);
             var threadComment = TownOfHost.Modules.MatchmakingWordManager.GetCurrentWord();
             if (threadComment.Length > TownOfHost.Modules.MatchmakingWordManager.MaxCommentLength)
                 threadComment = threadComment[..TownOfHost.Modules.MatchmakingWordManager.MaxCommentLength];
@@ -472,12 +473,13 @@ namespace TownOfHost
                 + "}";
         }
 
-        private static string BuildRecruitmentContent(string hostName, string roomCode, string stateLabel, int players, int maxPlayers, string rawState, int progressPercent)
+        private static string BuildRecruitmentContent(string hostName, string roomCode, string stateLabel, int players, int maxPlayers, string rawState, int progressPercent, DateTime updatedAt)
         {
             var host = string.IsNullOrWhiteSpace(hostName) ? "Unknown Host" : hostName;
             var code = string.IsNullOrWhiteSpace(roomCode) ? "------" : roomCode;
             var state = string.IsNullOrWhiteSpace(stateLabel) ? "不明" : stateLabel;
             var playersText = $"{Math.Max(players, 0)}/{Math.Max(maxPlayers, 0)}";
+            var updatedAtText = updatedAt.ToString("MM月\\/dd日\\/HH\\:mm");
 
             var progressLine = rawState == "InGame"
                 ? $"♣試合の進行状況♣: **{Math.Clamp(progressPercent, 0, 100)}%**\n"
@@ -489,6 +491,7 @@ namespace TownOfHost
                 + $"♦現在♦: **{state}**\n"
                 + $"♠人数♠: **{playersText}**\n"
                 + progressLine
+                + $"♥最終更新♥: **{updatedAtText}**\n"
                 + "ーーーーーーーーーーーーー";
         }
 

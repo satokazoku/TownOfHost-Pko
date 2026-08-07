@@ -115,7 +115,7 @@ public sealed class Sage : RoleBase
 
     public override void ApplyGameOptions(IGameOptions opt)
     {
-        AURoleOptions.EngineerCooldown = BarrierCooldown;
+        AURoleOptions.EngineerCooldown = Mathf.Max(cooldownTimer, 0.1f);
         AURoleOptions.EngineerInVentMaxTime = 0f;
     }
 
@@ -208,6 +208,8 @@ public sealed class Sage : RoleBase
 
     public override bool OnCheckMurderAsTarget(MurderInfo info)
     {
+        if (!info.DoKill) return true;
+
         if (!isBarrierActive) return true;
 
         var killer = info.AttemptKiller;

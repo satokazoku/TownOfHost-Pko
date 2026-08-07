@@ -36,13 +36,14 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
     : base(
         RoleInfo,
         player,
-        () => RequiresTasks ? HasTask.True : HasTask.False
+        () => (RequiresTasks && !AppointedPlayerIds.Contains(player.PlayerId)) ? HasTask.True : HasTask.False
     )
     {
         Flug3 = 0;
-        ShotLimit = ShotLimitOpt.GetInt();
-        CurrentKillCooldown = KillCooldown.GetFloat();
-        Taskmode = RequiresTasks;
+        var isAppointed = AppointedPlayerIds.Contains(player.PlayerId);
+        ShotLimit = isAppointed ? VillageChief.SheriffShotLimit.GetInt() : ShotLimitOpt.GetInt();
+        CurrentKillCooldown = isAppointed ? VillageChief.SheriffKillCooldown.GetFloat() : KillCooldown.GetFloat();
+        Taskmode = RequiresTasks && !isAppointed;
         nowcool = CurrentKillCooldown;
         LastCooltime = 0;
     }
@@ -80,8 +81,9 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
     int Flug3;
     bool diedTaskModeApplied;
 
-    //村長に任命されたプレイヤーID一覧（タスクなし扱い
     public static HashSet<byte> AppointedPlayerIds = new();
+    private bool IsAppointedSheriff => AppointedPlayerIds.Contains(Player.PlayerId);
+    private bool EffectiveRequiresTasks => RequiresTasks && !IsAppointedSheriff;
 
     public static readonly string[] KillOption =
     {
@@ -149,14 +151,19 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
 
     public override void Add()
     {
+        var isAppointedSheriff = IsAppointedSheriff; // Clear前に確定させる
         AppointedPlayerIds.Clear();
-        ShotLimit = ShotLimitOpt.GetInt();
-        CurrentKillCooldown = KillCooldown.GetFloat();
-        Taskmode = RequiresTasks;
+        if (isAppointedSheriff) AppointedPlayerIds.Add(Player.PlayerId);
+
+        var effectiveRequiresTasks = RequiresTasks && !isAppointedSheriff;
+
+        ShotLimit = isAppointedSheriff ? VillageChief.SheriffShotLimit.GetInt() : ShotLimitOpt.GetInt();
+        CurrentKillCooldown = isAppointedSheriff ? VillageChief.SheriffKillCooldown.GetFloat() : KillCooldown.GetFloat();
+        Taskmode = effectiveRequiresTasks;
         diedTaskModeApplied = false;
         Logger.Info($"{PlayerCatch.GetPlayerById(Player.PlayerId)?.GetNameWithRole().RemoveHtmlTags()} : 残り{ShotLimit}発", "Sheriff");
         PetActionManager.Register(Player.PlayerId, OnPetUsed);
-        if (!RequiresTasks)
+        if (!effectiveRequiresTasks)
         {
             nowcool = 0f;
             LastCooltime = 0;
@@ -172,7 +179,7 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
 
     private void OnPetUsed()
     {
-        if (!RequiresTasks) return;
+        if (!EffectiveRequiresTasks) return;
         if (!CanChangeMode()) return;
         ModeSwitching();
         SendRPC();
@@ -201,14 +208,17 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
         && !Taskmode;
 
     bool CanChangeMode()
-        => RequiresTasks
+        => EffectiveRequiresTasks
         && Player.IsAlive()
         && ShotLimit > 0;
 
     bool CanUseSheriffMode()
         => Player.IsAlive()
-        && (CanKillAllAlive.GetBool() || GameStates.AlreadyDied)
+        && (GetCanKillAllAlive() || GameStates.AlreadyDied)
         && ShotLimit > 0;
+
+    private bool GetCanKillAllAlive()
+        => IsAppointedSheriff ? VillageChief.SheriffCanKillAllAlive.GetBool() : CanKillAllAlive.GetBool();
 
     public bool CanUseImpostorVentButton() => false;
     public bool CanUseSabotageButton() => false;
@@ -222,7 +232,7 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
     {
         if (Is(info.AttemptKiller) && !info.IsSuicide)
         {
-            if (RequiresTasks && LastCooltime > 0)
+            if (EffectiveRequiresTasks && LastCooltime > 0)
             {
                 info.DoKill = false;
                 return;
@@ -256,7 +266,9 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
                 killer.RpcMurderPlayer(killer);
                 Flug3 = Utils.IsActive(Main.SabotageType) && Main.SabotageType.IsCriticalSabotage() ? 1 : 0;
                 UtilsGameLog.AddGameLog("Sheriff", string.Format(GetString("SheriffMissLog"), UtilsName.GetPlayerColor(target.PlayerId)));
-                if (!MisfireKillsTarget.GetBool())
+
+                var misfireKillsTarget = IsAppointedSheriff ? VillageChief.SheriffMisfireKillsTarget.GetBool() : MisfireKillsTarget.GetBool();
+                if (!misfireKillsTarget)
                 {
                     info.DoKill = false;
                     return;
@@ -264,7 +276,7 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
             }
 
             nowcool = CurrentKillCooldown;
-            ModeSwitching(RequiresTasks);
+            ModeSwitching(EffectiveRequiresTasks);
             SendRPC();
             killer.ResetKillCooldown();
             Achievements.RpcCompleteAchievement(Player.PlayerId, 0, SheriffAchievement.achievements[0]);
@@ -306,17 +318,17 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
 
         if (Player.IsAlive())
         {
-            ModeSwitching(RequiresTasks);
+            ModeSwitching(EffectiveRequiresTasks);
             SendRPC();
         }
         Player.RpcResetAbilityCooldown(Sync: true);
     }
-    public override RoleTypes? AfterMeetingRole => RequiresTasks ? null : RoleTypes.Impostor;
+    public override RoleTypes? AfterMeetingRole => EffectiveRequiresTasks ? null : RoleTypes.Impostor;
 
     public override void AfterMeetingTasks()
     {
         if (!Player.IsAlive()) return;
-        if (!RequiresTasks) return;
+        if (!EffectiveRequiresTasks) return;
         _ = new LateTask(() => nowcool = CurrentKillCooldown, Main.LagTime, "Reset-Sheriff");
     }
 
@@ -325,8 +337,8 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
         var progress = Utils.ColorString(CanUseSheriffMode() ? Color.yellow : Color.gray, $"({ShotLimit})");
         if (!GameStates.CalledMeeting && !gamelog)
             progress += Utils.ColorString(Color.yellow, Taskmode
-                ? $" [Task]<color=#ffffff>({LastCooltime})</color>"
-                : $"  [Sheriff]<color=#ffffff>({LastCooltime})</color>");
+                ? $" [タスク]<color=#ffffff>({LastCooltime})</color>"
+                : $"  [シェリフ]<color=#ffffff>({LastCooltime})</color>");
         return progress;
     }
 
@@ -344,12 +356,12 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
         if (GameStates.CalledMeeting || GameStates.Intro) return;
         if (!player.IsAlive())
         {
-            if (RequiresTasks && !Taskmode && !diedTaskModeApplied)
+            if (EffectiveRequiresTasks && !Taskmode && !diedTaskModeApplied)
                 ForceTaskModeOnDeath();
             return;
         }
 
-        if (!RequiresTasks) return;
+        if (!EffectiveRequiresTasks) return;
 
         if (nowcool > 0)
             nowcool -= Time.fixedDeltaTime;
@@ -393,7 +405,7 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
 
     private bool ModeSwitching(bool? taskMode = null)
     {
-        if (!RequiresTasks) taskMode = false;
+        if (!EffectiveRequiresTasks) taskMode = false;
         Taskmode = taskMode ?? !Taskmode;
 
         var clientId = Player.GetClientId();
@@ -411,7 +423,7 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
 
         if (!Taskmode)
         {
-            var cooldown = RequiresTasks ? Mathf.Max(LastCooltime, 0.1f) : CurrentKillCooldown;
+            var cooldown = EffectiveRequiresTasks ? Mathf.Max(LastCooltime, 0.1f) : CurrentKillCooldown;
             Player.SetKillCooldown(cooldown, delay: true);
         }
         UpdateLocalHud();

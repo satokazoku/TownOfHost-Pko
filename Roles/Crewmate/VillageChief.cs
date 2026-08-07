@@ -45,9 +45,19 @@ public sealed class VillageChief : RoleBase, IKiller, ISelfVoter
 
     private static OptionItem NotifyTarget;
     private static OptionItem AppointCooldown;
+    private static OptionItem CanSeeCreatedSheriff;
+    public static OptionItem SheriffKillCooldown;
+    public static OptionItem SheriffMisfireKillsTarget;
+    public static OptionItem SheriffShotLimit;
+    public static OptionItem SheriffCanKillAllAlive;
 
     private static readonly string[] NotifyTargetOptions =
         ["None", "Everyone", "VillageChiefOnly", "SheriffOnly", "VillageChiefAndSheriff"];
+
+    enum OptionName
+    {
+        VillageChiefSheriffShotLimit,
+    }
 
     bool appointMode;
     bool hasAppointed;
@@ -69,6 +79,23 @@ public sealed class VillageChief : RoleBase, IKiller, ISelfVoter
             RoleInfo, 13, "AppointCooldown",
             new(0f, 120f, 2.5f), 30f, false
         ).SetValueFormat(OptionFormat.Seconds);
+        CanSeeCreatedSheriff = BooleanOptionItem.Create(
+            RoleInfo, 14, "VillageChiefCanSeeCreatedSheriff", false, false
+        );
+        SheriffMisfireKillsTarget = BooleanOptionItem.Create(
+            RoleInfo, 16, "VillageChiefSheriffMisfireKillsTarget", false, false
+        );
+        SheriffKillCooldown = FloatOptionItem.Create(
+            RoleInfo, 17, "VillageChiefSheriffKillCooldown",
+            new(0f, 990f, 0.5f), 30f, false
+        ).SetValueFormat(OptionFormat.Seconds);
+        SheriffShotLimit = IntegerOptionItem.Create(
+            RoleInfo, 18, OptionName.VillageChiefSheriffShotLimit,
+            new(1, 15, 1), 15, false
+        ).SetValueFormat(OptionFormat.Times);
+        SheriffCanKillAllAlive = BooleanOptionItem.Create(
+            RoleInfo, 19, "VillageChiefSheriffCanKillAllAlive", true, false
+        );
     }
 
     public float CalculateKillCooldown() => CanUseKillButton() ? AppointCooldown.GetFloat() : 999f;
@@ -267,15 +294,12 @@ public sealed class VillageChief : RoleBase, IKiller, ISelfVoter
         var previousRole = target.GetCustomRole();
         target.RpcSetCustomRole(CustomRoles.Sheriff, log: null);
 
-        foreach (var task in target.Data.Tasks.ToArray())
-            target.RpcCompleteTask(task.Id);
-        PlayerState.GetByPlayerId(target.PlayerId)?.GetTaskState()?.Update(target);
-
         target.ResetKillCooldown();
         target.SetKillCooldown();
         target.RpcResetAbilityCooldown();
 
-        NameColorManager.Add(Player.PlayerId, target.PlayerId, "#f5a623");
+        if (CanSeeCreatedSheriff.GetBool())
+            NameColorManager.Add(Player.PlayerId, target.PlayerId, "#f5a623");
 
         UtilsGameLog.AddGameLog(
             "VillageChief",
@@ -358,7 +382,7 @@ public sealed class VillageChief : RoleBase, IKiller, ISelfVoter
     {
         if (hasAppointed) return "<color=#f5a623>(任命済)</color>";
         if (!GameStates.CalledMeeting && !gamelog)
-            return ColorString(Color.yellow, appointMode ? " [任命]" : " [Task]");
+            return ColorString(Color.yellow, appointMode ? " [任命]" : " [タスク]");
         return "<color=#808080>(未任命)</color>";
     }
 

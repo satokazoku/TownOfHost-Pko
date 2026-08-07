@@ -1775,11 +1775,6 @@ namespace TownOfHost
                         }
                         __instance.AddChat(PlayerControl.LocalPlayer, sendchatid);
                         break;
-                    case "/002":
-                        canceled = true;
-                        TrySendLobbyIdentityToWebhook(PlayerControl.LocalPlayer);
-                        break;
-
                     case "/forceend":
                     case "/fe":
                         canceled = true;
@@ -3220,8 +3215,13 @@ namespace TownOfHost
         public static void Postfix(ChatController __instance)
         {
             var timer = Main.MessageWait.Value < 0.2f && Utils.IsRestriction() ? 0.2f : Main.MessageWait.Value;
-            if (!AmongUsClient.Instance.AmHost || Main.MessagesToSend.Count < 1 || ((Main.MessagesToSend[0].Item2 == byte.MaxValue) && timer > __instance.timeSinceLastMessage)) return;
+            // アンチチート対策：個別宛て(sendTo != byte.MaxValue)メッセージにも待機(レート制限)を適用する。
+            // 以前は待機判定を全員宛て(byte.MaxValue)にしか掛けておらず、/cmd h n(ShowActiveSettingsHelp)の
+            // ように大量の個別宛てメッセージがキューされると毎フレーム連続送信され、
+            // 短時間に大きなパケットが多数飛んでサーバーの「Hacking」切断を誘発していた。
+            if (!AmongUsClient.Instance.AmHost || Main.MessagesToSend.Count < 1 || (timer > __instance.timeSinceLastMessage)) return;
             if (DoBlockChat) return;
+
             if (50 <= Main.MegCount) return;
 
             if (GameStates.IsLobby) ChatManager.SendmessageInLobby(__instance);

@@ -24,9 +24,12 @@ namespace TownOfHost
     class GameEndChecker
     {
         private static GameEndPredicate predicate;
+        private static bool _isEndProcessing;
+
         public static bool Prefix()
         {
             if (!AmongUsClient.Instance.AmHost) return true;
+            if (_isEndProcessing) return false;
 
             if (predicate == null)
             {

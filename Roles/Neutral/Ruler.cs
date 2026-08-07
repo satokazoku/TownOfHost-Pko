@@ -379,7 +379,7 @@ public sealed class Ruler : RoleBase, ISelfVoter, IAdditionalWinner
             .Concat(Enumerable.Repeat("", 3))
             .Take(3)
             .ToArray();
-        return string.Format(GetString("RulerRuleMenu"), rules[0], rules[1], rules[2], "/ruler");
+        return string.Format(GetString("RulerRuleMenu"), rules[0], rules[1], rules[2], "/cmd ruler");
     }
 
     public static bool HandleRuleCommand(PlayerControl sender, string[] args)

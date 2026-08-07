@@ -129,7 +129,7 @@ public sealed class Freeter : RoleBase, IKiller, IAdditionalWinner
         roleText = UtilsRoleText.GetRoleName(CustomRoles.Freeter);
         if (ColorUtility.TryParseHtmlString(RoleInfo.RoleColorCode, out var c))
             roleColor = c;
-        addon = true;
+        addon = false;
     }
 
     public void OnCheckMurderAsKiller(MurderInfo info)
@@ -194,7 +194,10 @@ public sealed class Freeter : RoleBase, IKiller, IAdditionalWinner
     public override void OnStartMeeting()
     {
         if (BetTargetId == byte.MaxValue) return;
+        if (!AmongUsClient.Instance.AmHost) return;
+
         NameColorManager.Add(BetTargetId, Player.PlayerId, "#32cd32");
+        NameColorManager.RpcMeetingColorName(Player);
     }
 
     public override void AfterMeetingTasks()

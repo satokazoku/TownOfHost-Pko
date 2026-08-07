@@ -1087,6 +1087,7 @@ public enum CustomRoles
     Villain,
     Scratcher,
     HappyJester,
+    UnHappyJester,
     //DEBUG only Neutral.
     //HideAndSeek
     HASFox,

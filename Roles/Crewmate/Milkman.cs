@@ -365,7 +365,7 @@ public sealed class Milkman : RoleBase, IKiller
 
         string mode = deliveryMode
             ? $"<color={RoleInfo.RoleColorCode}>[配達]</color>"
-            : "<color=#aaaaaa>[Task]</color>";
+            : "<color=#aaaaaa>[タスク]</color>";
 
         if (!GameStates.CalledMeeting && !GameLog)
             mode += $"<color=#ffffff>({LastCooltime})</color>";

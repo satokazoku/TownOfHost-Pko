@@ -5,6 +5,11 @@ using TownOfHost.Roles.Core.Interfaces;
 
 namespace TownOfHost.Roles.Impostor;
 
+// ダミーハンター用の役職。
+// ダミーハンターモードでは全プレイヤーがこの役職(ベース RoleTypes.Phantom)になり、
+// ファントムボタンのワンクリックで一番近いダミーへワープしてキルする。
+//
+// モード本体のロジックは DummyHunter(Modules/GameMode/DummyHunter.cs)に委譲する。
 public sealed class DummyHunterPlayer : RoleBase, IUsePhantomButton
 {
     public static readonly SimpleRoleInfo RoleInfo =
@@ -34,7 +39,9 @@ public sealed class DummyHunterPlayer : RoleBase, IUsePhantomButton
     {
     }
 
+    // ファントム置き換え役職として扱う(ワンクリックボタンを出す)。
     bool IUsePhantomButton.IsPhantomRole => true;
+    // キルはダミーに対してなので、キル後のクールリセット処理は使わない。
     bool IUsePhantomButton.IsresetAfterKill => false;
 
     public override void OnDestroy()
@@ -75,7 +82,7 @@ public sealed class DummyHunterPlayer : RoleBase, IUsePhantomButton
 
         // 矢印(一番近いダミーの方向)
         if (DummyHunter.IsActive && DummyHunter.OptionShowArrow != null && DummyHunter.OptionShowArrow.GetBool()
-            && DummyHunter.ElapsedTime >= DummyHunter.OptionArrowDelay.GetFloat())
+            && DummyHunter.OptionArrowDelay != null && DummyHunter.ElapsedTime >= DummyHunter.OptionArrowDelay.GetFloat())
         {
             var arrowPos = DummyHunter.GetClosestDummyPosition(seer);
             if (arrowPos.HasValue)

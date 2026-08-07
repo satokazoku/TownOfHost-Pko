@@ -582,12 +582,6 @@ public sealed class Stand : RoleBase, ILNKiller
         return true;
     }
 
-    public float CalculateKillCooldown()
-    {
-        var sm = GetOwner();
-        return sm != null && sm.standSummoned ? sm.currentStayTimer : 999f;
-    }
-
     public bool CanUseKillButton()
     {
         var sm = GetOwner();

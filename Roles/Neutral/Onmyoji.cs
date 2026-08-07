@@ -575,7 +575,7 @@ public sealed class Onmyoji : RoleBase, IKiller, ISelfVoter
             progress += ColorString(Color.yellow,
                 nominateMode
                     ? $" [指名]<color=#ffffff>({lastCDDisplay})</color>"
-                    : $" [Task]<color=#ffffff>({lastCDDisplay})</color>");
+                    : $" [タスク]<color=#ffffff>({lastCDDisplay})</color>");
         }
 
         return progress;

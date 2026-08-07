@@ -30,7 +30,7 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
         KillCooldown = OptionKillCooldown.GetFloat();
         CanVent = !OptionCanVent.GetBool();
         CanSabotage = !OptionCanSabotage.GetBool();
-        hasUsedPhantom = false;
+        usedPhantomCount = 0;
     }
 
     static OptionItem OptionPhantomCooldown;
@@ -41,7 +41,8 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
     static bool CanVent;
     static OptionItem OptionCanSabotage;
     static bool CanSabotage;
-    bool hasUsedPhantom;
+    static OptionItem OptionPhantomUsageCount;
+    int usedPhantomCount;
 
     enum OptionName
     {
@@ -49,6 +50,7 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
         DoubleKillerKillCooldown,
         DoubleKillerCanVent,
         DoubleKillerCanSabotage,
+        DoubleKillerPhantomUsageCount,
     }
 
     static void SetUpOptionItem()
@@ -59,6 +61,8 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
             .SetValueFormat(OptionFormat.Seconds);
         OptionCanVent = BooleanOptionItem.Create(RoleInfo, 12, OptionName.DoubleKillerCanVent, true, false);
         OptionCanSabotage = BooleanOptionItem.Create(RoleInfo, 13, OptionName.DoubleKillerCanSabotage, true, false);
+        OptionPhantomUsageCount = IntegerOptionItem.Create(RoleInfo, 14, OptionName.DoubleKillerPhantomUsageCount, new(1, 10, 1), 1, false)
+            .SetValueFormat(OptionFormat.Times);
     }
 
     public float CalculateKillCooldown() => KillCooldown;
@@ -71,11 +75,11 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
 
     public override void ApplyGameOptions(IGameOptions opt)
     {
-        if (!hasUsedPhantom)
+        if (usedPhantomCount < OptionPhantomUsageCount.GetInt())
             AURoleOptions.PhantomCooldown = PhantomCooldown;
     }
 
-    bool IUsePhantomButton.IsPhantomRole => !hasUsedPhantom;
+    bool IUsePhantomButton.IsPhantomRole => usedPhantomCount < OptionPhantomUsageCount.GetInt();
     bool IUsePhantomButton.IsresetAfterKill => false;
 
     void IUsePhantomButton.OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
@@ -83,7 +87,7 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
         AdjustKillCooldown = false;
         ResetCooldown = false;
 
-        if (hasUsedPhantom || !Player.IsAlive()) return;
+        if (usedPhantomCount >= OptionPhantomUsageCount.GetInt() || !Player.IsAlive()) return;
 
         PlayerControl nearest = null;
         float minDist = Main.NormalOptions.KillDistance switch
@@ -108,7 +112,7 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
 
         if (nearest == null) return;
 
-        hasUsedPhantom = true;
+        usedPhantomCount++;
         float savedKillTimer = Player.killTimer;
         Vector2 targetPos = nearest.transform.position;
         CustomRoleManager.OnCheckMurder(Player, nearest, nearest, nearest, true, true, 1, CustomDeathReason.Kill);
@@ -128,12 +132,10 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
         if (IUsePhantomButton.IPPlayerKillCooldown.ContainsKey(Player.PlayerId))
             IUsePhantomButton.IPPlayerKillCooldown[Player.PlayerId] = 0f;
 
-        Main.AllPlayerKillCooldown[Player.PlayerId] = cooldown * 2f;
-        Player.SyncSettings();
         Player.RpcProtectedMurderPlayer();
 
-        Player.killTimer = cooldown;
         Player.ResetKillCooldown();
+        Player.SetKillTimer(cooldown);
         Player.SyncSettings();
     }
 
@@ -150,7 +152,10 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
     }
 
     public override string GetProgressText(bool comms = false, bool GameLog = false)
-        => hasUsedPhantom ? "" : $"<#ff0000>(1)</color>";
+    {
+        int remaining = Mathf.Max(0, OptionPhantomUsageCount.GetInt() - usedPhantomCount);
+        return remaining <= 0 ? "" : $"<#ff0000>({remaining})</color>";
+    }
 
     public override bool OverrideAbilityButton(out string text)
     {

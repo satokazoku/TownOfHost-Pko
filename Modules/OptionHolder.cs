@@ -1453,7 +1453,7 @@ namespace TownOfHost
             OptionGameChatNormalChat = BooleanOptionItem.Create(1_300_360, "GameChatNormalChat", false, TabGroup.MainSettings, true)
                 .SetParent(OptionGameChatSetting)
                       .SetColorcode("#00c1ff")
-                      .SetOptionName(() => "通常チャットを有効にする");
+                      .SetOptionName(() => "通常チャットを有効にする(未完成)");
 
             OptionGameChatNormalNearChat = BooleanOptionItem.Create(1_300_370, "GameChatNormalNearChat", false, TabGroup.MainSettings, true)
                       .SetParent(OptionGameChatNormalChat)
@@ -1469,7 +1469,7 @@ namespace TownOfHost
                       .SetParent(OptionGameChatSetting)
                       .SetHeader(true)
                       .SetColorcode("#00c1ff")
-                      .SetOptionName(() => "秘匿チャットを有効にする");
+                      .SetOptionName(() => "秘匿チャットを有効にする(未完成)");
 
             OptionGameChatHideNearChat = BooleanOptionItem.Create(1_300_400, "GameChatHideNearChat", false, TabGroup.MainSettings, true)
                       .SetParent(OptionGameChatHideChat)

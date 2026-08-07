@@ -928,8 +928,8 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
     {
         if (!CanSideKick && !skMode) return "";
         return skMode
-            ? " <color=#ff6600>[SKモード]</color>"
-            : " <color=#00b4eb>[キルモード]</color>";
+            ? " <color=#ff6600>[SK]</color>"
+            : " <color=#00b4eb>[キル]</color>";
     }
 
     public override string GetAbilityButtonText() => IsLoaded ? "超発射" : "発射";
