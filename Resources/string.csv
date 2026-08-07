@@ -1823,6 +1823,8 @@
 "SpiderTrapCooldown","Trap Cooldown","罠設置クールタイム"
 "SpiderTrapArmTime","Trap Arm Time","罠が起動するまでの時間"
 "SpiderTrapCatchDuration","Catch Duration","捕獲時間"
+"MinimalistCanVent","Can Use Vent","ベントを使える"
+"MinimalistCanSabotage","Can Use Sabotage","サボタージュを使える"
 
 "## MadMate Role Setting"
 "MadmateOption","MadMate Options","マッドメイト系役職の設定"
@@ -2103,7 +2105,7 @@
 "JailerImprisonTurns","Imprisonment Turns","拘禁ターン数"
 "JailerImprisonSeconds","Imprisonment Seconds","拘禁秒数"
 "JailerContinueAfterMeeting","Continue Timer Through Meeting","会議中もタイマーを継続"
-"JailerAbilityCountdown","Ability Cooldown","能力を使用できる回数"
+"JailerAbilityCount","Ability Cooldown","能力を使用できる回数"
 "JailerAbilityTask","Ability Task Count","能力を使用可能になるタスク数"
 "Turns","Turns","ターン数"
 "Seconds","Seconds","秒数"
@@ -2113,6 +2115,10 @@
 "PoliceHandcuffDuration","Handcuff Duration (Turns)","手錠の効果ターン数"
 "Police_Mark","Mark","マーク"
 "Police_Handcuff","Activate Handcuffs","手錠発動"
+"NiceNekomataImpostorsGetRevenged","Nice Nekomata Revenges Impostors","インポスターを道連れする"
+"NiceNekomataMadmatesGetRevenged","Nice Nekomata Revenges Madmates","マッドロールを道連れする"
+"NiceNekomataNeutralsGetRevenged","Nice Nekomata Revenges Neutrals","ニュートラル陣営を道連れする"
+"NiceNekomataRevengeOnExile","Nice Nekomata Revenges on Exile","追放時道連れを発生させる"
 
 "## Neutral Role Setting"
 "SchrodingerCatExiledTeamChanges","Team Changes When Ejected","吊られた際、陣営が変化する","薛定谔的猫被放逐时会加入其他阵营","薛定諤的貓被丟出時陣營會轉變","Команда меняется после его Изгнания","Time Muda Quando Exilado",""

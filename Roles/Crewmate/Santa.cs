@@ -52,6 +52,7 @@ public sealed class Santa : RoleBase, IKiller
     static OptionItem OptGiftLimit;
     static OptionItem OptCanGiftLovers;
     static OptionItem OptCanGiftMadmate;
+    static OptionItem OptCanTaskCount;
 
     bool giftMode;
     int giftCount;
@@ -68,6 +69,7 @@ public sealed class Santa : RoleBase, IKiller
         SantaGiftLimit,
         SantaCanGiftLovers,
         SantaCanGiftMadmate,
+        SantaCanTaskCount,
     }
 
     private static readonly Dictionary<byte, int> RememberedColorByPlayerId = new();
@@ -125,6 +127,13 @@ public sealed class Santa : RoleBase, IKiller
         );
 
         OverrideTasksData.Create(RoleInfo, 20);
+
+        OptCanTaskCount = IntegerOptionItem.Create(
+            RoleInfo, 21, OptionName.SantaCanTaskCount,
+            new(0, 99, 1), 0, false
+        );
+
+        OverrideTasksData.Create(RoleInfo, 20);
     }
 
     public override void Add()
@@ -144,7 +153,6 @@ public sealed class Santa : RoleBase, IKiller
     private void OnPetUsed()
     {
         if (!Player.IsAlive()) return;
-
         if (tasksCompleted) return;
 
         giftMode = !giftMode;
@@ -170,10 +178,6 @@ public sealed class Santa : RoleBase, IKiller
 
         SendRPC();
         UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
-        Utils.SendMessage(
-            $"<color={RoleInfo.RoleColorCode}>全タスク完了！ずっとギフトモードになります。</color>",
-            Player.PlayerId);
-
         return true;
     }
 
