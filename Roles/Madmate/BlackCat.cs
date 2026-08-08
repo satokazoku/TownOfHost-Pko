@@ -31,7 +31,6 @@ public sealed class BlackCat : RoleBase, INekomata
         impostorsGetRevenged = optionImpostorsGetRevenged.GetBool();
         madmatesGetRevenged = optionMadmatesGetRevenged.GetBool();
         neutralsGetRevenged = optionNeutralsGetRevenged.GetBool();
-        revengeOnExile = optionRevengeOnExile.GetBool();
     }
 
     #region Custom Options
@@ -44,9 +43,6 @@ public sealed class BlackCat : RoleBase, INekomata
 
     /// <summary>ニュートラルを道連れ候補に含む</summary>
     private static BooleanOptionItem optionNeutralsGetRevenged;
-
-    /// <summary>追放時に道連れを発動する</summary>
-    private static BooleanOptionItem optionRevengeOnExile;
 
     private static void SetupOptionItems()
     {
@@ -64,11 +60,6 @@ public sealed class BlackCat : RoleBase, INekomata
             BooleanOptionItem.Create(RoleInfo, 30,
                 OptionName.BlackCatNeutralsGetRevenged,
                 false, false);
-
-        optionRevengeOnExile =
-            BooleanOptionItem.Create(RoleInfo, 40,
-                OptionName.BlackCatRevengeOnExile,
-                true, false);
     }
 
     private enum OptionName
@@ -76,7 +67,6 @@ public sealed class BlackCat : RoleBase, INekomata
         BlackCatImpostorsGetRevenged,
         BlackCatMadmatesGetRevenged,
         BlackCatNeutralsGetRevenged,
-        BlackCatRevengeOnExile
     }
 
     #endregion
@@ -84,13 +74,12 @@ public sealed class BlackCat : RoleBase, INekomata
     private static bool impostorsGetRevenged;
     private static bool madmatesGetRevenged;
     private static bool neutralsGetRevenged;
-    private static bool revengeOnExile;
 
     /// <summary>
     /// 追放された時のみ道連れを発動
     /// </summary>
     public bool DoRevenge(CustomDeathReason deathReason)
-        => revengeOnExile && deathReason == CustomDeathReason.Vote;
+        => deathReason == CustomDeathReason.Vote;
 
     /// <summary>
     /// 道連れ候補判定

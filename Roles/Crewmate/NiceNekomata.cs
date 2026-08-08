@@ -32,7 +32,6 @@ public sealed class NiceNekomata : RoleBase, INekomata
         impostorsGetRevenged = optionImpostorsGetRevenged.GetBool();
         madmatesGetRevenged = optionMadmatesGetRevenged.GetBool();
         neutralsGetRevenged = optionNeutralsGetRevenged.GetBool();
-        revengeOnExile = optionRevengeOnExile.GetBool();
     }
 
     #region Custom Options
@@ -40,14 +39,12 @@ public sealed class NiceNekomata : RoleBase, INekomata
     private static BooleanOptionItem optionImpostorsGetRevenged;
     private static BooleanOptionItem optionMadmatesGetRevenged;
     private static BooleanOptionItem optionNeutralsGetRevenged;
-    private static BooleanOptionItem optionRevengeOnExile;
 
     private enum OptionName
     {
         NiceNekomataImpostorsGetRevenged,
         NiceNekomataMadmatesGetRevenged,
         NiceNekomataNeutralsGetRevenged,
-        NiceNekomataRevengeOnExile
     }
 
     private static void SetupOptionItems()
@@ -78,15 +75,6 @@ public sealed class NiceNekomata : RoleBase, INekomata
                 false,
                 false
             );
-
-        optionRevengeOnExile =
-            BooleanOptionItem.Create(
-                RoleInfo,
-                40,
-                OptionName.NiceNekomataRevengeOnExile,
-                true,
-                false
-            );
     }
 
     #endregion
@@ -94,11 +82,10 @@ public sealed class NiceNekomata : RoleBase, INekomata
     private static bool impostorsGetRevenged;
     private static bool madmatesGetRevenged;
     private static bool neutralsGetRevenged;
-    private static bool revengeOnExile;
 
     public bool DoRevenge(CustomDeathReason deathReason)
     {
-        return revengeOnExile && deathReason == CustomDeathReason.Vote;
+        return deathReason == CustomDeathReason.Vote;
     }
 
     public bool IsCandidate(PlayerControl player)
