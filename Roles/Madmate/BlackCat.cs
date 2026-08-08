@@ -67,10 +67,6 @@ public sealed class BlackCat : RoleBase, INekomata
         BlackCatImpostorsGetRevenged,
         BlackCatMadmatesGetRevenged,
         BlackCatNeutralsGetRevenged,
-<<<<<<< HEAD
-=======
-        BlackCatRevengeOnExile
->>>>>>> b638eaf3b010c59dd1af8695e2fc9375e6b4f5b3
     }
 
     #endregion
