@@ -133,7 +133,7 @@ public sealed class Santa : RoleBase, IKiller
             new(0, 99, 1), 0, false
         );
 
-        OverrideTasksData.Create(RoleInfo, 20);
+        OverrideTasksData.Create(RoleInfo, 22);
     }
 
     public override void Add()

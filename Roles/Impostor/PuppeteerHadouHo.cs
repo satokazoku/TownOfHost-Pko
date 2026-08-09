@@ -7,23 +7,23 @@ using UnityEngine;
 
 namespace TownOfHost.Roles.Impostor;
 
-public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
+public sealed class PuppeteerHadouHo : RoleBase, IImpostor, IUsePhantomButton
 {
     public static readonly SimpleRoleInfo RoleInfo =
         SimpleRoleInfo.Create(
-            typeof(HadouHo),
-            player => new HadouHo(player),
-            CustomRoles.HadouHo,
+            typeof(PuppeteerHadouHo),
+            player => new PuppeteerHadouHo(player),
+            CustomRoles.PuppeteerHadouHo,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            4900,
+            8400,
             SetUpOptionItem,
-            "hh",
-            OptionSort: (3, 12),
-            from: From.SuperNewRoles
+            "phh",
+            OptionSort: (3, 14),
+            from: From.TownOfHost_Pko
         );
 
-    public HadouHo(PlayerControl player)
+    public PuppeteerHadouHo(PlayerControl player)
         : base(RoleInfo, player)
     {
         KillCooldown = OptionKillCoolDown.GetFloat();
@@ -31,7 +31,6 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
         ChargeTime = OptionChargeTime.GetFloat();
         BeamTime = OptionBeamTime.GetFloat();
         SelfDestructOnMiss = OptionSelfDestructOnMiss.GetBool();
-        KillImpostor = OptionKillImpostor.GetBool();
         IsCharging = false;
         chargeTimer = 0f;
         PlayerSpeed = 0f;
@@ -67,19 +66,16 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
     static float BeamTime;
     static OptionItem OptionSelfDestructOnMiss;
     static bool SelfDestructOnMiss;
-    static OptionItem OptionKillImpostor;
-    static bool KillImpostor;
 
-    enum OptionName { HadouHoChargeTime, HadouHoSelfDestruct, HadouHoKillImpostor,HadouHoBeamTime }
+    enum OptionName { PuppeteerHadouHoChargeTime, PuppeteerHadouHoSelfDestruct, PuppeteerHadouHoBeamTime }
 
     static void SetUpOptionItem()
     {
         OptionKillCoolDown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.KillCooldown, OptionBaseCoolTime, 30f, false).SetValueFormat(OptionFormat.Seconds);
         OptionCoolDown = FloatOptionItem.Create(RoleInfo, 11, GeneralOption.Cooldown, OptionBaseCoolTime, 30f, false).SetValueFormat(OptionFormat.Seconds);
-        OptionChargeTime = FloatOptionItem.Create(RoleInfo, 12, OptionName.HadouHoChargeTime, new(0.5f, 10f, 0.5f), 3f, false).SetValueFormat(OptionFormat.Seconds);
-        OptionBeamTime = FloatOptionItem.Create(RoleInfo, 13, OptionName.HadouHoBeamTime, new(0.5f, 10f, 0.5f), 3f, false).SetValueFormat(OptionFormat.Seconds);
-        OptionSelfDestructOnMiss = BooleanOptionItem.Create(RoleInfo, 14, OptionName.HadouHoSelfDestruct, false, false);
-        OptionKillImpostor = BooleanOptionItem.Create(RoleInfo, 15, OptionName.HadouHoKillImpostor, false, false);
+        OptionChargeTime = FloatOptionItem.Create(RoleInfo, 12, OptionName.PuppeteerHadouHoChargeTime, new(0.5f, 10f, 0.5f), 3f, false).SetValueFormat(OptionFormat.Seconds);
+        OptionBeamTime = FloatOptionItem.Create(RoleInfo, 13, OptionName.PuppeteerHadouHoBeamTime, new(0.5f, 10f, 0.5f), 3f, false).SetValueFormat(OptionFormat.Seconds);
+        OptionSelfDestructOnMiss = BooleanOptionItem.Create(RoleInfo, 14, OptionName.PuppeteerHadouHoSelfDestruct, false, false);
     }
 
     public override void Add()
@@ -131,7 +127,7 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
         Utils.AllPlayerKillFlash();
         Main.AllPlayerKillCooldown[Player.PlayerId] = 60f;
         Player.SetKillCooldown(60f);
-        _ = new LateTask(() => { Player.SyncSettings(); }, 0.1f, "HadouHoKillTimer", true);
+        _ = new LateTask(() => { Player.SyncSettings(); }, 0.1f, "PuppeteerHadouHoKillTimer", true);
         Player.SyncSettings();
         Main.AllPlayerKillCooldown[Player.PlayerId] = 60f;
         Player.SyncSettings();
@@ -248,8 +244,8 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
                 Player.SetKillCooldown(KillCooldown);
                 Player.RpcResetAbilityCooldown(Sync: true);
                 UtilsNotifyRoles.NotifyRoles(OnlyMeName: true);
-                _ = new LateTask(() => { IsFiring = false; }, 0.3f, "HadouHoResetFiring", true);
-            }, 0.2f, "HadouHoResetKillCool", true);
+                _ = new LateTask(() => { IsFiring = false; }, 0.3f, "PuppeteerHadouHoResetFiring", true);
+            }, 0.2f, "PuppeteerHadouHoResetKillCool", true);
         }, BeamTime);
     }
 
@@ -262,7 +258,6 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
         foreach (var target in PlayerCatch.AllAlivePlayerControls)
         {
             if (target.PlayerId == Player.PlayerId) continue;
-            if (!KillImpostor && target.GetCustomRole().IsImpostor() && !SuddenDeathMode.NowSuddenDeathMode) continue;
             var toTarget = target.GetTruePosition() - myPos;
             float dot = Vector2.Dot(toTarget, dir);
             if (dot <= 0) continue;
@@ -370,7 +365,7 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
     {
         seen ??= seer;
         if (seen.PlayerId != seer.PlayerId || isForMeeting || !Player.IsAlive()) return "";
-        if (!IsCharging) return $"{(isForHud ? "" : "<size=60%>")}<color=#ff0000>ファントムボタン → チャージ発射</color>";
+        if (!IsCharging) return $"{(isForHud ? "" : "<size=100%>")}<color=#ff0000>ファントムボタン → チャージ発射</color>";
         return $"{(isForHud ? "" : "<size=100%>")}<color=#ff0000>チャージ中... {(ChargeTime - chargeTimer):F1}s</color>";
     }
 
@@ -386,7 +381,7 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
     public override string GetAbilityButtonText() => "発射";
     public override bool OverrideAbilityButton(out string text)
     {
-        text = "HadouHo_Ability";
+        text = "PuppeteerHadouHo_Ability";
         return true;
     }
 }

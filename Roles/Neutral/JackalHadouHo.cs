@@ -41,6 +41,8 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         Cooldown = OptionCoolDown.GetFloat();
         ChargeTime = OptionChargeTime.GetFloat();
         SuperChargeTime = OptionSuperChargeTime.GetFloat();
+        BeamTime = OptionBeamTime.GetFloat();
+        SuperBeamTime = OptionSuperBeamTime.GetFloat();
         SelfDestructOnMiss = OptionSelfDestructOnMiss.GetBool();
         KillJackal = OptionKillJackal.GetBool();
         CanVent = OptionCanVent.GetBool();
@@ -84,7 +86,6 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
     bool HasHit;
     bool BeamFacingLeft;
     bool IsDead;
-    int PlayerColor;
     bool IsFiring = false;
     public bool CanSideKick;
     public bool IsLoaded;
@@ -112,6 +113,10 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
     static float ChargeTime;
     static OptionItem OptionSuperChargeTime;
     static float SuperChargeTime;
+    static OptionItem OptionBeamTime;
+    static float BeamTime;
+    static OptionItem OptionSuperBeamTime;
+    static float SuperBeamTime;
     static OptionItem OptionSelfDestructOnMiss;
     static bool SelfDestructOnMiss;
     static OptionItem OptionKillJackal;
@@ -128,6 +133,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
 
     static OptionItem OptionTamaLoadCooldown;
     static OptionItem OptionTamaCanLoad;
+    static OptionItem OptionTamaCanVent;
     static OptionItem OptionTamaVentCooldown;
     static OptionItem OptionTamaVentMaxTime;
     static OptionItem OptionTamaCanVentMove;
@@ -136,6 +142,8 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
     {
         JackalHadouHoChargeTime,
         JackalHadouHoSuperChargeTime,
+        JackalHadouHoBeamTime,
+        JackalHadouHoSuperBeamTime,
         JackalHadouHoSelfDestruct,
         JackalHadouHoKillJackal,
         JackalHadouHoSidekickCooldown,
@@ -147,6 +155,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
 
     public static float GetTamaLoadCooldown() => OptionTamaLoadCooldown?.GetFloat() ?? 10f;
     public static bool GetTamaCanLoad() => OptionTamaCanLoad?.GetBool() ?? true;
+    public static bool GetTamaCanVent() => OptionTamaCanVent?.GetBool() ?? false;
     public static float GetTamaVentCooldown() => OptionTamaVentCooldown?.GetFloat() ?? 0f;
     public static float GetTamaVentMaxTime() => OptionTamaVentMaxTime?.GetFloat() ?? 0f;
     public static bool GetTamaCanVentMove() => OptionTamaCanVentMove?.GetBool() ?? false;
@@ -170,28 +179,33 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
             .SetValueFormat(OptionFormat.Seconds);
         OptionSuperChargeTime = FloatOptionItem.Create(RoleInfo, 13, OptionName.JackalHadouHoSuperChargeTime, new(0.5f, 15f, 0.5f), 5f, false)
             .SetValueFormat(OptionFormat.Seconds);
-        OptionSelfDestructOnMiss = BooleanOptionItem.Create(RoleInfo, 15, OptionName.JackalHadouHoSelfDestruct, false, false);
-        OptionKillJackal = BooleanOptionItem.Create(RoleInfo, 16, OptionName.JackalHadouHoKillJackal, false, false);
-        OptionCanVent = BooleanOptionItem.Create(RoleInfo, 17, GeneralOption.CanVent, true, false);
-        OptionCanSabotage = BooleanOptionItem.Create(RoleInfo, 18, GeneralOption.CanUseSabotage, false, false);
-        OptionHasImpostorVision = BooleanOptionItem.Create(RoleInfo, 19, GeneralOption.ImpostorVision, true, false);
-        OptionCanMakeSidekick = BooleanOptionItem.Create(RoleInfo, 20, GeneralOption.CanCreateSideKick, true, false);
-        OptionSidekickCooldown = FloatOptionItem.Create(RoleInfo, 21, OptionName.JackalHadouHoSidekickCooldown, new(0f, 180f, 0.5f), 30f, false, OptionCanMakeSidekick)
+        OptionBeamTime = FloatOptionItem.Create(RoleInfo, 14, OptionName.JackalHadouHoBeamTime, new(0.5f, 10f, 0.5f), 3f, false)
+            .SetValueFormat(OptionFormat.Seconds);
+        OptionSuperBeamTime = FloatOptionItem.Create(RoleInfo, 15, OptionName.JackalHadouHoSuperBeamTime, new(0.5f, 15f, 0.5f), 5f, false)
+            .SetValueFormat(OptionFormat.Seconds);
+        OptionSelfDestructOnMiss = BooleanOptionItem.Create(RoleInfo, 16, OptionName.JackalHadouHoSelfDestruct, false, false);
+        OptionKillJackal = BooleanOptionItem.Create(RoleInfo, 17, OptionName.JackalHadouHoKillJackal, false, false);
+        OptionCanVent = BooleanOptionItem.Create(RoleInfo, 18, GeneralOption.CanVent, true, false);
+        OptionCanSabotage = BooleanOptionItem.Create(RoleInfo, 19, GeneralOption.CanUseSabotage, false, false);
+        OptionHasImpostorVision = BooleanOptionItem.Create(RoleInfo, 20, GeneralOption.ImpostorVision, true, false);
+        OptionCanMakeSidekick = BooleanOptionItem.Create(RoleInfo, 21, GeneralOption.CanCreateSideKick, true, false);
+        OptionSidekickCooldown = FloatOptionItem.Create(RoleInfo, 22, OptionName.JackalHadouHoSidekickCooldown, new(0f, 180f, 0.5f), 30f, false, OptionCanMakeSidekick)
             .SetValueFormat(OptionFormat.Seconds);
 
-        ObjectOptionitem.Create(RoleInfo, 24, OptionName.TamaOption, true, "")
+        ObjectOptionitem.Create(RoleInfo, 25, OptionName.TamaOption, true, "")
             .SetOptionName(() => "TAMA OPTION");
-        OptionTamaLoadCooldown = FloatOptionItem.Create(RoleInfo, 25, "TamaLoadCooldown", new(0f, 60f, 0.5f), 10f, false)
-            .SetValueFormat(OptionFormat.Seconds);
         OptionTamaCanLoad = BooleanOptionItem.Create(RoleInfo, 26, "TamaCanLoad", true, false);
-        OptionTamaVentCooldown = FloatOptionItem.Create(RoleInfo, 27, GeneralOption.Cooldown, new(0f, 180f, 0.5f), 0f, false)
+        OptionTamaLoadCooldown = FloatOptionItem.Create(RoleInfo, 27, "TamaLoadCooldown", new(0f, 60f, 0.5f), 10f, false, OptionTamaCanLoad)
+    .SetValueFormat(OptionFormat.Seconds);
+        OptionTamaCanVent = BooleanOptionItem.Create(RoleInfo, 28, GeneralOption.CanVent, false, false);
+        OptionTamaVentCooldown = FloatOptionItem.Create(RoleInfo, 29, GeneralOption.Cooldown, new(0f, 180f, 0.5f), 0f, false, OptionTamaCanVent)
             .SetValueFormat(OptionFormat.Seconds);
-        OptionTamaVentMaxTime = FloatOptionItem.Create(RoleInfo, 28, GeneralOption.EngineerInVentCooldown, new(0f, 180f, 0.5f), 0f, false)
+        OptionTamaVentMaxTime = FloatOptionItem.Create(RoleInfo, 30, GeneralOption.EngineerInVentCooldown, new(0f, 180f, 0.5f), 0f, false, OptionTamaCanVent)
             .SetZeroNotation(OptionZeroNotation.Infinity)
             .SetValueFormat(OptionFormat.Seconds);
-        OptionTamaCanVentMove = BooleanOptionItem.Create(RoleInfo, 29, "MadmateCanMovedByVent", false, false);
+        OptionTamaCanVentMove = BooleanOptionItem.Create(RoleInfo, 31, "MadmateCanMovedByVent", false, false, OptionTamaCanVent);
 
-        RoleAddAddons.Create(RoleInfo, 30, NeutralKiller: true);
+        RoleAddAddons.Create(RoleInfo, 32, NeutralKiller: true);
 
         HideRoleOptions(CustomRoles.Tama);
     }
@@ -210,7 +224,6 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
     public override void Add()
     {
         PlayerSpeed = Main.AllPlayerSpeed[Player.PlayerId];
-        PlayerColor = Player.Data.DefaultOutfit.ColorId;
         CanSideKick = NextNoSideKick ? false : OptionCanMakeSidekick.GetBool();
         NextNoSideKick = false;
         SidekickCooldown = OptionSidekickCooldown.GetFloat();
@@ -238,7 +251,6 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
             if (AmongUsClient.Instance.AmHost)
             {
                 Player.SyncSettings();
-                Player.RpcSetColor((byte)PlayerColor);
             }
             IsCharging = false;
             IsSuperCharging = false;
@@ -468,7 +480,6 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         Main.AllPlayerSpeed[Player.PlayerId] = PlayerSpeed;
         Player.MarkDirtySettings();
         Player.SyncSettings();
-        Player.RpcSetColor((byte)PlayerColor);
         SetRoleTextHeight(false);
         if (AmongUsClient.Instance.AmHost && ShipStatus.Instance != null)
         {
@@ -589,7 +600,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         UtilsNotifyRoles.NotifyRoles(ForceLoop: true);
         SendRpc();
         ApplyBeamHit();
-        _ = new LateTask(() => FinishBeam(), 3f, "JHHBeamEnd", true);
+        _ = new LateTask(() => FinishBeam(), BeamTime, "JHHBeamEnd", true);
     }
 
     void FireSuperBeam()
@@ -618,7 +629,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         UtilsNotifyRoles.NotifyRoles(ForceLoop: true);
         SendRpc();
         ApplySuperBeamHit();
-        _ = new LateTask(() => FinishBeam(), 3f, "JHHSuperBeamEnd", true);
+        _ = new LateTask(() => FinishBeam(), SuperBeamTime, "JHHSuperBeamEnd", true);
     }
 
     void FinishBeam()
@@ -628,7 +639,6 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
             ShowBeamMark = false; _prevBeamMark = false; IsSuperBeam = false;
             SetRoleTextHeight(false); IsFiring = false;
             Main.AllPlayerSpeed[Player.PlayerId] = PlayerSpeed;
-            Player.MarkDirtySettings(); Player.RpcSetColor((byte)PlayerColor);
             UtilsNotifyRoles.NotifyRoles(); SendRpc(); return;
         }
 
@@ -639,7 +649,6 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
 
         if (!HasHit && SelfDestructOnMiss)
         {
-            Player.RpcSetColor((byte)PlayerColor);
             Main.AllPlayerSpeed[Player.PlayerId] = PlayerSpeed;
             Player.MarkDirtySettings();
             PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = CustomDeathReason.Suicide;
@@ -647,7 +656,6 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
             IsFiring = false; return;
         }
 
-        Player.RpcSetColor((byte)PlayerColor);
         Main.AllPlayerSpeed[Player.PlayerId] = PlayerSpeed;
         Player.MarkDirtySettings();
 
@@ -905,10 +913,10 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         if (IsSuperCharging)
         {
             var r = Mathf.Max(0f, SuperChargeTime - superChargeTimer);
-            return $"{(isForHud ? "" : "<size=60%>")}<color=#ff0000>超チャージ中... {r:F1}s</color>";
+            return $"{(isForHud ? "" : "<size=100%>")}<color=#ff0000>超チャージ中... {r:F1}s</color>";
         }
         var rem = Mathf.Max(0f, ChargeTime - chargeTimer);
-        return $"{(isForHud ? "" : "<size=60%>")}<color=#ff0000>チャージ中... {rem:F1}s</color>";
+        return $"{(isForHud ? "" : "<size=100%>")}<color=#ff0000>チャージ中... {rem:F1}s</color>";
     }
 
     public string GetLowerTextOthers(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
@@ -916,11 +924,11 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         seen ??= seer;
         if (seen != seer || isForMeeting || !Player.IsAlive()) return "";
         if (IsSuperCharging && seer.PlayerId != Player.PlayerId)
-            return $"<color=#ff0000>超チャージ中... {(int)Mathf.Max(0f, SuperChargeTime - superChargeTimer)}s</color>";
+            return $"\n<size=100%><color=#ff0000>超チャージ中... {(int)Mathf.Max(0f, SuperChargeTime - superChargeTimer)}s</color></size>";
         if (IsCharging && seer.PlayerId != Player.PlayerId)
-            return $"<color=#ff0000>チャージ中... {(int)Mathf.Max(0f, ChargeTime - chargeTimer)}s</color>";
+            return $"\n<size=100%><color=#ff0000>チャージ中... {(int)Mathf.Max(0f, ChargeTime - chargeTimer)}s</color></size>";
         if (ShowBeamMark && seer.PlayerId != Player.PlayerId)
-            return "\n<color=#ff0000>ビーム中</color>";
+            return "\n<size=100%><color=#ff0000>ビーム中</color></size>";
         return "";
     }
 
@@ -1144,7 +1152,7 @@ public sealed class Tama : RoleBase, IKiller
 
     public bool OverrideKillButtonText(out string text)
     {
-        text = GetString("TamaLoadButtonText");
+        text = "装填";
         return true;
     }
 

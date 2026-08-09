@@ -470,6 +470,8 @@ namespace TownOfHost
         static readonly Regex UnderlineRegex = new(@"<u>(.*?)</u>", RegexOptions.Singleline | RegexOptions.Compiled);
         public static void SendMessage(string text, byte sendTo = byte.MaxValue, string title = "", bool checkl = true, bool isTowSend = false, bool setsize = false)
         {
+            // SendMessage disabled project-wide by request: no-op
+            return;
             if (!AmongUsClient.Instance.AmHost) return;
             if (text.RemoveHtmlTags() == "") return;
             if (title == "") title = $"<{Main.ModColor}>" + GetString($"DefaultSystemMessageTitle") + "</color>";

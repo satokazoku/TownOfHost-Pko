@@ -31,11 +31,11 @@ public sealed class JackalDoll : RoleBase
                     {
                         var restrict = OptionOnlyWithJackal?.GetBool() ?? false;
                         if (!restrict) return true;
-                        return CustomRoles.Jackal.IsPresent()
-                            || CustomRoles.JackalAlien.IsPresent()
-                            || CustomRoles.JackalMafia.IsPresent()
-                            || CustomRoles.JackalWolf.IsPresent()
-                            || CustomRoles.JackalHadouHo.IsPresent();
+                        return CustomRoles.Jackal.IsEnable()
+                            || CustomRoles.JackalAlien.IsEnable()
+                            || CustomRoles.JackalMafia.IsEnable()
+                            || CustomRoles.JackalWolf.IsEnable()
+                            || CustomRoles.JackalHadouHo.IsEnable();
                     }
                 },
 
@@ -67,9 +67,11 @@ public sealed class JackalDoll : RoleBase
     static NetworkedPlayerInfo ExiledPlayerInfo;
     enum Option
     {
-        JackaldolldieMode, JackaldollCountAsJackalKiller,
+        JackaldolldieMode,
+        JackaldollCountAsJackalKiller,
         JackaldollCountAsKillerOnlyWhenPromotionEnabled,
-        JackaldollRoleChe, SideKickJackaldollMacCount
+        JackaldollRoleChe,
+        SideKickJackaldollMacCount
     }
     enum Diemode
     {

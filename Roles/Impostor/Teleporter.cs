@@ -297,7 +297,7 @@ public sealed class Teleporter : RoleBase, IImpostor, IUsePhantomButton
         destPlayerId = reader.ReadByte();
     }
 
-    public override string GetAbilityButtonText() => GetString("テレポート");
+    public override string GetAbilityButtonText() => "テレポート";
 
     public override bool OverrideAbilityButton(out string text)
     {

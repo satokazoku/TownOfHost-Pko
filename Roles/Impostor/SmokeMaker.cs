@@ -67,7 +67,7 @@ public sealed class SmokeMaker : RoleBase, IImpostor, IUsePhantomButton
         OptionSmokeDuration = FloatOptionItem.Create(RoleInfo, 12, OptionName.SmokeMakerSmokeDuration,
             new(1f, 60f, 1f), 10f, false).SetValueFormat(OptionFormat.Seconds);
         OptionSmokeSize = IntegerOptionItem.Create(RoleInfo, 13, OptionName.SmokeMakerSmokeSize,
-            new(100, 1000, 50), 150, false).SetValueFormat(OptionFormat.Percent);
+            new(100, 650, 50), 150, false).SetValueFormat(OptionFormat.Percent);
         OptionMaxDummies = IntegerOptionItem.Create(RoleInfo, 14, OptionName.SmokeMakerMaxDummies,
             new(1, 20, 1), 5, false).SetValueFormat(OptionFormat.Pieces);
     }
