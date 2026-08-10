@@ -378,18 +378,6 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         }, 0.2f, "JHHPhantomResetOnKill", true);
     }
 
-    public bool OverrideKillButton(out string text)
-    {
-        if (skMode && CanSideKick) { text = "JackalHadouHo_SK"; return true; }
-        text = ""; return false;
-    }
-
-    public bool OverrideKillButtonText(out string text)
-    {
-        if (skMode && CanSideKick) { text = "弾SK"; return true; }
-        text = ""; return false;
-    }
-
     public void SetLoaded(bool loaded)
     {
         IsLoaded = loaded;
@@ -946,6 +934,18 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         text = IsLoaded ? "SuperHadouHo_Ability" : "HadouHo_Ability";
         return true;
     }
+
+    public bool OverrideKillButtonText(out string text)
+    {
+        if (skMode && CanSideKick) { text = "弾SK"; return true; }
+        text = ""; return false;
+    }
+
+    public bool OverrideKillButton(out string text)
+    {
+        if (skMode && CanSideKick) { text = "JackalHadouHo_Kill"; return true; }
+        text = ""; return false;
+    }
 }
 
 public sealed class Tama : RoleBase, IKiller
@@ -1009,7 +1009,7 @@ public sealed class Tama : RoleBase, IKiller
     }
 
     public bool CanUseSabotageButton() => false;
-    public bool CanUseImpostorVentButton() => true;
+    public bool CanUseImpostorVentButton() => JackalHadouHo.GetTamaCanVent();
     public override bool CanVentMoving(PlayerPhysics physics, int ventId) => JackalHadouHo.GetTamaCanVentMove();
 
     private bool IsOwnerAlive()
