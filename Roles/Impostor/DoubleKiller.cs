@@ -28,8 +28,8 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
     {
         PhantomCooldown = OptionPhantomCooldown.GetFloat();
         KillCooldown = OptionKillCooldown.GetFloat();
-        CanVent = !OptionCanVent.GetBool();
-        CanSabotage = !OptionCanSabotage.GetBool();
+        CanVent = OptionCanVent.GetBool();
+        CanSabotage = OptionCanSabotage.GetBool();
         usedPhantomCount = 0;
     }
 
@@ -129,12 +129,7 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
     private void RestoreKillCooldown(float cooldown)
     {
         cooldown = Mathf.Max(cooldown, 0f);
-        if (IUsePhantomButton.IPPlayerKillCooldown.ContainsKey(Player.PlayerId))
-            IUsePhantomButton.IPPlayerKillCooldown[Player.PlayerId] = 0f;
-
         Player.RpcProtectedMurderPlayer();
-
-        Player.ResetKillCooldown();
         Player.SetKillTimer(cooldown);
         Player.SyncSettings();
     }
