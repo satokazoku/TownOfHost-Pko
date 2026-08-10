@@ -1,9 +1,12 @@
+using System.Collections.Generic;
 using AmongUs.GameOptions;
+using HarmonyLib;
 using Hazel;
 using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using UnityEngine;
+using static TownOfHost.PlayerCatch;
 
 namespace TownOfHost.Roles.Impostor;
 
@@ -19,127 +22,284 @@ public sealed class PuppeteerHadouHo : RoleBase, IImpostor, IUsePhantomButton
             8400,
             SetUpOptionItem,
             "phh",
-            OptionSort: (3, 14),
+            OptionSort: (3, 15),
             from: From.TownOfHost_Pko
         );
 
     public PuppeteerHadouHo(PlayerControl player)
         : base(RoleInfo, player)
     {
-        KillCooldown = OptionKillCoolDown.GetFloat();
-        Cooldown = OptionCoolDown.GetFloat();
-        ChargeTime = OptionChargeTime.GetFloat();
-        BeamTime = OptionBeamTime.GetFloat();
-        SelfDestructOnMiss = OptionSelfDestructOnMiss.GetBool();
-        IsCharging = false;
+        KillCooldown = OptKillCooldown.GetFloat();
+        PhantomCooldown = OptPhantomCooldown.GetFloat();
+        puppetId = byte.MaxValue;
+        isCharging = false;
+        isFiring = false;
         chargeTimer = 0f;
-        PlayerSpeed = 0f;
-        ShowBeamMark = false;
-        HasHit = false;
-        IsDead = false;
-        IsFiring = false;
-        _prevCharging = false;
-        _prevBeamMark = false;
-        CustomRoleManager.LowerOthers.Add(GetLowerTextOthers);
+        beamTimer = 0f;
     }
 
-    public bool IsCharging;
-    float chargeTimer;
-    float PlayerSpeed;
-    public bool ShowBeamMark;
-    bool HasHit;
-    bool BeamFacingLeft;
-    bool IsDead;
-    bool IsFiring = false;
-    bool spawnCooldownStarted = false;
-    bool _prevCharging;
-    bool _prevBeamMark;
-
-    static OptionItem OptionCoolDown;
-    static float Cooldown;
-    public static float CooldownValue => Cooldown;
-    static OptionItem OptionKillCoolDown;
+    static OptionItem OptKillCooldown;
     static float KillCooldown;
-    static OptionItem OptionChargeTime;
-    static float ChargeTime;
-    static OptionItem OptionBeamTime;
-    static float BeamTime;
-    static OptionItem OptionSelfDestructOnMiss;
-    static bool SelfDestructOnMiss;
+    static OptionItem OptPhantomCooldown;
+    static float PhantomCooldown;
+    static OptionItem OptDelay;
+    static OptionItem OptSelfDestructOnMiss;
+    static OptionItem OptSelfDestructTarget;
+    static OptionItem OptSuperEnabled;
+    static OptionItem OptSuperChance;
 
-    enum OptionName { PuppeteerHadouHoChargeTime, PuppeteerHadouHoSelfDestruct, PuppeteerHadouHoBeamTime }
+    const float NormalBeamWidth = 1.3f;
+    const float SuperBeamWidth = 2.6f;
+    const float BeamDuration = 3f; // 本家HadouHoのShowBeamMark継続時間と同じ
+    static readonly Vector2 AirshipLiftPosition = new(7.76f, 8.56f); // 昇降機の座標(CharismaStar.csより)
 
-    static void SetUpOptionItem()
-    {
-        OptionKillCoolDown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.KillCooldown, OptionBaseCoolTime, 30f, false).SetValueFormat(OptionFormat.Seconds);
-        OptionCoolDown = FloatOptionItem.Create(RoleInfo, 11, GeneralOption.Cooldown, OptionBaseCoolTime, 30f, false).SetValueFormat(OptionFormat.Seconds);
-        OptionChargeTime = FloatOptionItem.Create(RoleInfo, 12, OptionName.PuppeteerHadouHoChargeTime, new(0.5f, 10f, 0.5f), 3f, false).SetValueFormat(OptionFormat.Seconds);
-        OptionBeamTime = FloatOptionItem.Create(RoleInfo, 13, OptionName.PuppeteerHadouHoBeamTime, new(0.5f, 10f, 0.5f), 3f, false).SetValueFormat(OptionFormat.Seconds);
-        OptionSelfDestructOnMiss = BooleanOptionItem.Create(RoleInfo, 14, OptionName.PuppeteerHadouHoSelfDestruct, false, false);
-    }
+    byte puppetId;
+    bool isCharging;
+    bool isFiring;
+    float chargeTimer;
+    float beamTimer;
+    bool hasHitAnyone;
+    bool beamFacingLeft;
+    float currentHitWidth;
 
-    public override void Add()
-    {
-        PlayerSpeed = Main.AllPlayerSpeed[Player.PlayerId];
-        spawnCooldownStarted = false;
-    }
+    internal static readonly Dictionary<byte, PuppeteerHadouHo> ActivePuppets = new();
+
+    [Attributes.GameModuleInitializer]
+    public static void ResetActivePuppets() => ActivePuppets.Clear();
 
     public override void OnDestroy()
     {
-        CustomRoleManager.LowerOthers.Remove(GetLowerTextOthers);
-
-        if (IsCharging || ShowBeamMark || IsFiring)
-        {
-            Main.AllPlayerSpeed[Player.PlayerId] = PlayerSpeed;
-            Player.MarkDirtySettings();
-            if (AmongUsClient.Instance.AmHost)
-            {
-                Player.SyncSettings();
-            }
-            IsCharging = false;
-            ShowBeamMark = false;
-            IsFiring = false;
-            SetRoleTextHeight(false);
-        }
+        if (puppetId != byte.MaxValue) ActivePuppets.Remove(puppetId);
     }
 
-    public override void ApplyGameOptions(IGameOptions opt) => AURoleOptions.PhantomCooldown = Cooldown;
-    public float CalculateKillCooldown() => KillCooldown;
-
-    public override bool OnEnterVent(PlayerPhysics physics, int ventId)
+    enum OptionName
     {
-        if (IsCharging || ShowBeamMark) return false;
-        return true;
+        PuppeteerHadouHoDelay,
+        PuppeteerHadouHoSelfDestruct,
+        PuppeteerHadouHoEnableSuper,
+        PuppeteerHadouHoSuperChance,
     }
+
+    enum SelfDestructTarget { Puppeteer, Target }
+
+    static void SetUpOptionItem()
+    {
+        OptKillCooldown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.KillCooldown, new(0.5f, 60f, 0.5f), 30f, false)
+            .SetValueFormat(OptionFormat.Seconds);
+        OptPhantomCooldown = FloatOptionItem.Create(RoleInfo, 11, GeneralOption.Cooldown, new(0.5f, 60f, 0.5f), 30f, false)
+            .SetValueFormat(OptionFormat.Seconds);
+        OptDelay = FloatOptionItem.Create(RoleInfo, 12, OptionName.PuppeteerHadouHoDelay, new(0.5f, 30f, 0.5f), 3f, false)
+            .SetValueFormat(OptionFormat.Seconds);
+        OptSelfDestructOnMiss = BooleanOptionItem.Create(RoleInfo, 13, OptionName.PuppeteerHadouHoSelfDestruct, false, false);
+        OptSelfDestructTarget = StringOptionItem.Create(RoleInfo, 14, "PuppeteerHadouHoSelfDestructMode", EnumHelper.GetAllNames<SelfDestructTarget>(), 0, false, OptSelfDestructOnMiss);
+        OptSuperEnabled = BooleanOptionItem.Create(RoleInfo, 15, OptionName.PuppeteerHadouHoEnableSuper, false, false);
+        OptSuperChance = IntegerOptionItem.Create(RoleInfo, 16, OptionName.PuppeteerHadouHoSuperChance, new(1, 100, 1), 10, false, OptSuperEnabled)
+            .SetValueFormat(OptionFormat.Percent);
+    }
+
+    float IKiller.CalculateKillCooldown() => KillCooldown;
+    public override void ApplyGameOptions(IGameOptions opt) => AURoleOptions.PhantomCooldown = PhantomCooldown;
+
     bool IUsePhantomButton.IsPhantomRole => true;
+    bool IUsePhantomButton.IsresetAfterKill => false;
 
     void IUsePhantomButton.OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
     {
         AdjustKillCooldown = false;
         ResetCooldown = false;
-        if (IsFiring || ShowBeamMark || !Player.IsAlive() || IsCharging) return;
 
-        IsFiring = true;
-        IsCharging = true;
+        if (!Player.IsAlive() || puppetId != byte.MaxValue) return;
+
+        var nearest = FindNearestValidTarget();
+        if (nearest == null) return;
+
+        puppetId = nearest.PlayerId;
+        isCharging = true;
+        isFiring = false;
         chargeTimer = 0f;
-        Main.AllPlayerSpeed[Player.PlayerId] = Main.MinSpeed;
-        Player.MarkDirtySettings();
-        Utils.AllPlayerKillFlash();
-        Main.AllPlayerKillCooldown[Player.PlayerId] = 60f;
-        Player.SetKillCooldown(60f);
-        _ = new LateTask(() => { Player.SyncSettings(); }, 0.1f, "PuppeteerHadouHoKillTimer", true);
-        Player.SyncSettings();
-        Main.AllPlayerKillCooldown[Player.PlayerId] = 60f;
-        Player.SyncSettings();
-        UtilsNotifyRoles.NotifyRoles(ForceLoop: true);
-        _prevCharging = true;
-        _prevBeamMark = false;
+        ActivePuppets[puppetId] = this;
+
         SendRpc();
     }
 
-    void SetRoleTextHeight(bool beaming)
+    PlayerControl FindNearestValidTarget()
     {
-        var t = Player.cosmetics.nameText.transform.Find("RoleText");
+        PlayerControl nearest = null;
+        float minDist = float.MaxValue;
+        var myPos = Player.GetTruePosition();
+
+        foreach (var target in PlayerCatch.AllAlivePlayerControls)
+        {
+            if (target.PlayerId == Player.PlayerId) continue;
+            if (target.GetCustomRole().IsImpostor() && !SuddenDeathMode.NowSuddenDeathMode) continue;
+
+            float dist = Vector2.Distance(myPos, target.GetTruePosition());
+            if (dist < minDist)
+            {
+                minDist = dist;
+                nearest = target;
+            }
+        }
+        return nearest;
+    }
+
+    public override void OnFixedUpdate(PlayerControl player)
+    {
+        if (!AmongUsClient.Instance.AmHost) return;
+        if (puppetId == byte.MaxValue) return;
+
+        if (!Player.IsAlive() || GameStates.CalledMeeting)
+        {
+            EndSequence();
+            return;
+        }
+
+        var puppet = GetPlayerById(puppetId);
+        if (puppet == null || !puppet.IsAlive())
+        {
+            EndSequence();
+            return;
+        }
+
+        if (isCharging)
+        {
+            chargeTimer += Time.fixedDeltaTime;
+            if (chargeTimer >= OptDelay.GetFloat())
+                StartFiring(puppet);
+            return;
+        }
+
+        if (isFiring)
+        {
+            // 本家HadouHoのShowBeamMark中と同じく、ビームが出てる間は毎tick当たり判定をやり続ける。
+            ApplyBeamHit(puppet);
+
+            beamTimer += Time.fixedDeltaTime;
+            if (beamTimer >= BeamDuration)
+                ResolveBeamEnd(puppet);
+        }
+    }
+
+    void StartFiring(PlayerControl puppet)
+    {
+        bool invalidState =
+            puppet.inVent
+            || puppet.walkingToVent
+            || puppet.onLadder
+            || puppet.inMovingPlat
+            || puppet.MyPhysics.Animations.IsPlayingEnterVentAnimation()
+            || puppet.MyPhysics.Animations.IsPlayingAnyLadderAnimation()
+            || ((MapNames)Main.NormalOptions.MapId == MapNames.Airship && Vector2.Distance(puppet.GetTruePosition(), AirshipLiftPosition) <= 1.9f)
+            || PuppeteerHadouHoZiplineTracker.IsOnZipline(puppet.PlayerId);
+
+        if (invalidState)
+        {
+            EndSequence();
+            return;
+        }
+
+        isCharging = false;
+        isFiring = true;
+        beamTimer = 0f;
+        hasHitAnyone = false;
+        beamFacingLeft = puppet.cosmetics.FlipX;
+        currentHitWidth = (OptSuperEnabled.GetBool() && RollChance(OptSuperChance.GetInt())) ? SuperBeamWidth : NormalBeamWidth;
+
+        SendRpc();
+        ApplyBeamHit(puppet); // 発射した瞬間にも1回判定(本家のFireBeam直後のApplyBeamHitと同じ)
+    }
+
+    void ApplyBeamHit(PlayerControl puppet)
+    {
+        if (!AmongUsClient.Instance.AmHost || !puppet.IsAlive()) return;
+
+        var origin = puppet.GetTruePosition();
+        Vector2 dir = beamFacingLeft ? Vector2.left : Vector2.right;
+
+        foreach (var target in PlayerCatch.AllAlivePlayerControls)
+        {
+            if (target.PlayerId == puppet.PlayerId) continue;
+            if (target.GetCustomRole().IsImpostor() && !SuddenDeathMode.NowSuddenDeathMode) continue;
+
+            var toTarget = target.GetTruePosition() - origin;
+            float dot = Vector2.Dot(toTarget, dir);
+            if (dot <= 0) continue;
+            var proj = dir * dot;
+            var perp = toTarget - proj;
+            if (perp.magnitude > currentHitWidth) continue;
+
+            // appearanceKiller=puppet: 見た目上は打たされたプレイヤーが撃った扱い。攻撃実績/勝利判定はPuppeteer(attemptKiller)側につく。
+            CustomRoleManager.OnCheckMurder(Player, target, puppet, target, true, deathReason: CustomDeathReason.Evaporation);
+            hasHitAnyone = true;
+        }
+    }
+
+    void ResolveBeamEnd(PlayerControl puppet)
+    {
+        SetPuppetRoleTextHeight(puppet, false);
+
+        if (!hasHitAnyone && OptSelfDestructOnMiss.GetBool())
+        {
+            var deadTarget = OptSelfDestructTarget.GetValue() == (int)SelfDestructTarget.Puppeteer ? Player : puppet;
+            PlayerState.GetByPlayerId(deadTarget.PlayerId).DeathReason = CustomDeathReason.Suicide;
+            deadTarget.RpcMurderPlayerV2(deadTarget);
+        }
+
+        EndSequence();
+    }
+
+    void EndSequence()
+    {
+        if (puppetId != byte.MaxValue) ActivePuppets.Remove(puppetId);
+        puppetId = byte.MaxValue;
+        isCharging = false;
+        isFiring = false;
+        chargeTimer = 0f;
+        beamTimer = 0f;
+        SendRpc();
+    }
+
+    internal bool TryBuildPuppetName(PlayerControl seen, ref string name, ref bool noMarker)
+    {
+        if (seen.PlayerId != puppetId) return false;
+        if (!Player.IsAlive()) return false;
+
+        string myColor = "#" + ColorUtility.ToHtmlStringRGB(Palette.PlayerColors[Player.Data.DefaultOutfit.ColorId]);
+
+        if (isCharging)
+        {
+            bool facingLeft = seen.cosmetics.FlipX;
+            string bigStar = $"<size=800%><color={myColor}>★</color></size>";
+            string blank = "　　　";
+            name = "<line-height=1200%>\n" + (facingLeft ? bigStar + blank : blank + bigStar) + "</line-height>";
+            noMarker = true;
+            return true;
+        }
+
+        if (isFiring)
+        {
+            SetPuppetRoleTextHeight(seen, true);
+            bool fl = beamFacingLeft;
+            string star = $"<voffset=0.35em><size=800%><color={myColor}>★</color></size></voffset>";
+            string beam = "<#00CFFF>━━━━━━━</color>";
+            string blank = "<size=1200%>　</size>";
+            string sB = fl ? star + blank : blank + star;
+            string lB = fl ? beam + beam + sB : sB + beam + beam;
+            string hugeBlank = "<alpha=#00>　　　　　　　　　　</alpha>";
+            string ss = "<size=5000%>", se = "</size></line-height>";
+            name = fl
+                ? "<line-height=4300%>\n" + $"{ss}{lB}{se}{ss}{hugeBlank}{se}"
+                : "<line-height=4300%>\n" + $"{ss}{hugeBlank}{se}{ss}{lB}{se}";
+            noMarker = true;
+            return true;
+        }
+
+        return false;
+    }
+
+    static void SetPuppetRoleTextHeight(PlayerControl puppet, bool beaming)
+    {
+        var t = puppet.cosmetics.nameText.transform.Find("RoleText");
         if (t == null) return;
         var rt = t.GetComponent<TMPro.TextMeshPro>();
         if (rt == null) return;
@@ -147,241 +307,103 @@ public sealed class PuppeteerHadouHo : RoleBase, IImpostor, IUsePhantomButton
         else { rt.enabled = true; t.SetLocalY(0.35f); }
     }
 
-    private void ResetState()
-    {
-        IsCharging = false;
-        ShowBeamMark = false;
-        IsFiring = false;
-        chargeTimer = 0f;
-        HasHit = false;
-        _prevCharging = false;
-        _prevBeamMark = false;
-        Main.AllPlayerSpeed[Player.PlayerId] = PlayerSpeed;
-        Player.MarkDirtySettings();
-        SetRoleTextHeight(false);
-    }
-
-    public override void OnFixedUpdate(PlayerControl player)
-    {
-        if (!AmongUsClient.Instance.AmHost) return;
-
-        if (!spawnCooldownStarted && Player.IsAlive() && !GameStates.Intro && GameStates.IsInTask && !GameStates.IsMeeting)
-        {
-            spawnCooldownStarted = true;
-            Player.RpcResetAbilityCooldown(Sync: true);
-        }
-
-        if (MeetingHud.Instance != null)
-        {
-            if (IsCharging || ShowBeamMark || IsFiring)
-            {
-                ResetState();
-                UtilsNotifyRoles.NotifyRoles();
-                SendRpc();
-            }
-            return;
-        }
-
-        if (!Player.IsAlive() && (IsCharging || ShowBeamMark))
-        {
-            ResetState();
-            UtilsNotifyRoles.NotifyRoles();
-            SendRpc();
-            return;
-        }
-
-        bool changed = (IsCharging != _prevCharging) || (ShowBeamMark != _prevBeamMark);
-        if (changed)
-        {
-            _prevCharging = IsCharging;
-            _prevBeamMark = ShowBeamMark;
-            UtilsNotifyRoles.NotifyRoles(ForceLoop: true);
-        }
-
-        if (ShowBeamMark && Player.IsAlive()) ApplyBeamHit();
-        if (IsCharging) { chargeTimer += Time.fixedDeltaTime; if (chargeTimer >= ChargeTime) FireBeam(); }
-    }
-
-    void FireBeam()
-    {
-        if (IsDead || !Player.IsAlive()) return;
-        BeamFacingLeft = Player.cosmetics.FlipX;
-        SendBeamDirection(BeamFacingLeft);
-        Utils.AllPlayerKillFlash();
-        IsCharging = false; chargeTimer = 0f; HasHit = false; ShowBeamMark = true;
-        SetRoleTextHeight(true);
-        _prevCharging = false;
-        _prevBeamMark = true;
-        UtilsNotifyRoles.NotifyRoles(ForceLoop: true);
-        SendRpc();
-        ApplyBeamHit();
-
-        _ = new LateTask(() =>
-        {
-            if (IsDead || !Player.IsAlive())
-            {
-                ShowBeamMark = false; _prevBeamMark = false;
-                SetRoleTextHeight(false); IsFiring = false;
-                Main.AllPlayerSpeed[Player.PlayerId] = PlayerSpeed;
-                Player.MarkDirtySettings();
-                UtilsNotifyRoles.NotifyRoles(); SendRpc(); return;
-            }
-            ShowBeamMark = false; _prevBeamMark = false;
-            SetRoleTextHeight(false);
-            UtilsNotifyRoles.NotifyRoles(ForceLoop: true); SendRpc();
-
-            if (!HasHit && SelfDestructOnMiss)
-            {
-                Main.AllPlayerSpeed[Player.PlayerId] = PlayerSpeed; Player.MarkDirtySettings();
-                PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = CustomDeathReason.Suicide;
-                Player.RpcMurderPlayerV2(Player); IsFiring = false; return;
-            }
-            Main.AllPlayerSpeed[Player.PlayerId] = PlayerSpeed; Player.MarkDirtySettings();
-            _ = new LateTask(() =>
-            {
-                if (!Player.IsAlive()) { IsFiring = false; return; }
-                Main.AllPlayerKillCooldown[Player.PlayerId] = KillCooldown;
-                Player.SetKillCooldown(KillCooldown);
-                Player.RpcResetAbilityCooldown(Sync: true);
-                UtilsNotifyRoles.NotifyRoles(OnlyMeName: true);
-                _ = new LateTask(() => { IsFiring = false; }, 0.3f, "PuppeteerHadouHoResetFiring", true);
-            }, 0.2f, "PuppeteerHadouHoResetKillCool", true);
-        }, BeamTime);
-    }
-
-    void ApplyBeamHit()
-    {
-        if (!AmongUsClient.Instance.AmHost || !Player.IsAlive()) return;
-        bool facingLeft = BeamFacingLeft;
-        var myPos = Player.GetTruePosition();
-        Vector2 dir = facingLeft ? Vector2.left : Vector2.right;
-        foreach (var target in PlayerCatch.AllAlivePlayerControls)
-        {
-            if (target.PlayerId == Player.PlayerId) continue;
-            var toTarget = target.GetTruePosition() - myPos;
-            float dot = Vector2.Dot(toTarget, dir);
-            if (dot <= 0) continue;
-            var proj = dir * dot;
-            var perp = toTarget - proj;
-            if (perp.magnitude > 1.3f) continue;
-            CustomRoleManager.OnCheckMurder(Player, target, target, target, true, deathReason: CustomDeathReason.Evaporation);
-            HasHit = true;
-        }
-    }
-
-    public override void OnReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
-    {
-        ResetState();
-        Player.SyncSettings();
-        UtilsNotifyRoles.NotifyRoles(ForceLoop: true); SendRpc();
-    }
-
-    public override void OnStartMeeting()
-    {
-        ResetState();
-        Player.SyncSettings();
-    }
-
-    public override void AfterMeetingTasks()
-    {
-        if (!AmongUsClient.Instance.AmHost || !Player.IsAlive()) return;
-        AURoleOptions.PhantomCooldown = Cooldown;
-        Player.RpcResetAbilityCooldown();
-    }
-
     void SendRpc()
     {
         using var sender = CreateSender();
-        sender.Writer.Write(IsCharging);
-        sender.Writer.Write(ShowBeamMark);
-    }
-
-    void SendBeamDirection(bool left)
-    {
-        using var sender = CreateSender();
-        sender.Writer.Write((byte)1);
-        sender.Writer.Write(left);
+        sender.Writer.Write(puppetId);
+        sender.Writer.Write(isCharging);
+        sender.Writer.Write(isFiring);
+        sender.Writer.Write(chargeTimer);
+        sender.Writer.Write(beamTimer);
+        sender.Writer.Write(beamFacingLeft);
     }
 
     public override void ReceiveRPC(MessageReader reader)
     {
-        if (reader.Length - reader.Position == 2) { reader.ReadByte(); BeamFacingLeft = reader.ReadBoolean(); return; }
-        bool oldCharging = IsCharging;
-        bool oldBeamMark = ShowBeamMark;
-        IsCharging = reader.ReadBoolean();
-        ShowBeamMark = reader.ReadBoolean();
-        if (oldCharging != IsCharging || oldBeamMark != ShowBeamMark)
-            UtilsNotifyRoles.NotifyRoles(ForceLoop: true);
+        puppetId = reader.ReadByte();
+        isCharging = reader.ReadBoolean();
+        isFiring = reader.ReadBoolean();
+        chargeTimer = reader.ReadSingle();
+        beamTimer = reader.ReadSingle();
+        beamFacingLeft = reader.ReadBoolean();
     }
 
-    public override bool GetTemporaryName(ref string name, ref bool NoMarker, bool isForMeeting, PlayerControl seer, PlayerControl seen = null)
+    public override void OnStartMeeting() => EndSequence();
+
+    static bool RollChance(int chance)
     {
-        seen ??= seer;
-        if (!Player.IsAlive() || isForMeeting) return false;
-        string myColor = "#" + ColorUtility.ToHtmlStringRGB(Palette.PlayerColors[Player.Data.DefaultOutfit.ColorId]);
-
-        if (IsCharging && seen.PlayerId == Player.PlayerId)
-        {
-            bool fl = seer.PlayerId == Player.PlayerId ? Player.cosmetics.FlipX : BeamFacingLeft;
-            string bigStar = $"<size=800%><color={myColor}>★</color></size>";
-            string blank = "　　　";
-            name = "<line-height=1200%>\n" + (fl ? bigStar + blank : blank + bigStar) + "</line-height>";
-            NoMarker = true; return true;
-        }
-
-        if (seen == seer && Is(seer) && !seer.IsModClient() && (IsCharging || ShowBeamMark))
-        {
-            if (ShowBeamMark && seen.PlayerId == Player.PlayerId) { BuildBeamName(ref name, myColor, false); NoMarker = true; return true; }
-            return false;
-        }
-
-        if (ShowBeamMark && seen.PlayerId == Player.PlayerId)
-        {
-            SetRoleTextHeight(true);
-            BuildBeamName(ref name, myColor, true);
-            NoMarker = true; return true;
-        }
-        return false;
-    }
-
-    void BuildBeamName(ref string name, string myColor, bool wider)
-    {
-        SetRoleTextHeight(true);
-        bool fl = BeamFacingLeft;
-        string star = $"<voffset=0.35em><size=800%><color={myColor}>★</color></size></voffset>";
-        string beam = "<#00CFFF>━━━━━━━</color>";
-        string blank = "<size=1200%>　</size>";
-        string sB = fl ? star + blank : blank + star;
-        string lB = fl ? beam + beam + sB : sB + beam + beam;
-        string hugeBlank = "<alpha=#00>　　　　　　　　　　</alpha>";
-        string ls = wider ? "<line-height=5300%>\n" : "<line-height=4300%>\n";
-        string ss = "<size=5000%>", se = "</size></line-height>";
-        name = fl
-            ? ls + $"{ss}{lB}{se}{ss}{hugeBlank}{se}"
-            : ls + $"{ss}{hugeBlank}{se}{ss}{lB}{se}";
+        chance = Mathf.Clamp(chance, 0, 100);
+        return chance > 0 && IRandom.Instance.Next(1, 101) <= chance;
     }
 
     public override string GetLowerText(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
     {
         seen ??= seer;
-        if (seen.PlayerId != seer.PlayerId || isForMeeting || !Player.IsAlive()) return "";
-        if (!IsCharging) return $"{(isForHud ? "" : "<size=100%>")}<color=#ff0000>ファントムボタン → チャージ発射</color>";
-        return $"{(isForHud ? "" : "<size=100%>")}<color=#ff0000>チャージ中... {(ChargeTime - chargeTimer):F1}s</color>";
-    }
+        if (isForMeeting || seen.PlayerId != seer.PlayerId) return "";
+        string sz = isForHud ? "" : "<size=60%>";
 
-    public string GetLowerTextOthers(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
-    {
-        seen ??= seer;
-        if (seen != seer || isForMeeting || !Player.IsAlive()) return "";
-        if (IsCharging && seer.PlayerId != Player.PlayerId) return $"\n<size=100%><color=#ff0000>チャージ中... {(int)(ChargeTime - chargeTimer)}s</color></size>";
-        if (ShowBeamMark && seer.PlayerId != Player.PlayerId) return "\n<size=100%><color=#ff0000>ビーム中</color></size>";
+        if (seer.PlayerId == Player.PlayerId && puppetId != byte.MaxValue)
+        {
+            var puppet = GetPlayerById(puppetId);
+            string name = puppet?.Data?.PlayerName ?? "???";
+            if (isCharging) return $"{sz}<color=#ff0000>{name} が波動砲をチャージ中... {(OptDelay.GetFloat() - chargeTimer):F1}s</color>";
+            if (isFiring) return $"{sz}<color=#ff0000>{name} が波動砲を発射中...</color>";
+        }
+
+        if (puppetId != byte.MaxValue && seer.PlayerId == puppetId && (isCharging || isFiring))
+            return $"{sz}<color=#ff0000>何かに操られている… 抵抗できない！</color>";
+
         return "";
     }
 
-    public override string GetAbilityButtonText() => "発射";
+    public override string GetAbilityButtonText() => "操作開始";
     public override bool OverrideAbilityButton(out string text)
     {
         text = "PuppeteerHadouHo_Ability";
+        return true;
+    }
+}
+
+// CheckUseZiplineにはvanilla側でジップライン搭乗中かを直接判定するプロパティが無いため、
+// 使用開始時刻から移動所要時間(既存のジップライン死亡演出と同じ 5s/8s)だけ「搭乗中」とみなす簡易トラッカー。
+// 他のZiplineパッチ(戻り値false等)には影響しない、記録専用のPrefix。
+[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CheckUseZipline))]
+static class PuppeteerHadouHoZiplineTracker
+{
+    static readonly Dictionary<byte, float> RidingUntil = new();
+
+    [Attributes.GameModuleInitializer]
+    public static void Reset() => RidingUntil.Clear();
+
+    public static void Prefix(PlayerControl __instance, [HarmonyArgument(2)] bool fromTop)
+    {
+        if (!AmongUsClient.Instance.AmHost) return;
+        RidingUntil[__instance.PlayerId] = Time.time + (fromTop ? 5f : 8f);
+    }
+
+    public static bool IsOnZipline(byte playerId) =>
+        RidingUntil.TryGetValue(playerId, out var until) && Time.time < until;
+}
+
+// GetTemporaryNameは「見られている側(seen)自身のロールクラス」にディスパッチされるため、
+// PuppeteerHadouHo側にオーバーライドを書いてもパペット(打たされたプレイヤー)の名前表示には反映されない。
+// RoleBase.GetTemporaryName自体にPrefixで割り込み、現在操作中のパペットならPuppeteerHadouHo側の見た目を割り込ませる。
+// 注意: パペットが元々GetTemporaryNameをオーバーライドしている役職(HadouHo系・Jumper・Slugger等)の場合は
+// そちらの仮想メソッドが直接呼ばれるため、このPrefixは効かない(未対応の既知の穴)。
+[HarmonyPatch(typeof(RoleBase), nameof(RoleBase.GetTemporaryName))]
+static class PuppeteerHadouHoNameOverridePatch
+{
+    public static bool Prefix(ref string name, ref bool NoMarker, bool isForMeeting, PlayerControl seer, PlayerControl seen, ref bool __result)
+    {
+        seen ??= seer;
+        if (isForMeeting) return true;
+        if (!PuppeteerHadouHo.ActivePuppets.TryGetValue(seen.PlayerId, out var controller)) return true;
+
+        if (controller.TryBuildPuppetName(seen, ref name, ref NoMarker))
+        {
+            __result = true;
+            return false;
+        }
         return true;
     }
 }
