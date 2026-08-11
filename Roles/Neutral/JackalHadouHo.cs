@@ -604,7 +604,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         {
             if (pc.GetRoleClass() is Tama tama && tama.OwnerId == Player.PlayerId && pc.IsAlive())
             {
-                PlayerState.GetByPlayerId(pc.PlayerId).DeathReason = CustomDeathReason.etc;
+                PlayerState.GetByPlayerId(pc.PlayerId).DeathReason = CustomDeathReason.Sacrifice;
                 pc.RpcExileV3();
                 PlayerState.GetByPlayerId(pc.PlayerId).SetDead();
                 UtilsGameLog.AddGameLog("JackalHadouHo", $"<color=#ff0000>【超波動砲】</color> 弾({UtilsName.GetPlayerColor(pc, true)})を消費しました");

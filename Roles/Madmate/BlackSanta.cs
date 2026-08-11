@@ -238,7 +238,6 @@ public sealed class BlackSanta : RoleBase, IKiller, IKillFlashSeeable, IDeathRea
         return true;
     }
 
-    // インポスターがわかるようになったか(タスク不要ならOptCanKnowImpostorsのみで判定)
     private bool KnowsImpostors()
     {
         if (!OptCanKnowImpostors.GetBool()) return false;
@@ -246,7 +245,6 @@ public sealed class BlackSanta : RoleBase, IKiller, IKillFlashSeeable, IDeathRea
         return MyTaskState.HasCompletedEnoughCountOfTasks(OptNeededTaskCountForKnowImpostors.GetInt());
     }
 
-    // マッドスニッチのCheckAndAddNameColorToImpostorsと同じ要領で、わかった時点のインポスターを自分の色でマーキングする
     private void CheckAndAddNameColorToImpostors()
     {
         if (!KnowsImpostors()) return;
@@ -298,7 +296,6 @@ public sealed class BlackSanta : RoleBase, IKiller, IKillFlashSeeable, IDeathRea
             ApplyModeDesync(true);
     }
 
-    // 配布候補と設定確率
     private static int GetGiftRate(CustomRoles role) => role switch
     {
         CustomRoles.EvilGuesser => OptEvilGuesserRate?.GetInt() ?? 0,
@@ -353,7 +350,6 @@ public sealed class BlackSanta : RoleBase, IKiller, IKillFlashSeeable, IDeathRea
         return weightedRoles[weightedRoles.Length - 1].Role;
     }
 
-    // キルボタン → プレゼント処理
     public void OnCheckMurderAsKiller(MurderInfo info)
     {
         var (killer, target) = info.AttemptTuple;
@@ -364,14 +360,12 @@ public sealed class BlackSanta : RoleBase, IKiller, IKillFlashSeeable, IDeathRea
         bool tryLoverToDeath = OptTryLoverToDeath?.GetBool() ?? false;
         bool isLovers = target.Is(CustomRoles.Lovers) || target.Is(CustomRoles.MadonnaLovers) || target.Is(CustomRoles.OneLove);
 
-        // 恋人へプレゼント → 自爆させる設定なら自爆
         if (isLovers && !tryLoverToDeath)
         {
             SantaSuicide();
             return;
         }
 
-        // インポスター陣営以外へプレゼント → 自爆(SNR: ForImpostor)
         if (target.GetCustomRole().GetCustomRoleTypes() != CustomRoleTypes.Impostor)
         {
             SantaSuicide();
@@ -384,7 +378,6 @@ public sealed class BlackSanta : RoleBase, IKiller, IKillFlashSeeable, IDeathRea
         var role = RollGiftRole();
         var beforeRole = target.GetCustomRole();
 
-        // 既に同じ役職なら消費せず何もしない(無駄撃ち防止)
         if (beforeRole == role)
         {
             killer.ResetKillCooldown();

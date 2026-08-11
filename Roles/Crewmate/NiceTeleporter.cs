@@ -265,7 +265,7 @@ public sealed class NiceTeleporter : RoleBase
         var dest = PlayerCatch.GetPlayerById(destPlayerId);
         string destName = dest != null ? UtilsName.GetPlayerColor(dest, true) : "???";
         int sec = Mathf.CeilToInt(pendingTimer);
-        return $"\n<size=100><color=#4169e1>{destName} の元に {sec}秒後テレポートします！</color></size>";
+        return $"\n<size=100%><color=#4169e1>{destName} の元に {sec}秒後テレポートします！</color></size>";
     }
 
     public override string GetLowerText(PlayerControl seer, PlayerControl seen = null,

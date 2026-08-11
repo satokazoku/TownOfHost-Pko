@@ -288,7 +288,8 @@ namespace TownOfHost
             var tpinfo = "";
             var text = "";
             var targetPlayer = PlayerCatch.AllPlayerControls.FirstOrDefault(player => player.PlayerId == to);
-            var isModerator = Moderator.IsModerator(targetPlayer);
+            // ホストは常にモデレーターコマンド欄が見える。
+            var isModerator = Moderator.IsModerator(targetPlayer) || to == 0;
 
             // 禁止コマンドはヘルプに表示しない
             bool cmdRestricted = Options.OptionCommandSetting?.GetBool() ?? false;
