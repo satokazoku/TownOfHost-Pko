@@ -903,6 +903,7 @@ public enum CustomRoles
     MadAvenger,
     SKMadmate,
     BlackCat,
+    BlackSanta,
     //TOH-K
     MadJester,
     MadTeller,
