@@ -390,7 +390,7 @@ namespace TownOfHost
                 var varsion = Main.PluginShowVersion;
                 var text = $"<size=70%>This Room Use \n<{Main.ModColor}><size=180%><b>{Main.ModName}</color></b></size> v.{varsion}\n<size=40%>\n\n</size>Mods are currently not available in <#fc8803> public rooms in AmongUs.</color><size=80%>\n";
                 var text2 = "</size><#ff1919>Solicitation or inducement from a public room to a mod room is <b>forbidden</b></color>. <size=40%>\nIf you encounter any <#ff1919>solicitation or inducement</color>, please notify the developer with a screenshot or other information.";
-                Utils.SendMessage($"{text}{text2}", Sendto, $"<{Main.ModColor}>【This Room Use \"Town Of Host-K\"】</color>");
+                Utils.SendMessage($"{text}{text2}", Sendto, $"<{Main.ModColor}>【This Room Use \"Town Of Host-Pko\"】</color>");
             }
 
             if (Options.AutoDisplayLastResult.GetBool() && PlayerState.AllPlayerStates.Count != 0 && (Sendto == byte.MaxValue || Main.clientIdList.Contains(Sendto.GetPlayerControl()?.GetClientId() ?? -1)))

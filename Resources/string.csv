@@ -876,6 +876,7 @@
 "NueInfoLong","A combination role paired with the <#8b6d61>Fool.</color>\nAlthough a Crewmate, the Nue sides with the Impostors.\nAfter completing a certain number of tasks and voting for themselves during a meeting, the Nue enters Guess Mode.\nWhile in Guess Mode, voting for the Fool will kill the Fool.\nOnce the Fool dies, the meeting immediately ends, and the Nue gains access to a Suicidal Attack ability.\nIf the guess fails, the Nue dies instead.\nAfter the Suicidal Attack is unlocked, the Nue will kill a target but will die by self-destruction shortly afterward.","<#8b6d61>愚か者</color>とのコンビネーション役職。\n\nクルーだがインポスターの味方をする。\n鵺(ぬえ)は一定数タスクを完了させ、会議で自投票することで推測モードになる\n推測モード中に愚か者に投票することで、愚か者が死亡する\n死亡後、会議が即座に終了し、鵺に自爆特攻能力が解放される。\n推測に失敗すると自身が死亡する。\n\n自爆特攻が解放されると、キルを行った後、一定時間後に自身が自殺する。"
 "MadHackerInfoLong","","クルーだがインポスターの味方をする。\nタスクターン中、シェイプシフト画面から死者の情報を得ることができる。\n設定によって死者の死体位置を得たり死者の死因を得る事もできる。\nインポスターのキルか確認できる設定有効時、×が\n赤=>インポスター　灰=>その他のキラー 橙=>自殺等となる。"
 "BlackCatInfoLong","a","インポスターの味方のクルーメイトです。\nいわゆる狂人と呼ばれる役職です。\n勝利条件はクルーメイトの勝利ではなく、インポスターの勝利です。\nその勝利に自身の生死は問われないので、あの手この手でインポスターを勝利に導きましょう。"
+"BlackSantaInfoLong","","ペットを撫でることでタスクモードとプレゼントモードを切り替えることが出来る。プレゼントモード中キルボタンで近くのプレイヤーに設定の役職を付与できる役職。\nペットがない場合でも設定タスク全完了でプレゼントが可能になる。\nただし、相手がインポスター陣営以外だった場合自殺する。"
 "#MadmateInfoLong"
 
 "# 特殊クルー役職"
