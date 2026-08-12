@@ -52,6 +52,7 @@ public sealed class Santa : RoleBase, IKiller
     static OptionItem OptGiftLimit;
     static OptionItem OptCanGiftLovers;
     static OptionItem OptCanGiftMadmate;
+    static OptionItem OptCanGiftJackalDoll;
     static OptionItem OptCanTaskCount;
 
     bool giftMode;
@@ -69,6 +70,7 @@ public sealed class Santa : RoleBase, IKiller
         SantaGiftLimit,
         SantaCanGiftLovers,
         SantaCanGiftMadmate,
+        SantaCanGiftJackalDoll,
         SantaCanTaskCount,
     }
 
@@ -76,6 +78,38 @@ public sealed class Santa : RoleBase, IKiller
 
     private static void SetupOptionItem()
     {
+        OptKillCooldown = FloatOptionItem.Create(
+            RoleInfo, 10, "SantaKillCooldown",
+            new(0.5f, 60f, 0.5f), 25f, false
+        ).SetValueFormat(OptionFormat.Seconds);
+
+        OptGiftLimit = IntegerOptionItem.Create(
+            RoleInfo, 17, OptionName.SantaGiftLimit,
+            new(1, 100, 1), 15, false
+        ).SetValueFormat(OptionFormat.Times);
+
+        OptCanTaskCount = IntegerOptionItem.Create(
+            RoleInfo, 30, OptionName.SantaCanTaskCount,
+            new(0, 99, 1), 0, false
+        );
+
+        OverrideTasksData.Create(RoleInfo, 20);
+
+        OptCanGiftLovers = BooleanOptionItem.Create(
+            RoleInfo, 18, OptionName.SantaCanGiftLovers,
+            false, false
+        );
+
+        OptCanGiftMadmate = BooleanOptionItem.Create(
+            RoleInfo, 19, OptionName.SantaCanGiftMadmate,
+            false, false
+        );
+
+        OptCanGiftJackalDoll = BooleanOptionItem.Create(
+            RoleInfo, 31, OptionName.SantaCanGiftJackalDoll,
+            false, false
+        );
+
         OptBalancerRate = IntegerOptionItem.Create(
             RoleInfo, 11, OptionName.SantaGiftRateBalancer,
             new(0, 100, 5), 20, false
@@ -105,33 +139,6 @@ public sealed class Santa : RoleBase, IKiller
             RoleInfo, 16, OptionName.SantaGiftRateNiceGuesser,
             new(0, 100, 5), 20, false
         ).SetValueFormat(OptionFormat.Percent);
-
-        OptKillCooldown = FloatOptionItem.Create(
-            RoleInfo, 10, "SantaKillCooldown",
-            new(0.5f, 60f, 0.5f), 25f, false
-        ).SetValueFormat(OptionFormat.Seconds);
-
-        OptGiftLimit = IntegerOptionItem.Create(
-            RoleInfo, 17, OptionName.SantaGiftLimit,
-            new(1, 100, 1), 15, false
-        ).SetValueFormat(OptionFormat.Times);
-
-        OptCanGiftLovers = BooleanOptionItem.Create(
-            RoleInfo, 18, OptionName.SantaCanGiftLovers,
-            false, false
-        );
-
-        OptCanGiftMadmate = BooleanOptionItem.Create(
-            RoleInfo, 19, OptionName.SantaCanGiftMadmate,
-            false, false
-        );
-
-        OverrideTasksData.Create(RoleInfo, 20);
-
-        OptCanTaskCount = IntegerOptionItem.Create(
-            RoleInfo, 30, OptionName.SantaCanTaskCount,
-            new(0, 99, 1), 0, false
-        );
     }
 
     public override void Add()
@@ -298,10 +305,12 @@ public sealed class Santa : RoleBase, IKiller
         var targetRoleType = target.GetCustomRole().GetCustomRoleTypes();
         bool isLovers = target.Is(CustomRoles.Lovers) || target.Is(CustomRoles.MadonnaLovers) || target.Is(CustomRoles.OneLove);
         bool isMadmate = targetRoleType == CustomRoleTypes.Madmate;
+        bool isJackalDoll = target.Is(CustomRoles.Jackaldoll);
         bool isCrew = targetRoleType == CustomRoleTypes.Crewmate;
         bool canGift = isCrew;
         if (!canGift && isLovers && (OptCanGiftLovers?.GetBool() ?? false)) canGift = true;
         if (!canGift && isMadmate && (OptCanGiftMadmate?.GetBool() ?? false)) canGift = true;
+        if (!canGift && isJackalDoll && (OptCanGiftJackalDoll?.GetBool() ?? false)) canGift = true;
 
         if (!canGift)
         {

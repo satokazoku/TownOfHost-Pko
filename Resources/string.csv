@@ -1997,6 +1997,8 @@
 "SantaGiftLimit","Maximum number of gifts","プレゼントの配布上限回数"
 "SantaCanGiftLovers","Can gift to Lovers","ラバーズにもプレゼントを配れる"
 "SantaCanGiftMadmate","Can gift to Madmate","マッドメイト陣営にもプレゼントを配れる"
+"SantaCanTaskCount","Can gift to players with tasks","能力を発揮するタスク数"
+"SantaCanGiftJackalDoll","Can gift to Jackal Doll","ジャッカルドールにもプレゼントを配れる"
 "RabbitRedistributionLongTasks","Redistribution Long Tasks","再配布ロングタスク数"
 "RabbitRedistributionCommonTasks","Redistribution Common Tasks","再配布通常タスク数"
 "RabbitRedistributionShortTasks","Redistribution Short Tasks","再配布ショートタスク数"
