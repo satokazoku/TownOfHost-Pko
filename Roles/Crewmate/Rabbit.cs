@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using AmongUs.GameOptions;
 using TownOfHost.Roles.Core;
+using Steamworks;
 
 namespace TownOfHost.Roles.Crewmate;
 
@@ -40,10 +41,13 @@ public sealed class Rabbit : RoleBase
     {
         TaskTrigger = OptionTaskTrigger.GetInt();
         NumLongTasks = OptionNumLongTasks.GetInt();
+        NumNormalTasks = OptionNumNormalTasks.GetInt();
         NumShortTasks = OptionNumShortTasks.GetInt();
 
         if (Main.NormalOptions.NumLongTasks < NumLongTasks)
             NumLongTasks = Main.NormalOptions.NumLongTasks;
+        if (Main.NormalOptions.NumCommonTasks < NumNormalTasks)
+            NumNormalTasks = Main.NormalOptions.NumCommonTasks;
         if (Main.NormalOptions.NumShortTasks < NumShortTasks)
             NumShortTasks = Main.NormalOptions.NumShortTasks;
 
@@ -54,16 +58,20 @@ public sealed class Rabbit : RoleBase
 
     static OptionItem OptionTaskTrigger;
     static OptionItem OptionNumLongTasks;
+    static OptionItem OptionNumNormalTasks;
     static OptionItem OptionNumShortTasks;
 
     enum OptionName
     {
         RabbitRedistributionLongTasks,
+        RabbitRedistributionNormalTasks,
         RabbitRedistributionShortTasks,
     }
 
     static int TaskTrigger;
+    static int NumNormalTasks;
     static int NumLongTasks;
+    public static int AdditionalCommonTasks => NumNormalTasks;
     static int NumShortTasks;
     static List<PlayerControl> taskFinish = new();
 
@@ -77,6 +85,8 @@ public sealed class Rabbit : RoleBase
         OptionTaskTrigger = IntegerOptionItem.Create(RoleInfo, 10, GeneralOption.TaskTrigger, new(0, 20, 1), 10, false)
             .SetValueFormat(OptionFormat.Pieces);
         OptionNumLongTasks = IntegerOptionItem.Create(RoleInfo, 11, OptionName.RabbitRedistributionLongTasks, new(0, 15, 1), 1, false)
+            .SetValueFormat(OptionFormat.Pieces);
+        OptionNumNormalTasks = IntegerOptionItem.Create(RoleInfo, 13, OptionName.RabbitRedistributionNormalTasks, new(0, 15, 1), 1, false)
             .SetValueFormat(OptionFormat.Pieces);
         OptionNumShortTasks = IntegerOptionItem.Create(RoleInfo, 12, OptionName.RabbitRedistributionShortTasks, new(0, 15, 1), 1, false)
             .SetValueFormat(OptionFormat.Pieces);
@@ -128,7 +138,7 @@ public sealed class Rabbit : RoleBase
 
         if (IsTaskFinished)
         {
-            MyTaskState.AllTasksCount += NumLongTasks + NumShortTasks;
+            MyTaskState.AllTasksCount += NumLongTasks + NumNormalTasks + NumShortTasks;
             Player.Data.RpcSetTasks(Array.Empty<byte>());
             Player.SyncSettings();
         }

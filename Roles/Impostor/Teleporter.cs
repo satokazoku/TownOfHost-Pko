@@ -253,7 +253,7 @@ public sealed class Teleporter : RoleBase, IImpostor, IUsePhantomButton
         var dest = PlayerCatch.GetPlayerById(destPlayerId);
         string destName = dest != null ? UtilsName.GetPlayerColor(dest, true) : "???";
         int sec = Mathf.CeilToInt(pendingTimer);
-        return $"\n<color=#ff4500>{destName} の元に {sec}秒後テレポートします！</color>";
+        return $"\n<size=100%><color=#ff4500>{destName} の元に {sec}秒後テレポートします！</color></size>";
     }
 
     public override string GetLowerText(PlayerControl seer, PlayerControl seen = null,
@@ -297,7 +297,7 @@ public sealed class Teleporter : RoleBase, IImpostor, IUsePhantomButton
         destPlayerId = reader.ReadByte();
     }
 
-    public override string GetAbilityButtonText() => GetString("テレポート");
+    public override string GetAbilityButtonText() => "テレポート";
 
     public override bool OverrideAbilityButton(out string text)
     {

@@ -605,8 +605,6 @@ public sealed class Onmyoji : RoleBase, IKiller, ISelfVoter
         if (reader.BytesRemaining > 0)
             NextShikigamiCandidate = reader.ReadByte();
     }
-
-    public override string GetAbilityButtonText() => GetString("OnmyojiAbilityButtonText");
     public bool OverrideKillButton(out string text) { text = "Onmyoji_Kill"; return true; }
 
     bool IsStarReadingTarget(PlayerControl target)
@@ -863,6 +861,18 @@ public sealed class Shikigami : RoleBase, IUsePhantomButton, IKillFlashSeeable
     }
 
     public override string GetAbilityButtonText() => GetString("ShikigamiTransformButtonText");
+
+    public override bool OverrideAbilityButton(out string text)
+    {
+        text = "Shikigami_Ability";
+        return true;
+    }
+
+    public bool OverrideKillButton(out string text)
+    {
+        text = "Shikigami_Kill";
+        return true;
+    }
 
     void EnsurePetActionRegistered()
     {

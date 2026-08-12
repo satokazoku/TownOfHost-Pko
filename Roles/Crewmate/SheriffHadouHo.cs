@@ -31,6 +31,7 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
     {
         Cooldown = OptionCooldown.GetFloat();
         ChargeTime = OptionChargeTime.GetFloat();
+        BeamTime = OptionBeamTime.GetFloat();
         ShotLimit = OptionShotLimit.GetInt();
         SelfDestructOnMiss = OptionSelfDestructOnMiss.GetBool();
         BeamColorModeValue = OptionBeamColorMode.GetValue();
@@ -43,7 +44,6 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
         _prevCharging = false;
         _prevBeamMark = false;
         BeamFacingLeft = false;
-        PlayerColor = 0;
         beamMode = false;
         nowcool = Cooldown;
         LastCooltime = (int)Cooldown;
@@ -53,6 +53,8 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
     static float Cooldown;
     static OptionItem OptionChargeTime;
     static float ChargeTime;
+    static OptionItem OptionBeamTime;
+    static float BeamTime;
     static OptionItem OptionShotLimit;
     static OptionItem OptionSelfDestructOnMiss;
     static bool SelfDestructOnMiss;
@@ -72,7 +74,6 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
     bool _prevCharging;
     bool _prevBeamMark;
     bool BeamFacingLeft;
-    int PlayerColor;
     bool beamMode;
     float nowcool;
     int LastCooltime;
@@ -90,6 +91,7 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
         SheriffHadouHoBeamColorMode,
         SheriffHadouHoBeamUnlockTask,
         SheriffHadouHoSelfDestruct,
+        SheriffHadouHoBeamTime,
     }
 
     static void SetupOptionItem()
@@ -98,14 +100,16 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
             new(0f, 60f, 0.5f), 30f, false).SetValueFormat(OptionFormat.Seconds);
         OptionChargeTime = FloatOptionItem.Create(RoleInfo, 11, OptionName.SheriffHadouHoChargeTime,
             new(0.5f, 10f, 0.5f), 3f, false).SetValueFormat(OptionFormat.Seconds);
-        OptionShotLimit = IntegerOptionItem.Create(RoleInfo, 12, OptionName.SheriffHadouHoShotLimit,
+        OptionBeamTime = FloatOptionItem.Create(RoleInfo, 12, OptionName.SheriffHadouHoBeamTime,
+            new(0.5f, 10f, 0.5f), 3f, false).SetValueFormat(OptionFormat.Seconds);
+        OptionShotLimit = IntegerOptionItem.Create(RoleInfo, 13, OptionName.SheriffHadouHoShotLimit,
             new(1, 15, 1), 3, false).SetValueFormat(OptionFormat.Times);
-        OptionSelfDestructOnMiss = BooleanOptionItem.Create(RoleInfo, 13,
+        OptionSelfDestructOnMiss = BooleanOptionItem.Create(RoleInfo, 14,
             OptionName.SheriffHadouHoSelfDestruct, true, false);
-        OptionBeamColorMode = StringOptionItem.Create(RoleInfo, 14,
+        OptionBeamColorMode = StringOptionItem.Create(RoleInfo, 15,
             OptionName.SheriffHadouHoBeamColorMode,
             new string[] { "Cyan", "Yellow" }, 1, false);
-        OptionBeamUnlockTask = IntegerOptionItem.Create(RoleInfo, 15,
+        OptionBeamUnlockTask = IntegerOptionItem.Create(RoleInfo, 16,
             OptionName.SheriffHadouHoBeamUnlockTask,
             new(0, 10, 1), 0, false).SetValueFormat(OptionFormat.Times);
     }
@@ -114,7 +118,6 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
     {
         CustomRoleManager.LowerOthers.Add(GetLowerTextOthers);
         PlayerSpeed = Main.AllPlayerSpeed[Player.PlayerId];
-        PlayerColor = Player.Data.DefaultOutfit.ColorId;
         BeamColorModeValue = OptionBeamColorMode.GetValue();
         BeamUnlockTaskCount = OptionBeamUnlockTask.GetInt();
         SelfDestructOnMiss = OptionSelfDestructOnMiss.GetBool();
@@ -270,7 +273,6 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
             ResetBeamState();
             beamMode = false;
             Player.RpcSetRoleDesync(RoleTypes.Engineer, Player.GetClientId());
-            Player.RpcSetColor((byte)PlayerColor);
             UtilsNotifyRoles.NotifyRoles(); SendRpc();
             return;
         }
@@ -337,7 +339,6 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
                 SetRoleTextHeight(false); IsFiring = false;
                 Main.AllPlayerSpeed[Player.PlayerId] = PlayerSpeed;
                 Player.MarkDirtySettings();
-                Player.RpcSetColor((byte)PlayerColor);
                 UtilsNotifyRoles.NotifyRoles(); SendRpc(); return;
             }
 
@@ -348,7 +349,6 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
 
             if (!HasHit && SelfDestructOnMiss)
             {
-                Player.RpcSetColor((byte)PlayerColor);
                 Main.AllPlayerSpeed[Player.PlayerId] = PlayerSpeed;
                 Player.MarkDirtySettings();
                 PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = CustomDeathReason.Suicide;
@@ -359,7 +359,6 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
                 return;
             }
 
-            Player.RpcSetColor((byte)PlayerColor);
             Main.AllPlayerSpeed[Player.PlayerId] = PlayerSpeed;
             Player.MarkDirtySettings();
             nowcool = Cooldown;
@@ -372,7 +371,7 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
                 UtilsNotifyRoles.NotifyRoles(OnlyMeName: true);
                 _ = new LateTask(() => { IsFiring = false; }, 0.3f, "SHHResetFiring", true);
             }, 0.2f, "SHHResetCooldown", true);
-        }, 3f, "SHHBeamEnd", true);
+        }, BeamTime, "SHHBeamEnd", true);
     }
 
     void ApplyBeamHit()
@@ -528,9 +527,9 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
         seen ??= seer;
         if (seen != seer || isForMeeting || !Player.IsAlive()) return "";
         if (IsCharging && seer.PlayerId != Player.PlayerId)
-            return $"\n<color=#ff0000>チャージ中... {(int)(ChargeTime - chargeTimer)}s</color>";
+            return $"\n<size=100%><color=#ff0000>チャージ中... {(int)(ChargeTime - chargeTimer)}s</color></size>";
         if (ShowBeamMark && seer.PlayerId != Player.PlayerId)
-            return "\n<color=#ff0000>ビーム中</color>";
+            return "\n<size=100%><color=#ff0000>ビーム中</color></size>";
         return "";
     }
 

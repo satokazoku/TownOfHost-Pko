@@ -22,7 +22,8 @@ public sealed class NiceLinker : RoleBase
             SetupOptionItem,
             "nl",
             "#aaaaff",
-            (1, 7)
+            (1, 7),
+            from: From.TownOfHost_Pko
         );
 
     public NiceLinker(PlayerControl player)

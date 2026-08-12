@@ -706,13 +706,13 @@ namespace TownOfHost
                             if (RuleText == "")
                             {
                                 RuleText = newRule;
-                                SaveRule(); // ★ セーブを実行
+                                SaveRule();
                                 SendMessage($"<size=90%><color=#ff0000>📋 ルールを設定しました！</color>\n{RuleText}</size>");
                             }
                             else
                             {
                                 RuleText = newRule;
-                                SaveRule(); // ★ セーブを実行
+                                SaveRule();
                                 SendMessage($"<size=90%><color=#ff0000>📋 ルールを変更しました！</color>\n{RuleText}</size>");
                             }
                         }
@@ -730,7 +730,7 @@ namespace TownOfHost
                             else
                             {
                                 RuleText = "";
-                                SaveRule(); // ★ セーブを実行
+                                SaveRule();
                                 SendMessage("<color=#ff0000>📋 ルールを削除しました！</color>");
                             }
                         }

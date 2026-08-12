@@ -833,7 +833,7 @@ public enum CustomRoles
     Insider,
     HadouHo,
     SelfBomber,
-    DoubleKiller,
+    DoubleKiller,    
     Slugger,
     Chaser,
     Samurai,
@@ -893,6 +893,8 @@ public enum CustomRoles
     MassMurder,
     EvilStandMaster,
     BeginnerImpostor,
+    PuppeteerHadouHo,
+    SmokeMaker,
     //DEBUG only Impostor
     //Madmate
     MadGuardian,
@@ -901,6 +903,7 @@ public enum CustomRoles
     MadAvenger,
     SKMadmate,
     BlackCat,
+    BlackSanta,
     //TOH-K
     MadJester,
     MadTeller,
@@ -1079,11 +1082,10 @@ public enum CustomRoles
     JackalWolf,
     TaskPlayerB,
     //TOH-P
-    StandMaster,
     Chatter,
     BatGirl,
     Shyboy,
-    SmokeMaker,
+    StandMaster,
     Stand,
     Villain,
     Scratcher,

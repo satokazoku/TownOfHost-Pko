@@ -129,11 +129,9 @@ public sealed class Santa : RoleBase, IKiller
         OverrideTasksData.Create(RoleInfo, 20);
 
         OptCanTaskCount = IntegerOptionItem.Create(
-            RoleInfo, 21, OptionName.SantaCanTaskCount,
+            RoleInfo, 30, OptionName.SantaCanTaskCount,
             new(0, 99, 1), 0, false
         );
-
-        OverrideTasksData.Create(RoleInfo, 20);
     }
 
     public override void Add()
