@@ -399,6 +399,7 @@ namespace TownOfHost
         Victim,
         Monika,
         StandMaster,
-        Villain
+        Villain,
+        Hunter
     }
 }

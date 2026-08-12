@@ -508,6 +508,7 @@ namespace TownOfHost
         Victim = CustomRoles.Victim,
         Amateras = CustomRoles.Amateras,
         Ruler = CustomRoles.Ruler,
+        Hunter = CustomRoles.Hunter,
 
         HASTroll = CustomRoles.HASTroll,
         TaskPlayerB = CustomRoles.TaskPlayerB,

@@ -285,6 +285,7 @@
 "TheFirstLittlePig","The First Little Pig","1番目の仔豚"
 "TheSecondLittlePig","The Second Little Pig","2番目の仔豚"
 "TheThirdLittlePig","The Third Little Pig","3番目の仔豚"
+"Hunter","Hunter","狩人"
 "#NeutralName"
 
 "#コンビネーション役職"
@@ -686,6 +687,7 @@
 "TheFirstLittlePigInfo","House， keep us safe!","藁の家でもないよりマシ"
 "TheSecondLittlePigInfo","House， keep us safe!","木の家はそこそこ頼りになる"
 "TheThirdLittlePigInfo","House， keep us safe!","レンガの家は盤石さ"
+"HunterInfo","Kill in the Dark","闇の中で殺戮せよ"
 "#NeutralInfo"
 
 "# HideAndSeek"
@@ -1015,6 +1017,7 @@
 "PursuerInfoLong","(Neutrals):\nThe client died, so the lawyer became a pursuer.\nIf you yourself are still alive at the end of the game, you win an additional victory. It is also possible to prevent kills for a set number of times.","依頼人が死亡したので弁護士は追跡者になった。\n自身がゲーム終了時に生存していれば追加で勝利となる。また、設定回数分キルを防ぐことが可能。","(中立阵营):\n当客户死了 律师将会变成起诉人\n如果起诉人在游戏结束时还活着，它将单独获得胜利. 也可以在设定的次数内阻止死亡",
 "MonikaInfoLong","","キルボタン「抹消」で対象を半死亡の「ゴミ箱」レイヤーへ送る。ゴミ箱の者は会議での発言・投票・能力を失うが、ゴミ箱・死亡者とは秘匿チャットで会話できる。ゴミ箱に居ない生存者が2名になると特殊会議で追加の勝者を選び、0～1名になるとモニカと残り全員が勝利する。"
 "PokerFaceInfoLong","PokerfaceWinnerOnlyAlive,Only surviving poker faces win.","生き残ったポーカーフェイスのみ勝利する"
+"HunterInfoLong","Select a target on the Shape Shift screen; when you get close to that target, you’ll warp to it and kill it. (The range is about a size smaller than the Skeld cafeteria.)\nAfter making a kill, your name turns brown and your movement speed increases.\nYour vision of the surrounding area will also be blocked for a certain amount of time.\nYou win when the number of Hunters equals the number of Crewmates.","シェイプシフト画面でターゲットを決め、そのターゲットに近づくとターゲットにワープしキルします。(範囲はスケルドのカフェテリアより一回り小さいぐらいです。)\nキルした後、自身の名前の色が茶色になり、足が速くなります。\n周りの視界も一定時間見えなくなります。\n狩人とカウント=クルーメイトの役職が同数になると勝利します。"
 "#NeutralInfoLong"
 
 "# ImpostorDescInfos"
@@ -1831,6 +1834,10 @@
 "SpiderTrapCatchDuration","Catch Duration","捕獲時間"
 "MinimalistCanVent","Can Use Vent","ベントを使える"
 "MinimalistCanSabotage","Can Use Sabotage","サボタージュを使える"
+"HunterchangeColorTime","Time When the Name Changes Color Time When the Name Changes Color","名前の色が変わる時間"
+"HunterSpeedBoostTime","Time to Get Faster","足が速くなる時間"
+"HunterSpeedBoost","Speed when running fast","足が速い時の速度"
+"HunterDarkenRange","Darken Range","暗転する範囲"
 
 "## MadMate Role Setting"
 "MadmateOption","MadMate Options","マッドメイト系役職の設定"
