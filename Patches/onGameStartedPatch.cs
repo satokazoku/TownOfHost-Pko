@@ -290,7 +290,7 @@ namespace TownOfHost
                         PlayerControl.LocalPlayer.RpcSetRole(RoleTypes.Crewmate, Main.SetRoleOverride && GameModeManager.IsStandardClass());
                         PlayerControl.LocalPlayer.Data.IsDead = true;
                     }
-                    if (DebugModeManager.EnableTOHPDebugMode.GetBool())
+                    if (DebugModeManager.EnableTOHNDebugMode.GetBool())
                     {
                         if (Main.HostRole != CustomRoles.NotAssigned)
                         {
@@ -527,8 +527,8 @@ namespace TownOfHost
                 // さつまといもの処理
                 foreach (var state in PlayerState.AllPlayerStates.Values)
                 {
-                    if (state.MainRole != CustomRoles.SatsumatoImo) continue;
-                    state.SetMainRole(rand.Next(0, 2) == 0 ? CustomRoles.SatsumatoImoC : CustomRoles.SatsumatoImoM);
+                    if (state.MainRole != CustomRoles.JekyllandHyde) continue;
+                    state.SetMainRole(rand.Next(0, 2) == 0 ? CustomRoles.Jekyll : CustomRoles.Hyde);
                 }
 
                 foreach (var pair in PlayerState.AllPlayerStates)

@@ -25,6 +25,7 @@ public sealed class Walkure : RoleBase, ISelfVoter, IKiller
             "wk",
             "#78d7ff",
              (3, 6),
+            from: From.TownOfHost_Pko,
             isDesyncImpostor: true
         );
 

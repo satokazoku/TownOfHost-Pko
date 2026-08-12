@@ -23,6 +23,7 @@ public sealed class Bakery : RoleBase
             "bak",
             "#8f6121",
             (4, 2),
+            from: From.ExtremeRoles,
             introSound: () => GetIntroSound(RoleTypes.Crewmate)
         );
 

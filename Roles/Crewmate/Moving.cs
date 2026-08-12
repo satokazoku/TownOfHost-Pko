@@ -65,6 +65,9 @@ public sealed class Moving : RoleBase
             Player.MarkDirtySettings();
             Player.RpcResetAbilityCooldown(Sync: true);
             UtilsNotifyRoles.NotifyRoles(OnlyMeName: true);
+            Utils.SendMessage(
+                $"<color=#00ccff>ワープ先を設定しました！</color>\n<size=70%>ペットを撫でるといつでもワープします。</size>",
+                Player.PlayerId);
             return;
         }
 

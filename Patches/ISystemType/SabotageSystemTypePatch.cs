@@ -4,7 +4,6 @@ using TownOfHost.Modules;
 using TownOfHost.Roles.AddOns.Common;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
-using TownOfHost.Roles.Madmate;
 
 namespace TownOfHost.Patches.ISystemType;
 
@@ -27,7 +26,7 @@ public static class SabotageSystemTypeUpdateSystemPatch
         if (Options.CurrentGameMode == CustomGameMode.HideAndSeek || Options.IsStandardHAS) return false;
 
         if (Options.CurrentGameMode is CustomGameMode.SuddenDeath or CustomGameMode.MurderMystery) return false;
-        if (GameStates.CalledMeeting && !Utils.IsActive(nextSabotage)) return false;
+        if (GameStates.CalledMeeting && amount.HasBit(SwitchSystem.DamageSystem)) return false;
 
         if (!CustomRoleManager.OnSabotage(player, nextSabotage))
         {
@@ -87,14 +86,12 @@ public static class SabotageSystemTypeUpdateSystemPatch
     }
     public static void Postfix(SabotageSystemType __instance, bool __runOriginal /* Prefixの結果，本体処理が実行されたかどうか */ )
     {
-        if (!__runOriginal || (!Options.ModifySabotageCooldown.GetBool() && (MadWare.RemoveSabotageCooldown is 0)) || !AmongUsClient.Instance.AmHost)
+        if (!__runOriginal || !Options.ModifySabotageCooldown.GetBool() || !AmongUsClient.Instance.AmHost)
         {
             return;
         }
-        var timer = __instance.Timer;
-        if (Options.ModifySabotageCooldown.GetBool()) timer = Options.SabotageCooldown.GetFloat();
         // サボタージュクールダウンを変更
-        __instance.Timer = timer + MadWare.RemoveSabotageCooldown;
+        __instance.Timer = Options.SabotageCooldown.GetFloat();
         __instance.IsDirty = true;
     }
 }

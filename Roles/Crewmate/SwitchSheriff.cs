@@ -238,12 +238,6 @@ public sealed class SwitchSheriff : RoleBase, IKiller, ISchrodingerCatOwner
     public override void OnReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
     {
         if (AddOns.Common.Amnesia.CheckAbilityreturn(Player)) return;
-        if (Player.IsAlive())
-        {
-            ModeSwitching(true);
-            SendRPC();
-        }
-        Player.RpcResetAbilityCooldown(Sync: true);
         if (target is null) return;
         if (target.PlayerId == Player.Data.PlayerId && Flug3 == 1)
         {
@@ -270,6 +264,12 @@ public sealed class SwitchSheriff : RoleBase, IKiller, ISchrodingerCatOwner
                 }
             }
         }
+        if (Player.IsAlive())
+        {
+            ModeSwitching(true);
+            SendRPC();
+        }
+        Player.RpcResetAbilityCooldown(Sync: true);
     }
     public override RoleTypes? AfterMeetingRole => RoleTypes.Engineer;
     public override void AfterMeetingTasks()

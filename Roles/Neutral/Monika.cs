@@ -279,6 +279,7 @@ public sealed class Monika : RoleBase, ILNKiller
             CountTypes.Pavlov => true,
             CountTypes.StandMaster => true,
             CountTypes.Villain => true,
+            CountTypes.Hunter => true,
             _ => false,
         };
     }

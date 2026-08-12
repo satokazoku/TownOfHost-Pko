@@ -8,7 +8,7 @@ namespace TownOfHost.Modules;
 
 /// <summary>
 /// 試合中にチャットバブルを表示するクラス。
-/// EHRのChatBubbleShowerを参考にTOH-P向けに移植。
+/// EHRのChatBubbleShowerを参考にTOH-N向けに移植。
 /// </summary>
 public static class ChatBubbleShower
 {

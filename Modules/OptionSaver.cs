@@ -10,7 +10,7 @@ namespace TownOfHost.Modules;
 public static class OptionSaver
 {
     private static readonly DirectoryInfo SaveDataDirectoryInfo = new(Main.BaseDirectory + "/SaveData/");
-    private static readonly FileInfo OptionSaverFileInfo = new($"{SaveDataDirectoryInfo.FullName}/Options_TOHPv{Version}.json");
+    private static readonly FileInfo OptionSaverFileInfo = new($"{SaveDataDirectoryInfo.FullName}/Options_TOHNv{Version}.json");
     private static readonly LogHandler logger = Logger.Handler(nameof(OptionSaver));
 
     public static void Initialize()
@@ -25,7 +25,7 @@ public static class OptionSaver
             OptionSaverFileInfo.Create().Dispose();
         }
         /*バグり散らかしてv30に戻したいってのがなくなるまで削除処理を入れないでおく。
-        FileInfo oldinfo = new($"{SaveDataDirectoryInfo.FullName}/Options_TOHP.json");
+        FileInfo oldinfo = new($"{SaveDataDirectoryInfo.FullName}/Options_TOHN.json");
         if (oldinfo.Exists)
         {
             oldinfo.Delete();

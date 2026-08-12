@@ -136,6 +136,7 @@ public sealed class Evolver : RoleBase, IImpostor, IUsePhantomButton
         if (initialState)
         {
             EvolveCount = 0;
+            // ★ ゲーム開始時は EvolveCooldown でタイマーを初期化（即捕食防止）
             evolveCooldownTimer = EvolveCooldown;
             pendingEvolve = null;
             EatenBodies.Clear();
@@ -159,10 +160,15 @@ public sealed class Evolver : RoleBase, IImpostor, IUsePhantomButton
     {
         float phantomCd;
         if (pendingEvolve != null)
+            // 捕食中 → 捕食完了までの残り時間
             phantomCd = Mathf.Max(0.1f, pendingEvolve.Required - pendingEvolve.Elapsed);
         else if (evolveCooldownTimer > 0f)
+            // 進化クール中 → 残りクール
             phantomCd = evolveCooldownTimer;
         else
+            // ★ 即使用可能状態でも 0 にはしない。EvolveCooldown を返してボタンに表示。
+            //    （OnSpawn・AfterMeetingTasks でタイマーをリセットするため
+            //      通常は evolveCooldownTimer > 0 のルートを通る）
             phantomCd = EvolveCooldown > 0f ? EvolveCooldown : 0.1f;
         AURoleOptions.PhantomCooldown = phantomCd;
 
@@ -310,6 +316,7 @@ public sealed class Evolver : RoleBase, IImpostor, IUsePhantomButton
 
         EatenBodies.Add(bodyId);
 
+        // キルクールタイマーはリセットしない（次のキル後から短縮後CDが適用）
         SyncPhantomCooldown();
 
         RPC.PlaySoundRPC(Player.PlayerId, Sounds.TaskComplete);
@@ -349,7 +356,7 @@ public sealed class Evolver : RoleBase, IImpostor, IUsePhantomButton
 
         pendingEvolve.Elapsed += Time.fixedDeltaTime;
         if (pendingEvolve.Elapsed >= pendingEvolve.Required)
-            CompleteEvolve();
+            CompleteEvolve(); 
     }
 
     public override bool CancelReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target, ref DontReportreson reason)

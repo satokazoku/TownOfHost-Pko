@@ -1,6 +1,7 @@
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using AmongUs.GameOptions;
+using Epic.OnlineServices.RTC;
 using Hazel;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
@@ -29,6 +30,7 @@ public sealed class LoversBreaker : RoleBase, ILNKiller
     static OptionItem OptionRequiredLoversKills;
     static OptionItem OptionCanWinAtDeath;
     static OptionItem OptionOnlyAssignWithLoversRole;
+    static OptionItem OptionNumberAllowedFailures;
 
     static float KillCooldown => OptionKillCooldown?.GetFloat() ?? 25f;
     static int RequiredLoversKills => OptionRequiredLoversKills?.GetInt() ?? 1;
@@ -39,17 +41,21 @@ public sealed class LoversBreaker : RoleBase, ILNKiller
     {
         LoversBreakerRequiredLoversKills,
         LoversBreakerCanWinAtDeath,
+        LoversBreakerNumberAllowedFailures,
         LoversBreakerOnlyAssignWithLoversRole
     }
 
     int loversKillCount;
     bool hadTargetLovers;
-
+    private int allowedFailures => OptionNumberAllowedFailures?.GetInt() ?? 60;
+    private int Failures;
     public LoversBreaker(PlayerControl player)
         : base(RoleInfo, player)
     {
         loversKillCount = 0;
         hadTargetLovers = false;
+        Failures = 0;
+
     }
 
     static void SetupOptionItem()
@@ -60,8 +66,9 @@ public sealed class LoversBreaker : RoleBase, ILNKiller
         OptionRequiredLoversKills = IntegerOptionItem.Create(RoleInfo, 12, OptionName.LoversBreakerRequiredLoversKills, new(1, 10, 1), 3, false)
             .SetValueFormat(OptionFormat.Times);
         OptionCanWinAtDeath = BooleanOptionItem.Create(RoleInfo, 13, OptionName.LoversBreakerCanWinAtDeath, false, false);
-        OptionOnlyAssignWithLoversRole = BooleanOptionItem.Create(RoleInfo, 14, OptionName.LoversBreakerOnlyAssignWithLoversRole, true, false);
-    }
+        OptionNumberAllowedFailures = IntegerOptionItem.Create(RoleInfo, 14, OptionName.LoversBreakerNumberAllowedFailures, new(0, 13, 1), 1, false)
+            .SetValueFormat(OptionFormat.Times);
+        OptionOnlyAssignWithLoversRole = BooleanOptionItem.Create(RoleInfo, 15, OptionName.LoversBreakerOnlyAssignWithLoversRole, true, false);    }
 
     public override void Add()
     {
@@ -83,8 +90,12 @@ public sealed class LoversBreaker : RoleBase, ILNKiller
         if (CanKillTarget(target)) return;
 
         info.DoKill = false;
-        PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = CustomDeathReason.Misfire;
-        info.AttemptKiller.RpcMurderPlayer(info.AttemptKiller);
+        ++Failures;
+        if (Failures >= allowedFailures)
+        {
+            PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = CustomDeathReason.Misfire;
+            info.AttemptKiller.RpcMurderPlayer(info.AttemptKiller);
+        }
     }
 
     public void OnMurderPlayerAsKiller(MurderInfo info)

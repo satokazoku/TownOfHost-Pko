@@ -1,4 +1,5 @@
 using AmongUs.GameOptions;
+using Epic.OnlineServices.Presence;
 using Hazel;
 using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
@@ -29,7 +30,6 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
         KillCooldown = OptionKillCoolDown.GetFloat();
         Cooldown = OptionCoolDown.GetFloat();
         ChargeTime = OptionChargeTime.GetFloat();
-        BeamTime = OptionBeamTime.GetFloat();
         SelfDestructOnMiss = OptionSelfDestructOnMiss.GetBool();
         KillImpostor = OptionKillImpostor.GetBool();
         IsCharging = false;
@@ -51,6 +51,7 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
     bool HasHit;
     bool BeamFacingLeft;
     bool IsDead;
+    int PlayerColor;
     bool IsFiring = false;
     bool spawnCooldownStarted = false;
     bool _prevCharging;
@@ -63,28 +64,26 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
     static float KillCooldown;
     static OptionItem OptionChargeTime;
     static float ChargeTime;
-    static OptionItem OptionBeamTime;
-    static float BeamTime;
     static OptionItem OptionSelfDestructOnMiss;
     static bool SelfDestructOnMiss;
     static OptionItem OptionKillImpostor;
     static bool KillImpostor;
 
-    enum OptionName { HadouHoChargeTime, HadouHoSelfDestruct, HadouHoKillImpostor,HadouHoBeamTime }
+    enum OptionName { HadouHoChargeTime, HadouHoSelfDestruct, HadouHoKillImpostor }
 
     static void SetUpOptionItem()
     {
-        OptionKillCoolDown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.KillCooldown, OptionBaseCoolTime, 30f, false).SetValueFormat(OptionFormat.Seconds);
-        OptionCoolDown = FloatOptionItem.Create(RoleInfo, 11, GeneralOption.Cooldown, OptionBaseCoolTime, 30f, false).SetValueFormat(OptionFormat.Seconds);
-        OptionChargeTime = FloatOptionItem.Create(RoleInfo, 12, OptionName.HadouHoChargeTime, new(0.5f, 10f, 0.5f), 3f, false).SetValueFormat(OptionFormat.Seconds);
-        OptionBeamTime = FloatOptionItem.Create(RoleInfo, 13, OptionName.HadouHoBeamTime, new(0.5f, 10f, 0.5f), 3f, false).SetValueFormat(OptionFormat.Seconds);
-        OptionSelfDestructOnMiss = BooleanOptionItem.Create(RoleInfo, 14, OptionName.HadouHoSelfDestruct, false, false);
-        OptionKillImpostor = BooleanOptionItem.Create(RoleInfo, 15, OptionName.HadouHoKillImpostor, false, false);
+        OptionKillCoolDown = FloatOptionItem.Create(RoleInfo, 14, GeneralOption.KillCooldown, OptionBaseCoolTime, 30f, false).SetValueFormat(OptionFormat.Seconds);
+        OptionCoolDown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.Cooldown, OptionBaseCoolTime, 30f, false).SetValueFormat(OptionFormat.Seconds);
+        OptionChargeTime = FloatOptionItem.Create(RoleInfo, 11, OptionName.HadouHoChargeTime, new(0.5f, 10f, 0.5f), 3f, false).SetValueFormat(OptionFormat.Seconds);
+        OptionSelfDestructOnMiss = BooleanOptionItem.Create(RoleInfo, 12, OptionName.HadouHoSelfDestruct, false, false);
+        OptionKillImpostor = BooleanOptionItem.Create(RoleInfo, 13, OptionName.HadouHoKillImpostor, false, false);
     }
 
     public override void Add()
     {
         PlayerSpeed = Main.AllPlayerSpeed[Player.PlayerId];
+        PlayerColor = Player.Data.DefaultOutfit.ColorId;
         spawnCooldownStarted = false;
     }
 
@@ -99,6 +98,7 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
             if (AmongUsClient.Instance.AmHost)
             {
                 Player.SyncSettings();
+                Player.RpcSetColor((byte)PlayerColor);
             }
             IsCharging = false;
             ShowBeamMark = false;
@@ -162,6 +162,7 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
         _prevBeamMark = false;
         Main.AllPlayerSpeed[Player.PlayerId] = PlayerSpeed;
         Player.MarkDirtySettings();
+        Player.RpcSetColor((byte)PlayerColor);
         SetRoleTextHeight(false);
     }
 
@@ -228,6 +229,7 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
                 SetRoleTextHeight(false); IsFiring = false;
                 Main.AllPlayerSpeed[Player.PlayerId] = PlayerSpeed;
                 Player.MarkDirtySettings();
+                Player.RpcSetColor((byte)PlayerColor);
                 UtilsNotifyRoles.NotifyRoles(); SendRpc(); return;
             }
             ShowBeamMark = false; _prevBeamMark = false;
@@ -236,10 +238,12 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
 
             if (!HasHit && SelfDestructOnMiss)
             {
+                Player.RpcSetColor((byte)PlayerColor);
                 Main.AllPlayerSpeed[Player.PlayerId] = PlayerSpeed; Player.MarkDirtySettings();
                 PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = CustomDeathReason.Suicide;
                 Player.RpcMurderPlayerV2(Player); IsFiring = false; return;
             }
+            Player.RpcSetColor((byte)PlayerColor);
             Main.AllPlayerSpeed[Player.PlayerId] = PlayerSpeed; Player.MarkDirtySettings();
             _ = new LateTask(() =>
             {
@@ -250,7 +254,7 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
                 UtilsNotifyRoles.NotifyRoles(OnlyMeName: true);
                 _ = new LateTask(() => { IsFiring = false; }, 0.3f, "HadouHoResetFiring", true);
             }, 0.2f, "HadouHoResetKillCool", true);
-        }, BeamTime);
+        }, 3f);
     }
 
     void ApplyBeamHit()
@@ -371,15 +375,15 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
         seen ??= seer;
         if (seen.PlayerId != seer.PlayerId || isForMeeting || !Player.IsAlive()) return "";
         if (!IsCharging) return $"{(isForHud ? "" : "<size=60%>")}<color=#ff0000>ファントムボタン → チャージ発射</color>";
-        return $"{(isForHud ? "" : "<size=100%>")}<color=#ff0000>チャージ中... {(ChargeTime - chargeTimer):F1}s</color>";
+        return $"{(isForHud ? "" : "<size=60%>")}<color=#ff0000>チャージ中... {(ChargeTime - chargeTimer):F1}s</color>";
     }
 
     public string GetLowerTextOthers(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
     {
         seen ??= seer;
         if (seen != seer || isForMeeting || !Player.IsAlive()) return "";
-        if (IsCharging && seer.PlayerId != Player.PlayerId) return $"\n<size=100%><color=#ff0000>チャージ中... {(int)(ChargeTime - chargeTimer)}s</color></size>";
-        if (ShowBeamMark && seer.PlayerId != Player.PlayerId) return "\n<size=100%><color=#ff0000>ビーム中</color></size>";
+        if (IsCharging && seer.PlayerId != Player.PlayerId) return $"\n<color=#ff0000>チャージ中... {(int)(ChargeTime - chargeTimer)}s</color>";
+        if (ShowBeamMark && seer.PlayerId != Player.PlayerId) return "\n<color=#ff0000>ビーム中</color>";
         return "";
     }
 

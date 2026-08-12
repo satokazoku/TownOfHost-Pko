@@ -149,8 +149,6 @@ public sealed class Vulture : RoleBase, IKillFlashSeeable, IAdditionalWinner
                     .EndRpc();
                 sender.EndMessage();
                 sender.SendMessage();
-
-                _ = new LateTask(() => Player.RpcShapeshift(Player, false), Main.LagTime, "", true);
             }
             if (turneat > 2)
             {

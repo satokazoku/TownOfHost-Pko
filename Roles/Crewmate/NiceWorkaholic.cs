@@ -18,6 +18,7 @@ public sealed class NiceWorkaholic : RoleBase
             "nwh",
             "#008b8b",
             (1, 9),
+            from: From.TownOfHost_Pko,
             introSound: () => ShipStatus.Instance?.CommonTasks
                 .FirstOrDefault(t => t.TaskType == TaskTypes.FixWiring)
                 ?.MinigamePrefab.OpenSound

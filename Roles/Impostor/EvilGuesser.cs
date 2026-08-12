@@ -22,7 +22,8 @@ public sealed class EvilGuesser : RoleBase, IImpostor
             SetupOptionItem,
             "eg",
             "#ff1919",
-            (2, 1)
+            (2, 1),
+            from: From.TheOtherRoles
         );
 
     public EvilGuesser(PlayerControl player)

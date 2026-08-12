@@ -24,7 +24,7 @@ namespace TownOfHost
     {
         public static DirectoryInfo GetLogFolder(bool auto = false)
         {
-            var folder = Directory.CreateDirectory($"{Application.persistentDataPath}/TownOfHost_Pko/Logs");
+            var folder = Directory.CreateDirectory($"{Application.persistentDataPath}/TownOfHost_N/Logs");
             if (auto)
             {
                 folder = Directory.CreateDirectory($"{folder.FullName}/AutoLogs");
@@ -34,17 +34,6 @@ namespace TownOfHost
         public static void DumpLog()
         {
             if (Main.IsAndroid()) return;
-            if (Main.GameCount == 0 && !GameStates.IsNotJoined)
-            {
-                var logger = Logger.Handler("DumpLog");
-                logger.Info("------------基本設定------------");
-                var tmp = GameOptionsManager.Instance.CurrentGameOptions.ToHudString(GameData.Instance ? GameData.Instance.PlayerCount : 10).Split("\r\n").Skip(1).SkipLast(10);
-                foreach (var t in tmp) logger.Info(t);
-                logger.Info("------------詳細設定------------");
-                foreach (var o in OptionItem.AllOptions.Where(o => o is not ObjectOptionitem))
-                    if (!o.IsHiddenOn(Options.CurrentGameMode) && (o.Parent == null ? !o.GetString().Equals("0%") : o.Parent.InfoGetBool()) && o.IsEnabled.Invoke())
-                        logger.Info($"{(o.Parent == null ? o.Name.PadRightV2(40) : $"┗ {o.Name}".PadRightV2(41))}:{o.GetTextString().RemoveSN().RemoveHtmlTags()}");
-            }
             var logs = GetLogFolder();
             var filename = CopyLog(logs.FullName);
             OpenDirectory(filename);
@@ -75,7 +64,7 @@ namespace TownOfHost
             string t = DateTime.Now.ToString("yyyy-MM-dd_HH.mm.ss");
             string subver = CredentialsPatch.Subver.RemoveHtmlTags();
             if (subver != "") subver = $"({subver})";
-            string fileName = $"{path}/TownOfHost_Pko-v{Main.PluginVersion}{subver}-{t}.log";
+            string fileName = $"{path}/TownOfHost_N-v{Main.PluginVersion}{subver}-{t}.log";
             FileInfo file = new(@$"{Environment.CurrentDirectory}/BepInEx/LogOutput.log");
             var logFile = file.CopyTo(fileName);
             return logFile.FullName;

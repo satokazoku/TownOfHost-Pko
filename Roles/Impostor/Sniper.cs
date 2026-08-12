@@ -431,6 +431,12 @@ public sealed class Sniper : RoleBase, IImpostor
     {
         return GetString(BulletCount <= 0 ? "DefaultShapeshiftText" : "SniperSnipeButtonText");
     }
+
+    public override bool OverrideAbilityButton(out string text)
+    {
+        text = "Sniper_Ability";
+        return true;
+    }
     public static Dictionary<int, Achievement> achievements = new();
     [Attributes.PluginModuleInitializer]
     public static void Load()

@@ -68,9 +68,9 @@ namespace TownOfHost
                 Event.Special = GameStates.IsNotJoined;
                 if (Event.Special)
                 {
-                    if (CredentialsPatch.TOHPLogo)
+                    if (CredentialsPatch.TOHNLogo)
                     {
-                        CredentialsPatch.TOHPLogo.sprite = UtilsSprite.LoadSprite("TownOfHost.Resources.TownOfHost-Pko_A.png", 300f);
+                        CredentialsPatch.TOHNLogo.sprite = UtilsSprite.LoadSprite("TownOfHost.Resources.TownOfHost-N_A.png", 300f);
                     }
                 }
             }
@@ -108,7 +108,6 @@ namespace TownOfHost
             //廃村
             if (GetKeysDown(KeyCode.Return, KeyCode.L, KeyCode.LeftShift))
             {
-                if (CustomSpawnEditor.ActiveEditMode) return;
                 if (Main.ForcedGameEndColl != 0 && !GameStates.IsLobby)
                 {
                     GameManager.Instance.enabled = false;
@@ -200,7 +199,7 @@ namespace TownOfHost
             {
                 Utils.AllPlayerKillFlash();
             }
-            //TOH-Pオプションをデフォルトに設定
+            //TOH-Nオプションをデフォルトに設定
             if (GetKeysDown(KeyCode.Delete, KeyCode.LeftControl))
             {
                 OptionItem.AllOptions.ToArray().Where(x => x.Id > 0).Do(x => x.SetValue(x.DefaultValue));
@@ -258,7 +257,7 @@ namespace TownOfHost
                 Logger.isAlsoInGame = !Logger.isAlsoInGame;
                 Logger.seeingame($"ログのゲーム内出力: {Logger.isAlsoInGame}");
             }
-            if (Input.GetKeyDown(KeyCode.R) && GameStates.IsCountDown && DebugModeManager.EnableTOHPDebugMode.GetBool())
+            if (Input.GetKeyDown(KeyCode.R) && GameStates.IsCountDown && DebugModeManager.EnableTOHNDebugMode.GetBool())
             {
                 Logger.Info("Impostor set to 0", "KeyCommand");
                 Main.NormalOptions.NumImpostors = 0;

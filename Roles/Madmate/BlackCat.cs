@@ -19,7 +19,7 @@ public sealed class BlackCat : RoleBase, INekomata
             SetupOptionItems,
             "bc",
             OptionSort: (2, 3),
-            from: From.SuperNewRoles
+            from: From.TOR_GM_Haoming_Edition
         );
 
     public BlackCat(PlayerControl player)
@@ -67,6 +67,7 @@ public sealed class BlackCat : RoleBase, INekomata
         BlackCatImpostorsGetRevenged,
         BlackCatMadmatesGetRevenged,
         BlackCatNeutralsGetRevenged,
+        BlackCatRevengeOnExile
     }
 
     #endregion

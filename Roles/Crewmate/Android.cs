@@ -99,15 +99,12 @@ public sealed class Android : RoleBase
         if (AddOns.Common.Amnesia.CheckAbilityreturn(Player)) return true;
 
         if (Player.inVent && NowVent != 999)
-            Player.MyPhysics.RpcBootFromVent(NowVent);
+            Player.MyPhysics.RpcExitVent(NowVent);
         return true;
     }
     public override void AfterSabotage(SystemTypes systemType) => Player.RpcResetAbilityCooldown(Sync: true);
-    public override bool OnEnterVent(PlayerPhysics physics, int ventId)
-    {
-        NowVent = ventId;
-        return !Main.IsActiveSabotage;//サボタージュ中なら入れないよっ!
-    }
+    public override bool OnEnterVent(PlayerPhysics physics, int ventId) => !Main.IsActiveSabotage;//サボタージュ中なら入れないよっ!
+
     public override void OnFixedUpdate(PlayerControl player)
     {
         //もう充電がパンパンなら

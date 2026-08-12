@@ -24,20 +24,14 @@ namespace TownOfHost
     class GameEndChecker
     {
         private static GameEndPredicate predicate;
-        private static bool _isEndProcessing;
-
         public static bool Prefix()
         {
             if (!AmongUsClient.Instance.AmHost) return true;
-            if (_isEndProcessing) return false;
 
             if (predicate == null)
             {
-                if (CustomWinnerHolder.WinnerTeam == CustomWinner.Default)
-                {
-                    Logger.Warn("ゲーム終了判定が未初期化のため、現在のゲームモードに合わせて初期化します", "GameEndChecker");
-                    EnsurePredicate();
-                }
+                Logger.Warn("ゲーム終了判定が未初期化のため、現在のゲームモードに合わせて初期化します", "GameEndChecker");
+                EnsurePredicate();
                 return false;
             }
 
@@ -400,7 +394,7 @@ namespace TownOfHost
                 if (pc == null) continue;
                 var target = (winnerList.Contains(pc.PlayerId) ? pc : (winnerList.Count == 0 ? pc : PlayerCatch.GetPlayerById(winnerList.OrderBy(pc => pc).FirstOrDefault()) ?? pc)) ?? pc;
                 var targetname = Main.AllPlayerNames[target.PlayerId];
-                var text = $"<voffset=25>{CustomWinnerText}\n<voffset=0>{targetname}\n\n<voffset=24><size=40%><{Main.ModColor}>TownOfHost-Pko</color><#ffffff>v.{Main.PluginShowVersion}</size>";// sb.ToString() +$"\n</align><voffset=23>{CustomWinnerText}\n<voffset=45><size=1.75>{targetname}";
+                var text = $"<voffset=25>{CustomWinnerText}\n<voffset=0>{targetname}\n\n<voffset=24><size=40%><{Main.ModColor}>TownOfHost-N</color><#ffffff>v.{Main.PluginShowVersion}</size>";// sb.ToString() +$"\n</align><voffset=23>{CustomWinnerText}\n<voffset=45><size=1.75>{targetname}";
                 if (text.Length > 320)
                 {
                     Logger.Warn($"Gamelog:{text}", "SetRoleSummary");

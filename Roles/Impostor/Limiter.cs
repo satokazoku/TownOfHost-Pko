@@ -157,7 +157,7 @@ namespace TownOfHost.Roles.Impostor
         }
         public bool OverrideKillButton(out string text)
         {
-            text = "Limiter_Kill";
+            text = "jibaku_Ability";
             return Limit;
         }
 

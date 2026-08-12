@@ -171,7 +171,7 @@ namespace TownOfHost
                 RoleSettingsButton.gameObject.SetActive(false);
 
                 ModSettingsButton.gameObject.name = "TownOfHostSetting";
-                ModSettingsButton.buttonText.text = "TownOfHost-Pko";
+                ModSettingsButton.buttonText.text = "TownOfHost-N";
                 var activeSprite = ModSettingsButton.activeSprites.GetComponent<SpriteRenderer>();
                 var selectedSprite = ModSettingsButton.selectedSprites.GetComponent<SpriteRenderer>();
                 activeSprite.color = StringHelper.CodeColor(Main.ModColor);
@@ -217,7 +217,7 @@ namespace TownOfHost
 
                         prisettext = Object.Instantiate(HudManager.Instance.TaskPanel.taskText, priset.transform);
                         prisettext.text = $"<size=120%><#cccccc><b>{GetString("SetPresetName")}</b></color></size>";
-                        prisettext.transform.localPosition = new Vector3(-2, -1.1f);
+                        prisettext.transform.localPosition = new Vector3(-2f, -1.1f);
                         searchtext = Object.Instantiate(HudManager.Instance.TaskPanel.taskText, priset.transform);
                         searchtext.text = $"<size=120%><#ffa826><b>{GetString("Search")}</b></color></size>";
                         searchtext.transform.localPosition = new Vector3(-2f, -0.3f);
@@ -233,7 +233,7 @@ namespace TownOfHost
                 ErrorNumber = 3;
                 if (priset)
                 {
-                    priset.transform.localPosition = new Vector3(0.3f, 3.2f);
+                    priset.transform.localPosition = new Vector3(0f, 3.2f);
                     priset.transform.localScale = new Vector3(0.4f, 0.4f, 0f);
                     priset?.gameObject?.SetActive(true);
                     priset.submitButton.OnPressed = (Action)(() =>
@@ -309,9 +309,9 @@ namespace TownOfHost
                     var tabButton = Object.Instantiate(templateTabButton, templateTabButton.transform.parent);
                     tabButton.name = tab.ToString();
                     tabButton.transform.position = templateTabButton.transform.position + new Vector3((0.762f * i * 0.8f) + (0.762f * i * 0.2f), 0, -300f);
-                    tabButton.inactiveSprites.GetComponent<SpriteRenderer>().sprite = UtilsSprite.LoadSprite($"TownOfHost.Resources.TOHP.Tab.TabIcon_{tab}.png", 60);
-                    tabButton.activeSprites.GetComponent<SpriteRenderer>().sprite = UtilsSprite.LoadSprite($"TownOfHost.Resources.TOHP.Tab.TabIcon_S_{tab}.png", 120);
-                    tabButton.selectedSprites.GetComponent<SpriteRenderer>().sprite = UtilsSprite.LoadSprite($"TownOfHost.Resources.TOHP.Tab.TabIcon_{tab}.png", 120);
+                    tabButton.inactiveSprites.GetComponent<SpriteRenderer>().sprite = UtilsSprite.LoadSprite($"TownOfHost.Resources.TOHN.Tab.TabIcon_{tab}.png", 60);
+                    tabButton.activeSprites.GetComponent<SpriteRenderer>().sprite = UtilsSprite.LoadSprite($"TownOfHost.Resources.TOHN.Tab.TabIcon_S_{tab}.png", 120);
+                    tabButton.selectedSprites.GetComponent<SpriteRenderer>().sprite = UtilsSprite.LoadSprite($"TownOfHost.Resources.TOHN.Tab.TabIcon_{tab}.png", 120);
 
                     tabButtons.Add(tabButton);
                 }
@@ -344,12 +344,12 @@ namespace TownOfHost
                             var tabButton = tabButtons[i];
                             if (tab != n) menus[n].SetActive(false);
                             tabButton.SelectButton(false);
-                            tabButton.selectedSprites.GetComponent<SpriteRenderer>().sprite = UtilsSprite.LoadSprite($"TownOfHost.Resources.TOHP.Tab.TabIcon_{n}.png", 120);
+                            tabButton.selectedSprites.GetComponent<SpriteRenderer>().sprite = UtilsSprite.LoadSprite($"TownOfHost.Resources.TOHN.Tab.TabIcon_{n}.png", 120);
                         }
                         crmenus[NowRoleTab].SetActive(false);
                         NowRoleTab = CustomRoles.NotAssigned;
                         tabButton.SelectButton(true);
-                        tabButton.selectedSprites.GetComponent<SpriteRenderer>().sprite = UtilsSprite.LoadSprite($"TownOfHost.Resources.TOHP.Tab.TabIcon_S_{tab}.png", 120);
+                        tabButton.selectedSprites.GetComponent<SpriteRenderer>().sprite = UtilsSprite.LoadSprite($"TownOfHost.Resources.TOHN.Tab.TabIcon_S_{tab}.png", 120);
                         menus[tab].SetActive(true);
                         var tabTitle = ModSettingsTab.quotaHeader;
                         CategoryHeaderEditRole[] tabSubTitle = tabTitle.transform.parent.GetComponentsInChildren<CategoryHeaderEditRole>();
@@ -376,7 +376,7 @@ namespace TownOfHost
                 ErrorNumber = 10;
                 if (search)
                 {
-                    search.transform.localPosition = new Vector3(0.3f, 3.5f);
+                    search.transform.localPosition = new Vector3(0f, 3.5f);
                     search.transform.localScale = new Vector3(0.4f, 0.4f, 0f);
                     search?.gameObject?.SetActive(true);
                     search.submitButton.OnPressed = (Action)(() =>
@@ -475,19 +475,19 @@ namespace TownOfHost
                     VanillaOptionHolder.ResetVanilla();
                     OptionItem.SyncAllOptions();
                     OptionSaver.Save();
-                }), UtilsSprite.LoadSprite("TownOfHost.Resources.TOHP.RESET-STG.png", 150f));
+                }), UtilsSprite.LoadSprite("TownOfHost.Resources.TOHN.RESET-STG.png", 150f));
                 CreateButton("OptionCopy", Color.green, -3.9f, new Action(() =>
                 {
                     OptionSerializer.SaveToClipboard();
                     GameSettingMenuChangeTabPatch.meg = GetString("OptionCopyMeg");
                     timer = 3;
-                }), UtilsSprite.LoadSprite("TownOfHost.Resources.TOHP.COPY-STG.png", 180f));
+                }), UtilsSprite.LoadSprite("TownOfHost.Resources.TOHN.COPY-STG.png", 180f));
                 CreateButton("OptionLoad", Color.green, -3.25f, new Action(() =>
                 {
                     OptionSerializer.LoadFromClipboard();
                     GameSettingMenuChangeTabPatch.meg = GetString("OptionLoadMeg");
                     timer = 3;
-                }), UtilsSprite.LoadSprite("TownOfHost.Resources.TOHP.LOAD-STG.png", 180f));
+                }), UtilsSprite.LoadSprite("TownOfHost.Resources.TOHN.LOAD-STG.png", 180f));
                 ErrorNumber = 13;
 
                 CreateLobbyInfo();
@@ -556,9 +556,9 @@ namespace TownOfHost
             if (!forceAllTabs && tabGenerated.Contains(tab)) return;
             var template = GetTeamplate();
             if (template == null) return;
-            var LabelBackgroundSprite = UtilsSprite.LoadSprite($"TownOfHost.Resources.TOHP.Label.LabelBackground.png");
-            var LabelBackgroundToolSprite = UtilsSprite.LoadSprite($"TownOfHost.Resources.TOHP.Label.LabelBackgroundTool.png");
-            var ShowOptionSprite = UtilsSprite.LoadSprite($"TownOfHost.Resources.TOHP.ShowOption.png");
+            var LabelBackgroundSprite = UtilsSprite.LoadSprite($"TownOfHost.Resources.TOHN.Label.LabelBackground.png");
+            var LabelBackgroundToolSprite = UtilsSprite.LoadSprite($"TownOfHost.Resources.TOHN.Label.LabelBackgroundTool.png");
+            var ShowOptionSprite = UtilsSprite.LoadSprite($"TownOfHost.Resources.TOHN.ShowOption.png");
 
             foreach (var option in OptionItem.AllOptions)
             {
@@ -682,7 +682,7 @@ namespace TownOfHost
 
                         if (option.IsHeader)
                         {
-                            var marksprite = UtilsSprite.LoadSprite($"TownOfHost.Resources.TOHP.Label.{option.Name}.png");
+                            var marksprite = UtilsSprite.LoadSprite($"TownOfHost.Resources.TOHN.Label.{option.Name}.png");
                             if (UtilsRoleInfo.GetRoleByInputName(GetString(option.Name), out var role, true) && role.IsVanilla())
                             {
                                 var roleb = RoleManager.Instance.AllRoles.ToArray().Where(x => x.Role == role.GetRoleTypes()).FirstOrDefault();

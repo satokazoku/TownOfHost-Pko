@@ -1,7 +1,9 @@
+using System.Collections.Generic;
 using AmongUs.GameOptions;
 
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+using static TownOfHost.Roles.Neutral.Nue;
 
 namespace TownOfHost.Roles.Neutral;
 //設定、こんびのしょりへん

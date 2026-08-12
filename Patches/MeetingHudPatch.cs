@@ -702,7 +702,7 @@ public static class MeetingHudPatch
             {
                 var role = exiledplayer.GetCustomRole();
                 var isMadmate =
-                    SatsumatoImo.UsesMadmateCommonSettings(role) ||
+                    JekyllandHyde.UsesMadmateCommonSettings(role) ||
                     // マッド属性化時に削除
                     (MagicalGirl.TryGetEffectiveRole<SchrodingerCat>(exiledplayer, out var schrodingerCat) && schrodingerCat.AmMadmate);
                 foreach (var candidate in PlayerCatch.AllAlivePlayerControls)

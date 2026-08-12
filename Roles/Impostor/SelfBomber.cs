@@ -87,10 +87,10 @@ public sealed class SelfBomber : RoleBase, IImpostor, IUsePhantomButton
         if (isForHud) return GetString("SelfBomberLowerText");
         return $"<size=50%>{GetString("SelfBomberLowerText")}</size>";
     }
-    public override string GetAbilityButtonText() => "爆発";
+    public override string GetAbilityButtonText() => GetString("爆発");
     public override bool OverrideAbilityButton(out string text)
     {
-        text = "Bomber_Ability";
+        text = "jibaku_Ability";
         return true;
     }
 }

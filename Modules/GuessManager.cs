@@ -95,8 +95,7 @@ public static class GuessManager
             {
                 return true;
             }
-            if (GameStates.ExiledAnimate ||
-            ((MeetingHud.Instance?.discussionTimer ?? 500) - Main.NormalOptions.DiscussionTime >= Main.NormalOptions.VotingTime - 3))
+            if (GameStates.ExiledAnimate)
             {
                 Utils.SendMessage(GetString("GuessErrorTuiho"), pc.PlayerId, $"<#ab80c2>{GetString("GuessErrorTuihoTitle")}</color>");
                 return true;
@@ -259,8 +258,8 @@ public static class GuessManager
     private static bool CheckTargetRoles(PlayerControl target, CustomRoles role)
     {
         if (MagicalGirl.IsMatchedGuess(target, role)) return false;
-        if (role is CustomRoles.SatsumatoImo
-            && target.GetCustomRole() is CustomRoles.SatsumatoImoC or CustomRoles.SatsumatoImoM)
+        if (role is CustomRoles.JekyllandHyde
+            && target.GetCustomRole() is CustomRoles.Jekyll or CustomRoles.Hyde)
         {
             return false;
         }

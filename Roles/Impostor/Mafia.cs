@@ -77,7 +77,9 @@ public sealed class Mafia : RoleBase, IImpostor, IUsePhantomButton
         ResetCooldown = false;
         if (!SKMad || Options.CanMakeMadmateCount.GetInt() <= PlayerCatch.SKMadmateNowCount) return;
         var target = Player.GetKillTarget(true);
-        if (target == null || target.GetCustomRole() is CustomRoles.King or CustomRoles.Merlin or CustomRoles.AlienHijack || (target.IsTeammate(Player) && !SuddenDeathMode.NowSuddenDeathTemeMode)) return;
+        if (target == null || target.GetCustomRole() is CustomRoles.King or CustomRoles.Autocrat or CustomRoles.Merlin || (target.IsTeammate(Player) && !SuddenDeathMode.NowSuddenDeathTemeMode)) return;
+        var source = Player.Is(CustomRoles.JackalWolf) ? Walkure.RoleChangeSource.Jackal : Walkure.RoleChangeSource.Impostor;
+        if (Walkure.TryRejectRoleChange(Player, target, source)) return;
 
         SKMad = false;
         SendRPC();

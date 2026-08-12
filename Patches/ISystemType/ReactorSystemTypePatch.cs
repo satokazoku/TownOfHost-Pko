@@ -40,10 +40,6 @@ public static class ReactorSystemTypeUpdateSystemPatch
             {
                 return false;
             }
-        foreach (var roleclass in CustomRoleManager.AllActiveRoles)
-        {
-            roleclass.Value.OnFixSabotage(player, Main.SabotageType, amount);
-        }
         return true;
     }
     public static void Postfix(ReactorSystemType __instance, byte __state /* amount */ )

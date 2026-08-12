@@ -1524,6 +1524,7 @@ public static class RoleGuideButtonPatch
             CountTypes.TaskPlayer => UtilsRoleText.GetRoleName(CustomRoles.TaskPlayerB),
             CountTypes.GrimReaper => UtilsRoleText.GetRoleName(CustomRoles.GrimReaper),
             CountTypes.Fox => UtilsRoleText.GetRoleName(CustomRoles.Fox),
+            CountTypes.Hunter => UtilsRoleText.GetRoleName(CustomRoles.Hunter),
             CountTypes.MilkyWay => GetString("MilkyWay"),
             CountTypes.Pavlov => GetString("Pavlov"),
             CountTypes.Eater => UtilsRoleText.GetRoleName(CustomRoles.Eater),
@@ -1567,7 +1568,7 @@ public static class RoleGuideButtonPatch
         else if (role is CustomRoles.Altair && Options.CustomRoleSpawnChances.TryGetValue(CustomRoles.Vega, out option))
             UtilsShowOption.ShowChildrenSettings(option, ref builder);
 
-        if (info?.CustomRoleType == CustomRoleTypes.Madmate && role is not CustomRoles.SatsumatoImoM)
+        if (info?.CustomRoleType == CustomRoleTypes.Madmate && role is not CustomRoles.Hyde)
         {
             builder.Append($"{Options.MadMateOption.GetName()}: {Options.MadMateOption.GetString()}\n");
             UtilsShowOption.ShowChildrenSettings(Options.MadMateOption, ref builder);

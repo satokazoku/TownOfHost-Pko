@@ -27,6 +27,7 @@ public sealed class BatGirl : RoleBase, ISelfVoter, IUsePhantomButton, IAddition
             "#ff4f8f",
             (8, 1),
             true,
+            from: From.TownOfHost_Pko,
             introSound: () => GetIntroSound(RoleTypes.Impostor),
             Desc: () => GetString((OptionAddWin?.GetBool() ?? true) ? "BatGirlInfoLongAddWin" : "BatGirlInfoLongSoloOnly")
         );

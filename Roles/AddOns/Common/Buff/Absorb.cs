@@ -18,7 +18,7 @@ namespace TownOfHost.Roles.AddOns.Common
         public static Dictionary<byte, int> AbsorbGuard;
         public static void SetupCustomOption()
         {
-            SetupRoleOptions(Id, TabGroup.Addons, CustomRoles.Absorb,fromtext: UtilsOption.GetFrom(From.TownOfHost_K));
+            SetupRoleOptions(Id, TabGroup.Addons, CustomRoles.Absorb);
             AddOnsAssignData.Create(Id + 10, CustomRoles.Absorb, true, true, true, true);
             ObjectOptionitem.Create(Id + 53, "AddonOption", true, "", TabGroup.Addons).SetOptionName(() => "Role Option").SetSubRoleOptionItem(CustomRoles.Absorb);
             OptionAddGuard = IntegerOptionItem.Create(Id + 50, "AddGuardCount", new(1, 10, 1), 1, TabGroup.Addons, false).SetSubRoleOptionItem(CustomRoles.Absorb);

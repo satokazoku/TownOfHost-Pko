@@ -17,12 +17,6 @@ namespace TownOfHost
         }
         public static void OnClimbLadder(PlayerPhysics player, Ladder source)
         {
-            // Ladder death option controls normal ladder fall behavior, but Spelunker should react
-            // to ladder climbs independently of that option. Always attempt to notify Spelunker role.
-            if (player?.myPlayer != null)
-            {
-                try { Roles.Neutral.Spelunker.OnLadderClimbed(player.myPlayer); } catch { }
-            }
             if (!Options.LadderDeath.GetBool()) return;
             var sourcePos = source.transform.position;
             var targetPos = source.Destination.transform.position;

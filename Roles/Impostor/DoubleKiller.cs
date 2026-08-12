@@ -19,7 +19,7 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
             3400,
             SetUpOptionItem,
             "dk",
-            OptionSort: (3, 15),
+            OptionSort: (4, 14),
             from: From.SuperNewRoles
         );
 
@@ -28,9 +28,9 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
     {
         PhantomCooldown = OptionPhantomCooldown.GetFloat();
         KillCooldown = OptionKillCooldown.GetFloat();
-        CanVent = OptionCanVent.GetBool();
-        CanSabotage = OptionCanSabotage.GetBool();
-        usedPhantomCount = 0;
+        CanVent = !OptionCanVent.GetBool();
+        CanSabotage = !OptionCanSabotage.GetBool();
+        MaxUseCount = OptionMaxUseCount.GetInt();
     }
 
     static OptionItem OptionPhantomCooldown;
@@ -41,8 +41,7 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
     static bool CanVent;
     static OptionItem OptionCanSabotage;
     static bool CanSabotage;
-    static OptionItem OptionPhantomUsageCount;
-    int usedPhantomCount;
+    static OptionItem OptionMaxUseCount; static int MaxUseCount;
 
     enum OptionName
     {
@@ -50,24 +49,25 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
         DoubleKillerKillCooldown,
         DoubleKillerCanVent,
         DoubleKillerCanSabotage,
-        DoubleKillerPhantomUsageCount,
+        DoubleKillerUseCount,
     }
 
     static void SetUpOptionItem()
     {
         OptionKillCooldown = FloatOptionItem.Create(RoleInfo, 10, OptionName.DoubleKillerKillCooldown, new(0.5f, 60f, 0.5f), 30f, false)
             .SetValueFormat(OptionFormat.Seconds);
-        OptionPhantomCooldown = FloatOptionItem.Create(RoleInfo, 11, OptionName.DoubleKillerPhantomCooldown, new(0.5f, 60f, 0.5f), 30f, false)
+        OptionPhantomCooldown = FloatOptionItem.Create(RoleInfo, 11, OptionName.DoubleKillerPhantomCooldown, new(0f, 60f, 0.5f), 30f, false)
             .SetValueFormat(OptionFormat.Seconds);
         OptionCanVent = BooleanOptionItem.Create(RoleInfo, 12, OptionName.DoubleKillerCanVent, true, false);
         OptionCanSabotage = BooleanOptionItem.Create(RoleInfo, 13, OptionName.DoubleKillerCanSabotage, true, false);
-        OptionPhantomUsageCount = IntegerOptionItem.Create(RoleInfo, 14, OptionName.DoubleKillerPhantomUsageCount, new(1, 10, 1), 1, false)
-            .SetValueFormat(OptionFormat.Times);
+        OptionMaxUseCount = IntegerOptionItem.Create(RoleInfo, 14, GeneralOption.OptionMaxUseCount, new(1, 14, 1), 1, false).SetValueFormat(OptionFormat.Times);
     }
 
     public float CalculateKillCooldown() => KillCooldown;
     public bool CanUseSabotageButton() => CanSabotage;
     public bool CanUseImpostorVentButton() => CanVent;
+
+    int UseCount = 0;
 
     public override bool CanClickUseVentButton => CanVent;
     public override bool OnEnterVent(PlayerPhysics physics, int ventId) => CanVent;
@@ -75,20 +75,20 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
 
     public override void ApplyGameOptions(IGameOptions opt)
     {
-        if (usedPhantomCount < OptionPhantomUsageCount.GetInt())
+        if (MaxUseCount > UseCount)
             AURoleOptions.PhantomCooldown = PhantomCooldown;
     }
 
-    bool IUsePhantomButton.IsPhantomRole => usedPhantomCount < OptionPhantomUsageCount.GetInt();
+    bool IUsePhantomButton.IsPhantomRole => MaxUseCount > UseCount;
     bool IUsePhantomButton.IsresetAfterKill => false;
 
     void IUsePhantomButton.OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
     {
         AdjustKillCooldown = false;
-        ResetCooldown = false;
+        ResetCooldown = true;
 
-        if (usedPhantomCount >= OptionPhantomUsageCount.GetInt() || !Player.IsAlive()) return;
-
+        if (MaxUseCount <= UseCount || !Player.IsAlive()) return;
+        ++UseCount; //0 => 1
         PlayerControl nearest = null;
         float minDist = Main.NormalOptions.KillDistance switch
         {
@@ -112,7 +112,6 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
 
         if (nearest == null) return;
 
-        usedPhantomCount++;
         float savedKillTimer = Player.killTimer;
         Vector2 targetPos = nearest.transform.position;
         CustomRoleManager.OnCheckMurder(Player, nearest, nearest, nearest, true, true, 1, CustomDeathReason.Kill);
@@ -129,8 +128,15 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
     private void RestoreKillCooldown(float cooldown)
     {
         cooldown = Mathf.Max(cooldown, 0f);
+        if (IUsePhantomButton.IPPlayerKillCooldown.ContainsKey(Player.PlayerId))
+            IUsePhantomButton.IPPlayerKillCooldown[Player.PlayerId] = 0f;
+
+        Main.AllPlayerKillCooldown[Player.PlayerId] = cooldown * 2f;
+        Player.SyncSettings();
         Player.RpcProtectedMurderPlayer();
-        Player.SetKillTimer(cooldown);
+
+        Player.killTimer = cooldown;
+        Player.ResetKillCooldown();
         Player.SyncSettings();
     }
 
@@ -146,12 +152,10 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
         AmongUsClient.Instance.FinishRpcImmediately(writer);
     }
 
-    public override string GetProgressText(bool comms = false, bool GameLog = false)
-    {
-        int remaining = Mathf.Max(0, OptionPhantomUsageCount.GetInt() - usedPhantomCount);
-        return remaining <= 0 ? "" : $"<#ff0000>({remaining})</color>";
-    }
+    //public override string GetProgressText(bool comms = false, bool GameLog = false)
+    //=> MaxUseCount > UseCount ? "" : $"<#ff0000>(MaxUseCount - UseCount)</color>";
 
+    public override string GetAbilityButtonText() => GetString("Subkill");
     public override bool OverrideAbilityButton(out string text)
     {
         text = "DoubleKiller_Ability";

@@ -327,9 +327,9 @@ namespace TownOfHost
                 "クルー" or "クルーメイト" => GetString("Crewmate"),
                 "狼少年" or "オオカミ少年" or "おおかみ少年" => GetString("WolfBoy"),
                 "ギャスプ" or "ギャプス" or "ギャスフ" => GetString("Gasp"),//これを許していいのか。
-                "さつまといも" or "さつもといも" or "satsumatoimo" or "satsumotoimo" => GetString("SatsumatoImo"),
-                "さつまといもc" or "さつもといもc" or "satsumatoimoc" or "satsumotoimoc" => GetString("SatsumatoImoC"),
-                "さつまといもm" or "さつもといもm" or "satsumatoimom" or "satsumotoimom" => GetString("SatsumatoImoM"),
+                "さつまといも" or "さつもといも" or "JekyllandHyde" or "satsumotoimo" => GetString("JekyllandHyde"),
+                "さつまといもc" or "さつもといもc" or "Jekyll" or "satsumotoimoc" => GetString("Jekyll"),
+                "さつまといもm" or "さつもといもm" or "Hyde" or "satsumotoimom" => GetString("Hyde"),
 
                 //第3陣営
                 "ラバーズ" or "リア充" or "恋人" => GetString("Lovers"),

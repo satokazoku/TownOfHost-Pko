@@ -227,7 +227,7 @@ public static class CustomRoleManager
         //キル可能だった場合のみMurderPlayerに進む
         if (info.CanKill && info.DoKill)//ノイメ対応
         {
-            if ((appearanceKiller.GetCustomRole() is CustomRoles.Viper || (appearanceKiller.GetRoleClass()?.HaveAddRole() is CustomRoles.Viper)) && !info.IsFakeSuicide && !info.IsSuicide)//DesyncImp役職だと死体が溶けないので一瞬だけViperにする。
+            if (appearanceKiller.GetCustomRole() is CustomRoles.Viper && !info.IsFakeSuicide && !info.IsSuicide)//DesyncImp役職だと死体が溶けないので一瞬だけViperにする。
             {
                 if (AmongUsClient.Instance.AmHost)
                     foreach (var pc in PlayerCatch.AllPlayerControls)
@@ -833,7 +833,7 @@ public enum CustomRoles
     Insider,
     HadouHo,
     SelfBomber,
-    DoubleKiller,    
+    DoubleKiller,
     Slugger,
     Chaser,
     Samurai,
@@ -882,7 +882,7 @@ public enum CustomRoles
     Archer,
     Assassin,
     UnFortuner,
-    //TOH-P
+    //TOH-Pko
     EvilGuesser,
     TimeSleeper,
     EvilBlender,
@@ -893,8 +893,10 @@ public enum CustomRoles
     MassMurder,
     EvilStandMaster,
     BeginnerImpostor,
-    PuppeteerHadouHo,
-    SmokeMaker,
+    //TOH-N
+    Survivor,
+    Polaris,
+    HydeImp,
     //DEBUG only Impostor
     //Madmate
     MadGuardian,
@@ -903,7 +905,6 @@ public enum CustomRoles
     MadAvenger,
     SKMadmate,
     BlackCat,
-    BlackSanta,
     //TOH-K
     MadJester,
     MadTeller,
@@ -917,7 +918,8 @@ public enum CustomRoles
     Nue,
     MadHacker,
     MadSheriff,
-    MadWare,
+    //TOH-N
+    Heretic,
     //DEBUG only Madmate
     //Crewmate(Vanilla)
     Engineer,
@@ -945,9 +947,9 @@ public enum CustomRoles
     Sage,
     NiceTrapper,
     Moving,
-    SatsumatoImo,
-    SatsumatoImoC,
-    SatsumatoImoM,
+    JekyllandHyde,
+    Jekyll,
+    Hyde,
     NiceTeleporter,
     NiceRedRidingHood,
     MagicalGirl,
@@ -995,7 +997,7 @@ public enum CustomRoles
     Observer,
     Satellite,
     Merlin,
-    //TOH-P
+    //TOH-Pko
     NiceGuesser,
     Pukupuku,
     Medium,
@@ -1008,6 +1010,9 @@ public enum CustomRoles
     Police,
     NiceWorkaholic,
     Jailer,
+    //TOH-N
+    //Alchemist,
+    RemoteSheriff,
     //DEBUG only Crewmate
     Analyzer,
     //Neutral
@@ -1081,16 +1086,19 @@ public enum CustomRoles
     Fool,
     JackalWolf,
     TaskPlayerB,
-    //TOH-P
+    //TOH-Pko
+    StandMaster,
     Chatter,
     BatGirl,
     Shyboy,
-    StandMaster,
+    SmokeMaker,
     Stand,
     Villain,
     Scratcher,
     HappyJester,
-    UnHappyJester,
+    //TOH-N
+    Obolus,
+    Mario,
     Hunter,
     //DEBUG only Neutral.
     //HideAndSeek

@@ -29,7 +29,7 @@ namespace TownOfHost
         public static SimpleButton UpdateButton2;
         private static SimpleButton gitHubButton;
         private static SimpleButton TwitterXButton;
-        private static SimpleButton TOHPBOTButton;
+        //private static SimpleButton TOHNBOTButton;
         private static SimpleButton RoleInfoButton;
         private static SimpleButton betaversionchange;
         public static TextMeshPro Statistics_TMP;
@@ -60,7 +60,7 @@ namespace TownOfHost
             {
                 discordButton = CreateButton(
                     "DiscordButton",
-                    new(-2.5f, -1f, 1f),
+                    new(-1.7f, -1f, 1f),
                     new(88, 101, 242, byte.MaxValue),
                     new(148, 161, byte.MaxValue, byte.MaxValue),
                     () => Application.OpenURL(Main.DiscordInviteUrl),
@@ -73,10 +73,10 @@ namespace TownOfHost
             {
                 gitHubButton = CreateButton(
                     "GitHubButton",
-                    new(-0.8f, -1f, 1f),//-1f
+                    new(0f, -1f, 1f),//-1f
                     new(153, 153, 153, byte.MaxValue),
                     new(209, 209, 209, byte.MaxValue),
-                    () => Application.OpenURL("https://github.com/satokazoku/TownOfHost-Pko"),
+                    () => Application.OpenURL("https://github.com/akebono-1382/TownOfHost-N"),
                     "GitHub");
             }
 
@@ -85,23 +85,23 @@ namespace TownOfHost
             {
                 TwitterXButton = CreateButton(
                     "TwitterXButton",
-                    new(0.9f, -1f, 1f),
+                    new(1.7f, -1f, 1f),
                     new(0, 202, 255, byte.MaxValue),
                     new(60, 255, 255, byte.MaxValue),
-                    () => Application.OpenURL("https://youtube.com/@toh-pko?si=P6vdE1t4MHoA_C6F"),
+                    () => Application.OpenURL("https://www.youtube.com/channel/UCw2bDCc7XF4te7qK0L-Holg"),
                     "Youtube");
             }
-            // TOHPBOTボタンを生成
-            if (SimpleButton.IsNullOrDestroyed(TOHPBOTButton))
+            // TOHNBOTボタンを生成
+            /*if (SimpleButton.IsNullOrDestroyed(TOHNBOTButton))
             {
-                TOHPBOTButton = CreateButton(
-                    "TOHPBOTButton",
+                TOHNBOTButton = CreateButton(
+                    "TOHNBOTButton",
                     new(2.6f, -1f, 1f),
                     new(0, 201, 87, byte.MaxValue),
                     new(60, 201, 87, byte.MaxValue),
                     () => Application.OpenURL("https://discord.com/"),
-                    "TOHPBOT");
-            }
+                    "TOHNBOT");
+            }*/
             if (SimpleButton.IsNullOrDestroyed(StatisticsButton))
             {
                 StatisticsButton = CreateButton(
@@ -111,7 +111,7 @@ namespace TownOfHost
                     new(255, 248, 173, byte.MaxValue),
                     () =>
                     {
-                        CredentialsPatch.TOHPLogo.gameObject.SetActive(false);
+                        CredentialsPatch.TOHNLogo.gameObject.SetActive(false);
                         __instance.screenTint.enabled = true;
                         Statistics_TMP.gameObject.SetActive(true);
                         Statistics_TMP.text = $"<size=60%>{SaveStatistics.ShowText()}";
@@ -183,7 +183,7 @@ namespace TownOfHost
                         updatea.name = "Update Detail";
                         updatea.gameObject.SetActive(true);
                         updatea.AnnouncementListSlider.SetActive(false);
-                        updatea.Title.text = "TOH-P " + ModUpdater.latestTitle;
+                        updatea.Title.text = "TOH-N " + ModUpdater.latestTitle;
                         updatea.AnnouncementBodyText.text = Regex.Replace(ModUpdater.body.Replace("#", "").Replace("**", ""), @"\[(.*?)\]\(.*?\)", "$1");
                         updatea.DateString.text = "Latest Release";
                         updatea.SubTitle.text = "";
@@ -203,7 +203,7 @@ namespace TownOfHost
                     new(60, 255, 183, byte.MaxValue),
                     () =>
                     {
-                        CredentialsPatch.TOHPLogo.gameObject.SetActive(false);
+                        CredentialsPatch.TOHNLogo.gameObject.SetActive(false);
                         __instance.screenTint.enabled = true;
                         if (betaVersionMenu != null)
                         {
@@ -311,7 +311,7 @@ namespace TownOfHost
             bool isActive = true,
             Transform transform = null)
         {
-            var button = new SimpleButton(transform == null ? CredentialsPatch.TOHPLogo.transform : transform, name, localPosition, normalColor, hoverColor, action, label, isActive);
+            var button = new SimpleButton(transform == null ? CredentialsPatch.TOHNLogo.transform : transform, name, localPosition, normalColor, hoverColor, action, label, isActive);
             if (scale.HasValue)
             {
                 button.Scale = scale.Value;
@@ -445,9 +445,9 @@ namespace TownOfHost
                 //    createbutton.GetComponent<BoxCollider2D>().offset = new(100f, 100);
             }
 
-            if (CredentialsPatch.TOHPLogo != null)
+            if (CredentialsPatch.TOHNLogo != null)
             {
-                CredentialsPatch.TOHPLogo.gameObject.SetActive(false);
+                CredentialsPatch.TOHNLogo.gameObject.SetActive(false);
             }
             if (VersionMenu != null)
                 VersionMenu.SetActive(false);
@@ -477,9 +477,9 @@ namespace TownOfHost
         public static void ResetScreenPostfix(MainMenuManager __instance)
         {
             CancelAutoCreateGame();
-            if (CredentialsPatch.TOHPLogo != null)
+            if (CredentialsPatch.TOHNLogo != null)
             {
-                CredentialsPatch.TOHPLogo?.gameObject?.SetActive(true);
+                CredentialsPatch.TOHNLogo?.gameObject?.SetActive(true);
             }
             if (VersionMenu != null)
                 VersionMenu.SetActive(false);
@@ -598,7 +598,7 @@ namespace TownOfHost
             {
                 var allrole = CustomRolesHelper.AllStandardRoles;
                 var role = allrole[IRandom.Instance.Next(allrole.Count())];
-                var sprite = UtilsSprite.LoadSprite($"TownOfHost.Resources.TOHP.Label.{role}.png", size);
+                var sprite = UtilsSprite.LoadSprite($"TownOfHost.Resources.TOHN.Label.{role}.png", size);
                 if (sprite is null) return;
                 part.myRend.material.shader = shader;
                 part.myRend.sharedMaterial.shader = shader;
@@ -608,11 +608,11 @@ namespace TownOfHost
             {
                 var allrole = CustomRolesHelper.AllRoles;
                 var role = allrole[IRandom.Instance.Next(allrole.Count())];
-                var sprite = UtilsSprite.LoadSprite($"TownOfHost.Resources.TOHP.Button.{role}_Ability.png", size);
+                var sprite = UtilsSprite.LoadSprite($"TownOfHost.Resources.TOHN.Button.{role}_Ability.png", size);
                 if (sprite is null)
-                    sprite = UtilsSprite.LoadSprite($"TownOfHost.Resources.TOHP.Button.{role}_Kill.png", size);
+                    sprite = UtilsSprite.LoadSprite($"TownOfHost.Resources.TOHN.Button.{role}_Kill.png", size);
                 if (sprite is null)
-                    sprite = UtilsSprite.LoadSprite($"TownOfHost.Resources.TOHP.Button.{role}_Vent.png", size);
+                    sprite = UtilsSprite.LoadSprite($"TownOfHost.Resources.TOHN.Button.{role}_Vent.png", size);
                 if (sprite is null) return;
                 part.myRend.material.shader = shader;
                 part.myRend.sharedMaterial.shader = shader;

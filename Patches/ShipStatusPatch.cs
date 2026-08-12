@@ -76,11 +76,6 @@ namespace TownOfHost
             if (Options.CurrentGameMode is CustomGameMode.HideAndSeek or CustomGameMode.StandardHAS or CustomGameMode.SuddenDeath or CustomGameMode.MurderMystery) return false;
             if (Options.CurrentGameMode != CustomGameMode.Standard || SuddenDeathMode.NowSuddenDeathMode) return false;
 
-            if (Options.AfterTurnCantCloseDoor.GetBool())
-            {
-                if (GameStates.turntimer < Options.AfterTurnCantCloseDoor.GetFloat()) return false;
-            }
-
             return !Options.AllowCloseDoors.GetBool();
         }
     }

@@ -84,7 +84,7 @@ namespace TownOfHost
 
             Register(bot, hideInLobby, spawned: true);
 
-            var botName = string.IsNullOrWhiteSpace(name) ? $"TOHP TestBot {id}" : name.Trim();
+            var botName = string.IsNullOrWhiteSpace(name) ? $"TOHN TestBot {id}" : name.Trim();
             var colorId = GetUnusedColorId(id);
 
             var spawnPosition = hideInLobby ? HiddenPosition : GetVisibleSpawnPosition(id);

@@ -128,7 +128,7 @@ public static class PreviousSessionDetector
                 $"<color=#00c1ff>【再参加検知】</color>\n" +
                 $"{playerName} は前の試合にも参加していました。\n" +
                 $"FC: {key}\n" +
-                $"<size=80%>/cmd kp で一括キックできます。</size>",
+                $"<size=80%>/kp で一括キックできます。</size>",
                 PlayerControl.LocalPlayer.PlayerId,
                 "<color=#00c1ff>⚠ 再参加検知</color>");
             return;

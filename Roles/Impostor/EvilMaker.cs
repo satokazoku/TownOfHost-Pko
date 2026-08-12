@@ -55,7 +55,9 @@ public sealed class EvilMaker : RoleBase, IImpostor, IUsePhantomButton
 
         var target = Player.GetKillTarget(true);
         if (target == null) return;
-        if ((target.GetCustomRole() is CustomRoles.SKMadmate or CustomRoles.King or CustomRoles.Merlin or CustomRoles.AlienHijack || target.IsTeammate(Player)) && !SuddenDeathMode.NowSuddenDeathMode) return;
+        if ((target.GetCustomRole() is CustomRoles.SKMadmate or CustomRoles.King or CustomRoles.Autocrat or CustomRoles.Merlin || target.IsTeammate(Player)) && !SuddenDeathMode.NowSuddenDeathMode) return;
+        var source = Player.Is(CustomRoles.JackalWolf) ? Walkure.RoleChangeSource.Jackal : Walkure.RoleChangeSource.Impostor;
+        if (Walkure.TryRejectRoleChange(Player, target, source)) return;
 
         Used = true;
         AdjustKillCooldown = false;

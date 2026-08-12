@@ -25,6 +25,7 @@ public sealed class Milkman : RoleBase, IKiller
             "#f0f0e0",
             (4, 2),
             true,
+            from: From.TownOfHost_Pko,
             introSound: () => GetIntroSound(RoleTypes.Crewmate)
         );
 
@@ -365,7 +366,7 @@ public sealed class Milkman : RoleBase, IKiller
 
         string mode = deliveryMode
             ? $"<color={RoleInfo.RoleColorCode}>[配達]</color>"
-            : "<color=#aaaaaa>[タスク]</color>";
+            : "<color=#aaaaaa>[Task]</color>";
 
         if (!GameStates.CalledMeeting && !GameLog)
             mode += $"<color=#ffffff>({LastCooltime})</color>";

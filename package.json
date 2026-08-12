@@ -3,6 +3,7 @@
     "ws": "^8.21.0"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^5.20260724.1"
+    "@cloudflare/workers-types": "^5.20260724.1",
+    "eslint": "^10.8.0"
   }
 }

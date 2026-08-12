@@ -1,5 +1,5 @@
-// 俺の約1日さようなら
-/*using System.Collections.Generic;
+/*// 俺の約1日さようなら
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using AmongUs.GameOptions;
@@ -81,9 +81,9 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
 
     int eatOrSwallowCount;
     bool eatMode;
+        float eatCooldownTimer;
     float extraSwallowTime;
     float extraCooldownRate;
-    float eatCooldownTimer;
     float swallowCooldownTimer;
     bool pendingDisplayActive;
     float pendingDisplayTimer;
@@ -99,9 +99,9 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
     {
         eatOrSwallowCount = 0;
         eatMode = true;
+        eatCooldownTimer = 0f;
         extraSwallowTime = 0f;
         extraCooldownRate = 0f;
-        eatCooldownTimer = 0f;
         swallowCooldownTimer = 0f;
         pendingDisplayActive = false;
         pendingDisplayTimer = 0f;
@@ -152,9 +152,9 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
         {
             eatOrSwallowCount = 0;
             eatMode = true;
+            eatCooldownTimer = GetBaseEatCooldown();
             extraSwallowTime = 0f;
             extraCooldownRate = 0f;
-            eatCooldownTimer = GetBaseEatCooldown();
             swallowCooldownTimer = GetBaseSwallowCooldown();
             pendingDisplayActive = false;
             pendingDisplayTimer = 0f;

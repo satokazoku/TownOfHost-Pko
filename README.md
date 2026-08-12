@@ -1,4 +1,4 @@
-# Town Of Host-Pko
+# Town Of Host-N
 
 ## この Mod について
 
@@ -6,18 +6,19 @@
 この Mod の問題などに関して公式に問い合わせないでください。<br>
 
 この Mod はTOH,TOHKに役職や機能など追加したModです
-TOH-Pkoで起きたバグは本家や他MODには報告しないでまずはTOH-Pkoに報告してください。<br>
+TOH-Nで起きたバグは本家や他MODには報告しないでまずはTOH-Nに報告してください。<br>
 
-また、TOH-Pkoに関する質問、バグ報告は基本、[DiscordServer](https://discord.gg/PQ5CrVHC25)でのみ受け付けております。<br>
+また、TOH-Nに関する質問、バグ報告は基本、[DiscordServer](https://discord.gg/VHJyzSDRUK)でのみ受け付けております。<br>
 
 [本家TOHはこちら](https://github.com/tukasa0001/TownOfHost)<br>
 [TOHKはこちら](https://github.com/KYMario/TownOfHost-K)<br>
+[TOHPkoはこちら](https://github.com/satokazoku/TownOfHost-Pko)<br>
 
 ## リリース
 AmongUsバージョン : **17.3.0**~<br>
 
-**最新版は[こちら](https://github.com/satokazoku/TownOfHost-Pko/releases/latest)**<br>
-過去バージョンは[こちら](https://github.com/satokazoku/TownOfHost-Pko/releases)<br>
+**最新版は[こちら](https://github.com/akebono-1382/TownOfHost-N/releases/latest)**<br>
+過去バージョンは[こちら](https://github.com/akebono-1382/TownOfHost-N/releases)<br>
 
 ## 公開ルームについて
 > [!Note]
@@ -46,16 +47,15 @@ AmongUsバージョン : **17.3.0**~<br>
 **禁止されない行為**
 > [**Note**]
 > - Discordや村のオープンチャットで非公開ルームのコードを伝え身内間でMod部屋を開催
-> - Town Of Host-Pkoのマッチメイキングでの募集
 > - Youtubeなどの配信サイトで上記の禁止行為に該当しない参加型/身内村配信<br>
 
 =>　要するに**Modだと認知していない野良のプレイヤーが交わる可能性がある**とアウトです。<br>
 <br>
 勧誘部屋に遭遇した場合は勧誘先に無闇に参加せずまずは開発者にお知らせください。厳正に対処いたします。<br>
 
-## TOH-Pkoでの処罰、利用不可について
-v.5.1.61.1以降より[SuperNewRoles](https://github.com/SuperNewRoles/SuperNewRoles/)様等一部のModに搭載されていた<br>
-ブラックリストをTown Of Host-Pkoでも適応するようにいたしました。<br>
+## TOH-Nでの処罰、利用不可について
+TOHK v.5.1.61.1以降より[SuperNewRoles](https://github.com/SuperNewRoles/SuperNewRoles/)様等一部のModに搭載されていた<br>
+ブラックリストをTown Of Host-Nでも適応するようにいたしました。<br>
 
 > [!note]
 > - 【処罰に値する利用方法】
@@ -70,7 +70,7 @@ v.5.1.61.1以降より[SuperNewRoles](https://github.com/SuperNewRoles/SuperNewR
 -----------------------------------------------
 
 **【絶対に読むんだ】**<br>
-Town Of Host-Pkoの利用をもって"処罰に値する利用方法"内で記載されている<br>
+Town Of Host-Nの利用をもって"処罰に値する利用方法"内で記載されている<br>
 行動をしないと誓い,<br>
 処罰に値する利用を行った場合はいかなる場合でも処罰を受け入れるものとします。<br>
 
@@ -80,23 +80,26 @@ Town Of Host-Pkoの利用をもって"処罰に値する利用方法"内で記�
 上の【処罰に値する利用方法】の行動をしたら<br>
 Modが使えなくなるよ!<br>
 このMod使うならMod使えなくなっても受け入れるし、<br>
-その処罰に値する利用方法をしないよ！！<br>
+その処罰に値する利用方法をしないよ
+<br>
 ってことです。
 
-**TownOfHost-Pkoの開発者**<br>
-　しぇとこch<br>
-　　[Youtube](https://youtube.com/channel/UCM1gs89uwjOJF3EcVc1ZEOA?si=a1ffdwsBjGbJKig6)<br>
+**TownOfHost-Nの開発者**<br>
+　あけぼの<br>
 
 ※本家TownOfHost,TownOfHost_K様の開発者はここでは省略させていただきます
 #### クレジット
 [Town Of Host](https://github.com/tukasa0001/TownOfHost)<br>
-　Fork元の本家です。<br>TownOfHost様にある機能はTownOfHost-Pkoでも大体実装されています<br>
+　TOHKのFork元です。<br>TownOfHost様にある機能はTownOfHost-Nでも大体実装されています<br>
 
-[Town Of Host_K](https://github.com/KYMario/TownOfHost-K)<br>
-　Fork元です。<br>TownOfHost_K様にある機能はTownOfHost-Pkoでも大体実装されています<br>
+[Town Of Host K](https://github.com/KYMario/TownOfHost-K)<br>
+　Fork元の本家です。<br>TownOfHost_K様にある機能はTownOfHost-Nでも大体実装されています<br
 
-[Town Of Host_Y](https://github.com/Yumenopai/TownOfHost_Y)<br>
-　会議時の役職表示、会議拡張、ワーカホリック,ラビット,チェイサー,ニムロッド,鬼,決闘者,海賊,属性名、一部役職を参考/移植させて頂きました！<br>
+[Town Of Host Pko](https://github.com/satokazoku/TownOfHost-Pko)<br>
+　Fork元です。<br>TownOfHost Pko様にある機能はTownOfHost-Nでも大体実装されています<br>
+
+[Town Of Host Y](https://github.com/Yumenopai/TownOfHost_Y)<br>
+　会議時の役職表示、会議拡張、一部役職を参考/移植させて頂きました！<br>
 
 [Town Of Host For E](https://github.com/AsumuAkaguma/TownOfHost_ForE) <br>
 　機能やコメント取得一部処理の参考にさせて頂きました！<br>
@@ -114,7 +117,7 @@ Modが使えなくなるよ!<br>
 　10.24アプデの対応で参考にさせていただきました！<br>
 
 [SuperNewRoles](https://github.com/ykundesu/SuperNewRoles) <br>
-　スパイダー、ナイス猫又、黒猫、ナイス赤ずきん、ポーカーフェイス、三匹の子豚、ミニマリスト、ナイステレポーター、テレポーター、さつまといも、ムービング、イビルムービング、ロケット、自殺願望者、爆ぜ師、ジャッカルシーア、侍、パブロフの犬、モイラ、キューピッド、スペランカー、神、フリーター、マグロ、陰陽師、忘却者、波動砲ジャッカル、弾、波動砲、ダブルキラー、自爆魔、サンタ、ブラックサンタ、村長、天秤、ミーティングシェリフ、トイレファン、イビルギャンブラー、ペンギン、マッドスーサイドを移植/参考<br>
+　ペンギン、ダブルキラー等の役職を移植/参考<br>
 　ブラックリスト等や様々な部分を参考にさせて頂きました！<br>
 
 [TheOtherRoles](https://github.com/TheOtherRolesAU/TheOtherRoles)<br>
@@ -133,4 +136,4 @@ TOR_GM_Haoming_Edition<br>
 　マッドジェスターの参考/移植させていただきました<br>
 
 [ExtremeRoles](https://github.com/yukieiji/ExtremeRoles)<br>
-　アサシンとマーリンの参考/移植、イーター、エボルバーの移植をさせていただきました。<br>
+　アサシンとマーリン、エボルバー、ヘレティックの参考/移植をさせていただきました。<br>

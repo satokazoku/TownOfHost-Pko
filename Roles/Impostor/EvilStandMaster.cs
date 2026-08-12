@@ -110,6 +110,7 @@ public sealed class EvilStandMaster : RoleBase, IImpostor, IUsePhantomButton
                 Player.SetKillCooldown(newCd);
                 Logger.Info($"[EvilStandMaster] ワープ不可→自分のキルCD {OwnKillCDReduce}秒短縮", "EvilStandMaster");
             }
+            Utils.SendMessage(GetString("EvilStandMasterNoTarget"), Player.PlayerId);
             return;
         }
 
@@ -142,6 +143,9 @@ public sealed class EvilStandMaster : RoleBase, IImpostor, IUsePhantomButton
             Logger.Info($"[EvilStandMaster] {target.Data?.GetLogPlayerName()} のキルCD {TeammateKillCDReduce}秒短縮", "EvilStandMaster");
         }
 
+        Utils.SendMessage(
+            string.Format(GetString("EvilStandMasterWarped"), target.Data?.PlayerName ?? "???"),
+            Player.PlayerId);
         UtilsNotifyRoles.NotifyRoles();
     }
 
@@ -169,7 +173,7 @@ public sealed class EvilStandMaster : RoleBase, IImpostor, IUsePhantomButton
         return true;
     }
 
-    public override string GetAbilityButtonText() => "召喚";
+    public override string GetAbilityButtonText() => GetString("召喚");
 
     public override string GetLowerText(PlayerControl seer, PlayerControl seen = null,
         bool isForMeeting = false, bool isForHud = false)

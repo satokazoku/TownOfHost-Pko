@@ -1,4 +1,4 @@
-/*
+
 using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
@@ -22,8 +22,7 @@ public sealed class Rocket : RoleBase, IImpostor, IUsePhantomButton
             26350,
             SetupOptionItem,
             "rkt",
-            OptionSort: (3, 14),
-            from: From.SuperNewRoles
+            OptionSort: (3, 14)
         );
 
     public Rocket(PlayerControl player) : base(RoleInfo, player)
@@ -611,4 +610,3 @@ public class RocketFlyDummy : CustomNetObject
         ActiveDummies.Clear();
     }
 }
-*/

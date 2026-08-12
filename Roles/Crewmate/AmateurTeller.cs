@@ -188,7 +188,7 @@ public sealed class AmateurTeller : RoleBase, ISelfVoter
                     return $"<color=#6b3ec3>★{ar}</color>";
                 }
             }
-            else if (seen.PlayerId == tell.UseTarget && seer == tell.Player)
+            else if (seer.PlayerId == tell.UseTarget && seen == tell.Player)
                 return "<color=#6b3ec3>★</color>";
         }
         return "";

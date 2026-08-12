@@ -19,7 +19,7 @@ namespace TownOfHost
         {
             if (AmongUsClient.Instance.AmHost is false) return true;
 
-            //波動砲がチャージ中またはビーム中ならジップライン使用禁止
+            // ★ 波動砲がチャージ中またはビーム中ならジップライン使用禁止
             if (__instance.GetRoleClass() is Roles.Impostor.HadouHo hadouHo)
             {
                 if (hadouHo.IsCharging || hadouHo.ShowBeamMark)

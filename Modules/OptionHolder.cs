@@ -175,7 +175,6 @@ namespace TownOfHost
 
         // HideAndSeek
         public static OptionItem AllowCloseDoors;
-        public static OptionItem AfterTurnCantCloseDoor;
         public static OptionItem KillDelay;
         public static OptionItem IgnoreVent;
         public static float HideAndSeekKillDelayTimer = 0f;
@@ -1060,7 +1059,6 @@ namespace TownOfHost
                 .SetEnabled(() => IsActiveAirship);
             AllowCloseDoors = BooleanOptionItem.Create(108114, "AllowCloseDoors", false, TabGroup.MainSettings, false)
                 .SetParent(Sabotage);
-            AfterTurnCantCloseDoor = FloatOptionItem.Create(108115, "AfterTurnCantCloseDoor", new(0, 300, 1), 0f, TabGroup.MainSettings, false).SetParent(Sabotage).SetZeroNotation(OptionZeroNotation.Off).SetValueFormat(OptionFormat.Seconds);
             // ランダムマップ
             RandomMapsMode = BooleanOptionItem.Create(108700, "RandomMapsMode", false, TabGroup.MainSettings, false)
                 .SetHeader(true)
@@ -1455,7 +1453,7 @@ namespace TownOfHost
             OptionGameChatNormalChat = BooleanOptionItem.Create(1_300_360, "GameChatNormalChat", false, TabGroup.MainSettings, true)
                 .SetParent(OptionGameChatSetting)
                       .SetColorcode("#00c1ff")
-                      .SetOptionName(() => "通常チャットを有効にする(未完成)");
+                      .SetOptionName(() => "通常チャットを有効にする");
 
             OptionGameChatNormalNearChat = BooleanOptionItem.Create(1_300_370, "GameChatNormalNearChat", false, TabGroup.MainSettings, true)
                       .SetParent(OptionGameChatNormalChat)
@@ -1471,7 +1469,7 @@ namespace TownOfHost
                       .SetParent(OptionGameChatSetting)
                       .SetHeader(true)
                       .SetColorcode("#00c1ff")
-                      .SetOptionName(() => "秘匿チャットを有効にする(未完成)");
+                      .SetOptionName(() => "秘匿チャットを有効にする");
 
             OptionGameChatHideNearChat = BooleanOptionItem.Create(1_300_400, "GameChatHideNearChat", false, TabGroup.MainSettings, true)
                       .SetParent(OptionGameChatHideChat)

@@ -61,9 +61,9 @@ public sealed class MagicalGirl : RoleBase, ISelfVoter, IKiller, IUsePhantomButt
     [
         CustomRoles.MagicalGirl,
         CustomRoles.AllArounder,
-        CustomRoles.SatsumatoImo,
-        CustomRoles.SatsumatoImoC,
-        CustomRoles.SatsumatoImoM,
+        CustomRoles.JekyllandHyde,
+        CustomRoles.Jekyll,
+        CustomRoles.Hyde,
         CustomRoles.Apprentice,
         CustomRoles.Walker,
         CustomRoles.Merlin

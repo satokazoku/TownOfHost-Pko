@@ -3,6 +3,7 @@ using Hazel;
 using TownOfHost.Roles.AddOns.Common;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Crewmate;
 using TownOfHost.Roles.Madmate;
 using TownOfHost.Roles.Neutral;
 
@@ -30,11 +31,11 @@ public static class HudOverrideSystemTypeUpdateSystemPatch
         var tags = (HqHudSystemType.Tags)(amount & HqHudSystemType.TagMask);
         var playerRole = player.GetRoleClass();
         var isMadmate =
-            SatsumatoImo.UsesMadmateCommonSettings(player) ||
+            JekyllandHyde.UsesMadmateCommonSettings(player) ||
             // マッド属性化時に削除
             (playerRole is SchrodingerCat schrodingerCat && schrodingerCat.AmMadmate);
 
-        if ((isMadmate && !Options.MadmateCanFixComms.GetBool() && !player.Is(CustomRoles.MadWare))
+        if ((isMadmate && !Options.MadmateCanFixComms.GetBool())
         || (player.Is(CustomRoles.Amanojaku) && !Amanojaku.OptCanFixComms.GetBool())
         || (player.Is(CustomRoles.Clumsy)))
         {
@@ -52,10 +53,6 @@ public static class HudOverrideSystemTypeUpdateSystemPatch
             {
                 return false;
             }
-        foreach (var roleclass in CustomRoleManager.AllActiveRoles)
-        {
-            roleclass.Value.OnFixSabotage(player, Main.SabotageType, amount);
-        }
         return true;
     }
     public static void Postfix()

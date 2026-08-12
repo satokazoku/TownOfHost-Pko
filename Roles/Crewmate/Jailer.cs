@@ -526,23 +526,6 @@ public sealed class Jailer : RoleBase, IUsePhantomButton, IKiller
         imprisonTurnsLeft = reader.ReadInt32();
         remainAbilityCount = reader.ReadInt32();
     }
-    public override string GetAbilityButtonText() => "設置";
-    public override bool OverrideAbilityButton(out string text)
-    {
-        text = "Jailer_Ability";
-        return true;
-    }
-    public bool OverrideKillButtonText(out string text)
-    {
-        text = "拘束";
-        return true;
-    }
-
-    public bool OverrideKillButton(out string text)
-    {
-        text = "Jailer_Kill";
-        return true;
-    }
 }
 
 public sealed class PrisonNetObject : CustomNetObject

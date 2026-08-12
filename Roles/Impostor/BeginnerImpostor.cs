@@ -7,7 +7,6 @@ using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using static TownOfHost.Translator;
-
 namespace TownOfHost.Roles.Impostor;
 
 public sealed class BeginnerImpostor : RoleBase, IImpostor, IUsePhantomButton
@@ -24,6 +23,7 @@ public sealed class BeginnerImpostor : RoleBase, IImpostor, IUsePhantomButton
             "bi",
             "#ff1919",
             OptionSort: (4, 6),
+            from: From.TownOfHost_Pko,
             assignInfo: new RoleAssignInfo(CustomRoles.BeginnerImpostor, CustomRoleTypes.Impostor)
             {
                 AssignCountRule = new(1, 1, 1)

@@ -43,6 +43,7 @@ public abstract class RoleDescription
                 case CountTypes.Fox: overrideRoleText = CustomRoles.Fox; break;
                 case CountTypes.GrimReaper: overrideRoleText = CustomRoles.GrimReaper; break;
                 case CountTypes.Remotekiller: overrideRoleText = CustomRoles.Remotekiller; break;
+                case CountTypes.Hunter: overrideRoleText = CustomRoles.Hunter; break;
                 case CountTypes.MilkyWay: countText = Neutral.Vega.TeamText; break;
                 default: overrideRoleText = CustomRoles.Crewmate; break;
             }
@@ -66,7 +67,7 @@ public abstract class RoleDescription
             else if (RoleInfo.RoleName is CustomRoles.Braid) UtilsShowOption.ShowChildrenSettings(Options.CustomRoleSpawnChances[CustomRoles.Driver], ref sb);
             else if (RoleInfo.RoleName is CustomRoles.Altair) UtilsShowOption.ShowChildrenSettings(Options.CustomRoleSpawnChances[CustomRoles.Vega], ref sb);
             else if (RoleInfo.RoleName is CustomRoles.Nue) UtilsShowOption.ShowChildrenSettings(Options.CustomRoleSpawnChances[CustomRoles.Nue], ref sb);
-            var showsMadmateCommonSettings = RoleInfo.RoleName is not CustomRoles.SatsumatoImoM;
+            var showsMadmateCommonSettings = RoleInfo.RoleName is not CustomRoles.Hyde;
             if (RoleInfo.CustomRoleType == CustomRoleTypes.Madmate && showsMadmateCommonSettings)
             {
                 string rule = "┣ ";

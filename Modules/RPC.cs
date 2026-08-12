@@ -126,7 +126,7 @@ namespace TownOfHost
 
         public static void Postfix(PlayerControl __instance, [HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader reader)
         {
-            if (DebugModeManager.EnableTOHPDebugMode.GetBool() && callId != (byte)RpcCalls.SetPetStr)
+            if (DebugModeManager.EnableTOHNDebugMode.GetBool() && callId != (byte)RpcCalls.SetPetStr)
                 Logger.Info(callId + $"{(callId < (byte)CustomRPC.VersionCheck ? (RpcCalls)callId : (CustomRPC)callId)}" + "RPCを受け取りました！", "RPC");
 
             if (callId < (byte)CustomRPC.VersionCheck) return;
@@ -651,8 +651,7 @@ namespace TownOfHost
             SyncNextSpawn,
             SyncOneLove,
             SyncVoteResult,
-            ShowIntro,
-            ShowKillFlash
+            ShowIntro
         }
 
         public static void RpcModSetting(MessageReader reader)
@@ -734,16 +733,6 @@ namespace TownOfHost
                         HudManagerCoShowIntroPatch.Cancel = false;
                         DestroyableSingleton<HudManager>.Instance.StartCoroutine(DestroyableSingleton<HudManager>.Instance.CoShowIntro());
                         DestroyableSingleton<HudManager>.Instance.HideGameLoader();
-                    }
-                    break;
-                case ModSystem.ShowKillFlash:
-                    {
-                        var playerid = reader.ReadByte();
-                        if (playerid == PlayerControl.LocalPlayer.PlayerId)
-                        {
-                            Utils.FlashColor(new(1f, 0f, 0f, 0.5f));
-                            if (Constants.ShouldPlaySfx()) PlaySound(playerid, Sounds.KillSound);
-                        }
                     }
                     break;
             }

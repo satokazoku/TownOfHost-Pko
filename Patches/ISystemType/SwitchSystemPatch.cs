@@ -3,6 +3,7 @@ using Hazel;
 using TownOfHost.Roles.AddOns.Common;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Crewmate;
 using TownOfHost.Roles.Madmate;
 using TownOfHost.Roles.Neutral;
 using UnityEngine;
@@ -32,17 +33,17 @@ public static class SwitchSystemUpdateSystemPatch
         }
         var roleclass = player.GetRoleClass();
         var isMadmate =
-            SatsumatoImo.UsesMadmateCommonSettings(player) ||
+            JekyllandHyde.UsesMadmateCommonSettings(player) ||
             // マッド属性化時に削除
             (roleclass is SchrodingerCat schrodingerCat && schrodingerCat.AmMadmate);
-        if ((isMadmate && !Options.MadmateCanFixLightsOut.GetBool() && !player.Is(CustomRoles.MadWare))
+        if ((isMadmate && !Options.MadmateCanFixLightsOut.GetBool())
         || (player.Is(CustomRoles.Amanojaku) && !Amanojaku.OptCanFixLightsOut.GetBool())
         || player.Is(CustomRoles.Water))
         {
             return false;
         }
         // ロールの処理
-        if (Amnesia.CheckAbility(player))
+        if (Roles.AddOns.Common.Amnesia.CheckAbility(player))
         {
             if ((roleclass as ISystemTypeUpdateHook)?.UpdateSwitchSystem(__instance, amount) is false)
             {
@@ -66,25 +67,21 @@ public static class SwitchSystemUpdateSystemPatch
             if (Options.DisableAirshipCargoLightsPanel.GetBool() && Vector2.Distance(truePosition, new(30.56f, 2.12f)) <= 2f) return false;
         }
 
-        // amount分だけ1を左にずらす
-        // 各桁が各ツマミに対応する
-        // 一番左のツマミが操作されたら(amount: 0) 00001
-        // 一番右のツマミが操作されたら(amount: 4) 10000
-        // ref: SwitchSystem.RepairDamage, SwitchMinigame.FixedUpdate
-        var switchedKnob = (byte)(0b_00001 << amount);
-        // ExpectedSwitches: すべてONになっているときのスイッチの上下状態
-        // ActualSwitches: 実際のスイッチの上下状態
-        // 操作されたツマミについて，ExpectedとActualで同じならそのツマミは既に直ってる
-        bool IsDisturbancesSwitchs = (__instance.ActualSwitches & switchedKnob) == (__instance.ExpectedSwitches & switchedKnob);
-
         // サボタージュによる破壊ではない && 配電盤を下げられなくするオプションがオン
-        if (IsDisturbancesSwitchs && Options.BlockDisturbancesToSwitches.GetBool()) return false;
-
-        if (IsDisturbancesSwitchs is false)
+        if (Options.BlockDisturbancesToSwitches.GetBool())
         {
-            foreach (var activeroleclass in CustomRoleManager.AllActiveRoles)
+            // amount分だけ1を左にずらす
+            // 各桁が各ツマミに対応する
+            // 一番左のツマミが操作されたら(amount: 0) 00001
+            // 一番右のツマミが操作されたら(amount: 4) 10000
+            // ref: SwitchSystem.RepairDamage, SwitchMinigame.FixedUpdate
+            var switchedKnob = (byte)(0b_00001 << amount);
+            // ExpectedSwitches: すべてONになっているときのスイッチの上下状態
+            // ActualSwitches: 実際のスイッチの上下状態
+            // 操作されたツマミについて，ExpectedとActualで同じならそのツマミは既に直ってる
+            if ((__instance.ActualSwitches & switchedKnob) == (__instance.ExpectedSwitches & switchedKnob))
             {
-                activeroleclass.Value.OnFixSabotage(player, Main.SabotageType, amount);
+                return false;
             }
         }
         return true;

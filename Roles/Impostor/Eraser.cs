@@ -22,7 +22,7 @@ public sealed class Eraser : RoleBase, IImpostor, IUsePhantomButton
             SetupOptionItem,
             "Er",
             OptionSort: (6, 3),
-            from: From.TownOfHost_K
+            from: From.TheOtherRoles
         );
     public Eraser(PlayerControl player)
     : base(
@@ -54,7 +54,6 @@ public sealed class Eraser : RoleBase, IImpostor, IUsePhantomButton
     static OptionItem OptionCanDelMadmate; static bool CanDelMad;
     static OptionItem OptionCanDelNeutral; static bool CanDelNeu;
     static OptionItem OptionCanDelAddon; static bool CanDelAddon;
-
     static OptionItem OptionDeltimingAfterMeeting; static bool DeltimingAfterMeeting;
 
     int UseCount;//使用回数

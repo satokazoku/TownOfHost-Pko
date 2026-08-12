@@ -41,7 +41,7 @@ public sealed class Spelunker : RoleBase, ISystemTypeUpdateHook
         SpelunkerCommsSabotageDeathTime,
     }
 
-    const float NearVentDistance = 0.2f;
+    const float NearVentDistance = 0.8f;
     const float DoorRollCooldown = 0.2f;
 
     int nearVentId;

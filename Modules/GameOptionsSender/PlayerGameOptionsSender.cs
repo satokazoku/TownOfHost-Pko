@@ -16,6 +16,7 @@ using TownOfHost.Roles.AddOns.Common;
 using TownOfHost.Roles.Madmate;
 using TownOfHost.Roles.Neutral;
 using TownOfHost.Roles.Vanilla;
+using TownOfHost.Roles.Crewmate;
 
 namespace TownOfHost.Modules
 {
@@ -189,7 +190,7 @@ namespace TownOfHost.Modules
                         AURoleOptions.ShapeshifterDuration = DefaultShapeshiftDuration.GetFloat();
                         break;
                     case CustomRoleTypes.Madmate:
-                        if (SatsumatoImo.UsesMadmateCommonSettings(role))
+                        if (JekyllandHyde.UsesMadmateCommonSettings(role))
                         {
                             AURoleOptions.EngineerCooldown = MadmateVentCooldown.GetFloat();
                             AURoleOptions.EngineerInVentMaxTime = MadmateVentMaxTime.GetFloat();
@@ -342,7 +343,7 @@ namespace TownOfHost.Modules
                             case CustomRoles.LastNeutral: HaveWatching |= LastImpostor.GiveWatching.GetBool(); break;
                         }
                     }
-                    if (SatsumatoImo.UsesMadmateCommonSettings(role) && MadmateCanSeeOtherVotes.GetBool()) HaveWatching = true;
+                    if (JekyllandHyde.UsesMadmateCommonSettings(role) && MadmateCanSeeOtherVotes.GetBool()) HaveWatching = true;
                 }
 
                 if (HaveWatching) opt.SetBool(BoolOptionNames.AnonymousVotes, false);

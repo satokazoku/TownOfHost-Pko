@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace TownOfHost.Roles.Neutral;
 
-public sealed class JackalWolf : RoleBase, ILNKiller, IUsePhantomButton, IDoubleTrigger, IKillFlashSeeable, ISidekickable, ISchrodingerCatOwner
+public sealed class JackalWolf : RoleBase, ILNKiller, IUsePhantomButton, IDoubleTrigger, IKillFlashSeeable, ISidekickable
 {
     public static readonly SimpleRoleInfo RoleInfo =
         SimpleRoleInfo.Create(
@@ -248,7 +248,6 @@ public sealed class JackalWolf : RoleBase, ILNKiller, IUsePhantomButton, IDouble
             Logger.Error($"{ex}", "Assassin");
         }
     }
-    public ISchrodingerCatOwner.TeamType SchrodingerCatChangeTo => ISchrodingerCatOwner.TeamType.Jackal;
     bool IUsePhantomButton.IsPhantomRole => AddRole is IUsePhantomButton iusephantom && iusephantom?.IsPhantomRole is true;
     bool IUsePhantomButton.UseOneclickButton => AddRole is IUsePhantomButton iusephantom && iusephantom?.UseOneclickButton is true;
     bool IUsePhantomButton.IsresetAfterKill => AddRole is IUsePhantomButton iusephantom && iusephantom.IsresetAfterKill;

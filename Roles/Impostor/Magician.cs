@@ -103,12 +103,6 @@ public sealed class Magician : RoleBase, IImpostor, IUsePhantomButton
         CustomRoleManager.MarkOthers.Remove(GetMarkOthers);
     }
 
-    public override void OnStartMeeting()
-    {
-        if (Player.IsAlive()) return;
-        MagicTarget.Clear();
-    }
-
     public override void AfterMeetingTasks()
     {
         if (ResetKillCount) HaveKillCount = 0;
@@ -250,7 +244,7 @@ public sealed class Magician : RoleBase, IImpostor, IUsePhantomButton
     public string GetMarkOthers(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
     {
         seen ??= seer;
-        if (isForMeeting && Player.IsAlive() && MagicTarget.Contains(seen.PlayerId))
+        if (isForMeeting & MagicTarget.Contains(seen.PlayerId))
         {
             return Utils.ColorString(Palette.ImpostorRed, "♢");
         }

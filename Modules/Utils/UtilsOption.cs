@@ -981,6 +981,7 @@ namespace TownOfHost
                 case From.TownOfHost_Pko: Fromtext += $"<#FF9631>TownOfHost Pko</color>"; break;
                 case From.RevolutionaryHostRoles: Fromtext += $"<#3cb371>RevolutionaryHostRoles</color>"; break;
                 case From.Love_Couple_Mod: Fromtext += "<#ff6be4>Love Couple Mod</color>"; break;
+                case From.UchuAddon: Fromtext += "<#191970>Nebula on the Ship</color><#0065f4>(UchuAddon)</color>"; break;
             }
             if (role is CustomRoles.MadSuicide) Fromtext += "  <#000000>(<#ff1919>崇拝者</color>)</color>";
             return Fromtext;

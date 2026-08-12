@@ -81,6 +81,17 @@ public sealed class MadBetrayer : RoleBase, IKiller, ISchrodingerCatOwner
         else
             opt.SetVision(false);
     }
+    public static void CheckCount(ref int crew, ref int betrayer)
+    {
+        if (IsBetray)
+        {
+            betrayer++;
+        }
+        else
+        {
+            crew++;
+        }
+    }
     public static bool IsMadmate() => IsBetray is false;
 
     public override string GetMark(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)

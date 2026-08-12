@@ -153,8 +153,8 @@ public sealed class Ogre : RoleBase, IKiller, IAdditionalWinner
     {
         nowKillRate = reader.ReadInt32();
     }
-s
     public override void AfterMeetingTasks()
     {
     }
-}*/
+}
+*/

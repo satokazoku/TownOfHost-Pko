@@ -20,7 +20,7 @@ public sealed class テスト用PatchLobbyTitleDummy : CustomNetObject
     // ─── グラデーション名前 + バージョン生成 ─────────────────────────
     private static string BuildTitle()
     {
-        const string nameText = "TownOfHost-Pko";
+        const string nameText = "TownOfHost-N";
         // ★ バージョン文字列が異なる場合は Main.PluginVersion を適切なものに変更
         string versionText = $"v{Main.PluginVersion}";
 

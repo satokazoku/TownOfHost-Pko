@@ -72,15 +72,9 @@ public sealed class Teleporter : RoleBase, IImpostor, IUsePhantomButton
     bool IUsePhantomButton.IsPhantomRole => true;
     bool IUsePhantomButton.IsresetAfterKill => false;
 
-    public override void Add()
-    {
-        PetActionManager.Register(Player.PlayerId, OnPetUsed);
-    }
-
     public override void OnDestroy()
     {
         CustomRoleManager.LowerOthers.Remove(GetLowerTextOthers);
-        PetActionManager.Unregister(Player.PlayerId);
     }
 
     public override void ApplyGameOptions(IGameOptions opt)
@@ -119,32 +113,19 @@ public sealed class Teleporter : RoleBase, IImpostor, IUsePhantomButton
         AdjustKillCooldown = true;
         ResetCooldown = true;
 
-        if (!TryStartTeleport())
-            ResetCooldown = false;
-    }
-
-    private void OnPetUsed()
-    {
-        if (!AmongUsClient.Instance.AmHost) return;
-        TryStartTeleport();
-    }
-
-    private bool TryStartTeleport()
-    {
-        if (!AmongUsClient.Instance.AmHost) return false;
-        if (!Player.IsAlive()) return false;
-        if (pendingTimer >= 0f) return false;
+        if (!AmongUsClient.Instance.AmHost) { ResetCooldown = false; return; }
+        if (!Player.IsAlive()) { ResetCooldown = false; return; }
+        if (pendingTimer >= 0f) { ResetCooldown = false; return; }
 
         var candidates = PlayerCatch.AllAlivePlayerControls
             .Where(pc => pc.PlayerId != Player.PlayerId)
             .ToArray();
-        if (candidates.Length == 0) return false;
+        if (candidates.Length == 0) { ResetCooldown = false; return; }
 
         var dest = candidates[IRandom.Instance.Next(candidates.Length)];
         destPlayerId = dest.PlayerId;
         pendingTimer = WaitingTime;
 
-        Player.RpcResetAbilityCooldown(Sync: true);
         SendRpc();
         UtilsNotifyRoles.NotifyRoles();
 
@@ -153,8 +134,6 @@ public sealed class Teleporter : RoleBase, IImpostor, IUsePhantomButton
 
         if (WaitingTime <= 0f)
             ExecuteTeleport();
-
-        return true;
     }
 
     public override void OnFixedUpdate(PlayerControl player)
@@ -253,7 +232,7 @@ public sealed class Teleporter : RoleBase, IImpostor, IUsePhantomButton
         var dest = PlayerCatch.GetPlayerById(destPlayerId);
         string destName = dest != null ? UtilsName.GetPlayerColor(dest, true) : "???";
         int sec = Mathf.CeilToInt(pendingTimer);
-        return $"\n<size=100%><color=#ff4500>{destName} の元に {sec}秒後テレポートします！</color></size>";
+        return $"\n<color=#ff4500>{destName} の元に {sec}秒後テレポートします！</color>";
     }
 
     public override string GetLowerText(PlayerControl seer, PlayerControl seen = null,
@@ -297,7 +276,7 @@ public sealed class Teleporter : RoleBase, IImpostor, IUsePhantomButton
         destPlayerId = reader.ReadByte();
     }
 
-    public override string GetAbilityButtonText() => "テレポート";
+    public override string GetAbilityButtonText() => GetString("テレポート");
 
     public override bool OverrideAbilityButton(out string text)
     {

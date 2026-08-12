@@ -112,10 +112,6 @@ public sealed class EvilBlender : RoleBase, IImpostor, IUsePhantomButton
             ResetCooldown = null;
             return;
         }
-        if (GameStates.CalledMeeting)
-        {
-            return;
-        }
 
         if (Utils.IsActive(SystemTypes.Reactor)
         || Utils.IsActive(SystemTypes.Electrical)

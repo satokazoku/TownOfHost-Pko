@@ -104,10 +104,6 @@ public sealed class Swooper : RoleBase, IImpostor, IUsePhantomButton
             : Mathf.Max(cooldownTimer, 0.1f);
     }
 
-    public void OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
-    {
-    }
-
     bool IUsePhantomButton.IsresetAfterKill => false;
     bool IUsePhantomButton.UseOneclickButton => true;
 
@@ -321,6 +317,11 @@ public sealed class Swooper : RoleBase, IImpostor, IUsePhantomButton
         sender.Writer.Write(durationTimer);
     }
 
+    public override bool OverrideAbilityButton(out string text)
+    {
+        text = "Swooper_ability";
+        return true;
+    }
     public override void ReceiveRPC(MessageReader reader)
     {
         isInvisible = reader.ReadBoolean();

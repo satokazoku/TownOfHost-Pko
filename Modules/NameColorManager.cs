@@ -2,6 +2,7 @@ using Hazel;
 using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Impostor;
+using TownOfHost.Roles.Neutral;
 
 namespace TownOfHost
 {
@@ -63,6 +64,7 @@ namespace TownOfHost
                 || (seer.Is(CustomRoleTypes.Impostor) && target.Is(CustomRoleTypes.Impostor)
                 && (!seer.Is(CustomRoles.Amnesiac) || ((PlayerControl.LocalPlayer.GetRoleClass() as Amnesiac)?.Realized ?? false)))
                 || Mare.KnowTargetRoleColor(target, isMeeting)
+                || Hunter.KnowTargetRoleColor(target, isMeeting)
                 || ((seer.Is(CountTypes.Jackal) || seer.Is(CustomRoles.Jackaldoll)) && (target.Is(CountTypes.Jackal) || target.Is(CustomRoles.Jackaldoll)))
                 || (seer.Is(CountTypes.MilkyWay) && target.Is(CountTypes.MilkyWay));
         }

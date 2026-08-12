@@ -138,8 +138,8 @@ public static class Chatter_AddChat_Patch
         if (!sourcePlayer.IsAlive()) return;
         if (sourcePlayer.GetRoleClass() is not Chatter chatter) return;
 
-        // ★ /cmd を含むメッセージはコマンドなのでリセットしない
-        if (chatText != null && chatText.TrimStart().StartsWith("/cmd"))
+        // ★ /を含むメッセージはコマンドなのでリセットしない
+        if (chatText != null && chatText.TrimStart().StartsWith("/"))
             return;
 
         chatter.ResetTimer();

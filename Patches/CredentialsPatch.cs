@@ -16,7 +16,7 @@ namespace TownOfHost
     [HarmonyPatch]
     public static class CredentialsPatch
     {
-        public static SpriteRenderer TOHPLogo { get; private set; }
+        public static SpriteRenderer TOHNLogo { get; private set; }
         private static TextMeshPro pingTrackerCredential = null;
         private static AspectPosition pingTrackerCredentialAspectPos = null;
         private static float deltaTime = 0.0f;
@@ -36,7 +36,7 @@ namespace TownOfHost
                     pingTrackerCredential = uselessPingTracker.GetComponent<TextMeshPro>();
                     Object.Destroy(uselessPingTracker);
                     pingTrackerCredential.alignment = TextAlignmentOptions.TopRight;
-                    pingTrackerCredential.rectTransform.pivot = new(1f, 0.7f);  // 中心を右上角に設定
+                    pingTrackerCredential.rectTransform.pivot = new(1f, 0.8f);  // 中心を右上角に設定
                     pingTrackerCredentialAspectPos = pingTrackerCredential.GetComponent<AspectPosition>();
                     pingTrackerCredentialAspectPos.Alignment = AspectPosition.EdgeAlignments.RightTop;
                     pingTrackerCredential.gameObject.name = "CredentialText";
@@ -80,7 +80,7 @@ namespace TownOfHost
                         if (DebugModeManager.IsDebugMode)
                         {
                             sb.Append("\r\n");
-                            sb.Append(DebugModeManager.EnableTOHPDebugMode.OptionMeGetBool() ? "<#0066de>DebugMode</color>" : Utils.ColorString(Color.green, "デバッグモード"));
+                            sb.Append(DebugModeManager.EnableTOHNDebugMode.OptionMeGetBool() ? "<#0066de>DebugMode</color>" : Utils.ColorString(Color.green, "デバッグモード"));
                         }
 
                         exSb.Clear();
@@ -150,18 +150,18 @@ namespace TownOfHost
 #if DEBUG
                 if (OptionItem.IdDuplicated)
                 {
-                    ErrorText.Instance.AddError(ErrorCode.OptionIDDuplicate);
+                    //ErrorText.Instance.AddError(ErrorCode.OptionIDDuplicate);
                 }
 #endif
 
-                if (SpecialEventText == null && TOHPLogo != null)
+                if (SpecialEventText == null && TOHNLogo != null)
                 {
                     SpecialEventText = TMPTemplate.Create(
                         "SpecialEventText",
                         "",
                         Color.white,
                         alignment: TextAlignmentOptions.Center,
-                        parent: TOHPLogo.transform);
+                        parent: TOHNLogo.transform);
                     SpecialEventText.name = "SpecialEventText";
                     SpecialEventText.fontSizeMin = 3f;
                     SpecialEventText.transform.localPosition = new Vector3(0f, 0.8f, 0f);
@@ -215,7 +215,7 @@ namespace TownOfHost
                 fontSize: 2f,
                 alignment: TextAlignmentOptions.Right,
                 setActive: true);
-            credentials.transform.position = new Vector3(2.3419f, 2.29f, -5f);
+            credentials.transform.position = new Vector3(1.07f, 2.8f, -5f);
 #if DEBUG
             if (!GameStates.InGame) credentials.transform.position -= new Vector3(0f, 0.1218f, 0f);
 #endif
@@ -240,13 +240,13 @@ namespace TownOfHost
                 amongUsLogo = GameObject.Find("LOGO-AU");
 
                 var rightpanel = __instance.gameModeButtons.transform.parent;
-                var logoObject = new GameObject("titleLogo_TOHP");
+                var logoObject = new GameObject("titleLogo_TOHN");
                 var logoTransform = logoObject.transform;
-                TOHPLogo = logoObject.AddComponent<SpriteRenderer>();
+                TOHNLogo = logoObject.AddComponent<SpriteRenderer>();
                 logoTransform.parent = rightpanel;
                 logoTransform.localPosition = new(0f, 0.15f, 1f);
                 logoTransform.localScale *= 1.0f;
-                TOHPLogo.sprite = UtilsSprite.LoadSprite(Event.April || Event.Special ? "TownOfHost.Resources.TownOfHost-PKO-logo2.png" : "TownOfHost.Resources.TownOfHost-PKO-logo.png", 175f);
+                TOHNLogo.sprite = UtilsSprite.LoadSprite(Event.April || Event.Special ? "TownOfHost.Resources.TownOfHost-N-logo2.png" : "TownOfHost.Resources.TownOfHost-N-logo.png", 175f);
             }
         }
         [HarmonyPatch(typeof(ModManager), nameof(ModManager.LateUpdate))]

@@ -22,9 +22,7 @@ public sealed class EvilLinker : RoleBase, IImpostor, IUsePhantomButton
             126700,
             SetupOptionItem,
             "el",
-            OptionSort: (2, 11),
-            from: From.TownOfHost_Pko
-
+            OptionSort: (2, 11)
         );
 
     public EvilLinker(PlayerControl player)

@@ -15,6 +15,7 @@ using static TownOfHost.ExtendedPlayerControl;
 
 using static TownOfHost.Translator;
 using Rewired;
+using TownOfHost.Roles.Crewmate;
 
 namespace TownOfHost
 {
@@ -50,7 +51,7 @@ namespace TownOfHost
                 if (!SuddenDeathMode.NowSuddenDeathMode) NameColorManager.RemoveAll(player.PlayerId);
 
                 //マッドメイトの最初からの内通
-                if (SatsumatoImo.CanSeeImpostorNameColor(role))
+                if (JekyllandHyde.CanSeeImpostorNameColor(role))
                 {
                     if (PlayerCatch.AllPlayerFirstTypes.Any(x => x.Value is CustomRoleTypes.Impostor))
                         foreach (var imp in PlayerCatch.AllPlayerFirstTypes.Where(x => x.Value is CustomRoleTypes.Impostor))
@@ -108,10 +109,6 @@ namespace TownOfHost
                 }
                 else
                 {
-                    if (Main.AllPlayerSpeed[player.PlayerId] == Main.MinSpeed)
-                    {
-                        Main.AllPlayerSpeed[player.PlayerId] = Main.NormalOptions.PlayerSpeedMod;
-                    }
                     player.SyncSettings();
                 }
             }

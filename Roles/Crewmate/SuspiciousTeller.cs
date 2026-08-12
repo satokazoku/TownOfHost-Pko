@@ -24,6 +24,7 @@ public sealed class SuspiciousTeller : RoleBase, ISelfVoter
             "spt",
             "#6b3ec3",
             (3, 2),
+            from: From.TownOfHost_Pko,
             introSound: () => GetIntroSound(RoleTypes.Scientist)
         );
 
@@ -35,7 +36,7 @@ public sealed class SuspiciousTeller : RoleBase, ISelfVoter
         CustomRoles.HASTroll,
         CustomRoles.MMArcher,
         CustomRoles.TaskPlayerB,
-        CustomRoles.SatsumatoImo,
+        CustomRoles.JekyllandHyde,
         CustomRoles.Apprentice,
         CustomRoles.Walker,
         CustomRoles.Merlin,

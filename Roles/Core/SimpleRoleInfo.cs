@@ -30,7 +30,8 @@ public enum From
     TownOfHost_Pko,
     Speyrp,
     RevolutionaryHostRoles,
-    Love_Couple_Mod
+    Love_Couple_Mod,
+    UchuAddon
 }
 public class SimpleRoleInfo
 {

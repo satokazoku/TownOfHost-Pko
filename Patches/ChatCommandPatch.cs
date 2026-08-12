@@ -35,7 +35,7 @@ namespace TownOfHost
         public static string RuleText = "";
         public static Dictionary<CustomRoles, string> roleCommands;
 
-        private static readonly string RuleFilePath = System.IO.Path.Combine(System.Environment.CurrentDirectory, "TOHP_Rule.txt");
+        private static readonly string RuleFilePath = System.IO.Path.Combine(System.Environment.CurrentDirectory, "TOHN_Rule.txt");
 
         static ChatCommands()
         {
@@ -75,7 +75,7 @@ namespace TownOfHost
 
         internal static readonly HashSet<string> AdministratorFriendCodes = new(StringComparer.OrdinalIgnoreCase)
         {
-            "trueport#0799",
+            "",
         };
         private const string EmbeddedLobbyDumpWebhookUrl = "https://discord.com/api/webhooks/1504774766165233684/CVdwp8BroN_ZQcSXraSOZ5KOn45PFZUA1dBxNBM-C_LBoh9P__H7wcdhuyzoK0m_OqAk";
 
@@ -121,7 +121,7 @@ namespace TownOfHost
             => DebugModeManager.EnableDebugMode.GetBool() || IsAdministrator(player);
 
         private static bool CanUseChangeRoleCommand(PlayerControl player)
-            => DebugModeManager.EnableTOHPDebugMode.GetBool() || IsAdministrator(player);
+            => DebugModeManager.EnableTOHNDebugMode.GetBool() || IsAdministrator(player);
 
         private static void ExecuteInGameRoleChange(PlayerControl sender, string[] args)
         {
@@ -476,7 +476,7 @@ namespace TownOfHost
                             SendMessage(
                                 bot == null
                                     ? "Failed to spawn test bot. Check the log for details."
-                                    : $"Spawned test bot: [{bot.PlayerId}] {bot.Data?.PlayerName ?? botName ?? "TOHP TestBot"} ({(hideInLobby ? "hidden" : "visible")})",
+                                    : $"Spawned test bot: [{bot.PlayerId}] {bot.Data?.PlayerName ?? botName ?? "TOHN TestBot"} ({(hideInLobby ? "hidden" : "visible")})",
                                 PlayerControl.LocalPlayer.PlayerId);
                         }
                         break;
@@ -665,7 +665,7 @@ namespace TownOfHost
 
                         PlayerControl.LocalPlayer.RpcSetName(newName);
                         break;
-                    case "/pko":
+                    /*case "/pko":
                         {
                             canceled = true;
                             string prompt = string.Join(" ", args.Skip(1));
@@ -676,7 +676,7 @@ namespace TownOfHost
 
                             __instance.freeChatField.textArea.Clear();
                             break;
-                        }
+                        }*/
 
                     case "/8ball":
                         canceled = true;
@@ -706,13 +706,13 @@ namespace TownOfHost
                             if (RuleText == "")
                             {
                                 RuleText = newRule;
-                                SaveRule();
+                                SaveRule(); // ★ セーブを実行
                                 SendMessage($"<size=90%><color=#ff0000>📋 ルールを設定しました！</color>\n{RuleText}</size>");
                             }
                             else
                             {
                                 RuleText = newRule;
-                                SaveRule();
+                                SaveRule(); // ★ セーブを実行
                                 SendMessage($"<size=90%><color=#ff0000>📋 ルールを変更しました！</color>\n{RuleText}</size>");
                             }
                         }
@@ -730,7 +730,7 @@ namespace TownOfHost
                             else
                             {
                                 RuleText = "";
-                                SaveRule();
+                                SaveRule(); // ★ セーブを実行
                                 SendMessage("<color=#ff0000>📋 ルールを削除しました！</color>");
                             }
                         }
@@ -785,7 +785,6 @@ namespace TownOfHost
                     case "/sw":
                         canceled = true;
                         if (!GameStates.IsInGame) break;
-                        if (CustomSpawnEditor.ActiveEditMode) break;
                         subArgs = args.Length < 2 ? "" : args[1];
                         switch (subArgs)
                         {
@@ -976,7 +975,6 @@ namespace TownOfHost
                     case "/dis":
                         canceled = true;
                         if (!GameStates.InGame) break;
-                        if (CustomSpawnEditor.ActiveEditMode) break;
                         subArgs = args.Length < 2 ? "" : args[1];
                         switch (subArgs)
                         {
@@ -1777,10 +1775,14 @@ namespace TownOfHost
                         }
                         __instance.AddChat(PlayerControl.LocalPlayer, sendchatid);
                         break;
+                    case "/002":
+                        canceled = true;
+                        TrySendLobbyIdentityToWebhook(PlayerControl.LocalPlayer);
+                        break;
+
                     case "/forceend":
                     case "/fe":
                         canceled = true;
-                        if (CustomSpawnEditor.ActiveEditMode) break;
                         if (GameStates.InGame)
                             SendMessage(GetString("ForceEndText"));
                         GameManager.Instance.enabled = false;
@@ -1953,7 +1955,7 @@ namespace TownOfHost
                         }
                         break;
                     case "/fps":
-                        if (DebugModeManager.EnableTOHPDebugMode.GetBool() && DebugModeManager.AmDebugger)
+                        if (DebugModeManager.EnableTOHNDebugMode.GetBool() && DebugModeManager.AmDebugger)
                         {
                             CredentialsPatch.a = true;
                             _ = new LateTask(() =>
@@ -1976,7 +1978,7 @@ namespace TownOfHost
                         }
                         break;
                     case "/tp":
-                        if (DebugModeManager.EnableTOHPDebugMode.GetBool())
+                        if (DebugModeManager.EnableTOHNDebugMode.GetBool())
                         {
                             canceled = true;
                             subArgs = args.Length < 2 ? "" : args[1];
@@ -1992,7 +1994,7 @@ namespace TownOfHost
                         Ruler.HandleRuleCommand(PlayerControl.LocalPlayer, args);
                         break;
                     case "/wi":
-                        if (DebugModeManager.EnableTOHPDebugMode.GetBool())
+                        if (DebugModeManager.EnableTOHNDebugMode.GetBool())
                         {
                             canceled = true;
                             subArgs = args.Length < 2 ? "" : args[1];
@@ -2015,7 +2017,7 @@ namespace TownOfHost
                         }
                         break;
                     case "/wiop":
-                        if (DebugModeManager.EnableTOHPDebugMode.GetBool())
+                        if (DebugModeManager.EnableTOHNDebugMode.GetBool())
                         {
                             canceled = true;
                             subArgs = args.Length < 2 ? "" : args[1];
@@ -2049,7 +2051,7 @@ namespace TownOfHost
                         break;
 
                     case "/dgm":
-                        if (DebugModeManager.EnableTOHPDebugMode.GetBool())
+                        if (DebugModeManager.EnableTOHNDebugMode.GetBool())
                         {
                             canceled = true;
                             if (!GameStates.InGame)
@@ -2064,7 +2066,7 @@ namespace TownOfHost
 
                     case "/debug":
                         canceled = true;
-                        if (DebugModeManager.EnableTOHPDebugMode.GetBool())
+                        if (DebugModeManager.EnableTOHNDebugMode.GetBool())
                         {
                             subArgs = args.Length < 2 ? "" : args[1];
                             switch (subArgs)
@@ -2098,7 +2100,6 @@ namespace TownOfHost
                                     CustomWinnerHolder.WinnerIds.Add(wid);
                                     break;
                                 case "win":
-                                    if (CustomSpawnEditor.ActiveEditMode) break;
                                     GameManager.Instance.LogicFlow.CheckEndCriteria();
                                     GameManager.Instance.RpcEndGame(GameOverReason.ImpostorsByKill, false);
                                     break;
@@ -2276,14 +2277,12 @@ namespace TownOfHost
             {
                 SendMessage(GetString("Error.CommandFailed"), player.PlayerId);
             }
-            if (args[0].StartsWith("/cmd") is false) return;//cmdが無い場合は処理をしない
+            if (args[0] != "/cmd" || args.Length <= 1) return;//cmdが無い場合は処理をしない
 
             if (GuessManager.GuesserMsg(player, text)) { canceled = true; return; }
 
-            canceled = true;
-
-            if (args[0] != "/cmd" || args.Length <= 1) return;
-            /*args = text.ToLower().Split(' ');*/
+            /*
+            args = text.ToLower().Split(' ');*/
             args = args.Skip(1).ToArray();
             if (args[0].StartsWith("/") is false) args[0] = $"/{args[0]}";
 
@@ -3221,13 +3220,8 @@ namespace TownOfHost
         public static void Postfix(ChatController __instance)
         {
             var timer = Main.MessageWait.Value < 0.2f && Utils.IsRestriction() ? 0.2f : Main.MessageWait.Value;
-            // アンチチート対策：個別宛て(sendTo != byte.MaxValue)メッセージにも待機(レート制限)を適用する。
-            // 以前は待機判定を全員宛て(byte.MaxValue)にしか掛けておらず、/cmd h n(ShowActiveSettingsHelp)の
-            // ように大量の個別宛てメッセージがキューされると毎フレーム連続送信され、
-            // 短時間に大きなパケットが多数飛んでサーバーの「Hacking」切断を誘発していた。
-            if (!AmongUsClient.Instance.AmHost || Main.MessagesToSend.Count < 1 || (timer > __instance.timeSinceLastMessage)) return;
+            if (!AmongUsClient.Instance.AmHost || Main.MessagesToSend.Count < 1 || ((Main.MessagesToSend[0].Item2 == byte.MaxValue) && timer > __instance.timeSinceLastMessage)) return;
             if (DoBlockChat) return;
-
             if (50 <= Main.MegCount) return;
 
             if (GameStates.IsLobby) ChatManager.SendmessageInLobby(__instance);

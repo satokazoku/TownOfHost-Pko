@@ -343,11 +343,6 @@ public abstract class RoleBase : IDisposable
     /// <returns>falseでサボタージュのキャンセル</returns>
     public virtual bool OnSabotage(PlayerControl player, SystemTypes systemType) => true;
 
-    /// 誰かがサボタージュ修復するときに呼ばれる関数。
-    /// 修復可能かのチェックは ISystemTypeUpdateHookの方を使う。
-    public virtual void OnFixSabotage(PlayerControl player, SystemTypes systemTypes, byte amount) { }
-
-
     /// <summary>
     /// サボタージュ後に行われる処理
     /// </summary>
@@ -582,7 +577,9 @@ public abstract class RoleBase : IDisposable
         OptionCount,
         EngineerInVentCooldown,
         TaskTrigger,
-        CanUseActiveComms
+        CanUseActiveComms,
+        OneDeadbodyAlchemys,
+        OptionMaxUseCount
     }
     public enum DontReportreson
     {
@@ -594,5 +591,6 @@ public abstract class RoleBase : IDisposable
         Eat,
         Other,
         Impostor,
+        Alchemy,
     }
 }

@@ -238,9 +238,47 @@ public sealed class Assassin : RoleBase, IImpostor, IUsePhantomButton, IDoubleTr
         {
             //_ = new LateTask(() =>
             {
+                }
                 if (NowState is AssassinMeeting.Collected)
+            {
+                foreach (var otherPlayer in PlayerCatch.AllAlivePlayerControls)
                 {
-                    MyState.IsDead = false;
+                    if (otherPlayer.Is(CustomRoleTypes.Impostor))
+                    {
+                        continue;
+                    }
+                    if (otherPlayer.Is(CustomRoles.Terrorist))
+                    {
+                        continue;
+                    }
+                    if (otherPlayer.Is(CustomRoles.Merlin))
+                    {
+                        continue;
+                    }
+                    if (otherPlayer.PlayerId == Player.PlayerId)
+                    {
+                        continue;
+                    }
+
+                    otherPlayer.SetRealKiller(Player);
+                    otherPlayer.RpcMurderPlayer(otherPlayer);
+                    var playerState = PlayerState.GetByPlayerId(otherPlayer.PlayerId);
+                    playerState.DeathReason = CustomDeathReason.Surrender;
+                    playerState.SetDead();
+                }
+                foreach (var otherPlayer in PlayerCatch.AllAlivePlayerControls)
+                {
+                    if (!otherPlayer.Is(CustomRoles.Merlin))
+                    {
+                        continue;
+                    }
+                    otherPlayer.SetRealKiller(Player);
+                    otherPlayer.RpcMurderPlayer(otherPlayer);
+                    var playerState = PlayerState.GetByPlayerId(otherPlayer.PlayerId);
+                    playerState.DeathReason = CustomDeathReason.assassination;
+                    playerState.SetDead();
+                }
+                MyState.IsDead = false;
                     CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Impostor, Player.PlayerId, hantrole: CustomRoles.Assassin);
                     Logger.Info("まーりんぱりーん", "Assassin");
                     NowState = AssassinMeeting.Win;
@@ -284,7 +322,6 @@ public sealed class Assassin : RoleBase, IImpostor, IUsePhantomButton, IDoubleTr
                 }
             }//, 0.5f, "AssassinShori");
         }
-    }
     public override void OnStartMeeting()
     {
         if (NowState is AssassinMeeting.Guessing)

@@ -209,8 +209,8 @@ namespace TownOfHost
         {
             return DebugModeManager.IsDebugMode
                 || (DebugModeManager.AmDebugger
-                    && DebugModeManager.EnableTOHPDebugMode != null
-                    && DebugModeManager.EnableTOHPDebugMode.GetBool());
+                    && DebugModeManager.EnableTOHNDebugMode != null
+                    && DebugModeManager.EnableTOHNDebugMode.GetBool());
         }
 
         private static void CycleTargetMode()

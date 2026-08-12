@@ -1,5 +1,4 @@
-/*
-using AmongUs.GameOptions;
+/*using AmongUs.GameOptions;
 using Hazel;
 using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
@@ -343,6 +342,12 @@ public sealed class Slugger : RoleBase, IImpostor, IUsePhantomButton
 
     public override string GetAbilityButtonText() => GetString("SluggerAbilityText");
 
+    public override bool OverrideAbilityButton(out string text)
+    {
+        text = "Slugger_Ability";
+        return true;
+    }
+
     public void SendRpc()
     {
         using var sender = CreateSender();
@@ -357,5 +362,4 @@ public sealed class Slugger : RoleBase, IImpostor, IUsePhantomButton
         IsSwinging = reader.ReadBoolean();
         SwingFacingLeft = reader.ReadBoolean();
     }
-}
-*/
+}*/

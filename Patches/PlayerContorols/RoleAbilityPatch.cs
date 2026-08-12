@@ -70,7 +70,7 @@ namespace TownOfHost
                     //shapeshifter.RpcShapeshift(shapeshifter, false);
                     var min = mpdistance.OrderBy(c => c.Value).FirstOrDefault();//一番値が小さい
                     PlayerControl targetm = min.Key;
-                    if (!(targetm.GetCustomRole() is CustomRoles.King or CustomRoles.Merlin or CustomRoles.AlienHijack or CustomRoles.Autocrat))
+                    if (!targetm.Is(CustomRoles.King) && !targetm.Is(CustomRoles.Autocrat) && !targetm.Is(CustomRoles.Merlin))
                     {
                         var source = shapeshifter.Is(CustomRoles.Egoist) || targetRole is CustomRoles.Jackaldoll
                             ? Walkure.RoleChangeSource.Jackal
@@ -507,7 +507,7 @@ namespace TownOfHost
 
                 //マッドでベント移動できない設定なら矢印を消す
                 if ((!roleClass?.CanVentMoving(__instance, id) ?? false) ||
-                    (SatsumatoImo.UsesMadmateCommonSettings(user) && !Options.MadmateCanMovedByVent.GetBool()))
+                    (JekyllandHyde.UsesMadmateCommonSettings(user) && !Options.MadmateCanMovedByVent.GetBool()))
                 {
                     if (!MadBool && user.PlayerId == PlayerControl.LocalPlayer.PlayerId)
                         MadBool = true;

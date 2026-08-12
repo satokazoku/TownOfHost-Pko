@@ -35,7 +35,6 @@ public sealed class Scratcher : RoleBase, IAdditionalWinner
         ScratchedThisMeeting = 0;
         Won = false;
         AddWin = false;
-        GameEndTriggered = false;
 
         ScratchPerTask = OptionScratchPerTask.GetInt();
         MaxScratchPerMeeting = OptionMaxScratchPerMeeting.GetInt();
@@ -44,8 +43,6 @@ public sealed class Scratcher : RoleBase, IAdditionalWinner
         WinAtMeetingEnd = OptionWinTiming.GetBool();
         IsAdditionalWin = OptionIsAdditionalWin.GetBool();
         CanWinAtDeath = OptionCanWinAtDeath.GetBool();
-        AddWinToSoloWin = OptionAddWinToSoloWin.GetBool();
-        SoloWinHitCount = OptionSoloWinHitCount.GetInt();
     }
 
     private int Scratches;
@@ -53,7 +50,6 @@ public sealed class Scratcher : RoleBase, IAdditionalWinner
     private int ScratchedThisMeeting;
     private bool Won;
     private bool AddWin;
-    private bool GameEndTriggered;
 
     private static OptionItem OptionScratchPerTask; private static int ScratchPerTask;
     private static OptionItem OptionMaxScratchPerMeeting; private static int MaxScratchPerMeeting;
@@ -62,8 +58,6 @@ public sealed class Scratcher : RoleBase, IAdditionalWinner
     private static OptionItem OptionWinTiming; private static bool WinAtMeetingEnd;
     private static OptionItem OptionIsAdditionalWin; private static bool IsAdditionalWin;
     private static OptionItem OptionCanWinAtDeath; private static bool CanWinAtDeath;
-    private static OptionItem OptionAddWinToSoloWin; private static bool AddWinToSoloWin;
-    private static OptionItem OptionSoloWinHitCount; private static int SoloWinHitCount;
 
     enum OptionName
     {
@@ -74,8 +68,6 @@ public sealed class Scratcher : RoleBase, IAdditionalWinner
         ScratcherWinTiming,
         ScratcherIsAdditionalWin,
         ScratcherCanWinAtDeath,
-        ScratcherAddWinToSoloWin,
-        ScratcherSoloWinHitCount,
     }
 
     private static void SetupOptionItem()
@@ -93,9 +85,6 @@ public sealed class Scratcher : RoleBase, IAdditionalWinner
         OptionWinTiming = BooleanOptionItem.Create(RoleInfo, 14, OptionName.ScratcherWinTiming, false, false);
         OptionIsAdditionalWin = BooleanOptionItem.Create(RoleInfo, 15, OptionName.ScratcherIsAdditionalWin, false, false);
         OptionCanWinAtDeath = BooleanOptionItem.Create(RoleInfo, 16, OptionName.ScratcherCanWinAtDeath, false, false, OptionIsAdditionalWin);
-        OptionAddWinToSoloWin = BooleanOptionItem.Create(RoleInfo, 17, OptionName.ScratcherAddWinToSoloWin, false, false, OptionIsAdditionalWin);
-        OptionSoloWinHitCount = IntegerOptionItem.Create(RoleInfo, 18, OptionName.ScratcherSoloWinHitCount,
-            new(1, 100, 1), 3, false, OptionAddWinToSoloWin).SetValueFormat(OptionFormat.Pieces);
         OverrideTasksData.Create(RoleInfo, 20);
     }
 
@@ -131,128 +120,69 @@ public sealed class Scratcher : RoleBase, IAdditionalWinner
         return false;
     }
 
-    private bool CanScratch(out string errorMessage)
+    private void ScratchOne()
     {
-        errorMessage = null;
-
-        if (GameEndTriggered) return false;
+        if (!AmongUsClient.Instance.AmHost) return;
+        if (Won && !WinAtMeetingEnd) return;
 
         if (!Player.IsAlive())
         {
-            errorMessage = GetString("ScratcherDead");
-            return false;
+            Utils.SendMessage(GetString("ScratcherDead"), Player.PlayerId);
+            return;
         }
 
         if (!GameStates.IsMeeting)
         {
-            errorMessage = GetString("ScratcherNotMeeting");
-            return false;
+            Utils.SendMessage(GetString("ScratcherNotMeeting"), Player.PlayerId);
+            return;
         }
-
         if (Scratches <= 0)
         {
-            errorMessage = GetString("ScratcherNoScratch");
-            return false;
+            Utils.SendMessage(GetString("ScratcherNoScratch"), Player.PlayerId);
+            return;
         }
-
         if (ScratchedThisMeeting >= MaxScratchPerMeeting)
         {
-            errorMessage = string.Format(GetString("ScratcherMeetingLimit"), MaxScratchPerMeeting);
-            return false;
-        }
-
-        return true;
-    }
-
-    private void ScratchOne()
-    {
-        if (!AmongUsClient.Instance.AmHost) return;
-        if (!CanScratch(out var error))
-        {
-            if (error != null) Utils.SendMessage(error, Player.PlayerId);
+            Utils.SendMessage(string.Format(GetString("ScratcherMeetingLimit"), MaxScratchPerMeeting), Player.PlayerId);
             return;
         }
 
-        var isHit = RollScratch();
-
-        var sb = new StringBuilder();
-        sb.Append(isHit
-            ? string.Format(GetString("ScratcherHit"), Hits, GetCurrentWinTarget())
-            : GetString("ScratcherMiss"));
-        sb.Append('\n');
-        sb.Append(string.Format(GetString("ScratcherRemain"),
-            Scratches,
-            Math.Max(0, MaxScratchPerMeeting - ScratchedThisMeeting)));
-
-        Utils.SendMessage(sb.ToString(), Player.PlayerId);
-
-        SendRPC();
-        UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: [Player]);
-
-        CheckWinCondition();
-    }
-
-    private void ScratchAll()
-    {
-        if (!AmongUsClient.Instance.AmHost) return;
-        if (!CanScratch(out var error))
-        {
-            if (error != null) Utils.SendMessage(error, Player.PlayerId);
-            return;
-        }
-
-        var hitCount = 0;
-        var totalCount = 0;
-
-        while (Scratches > 0 && ScratchedThisMeeting < MaxScratchPerMeeting && !GameEndTriggered)
-        {
-            if (RollScratch()) hitCount++;
-            totalCount++;
-            CheckWinCondition();
-        }
-
-        var sb = new StringBuilder();
-        sb.Append(string.Format(GetString("ScratcherHitAll"), totalCount, hitCount, Hits, GetCurrentWinTarget()));
-        sb.Append('\n');
-        sb.Append(string.Format(GetString("ScratcherRemain"),
-            Scratches,
-            Math.Max(0, MaxScratchPerMeeting - ScratchedThisMeeting)));
-
-        Utils.SendMessage(sb.ToString(), Player.PlayerId);
-
-        SendRPC();
-        UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: [Player]);
-    }
-
-    private bool RollScratch()
-    {
         Scratches--;
         ScratchedThisMeeting++;
 
         var roll = IRandom.Instance.Next(100);
         var isHit = roll < HitProbability;
-        if (isHit) Hits++;
 
-        Logger.Info($"スクラッチ削り: {(isHit ? "当たり" : "ハズレ")} 当たり数:{Hits}/{GetCurrentWinTarget()} 残り:{Scratches}", "Scratcher");
-
-        return isHit;
-    }
-
-    private void CheckWinCondition()
-    {
-        if (GameEndTriggered) return;
-        if (Hits < WinHitCount) return;
-
-        if (IsAdditionalWin)
+        var sb = new StringBuilder();
+        if (isHit)
         {
-            if (!AddWin)
+            Hits++;
+            sb.Append(string.Format(GetString("ScratcherHit"), Hits, WinHitCount));
+        }
+        else
+        {
+            sb.Append(GetString("ScratcherMiss"));
+        }
+        sb.Append('\n');
+        sb.Append(string.Format(GetString("ScratcherRemain"),
+            Scratches,
+            Math.Max(0, MaxScratchPerMeeting - ScratchedThisMeeting)));
+
+        Utils.SendMessage(sb.ToString(), Player.PlayerId);
+        Logger.Info($"スクラッチ削り: {(isHit ? "当たり" : "ハズレ")} 当たり数:{Hits}/{WinHitCount} 残り:{Scratches}", "Scratcher");
+
+        SendRPC();
+        UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: [Player]);
+
+        if (Hits >= WinHitCount)
+        {
+            if (IsAdditionalWin)
             {
                 AddWin = true;
                 SendRPC();
                 Utils.SendMessage(GetString("ScratcherAchieveAdd"), Player.PlayerId);
             }
-
-            if (AddWinToSoloWin && !Won && Hits >= GetSecondStageWinHitCount())
+            else
             {
                 Won = true;
                 SendRPC();
@@ -262,28 +192,11 @@ public sealed class Scratcher : RoleBase, IAdditionalWinner
                     DoSoloWin();
             }
         }
-        else if (!Won)
-        {
-            Won = true;
-            SendRPC();
-            if (WinAtMeetingEnd)
-                Utils.SendMessage(GetString("ScratcherAchieveSoon"), Player.PlayerId);
-            else
-                DoSoloWin();
-        }
     }
-
-    private static int GetSecondStageWinHitCount() => Math.Max(WinHitCount + 1, SoloWinHitCount);
-
-    private int GetCurrentWinTarget()
-        => (IsAdditionalWin && AddWinToSoloWin && AddWin) ? GetSecondStageWinHitCount() : WinHitCount;
 
     private void DoSoloWin()
     {
         if (!AmongUsClient.Instance.AmHost) return;
-        if (GameEndTriggered) return;
-        GameEndTriggered = true;
-
         Logger.Info("スクラッチャー単独勝利", "Scratcher");
 
         if (CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Scratcher, Player.PlayerId, true))
@@ -302,10 +215,10 @@ public sealed class Scratcher : RoleBase, IAdditionalWinner
     }
 
     bool IAdditionalWinner.CheckWin(ref CustomRoles winnerRole)
-        => AddWin && !GameEndTriggered && (CanWinAtDeath || Player.IsAlive());
+        => AddWin && (CanWinAtDeath || Player.IsAlive());
 
     public override string GetProgressText(bool comms = false, bool GameLog = false)
-        => $"<{RoleInfo.RoleColorCode}>({Hits}/{GetCurrentWinTarget()})♦{Scratches}</color>";
+        => $"<{RoleInfo.RoleColorCode}>({Hits}/{WinHitCount})♦{Scratches}</color>";
 
     public override string GetMark(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
     {
@@ -320,10 +233,10 @@ public sealed class Scratcher : RoleBase, IAdditionalWinner
         seen ??= seer;
         if (seen != seer) return "";
 
-        var lower = $"<size=80%><{RoleInfo.RoleColorCode}>{string.Format(GetString("ScratcherLower"), Scratches, Hits, GetCurrentWinTarget())}</color></size>";
+        var lower = $"<size=80%><{RoleInfo.RoleColorCode}>{string.Format(GetString("ScratcherLower"), Scratches, Hits, WinHitCount)}</color></size>";
 
         if (isForMeeting && Player.IsAlive() && Scratches > 0 && ScratchedThisMeeting < MaxScratchPerMeeting)
-            lower += $"\n<size=70%><color={RoleInfo.RoleColorCode}>/cmd /sh で1回、/cmd /sha で一括削り</color></size>";
+            lower += $"\n<size=70%><color={RoleInfo.RoleColorCode}>/sh でスクラッチを削る</color></size>";
 
         return lower;
     }
@@ -348,43 +261,32 @@ public sealed class Scratcher : RoleBase, IAdditionalWinner
     [HarmonyPatch(typeof(GuessManager), nameof(GuessManager.GuesserMsg))]
     private static class ScratcherCommandPatch
     {
-        private enum ScratchCommandType { None, Single, All }
-
         private static bool Prefix(PlayerControl pc, string msg, ref bool __result)
         {
-            var command = TryParseStCommand(msg);
-            if (command == ScratchCommandType.None) return true;
+            if (!TryParseStCommand(msg)) return true;
 
             __result = true;
             if (!AmongUsClient.Instance.AmHost || !GameStates.IsInGame || pc == null) return false;
 
             if (pc.GetRoleClass() is not Scratcher scratcher)
             {
-                Utils.SendMessage("/cmd /sh・/cmd /sha はスクラッチャー専用コマンドです。", pc.PlayerId,
+                Utils.SendMessage("/sh はスクラッチャー専用コマンドです。", pc.PlayerId,
                     $"<{RoleInfo.RoleColorCode}>スクラッチャー</color>");
                 return false;
             }
 
-            if (command == ScratchCommandType.All)
-                scratcher.ScratchAll();
-            else
-                scratcher.ScratchOne();
+            scratcher.ScratchOne();
             return false;
         }
 
-        private static ScratchCommandType TryParseStCommand(string msg)
+        private static bool TryParseStCommand(string msg)
         {
-            if (string.IsNullOrWhiteSpace(msg)) return ScratchCommandType.None;
+            if (string.IsNullOrWhiteSpace(msg)) return false;
             var args = msg.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            if (args.Length < 2) return ScratchCommandType.None;
-            if (args[0] != "/cmd") return ScratchCommandType.None;
+            if (args.Length < 2) return false;
+            if (args[0] != "/cmd") return false;
             var cmd = args[1].StartsWith("/") ? args[1] : $"/{args[1]}";
-            return cmd switch
-            {
-                "/sh" => ScratchCommandType.Single,
-                "/sha" => ScratchCommandType.All,
-                _ => ScratchCommandType.None
-            };
+            return cmd == "/sh";
         }
     }
 }

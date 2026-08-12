@@ -1,5 +1,5 @@
 # フォークガイドライン
-このガイドラインは、Town Of Host(以下"当mod")の開発者が当modのフォークする上でのルールを定めるものです。  
+このガイドラインは、Town Of Host N(以下"当mod")の開発者が当modのフォークする上でのルールを定めるものです。  
 双方の効率的なmod開発のためにも、当modをフォークする際はこのガイドラインに従うようお願いいたします。  
 また、当modはAmong Usのmodであるため、Innerslothが定める[Among Us Mod Policy](https://www.innersloth.com/among-us-mod-policy/)にも従ってください。  
 

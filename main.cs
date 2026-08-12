@@ -19,7 +19,7 @@ using static Unity.Services.LevelPlay.LevelPlayBannerPosition;
 [assembly: AssemblyInformationalVersionAttribute(TownOfHost.Main.PluginVersion)]
 namespace TownOfHost
 {
-    [BepInPlugin(PluginGuid, "Town Of Host-Pko", BepInExPluginVersion)]
+    [BepInPlugin(PluginGuid, "Town Of Host-N", BepInExPluginVersion)]
     [BepInIncompatibility("jp.ykundesu.supernewrolesnext")]
     [BepInIncompatibility("jp.ykundesu.supernewroles")]
     [BepInIncompatibility("me.yukieiji.extremeroles")]
@@ -29,21 +29,19 @@ namespace TownOfHost
     {
         // == プログラム設定 / Program Config ==
         // modの名前 / Mod Name (Default: Town Of Host)
-        public static readonly string ModName = "Town Of Host-Pko";
+        public static readonly string ModName = "<color=#00bfff>Town Of Host-</color><color=#6a5acd>N</color>";
         // modの色 / Mod Color (Default: #00bfff)
-        public static readonly string ModColor = "#FF9631";
+        public static readonly string ModColor = "#6a5acd";
         // 公開ルームを許可する / Allow Public Room (Default: true)
         public static readonly bool AllowPublicRoom = true;
         // フォークID / ForkId (Default: OriginalTOH)
-        public static readonly string ForkId = "TOH-PKO";
+        public static readonly string ForkId = "TOH-N";
         // Discordボタンを表示するか / Show Discord Button (Default: true)
         public static readonly bool ShowDiscordButton = true;
-        // Discordサーバーの招待リンク / Discord Server Invite URL (Default: https://discord.gg/PQ5CrVHC25)
-        public static readonly string DiscordInviteUrl = "https://discord.gg/PQ5CrVHC25";
-        public static readonly string MatchmakingRelayUrl = "https://tohp-relay.oyasai0831ohyasai.workers.dev/";
+        // Discordサーバーの招待リンク / Discord Server Invite URL
+        public static readonly string DiscordInviteUrl = "https://discord.gg/VHJyzSDRUK";
+        //public static readonly string MatchmakingRelayUrl = "no";
         public static readonly string MatchmakingRelaySecret = "6rVp2N8xK5mQ9wA1zL4jS7tB3hG0eD9Y";
-        public static string PresetShareApiUrl = "https://pikeo-ai.pikeo-ai.workers.dev";
-        public static string PresetShareApiSecret = "(AmongUsTOHPkoPukupuku142satokoVERYCUTE)";
         // ==========
         public const string OriginalForkId = "OriginalTOH"; // Don't Change The Value. / この値を変更しないでください。
         // == 認証設定 / Authentication Config ==
@@ -60,12 +58,12 @@ namespace TownOfHost
         public static ConfigEntry<string> DebugKeyInput { get; private set; }
         public static ConfigEntry<string> ExplosionKeyInput { get; private set; }
 
-        public const string PluginGuid = "com.satokazoku.TownOfHost-Pko";
+        public const string PluginGuid = "com.akebono.TownOfHost-N";
 
-        public const string BepInExPluginVersion = "5.34.19.94";
-        public const string PluginVersion = "5.34.19.94";//ほんとはx.y.z表記にしたかったけどx.y.z.km.ks表記だと警告だされる
-        public const string PluginShowVersion = "5.34.19.94";
-        public const string ModVersion = ".19.94";//リリースver用バージョン変更dc9b79
+        public const string BepInExPluginVersion = "1.1.0.0";
+        public const string PluginVersion = "1.1.0.0";//ほんとはx.y.z表記にしたかったけどx.y.z.km.ks表記だと警告だされる
+        public const string PluginShowVersion = "1.1.0.0";
+        public const string ModVersion = ".0.0";//リリースver用バージョン変更dc9b79
 
         /// 配布するデバッグ版なのであればtrue。リリース時にはfalseにすること。
         public static bool DebugVersion = false;
@@ -187,7 +185,7 @@ namespace TownOfHost
         public static string BaseDirectory
             => Path.GetFullPath(Path.Combine(
                 string.IsNullOrEmpty(BepInEx.Paths.BepInExRootPath) ? Application.persistentDataPath : BepInEx.Paths.BepInExRootPath,
-                "../TOHP_DATA"));
+                "../TOHN_DATA"));
         public static string GetPresetName(int presetIndex)
         {
             var translationKey = $"Preset_{presetIndex + 1}";
@@ -249,7 +247,7 @@ namespace TownOfHost
             Instance = this;
 
             //Client Options
-            HideName = Config.Bind("Client Options", "Hide Game Code Name", "Town Of Host-Pko");
+            HideName = Config.Bind("Client Options", "Hide Game Code Name", "Town Of Host-N");
             HideColor = Config.Bind("Client Options", "Hide Game Code Color", $"{ModColor}");
             ForceJapanese = Config.Bind("Client Options", "Force Japanese", false);
             JapaneseRoleName = Config.Bind("Client Options", "Japanese Role Name", true);
@@ -275,7 +273,7 @@ namespace TownOfHost
             DebugKeyInput = Config.Bind("Authentication", "Debug Key", "");
             ExplosionKeyInput = Config.Bind("Authentication", "Explosion Key", "");
 
-            Logger = BepInEx.Logging.Logger.CreateLogSource("TownOfHost-Pko");
+            Logger = BepInEx.Logging.Logger.CreateLogSource("TownOfHost-N");
             TownOfHost.Logger.Enable();
             TownOfHost.Logger.Disable("NotifyRoles");
             TownOfHost.Logger.Disable("SendRPC");
@@ -394,14 +392,14 @@ namespace TownOfHost
             if (IsCs())
                 return AllowCS;
 
-            var hasRelayConfigured =
+            /*var hasRelayConfigured =
                 !string.IsNullOrWhiteSpace(MatchmakingRelayUrl)
-                && !MatchmakingRelayUrl.Equals("none", StringComparison.OrdinalIgnoreCase);
+                && !MatchmakingRelayUrl.Equals("none", StringComparison.OrdinalIgnoreCase);*/
 
             return !ModUpdater.hasUpdate
                 && !ModUpdater.isBroken
-                && AllowPublicRoom
-                && (IsPublicAvailableOnThisVersion || hasRelayConfigured);
+                && AllowPublicRoom;
+                //&& (IsPublicAvailableOnThisVersion || hasRelayConfigured);
         }
         public static bool IsroleAssigned
             => !SetRoleOverride/* && Options.CurrentGameMode == CustomGameMode.Standard*/ || SelectRolesPatch.roleAssigned;
@@ -440,7 +438,10 @@ namespace TownOfHost
         Retaliation,
         RuleViolation,
         Sacrifice,
-        etc = -1
+        Burnout,
+        Surrender,
+        assassination,
+        etc = -1,
     }
     //WinData
     public enum CustomWinner
@@ -509,6 +510,8 @@ namespace TownOfHost
         Victim = CustomRoles.Victim,
         Amateras = CustomRoles.Amateras,
         Ruler = CustomRoles.Ruler,
+        Obolus = CustomRoles.Obolus,
+        Mario = CustomRoles.Mario,
         Hunter = CustomRoles.Hunter,
 
         HASTroll = CustomRoles.HASTroll,

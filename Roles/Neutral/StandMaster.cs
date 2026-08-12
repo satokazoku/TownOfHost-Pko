@@ -9,6 +9,7 @@ using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Madmate;
 using HarmonyLib;
+using TownOfHost.Roles.Crewmate;
 
 namespace TownOfHost.Roles.Neutral;
 
@@ -362,7 +363,7 @@ public sealed class StandMaster : RoleBase, ILNKiller, IUsePhantomButton
     bool skipSwapForThisMeeting;
     public override void OnStartMeeting()
     {
-        skipSwapForThisMeeting = SatsumatoImo.IsSpecialMeetingNoSwap();
+        skipSwapForThisMeeting = JekyllandHyde.IsSpecialMeetingNoSwap();
         if (!skipSwapForThisMeeting) standSummoned = false;
     }
 

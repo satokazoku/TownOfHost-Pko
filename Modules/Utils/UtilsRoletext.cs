@@ -54,8 +54,7 @@ namespace TownOfHost
                         || (Options.InsiderMode.GetBool() && seerrole.IsImpostor())
                         || (Options.CanSeeImpostorRole.GetBool() && seerrole.IsImpostor() && seen.GetCustomRole().IsImpostor())
                         || seen.Is(CustomRoles.MadonnaLovers) && seer.Is(CustomRoles.MadonnaLovers) && Madonna.IsKnowRole
-                        || (seen.Is(CustomRoles.CupidLovers) && seer.Is(CustomRoles.CupidLovers) && Cupid.IsKnowRole)
-                        || (seen.Is(CustomRoles.CupidLovers) && seer.Is(CustomRoles.Cupid) && Cupid.IsKnowRole)
+                        || seen.Is(CustomRoles.CupidLovers) && seer.Is(CustomRoles.CupidLovers) && Cupid.IsKnowRole
                         ;
 
             foreach (var data in ColorLovers.Alldatas.Values)
@@ -85,7 +84,7 @@ namespace TownOfHost
             if (text == roleText && !ch)//アドオンの上書きチェック
                 (roleColor, roleText) = GetTrueRoleNameData(seen.PlayerId, addon);
             // 一応ここでも君臨者をみることができなくする
-            if (seen.Is(CustomRoles.King) && (seer.Is(CustomRoles.SatsumatoImoC) || seer.Is(CustomRoles.SatsumatoImoM)))
+            if (seen.Is(CustomRoles.King) && (seer.Is(CustomRoles.Jekyll) || seer.Is(CustomRoles.Hyde)))
                 enabled = false;
 
             return enabled ? ColorString(roleColor, roleText) : "";
@@ -698,6 +697,7 @@ namespace TownOfHost
                             CountTypes.Crew => GetRoleColorAndtext(CustomRoles.Crewmate),
                             CountTypes.Remotekiller => GetRoleColorAndtext(CustomRoles.Remotekiller),
                             CountTypes.Fox => GetRoleColorAndtext(CustomRoles.Fox),
+                            CountTypes.Hunter => GetRoleColorAndtext(CustomRoles.Hunter),
                             CountTypes.MilkyWay => Roles.Neutral.Vega.TeamText,
                             _ => "...?",
                         };

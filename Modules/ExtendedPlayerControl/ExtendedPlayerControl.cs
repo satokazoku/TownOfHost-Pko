@@ -16,6 +16,7 @@ using TownOfHost.Roles.AddOns.Common;
 
 using static TownOfHost.Translator;
 using TownOfHost.Roles.Madmate;
+using TownOfHost.Roles.Crewmate;
 
 namespace TownOfHost
 {
@@ -496,7 +497,7 @@ namespace TownOfHost
 
             // IDeathReasonSeeable未対応役職はこちら
             return check ||
-            (SatsumatoImo.UsesMadmateCommonSettings(seer) && Options.MadmateCanSeeDeathReason.GetBool())
+            (JekyllandHyde.UsesMadmateCommonSettings(seer) && Options.MadmateCanSeeDeathReason.GetBool())
             || (seer.Is(CustomRoles.Autopsy) && (!Utils.IsActive(SystemTypes.Comms) || Autopsy.CanUseActiveComms.GetBool()));
         }
         public static string GetRoleDesc(this PlayerControl player, bool InfoLong = false)
