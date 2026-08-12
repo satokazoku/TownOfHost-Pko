@@ -46,6 +46,7 @@ public sealed class Samurai : RoleBase, IImpostor, IUsePhantomButton
     public Samurai(PlayerControl player)
         : base(RoleInfo, player)
     {
+        CanUse = true;
     }
 
     static void SetupOptionItem()
@@ -64,6 +65,7 @@ public sealed class Samurai : RoleBase, IImpostor, IUsePhantomButton
     public bool CanUseSabotageButton() => CanSabotage;
     public bool CanUseImpostorVentButton() => CanVent;
 
+    bool CanUse;
     public override bool CanClickUseVentButton => CanVent;
     public override bool OnEnterVent(PlayerPhysics physics, int ventId) => CanVent;
     public override bool CanVentMoving(PlayerPhysics physics, int ventId) => CanVent;
@@ -78,17 +80,21 @@ public sealed class Samurai : RoleBase, IImpostor, IUsePhantomButton
 
     void IUsePhantomButton.OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
     {
-        AdjustKillCooldown = false;
-        ResetCooldown = false;
+        if (CanUse)
+        {
+            AdjustKillCooldown = false;
+            ResetCooldown = false;
+            CanUse = false;
 
-        if (!AmongUsClient.Instance.AmHost) return;
-        if (!Player.IsAlive()) return;
+            if (!AmongUsClient.Instance.AmHost) return;
+            if (!Player.IsAlive()) return;
 
-        var killedCount = KillTargetsInFront();
-        if (killedCount <= 0) return;
+            var killedCount = KillTargetsInFront();
+            if (killedCount <= 0) return;
 
-        ResetCooldown = true;
-        UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
+            ResetCooldown = true;
+            UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
+        }
     }
 
     int KillTargetsInFront()
