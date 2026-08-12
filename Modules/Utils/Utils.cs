@@ -288,8 +288,7 @@ namespace TownOfHost
             var tpinfo = "";
             var text = "";
             var targetPlayer = PlayerCatch.AllPlayerControls.FirstOrDefault(player => player.PlayerId == to);
-            // ホストは常にモデレーターコマンド欄が見える。
-            var isModerator = Moderator.IsModerator(targetPlayer) || to == 0;
+            var isModerator = Moderator.IsModerator(targetPlayer);
 
             // 禁止コマンドはヘルプに表示しない
             bool cmdRestricted = Options.OptionCommandSetting?.GetBool() ?? false;
@@ -323,7 +322,15 @@ namespace TownOfHost
                     + $"\n/cmd /set rule(s r) - {GetString("Command.set_rule")}"
                     + $"\n/cmd /mod id|name|color - {GetString("Command.modadd")}"
                     + $"\n/cmd /mod delete id|name|color - {GetString("Command.moddel")}"
-                    + $"\n/cmd /gc - {GetString("Command.globalconnect")}";
+                    + $"\n/cmd /gc - {GetString("Command.globalconnect")}"
+                    + $"\n/cmd /fe - {GetString("Command.fe")}"
+                    + $"\n/cmd /sw - {GetString("Command.sw")}"
+                    + $"\n/cmd /say - {GetString("Command.Msay")}"
+                    + $"\n/cmd /start - {GetString("Command.start")}"
+                    + $"\n/cmd /kf - {GetString("Command.kf")}"
+                    + $"\n/cmd /mf - {GetString("Command.mf")}"
+                    + $"\n/cmd /ban - {GetString("Command.ban")}"
+                    + $"\n/cmd /kick - {GetString("Command.kick")}";
 
                 if (Options.OptionStreamerSetting.GetBool())
                 {
