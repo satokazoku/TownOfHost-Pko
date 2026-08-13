@@ -95,13 +95,14 @@ namespace TownOfHost.Roles.Neutral
 
         private static void SetupOptionItem()
         {
-            OptionCooldown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.Cooldown, new(0f, 180f, 0.5f), 35f, false).SetValueFormat(OptionFormat.Seconds);
+            SoloWinOption.Create(RoleInfo, 8, defo: 0);
+            OptionCooldown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.Cooldown, new(0f, 180f, 0.5f), 40f, false).SetValueFormat(OptionFormat.Seconds);
             OptionCanVent = BooleanOptionItem.Create(RoleInfo, 11, GeneralOption.CanVent, true, false);
             OptionHasImpostorVision = BooleanOptionItem.Create(RoleInfo, 12, GeneralOption.ImpostorVision, true, false);
             OptionchangeColorTime = FloatOptionItem.Create(RoleInfo, 13, OptionName.HunterchangeColorTime,
-                new(0f, 180f, 0.5f), 5f, false).SetValueFormat(OptionFormat.Seconds);
+                new(0f, 180f, 0.5f), 7.5f, false).SetValueFormat(OptionFormat.Seconds);
             OptionSpeedBoostTime = FloatOptionItem.Create(RoleInfo, 14, OptionName.HunterSpeedBoostTime,
-                new(0f, 180f, 0.5f), 5f, false).SetValueFormat(OptionFormat.Seconds);
+                new(0f, 180f, 0.5f), 7.5f, false).SetValueFormat(OptionFormat.Seconds);
             OptionSpeedBoost = FloatOptionItem.Create(RoleInfo, 15, OptionName.HunterSpeedBoost,
                 new(1f, 10f, 0.25f), 1.75f, false).SetValueFormat(OptionFormat.Multiplier);
             optionDarkenDuration = FloatOptionItem.Create(RoleInfo, 16, OptionName.StealthDarkenDuration, new(0.5f, 30f, 0.5f), 1f, false);
@@ -152,7 +153,11 @@ namespace TownOfHost.Roles.Neutral
                     }
                 }
             }
-            if (!targeted || KillWaitPlayer == null) return;
+            if (!targeted || KillWaitPlayer == null)
+            {
+                targeted = false;
+                return;
+            }
             // TOHYありがとう!!!!!!!!
             if (targeted && KillWaitPlayer)
             {
@@ -164,6 +169,12 @@ namespace TownOfHost.Roles.Neutral
             float sqrDistance = difference.sqrMagnitude;
             float checkRadius = 5f;
             var target = KillWaitPlayer;
+            if (target.PlayerId == Player.PlayerId)
+            {
+                targeted = false;
+                KillWaitPlayer = null;
+                return;
+            }
             if (sqrDistance <= checkRadius * checkRadius)
             {
                 if (!AmongUsClient.Instance.AmHost) return; 
@@ -172,7 +183,7 @@ namespace TownOfHost.Roles.Neutral
                 {
                     if (CustomRoleManager.OnCheckMurder(Player, Player, Player, Player, true, false, 2, CustomDeathReason.Suicide))
                     {
-                        target.SetRealKiller(Player);
+                        Player.SetRealKiller(Player);
                         UtilsNotifyRoles.NotifyRoles(SpecifySeer: Player);
                     }
                 }
@@ -294,6 +305,7 @@ namespace TownOfHost.Roles.Neutral
                         targetCankill = true;
                     }
                     targetDied = false;
+
                 }
                 else
                 {
@@ -328,15 +340,15 @@ namespace TownOfHost.Roles.Neutral
                 return isForHud ? mes : $"<size=40%>{mes}</size>";
             }
         }
-
-        public override void OnStartMeeting()
+        public override void AfterMeetingTasks()
         {
             RemoveEffect(Player.PlayerId);
             targetId = 255;
             targetCankill = true;
             targeted = false;
+            KillWaitPlayer = null;
         }
-        
+
         public static System.Collections.Generic.Dictionary<int, Achievement> achievements = new();
         [Attributes.PluginModuleInitializer]
         public static void Load()
