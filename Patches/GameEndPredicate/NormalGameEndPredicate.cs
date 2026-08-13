@@ -459,7 +459,7 @@ namespace TownOfHost
             }
             else if (Imp == 0 && Jackal == 0 && Remotekiller == 0 && GrimReaper == 0
                 && MilkyWay == 0 && MadBetrayer == 0 && StandMasterCount == 0 && EaterCount == 0
-                && Hunter == 0 && FoxAndCrew <= Hunter) //狩人勝利
+                && FoxAndCrew <= Hunter) //狩人勝利
             {
                 reason = GameOverReason.ImpostorsByKill;
                 CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Hunter, byte.MaxValue);
