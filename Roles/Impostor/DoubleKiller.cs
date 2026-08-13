@@ -31,6 +31,7 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
         CanVent = OptionCanVent.GetBool();
         CanSabotage = OptionCanSabotage.GetBool();
         usedPhantomCount = 0;
+        phantomNowCool = 0f;
     }
 
     static OptionItem OptionPhantomCooldown;
@@ -43,6 +44,7 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
     static bool CanSabotage;
     static OptionItem OptionPhantomUsageCount;
     int usedPhantomCount;
+    float phantomNowCool;
 
     enum OptionName
     {
@@ -76,7 +78,17 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
     public override void ApplyGameOptions(IGameOptions opt)
     {
         if (usedPhantomCount < OptionPhantomUsageCount.GetInt())
-            AURoleOptions.PhantomCooldown = PhantomCooldown;
+            AURoleOptions.PhantomCooldown = Mathf.Max(phantomNowCool, 0.1f);
+    }
+
+    public override void OnFixedUpdate(PlayerControl player)
+    {
+        if (!AmongUsClient.Instance.AmHost) return;
+        if (phantomNowCool > 0f)
+        {
+            phantomNowCool -= Time.fixedDeltaTime;
+            if (phantomNowCool < 0f) phantomNowCool = 0f;
+        }
     }
 
     bool IUsePhantomButton.IsPhantomRole => usedPhantomCount < OptionPhantomUsageCount.GetInt();
@@ -119,19 +131,20 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
 
         SnapToPosition(targetPos);
 
+        phantomNowCool = PhantomCooldown;
+
         _ = new LateTask(() =>
         {
             if (!Player.IsAlive()) return;
             RestoreKillCooldown(savedKillTimer);
+            Player.RpcResetAbilityCooldown(Sync: true);
         }, 0.2f, "DoubleKillerRestoreCD", true);
     }
 
     private void RestoreKillCooldown(float cooldown)
     {
         cooldown = Mathf.Max(cooldown, 0f);
-        Player.RpcProtectedMurderPlayer();
-        Player.SetKillTimer(cooldown);
-        Player.SyncSettings();
+        Player.SetKillCooldown(cooldown, delay: true);
     }
 
     private void SnapToPosition(Vector2 position)

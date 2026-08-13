@@ -1,3 +1,4 @@
+using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
 using TownOfHost.Modules;
@@ -70,7 +71,7 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
     static OptionItem OptionKillImpostor;
     static bool KillImpostor;
 
-    enum OptionName { HadouHoChargeTime, HadouHoSelfDestruct, HadouHoKillImpostor,HadouHoBeamTime }
+    enum OptionName { HadouHoChargeTime, HadouHoSelfDestruct, HadouHoKillImpostor, HadouHoBeamTime }
 
     static void SetUpOptionItem()
     {
@@ -259,9 +260,15 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
         bool facingLeft = BeamFacingLeft;
         var myPos = Player.GetTruePosition();
         Vector2 dir = facingLeft ? Vector2.left : Vector2.right;
-        foreach (var target in PlayerCatch.AllAlivePlayerControls)
+        // ループ中にOnCheckMurderで対象が死亡すると、AllAlivePlayerControlsの中身が
+        // その場で変化してしまう(シェリフのキルモード解除RPC等、死亡時の副作用が絡む場合に
+        // 顕著)。開始前にスナップショットを取り、ループ中の死亡は都度チェックすることで
+        // 以降の対象判定がおかしくなるのを防ぐ。
+        foreach (var target in PlayerCatch.AllAlivePlayerControls.ToArray())
         {
+            if (!Player.IsAlive()) break;
             if (target.PlayerId == Player.PlayerId) continue;
+            if (!target.IsAlive()) continue;
             if (!KillImpostor && target.GetCustomRole().IsImpostor() && !SuddenDeathMode.NowSuddenDeathMode) continue;
             var toTarget = target.GetTruePosition() - myPos;
             float dot = Vector2.Dot(toTarget, dir);

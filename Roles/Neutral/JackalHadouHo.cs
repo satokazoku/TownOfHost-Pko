@@ -1,3 +1,4 @@
+using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
 using TownOfHost.Modules;
@@ -669,9 +670,11 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         if (!AmongUsClient.Instance.AmHost || !Player.IsAlive()) return;
         var myPos = Player.GetTruePosition();
         Vector2 dir = BeamFacingLeft ? Vector2.left : Vector2.right;
-        foreach (var target in PlayerCatch.AllAlivePlayerControls)
+        foreach (var target in PlayerCatch.AllAlivePlayerControls.ToArray())
         {
+            if (!Player.IsAlive()) break;
             if (target.PlayerId == Player.PlayerId) continue;
+            if (!target.IsAlive()) continue;
             if (!KillJackal && target.GetCustomRole() is CustomRoles.Jackal or CustomRoles.JackalMafia
                 or CustomRoles.JackalAlien or CustomRoles.Jackaldoll or CustomRoles.JackalHadouHo
                 or CustomRoles.Tama && !SuddenDeathMode.NowSuddenDeathMode) continue;
@@ -690,9 +693,11 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         if (!AmongUsClient.Instance.AmHost || !Player.IsAlive()) return;
         var myPos = Player.GetTruePosition();
         Vector2 dir = BeamFacingLeft ? Vector2.left : Vector2.right;
-        foreach (var target in PlayerCatch.AllAlivePlayerControls)
+        foreach (var target in PlayerCatch.AllAlivePlayerControls.ToArray())
         {
+            if (!Player.IsAlive()) break;
             if (target.PlayerId == Player.PlayerId) continue;
+            if (!target.IsAlive()) continue;
             if (!KillJackal && target.GetCustomRole() is CustomRoles.Jackal or CustomRoles.JackalMafia
                 or CustomRoles.JackalAlien or CustomRoles.Jackaldoll or CustomRoles.JackalHadouHo
                 or CustomRoles.Tama && !SuddenDeathMode.NowSuddenDeathMode) continue;

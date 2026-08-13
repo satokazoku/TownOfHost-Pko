@@ -1008,6 +1008,7 @@ public enum CustomRoles
     Police,
     NiceWorkaholic,
     Jailer,
+    BoostLighter,
     //DEBUG only Crewmate
     Analyzer,
     //Neutral
@@ -1053,6 +1054,7 @@ public enum CustomRoles
     TheFirstLittlePig,
     TheSecondLittlePig,
     TheThirdLittlePig,
+    Dancer,
     //TOH-K
     Remotekiller,
     Chef,

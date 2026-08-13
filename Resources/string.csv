@@ -89,7 +89,6 @@
 "Teleporter","Teleporter","テレポーター"
 "EvilLinker","EvilLinker","イビルリンカー"
 "Minimalist","Minimalist","ミニマリスト","极简主义者","極簡主義者","Минималист","Minimalista","Minimalista"
-"Evilk","",""
 "Evolver","Evolver","エボルバー"
 "Conjurer","Conjurer","魔術師"
 "Swooper","Swooper","スウーパー"
@@ -205,6 +204,7 @@
 "NiceEraser","NiceEraser","ナイスイレイサー"
 "MagicalGirl","Magical Girl","魔法少女"
 "Walkure","Walkure","ワルキューレ"
+"BoostLighter","Boost Lighter","ブーストライター"
 "#CrewmateName"
 
 "# ニュートラル役職"
@@ -606,6 +606,7 @@
 "NiceEraserInfo","Rehabilitate the wicked.","悪人を更生させよう"
 "MagicalGirlInfo","☆ Revolution ☆","へ〜んしんっ☆"
 "WalkureInfo","Reveal yourself and receive divine favor.","名乗りを上げ、加護を得よう"
+"BoostLighterInfo","Light up the dark, and see further than anyone else.","闇を照らし、誰よりも遠くを見通せ。"
 "#CrewmateInfo"
 
 "# ニュートラル役職"
@@ -959,6 +960,7 @@
 "NiceNekomataInfoLong","","会議に関する能力を有するクルーメイトです。\n追放されるとランダムで生存者を一人道連れにします。"
 "MagicalGirlInfoLong","Complete the required tasks, then self-vote in a meeting to show transformable roles.\nVote a listed player to transform into the role shown for that player.\nThe transformation lasts for the configured number of turns, and a role you have already transformed into cannot be selected again","一定タスク完了時に会議時に自投票をすると変身モードに入る\n変身モード中に指定されたプレイヤーに投票すると、\n設定された役職に一定ターン変化することができる。\nただし、オールラウンダー、さつまといも、子方、ウォーカー、マーリンには変身ができない。\n変身は役ごとに一回のみ可能で、クルーにのみ変身ができる。\n変身後の役職設定はその役の設定に依存します。\nぽんこつ占い師が占い師と錯覚する設定がONの場合、役選択時に占い師と表示されます。\nまた、ゲッサーでは変身先の役職/魔法少女で撃ち殺せる。"
 "WalkureInfoLong","Self-vote during a meeting to enter Revelation Mode.\nWhile in Revelation Mode, vote another player to reveal yourself as Walkure to them.\nRevealed players may be able to see your role, depending on settings.\nAs your reveal count increases, you gain configured buffs and may unlock a kill ability.\nIf enough players vote for you, you are exiled regardless of the normal vote result.\nWhen you die or are exiled, some crewmates may follow you in death or lose their roles.\nAttempts to change your role can be reflected, causing the actor to self-destruct.\nIf required reveals to win is enabled, you cannot win unless you reach the configured reveal count.","会議で自投票すると名乗りモードに入る。\n名乗りモード中に自分以外へ投票すると、その相手に自分がワルキューレであることを名乗り出る。\n設定によっては、名乗られた相手からワルキューレの役職が見えるようになる。\n名乗り回数が増えると、設定された加護を得たり、キル能力を解放したりできる。\n一定数以上の票を受けると、通常の投票結果に関係なく追放される。\n死亡または追放されると、一部のクルーが後追いしたり役職を失ったりする。\n役職変更を受けた場合、設定に応じて反射し、実行者を自滅させる。\n勝利に必要な名乗り回数が有効な場合、設定回数を満たしていないと勝利できない。"
+"BoostLighterInfoLong","Pet your pet to temporarily boost your vision. Check your remaining time through the vent cooldown display.","ペットを撫でると一定時間、視界がブーストされる。残り時間はベントのクールダウン表示で確認できる。"
 "#CrewmateInfoLong"
 
 "# ニュートラル役職"
@@ -1996,7 +1998,7 @@
 "SantaGiftRateNiceGuesser","Chance to gift Nice Guesser","ナイスゲッサー排出確率"
 "SantaGiftLimit","Maximum number of gifts","プレゼントの配布上限回数"
 "SantaCanGiftLovers","Can gift to Lovers","ラバーズにもプレゼントを配れる"
-"SantaCanGiftMadmate","Can gift to Madmate","マッドメイト陣営にもプレゼントを配れる"
+"SantaCanGiftMadmate","Can gift to Madmate","マッドロールにもプレゼントを配れる"
 "SantaCanTaskCount","Can gift to players with tasks","能力を発揮するタスク数"
 "SantaCanGiftJackalDoll","Can gift to Jackal Doll","ジャッカルドールにもプレゼントを配れる"
 "RabbitRedistributionLongTasks","Redistribution Long Tasks","再配布ロングタスク数"
@@ -2273,6 +2275,9 @@
 "WalkureKillButtonText","Judgment","断罪"
 "Mode.Walkure","Revelation Mode","名乗りモード"
 "Vote.Walkure","Vote to reveal yourself","誰かに投票で名乗り"
+"BoostLighterCooldown","Cooldown","クールタイム"
+"BoostLighterDuration","Boost Duration","ブースト持続時間"
+"BoostLighterAffectedByBlackout","Affected by Blackout","停電の影響を受ける"
 
 "## Neutral Role Setting"
 "SchrodingerCatExiledTeamChanges","Team Changes When Ejected","吊られた際、陣営が変化する","薛定谔的猫被放逐时会加入其他阵营","薛定諤的貓被丟出時陣營會轉變","Команда меняется после его Изгнания","Time Muda Quando Exilado",""

@@ -1,3 +1,4 @@
+/*
 using System.Collections.Generic;
 using AmongUs.GameOptions;
 using Hazel;
@@ -49,8 +50,6 @@ public sealed class TimeSleeper : RoleBase, IImpostor, IUsePhantomButton
     static float RecordDuration;
     static OptionItem OptionRewindSpeed;
     static float RewindSpeed;
-
-    const float SnapInterval = 0.25f;
 
     bool isRecording;
     bool isRewinding;
@@ -145,7 +144,7 @@ public sealed class TimeSleeper : RoleBase, IImpostor, IUsePhantomButton
         {
             recordTimer += Time.fixedDeltaTime;
 
-            if (recordTimer % SnapInterval < Time.fixedDeltaTime)
+            if (recordTimer % 0.1f < Time.fixedDeltaTime)
             {
                 foreach (var pc in PlayerCatch.AllAlivePlayerControls)
                 {
@@ -183,7 +182,7 @@ public sealed class TimeSleeper : RoleBase, IImpostor, IUsePhantomButton
         {
             rewindTimer += Time.fixedDeltaTime * RewindSpeed;
 
-            if (rewindTimer >= SnapInterval)
+            if (rewindTimer >= 0.1f)
             {
                 rewindTimer = 0f;
 
@@ -199,8 +198,6 @@ public sealed class TimeSleeper : RoleBase, IImpostor, IUsePhantomButton
                     return;
                 }
 
-                var snapBuffer = new List<(byte playerId, Vector2 pos)>();
-
                 foreach (var kvp in positionHistory)
                 {
                     var pc = PlayerCatch.GetPlayerById(kvp.Key);
@@ -214,12 +211,8 @@ public sealed class TimeSleeper : RoleBase, IImpostor, IUsePhantomButton
                     if (IsBeamingOrCharging(pc)) continue;
 
                     var targetPos = kvp.Value[rewindIndex];
-                    pc.NetTransform.SnapTo(targetPos);
-                    snapBuffer.Add((pc.PlayerId, targetPos));
+                    pc.RpcSnapToForced(targetPos, SendOption.None);
                 }
-
-                if (snapBuffer.Count > 0)
-                    SendSnapBatchRpc(snapBuffer);
 
                 rewindIndex--;
             }
@@ -262,48 +255,14 @@ public sealed class TimeSleeper : RoleBase, IImpostor, IUsePhantomButton
     void SendRpc()
     {
         using var sender = CreateSender();
-        sender.Writer.Write((byte)0);
         sender.Writer.Write(isRecording);
         sender.Writer.Write(isRewinding);
     }
 
-    void SendSnapBatchRpc(List<(byte playerId, Vector2 pos)> snaps)
-    {
-        using var sender = CreateSender();
-        sender.Writer.Write((byte)1);
-        sender.Writer.Write((byte)snaps.Count);
-        foreach (var (playerId, pos) in snaps)
-        {
-            sender.Writer.Write(playerId);
-            sender.Writer.Write(pos.x);
-            sender.Writer.Write(pos.y);
-        }
-    }
-
     public override void ReceiveRPC(MessageReader reader)
     {
-        var type = reader.ReadByte();
-
-        if (type == 0)
-        {
-            isRecording = reader.ReadBoolean();
-            isRewinding = reader.ReadBoolean();
-            return;
-        }
-
-        if (type == 1)
-        {
-            var count = reader.ReadByte();
-            for (int i = 0; i < count; i++)
-            {
-                var playerId = reader.ReadByte();
-                var x = reader.ReadSingle();
-                var y = reader.ReadSingle();
-                var pc = PlayerCatch.GetPlayerById(playerId);
-                if (pc != null)
-                    pc.NetTransform.SnapTo(new Vector2(x, y));
-            }
-        }
+        isRecording = reader.ReadBoolean();
+        isRewinding = reader.ReadBoolean();
     }
 
     public override string GetLowerText(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
@@ -334,3 +293,4 @@ public sealed class TimeSleeper : RoleBase, IImpostor, IUsePhantomButton
         return true;
     }
 }
+*/
