@@ -47,7 +47,6 @@ public sealed class EvilMoving : RoleBase, IImpostor, IUsePhantomButton
             new(2.5f, 120f, 2.5f), 30f, false).SetValueFormat(OptionFormat.Seconds);
     }
 
-    public float CalculateKillCooldown() => Main.NormalOptions.KillCooldown;
     public bool CanUseSabotageButton() => true;
     public bool CanUseImpostorVentButton() => true;
 
