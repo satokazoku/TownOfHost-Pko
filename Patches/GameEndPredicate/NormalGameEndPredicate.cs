@@ -268,7 +268,8 @@ namespace TownOfHost
             int EaterCount = 0;
             int PavlovOwnerAlive = 0;
             int PavlovOwnerRemaining = 0;
-
+            int Pirate = 0;
+            
             foreach (var pc in PlayerCatch.AllAlivePlayerControls)
             {
                 if (pc.Is(CustomRoles.PavlovOwner))
@@ -307,6 +308,7 @@ namespace TownOfHost
                             StandMasterCount++;
                         break;
                     case CountTypes.Eater: EaterCount++; break;
+                    case CountTypes.Pirate: Pirate++; Crew++; FoxAndCrew++; break;                    
                 }
             }
 
@@ -465,6 +467,14 @@ namespace TownOfHost
                 CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Hunter, byte.MaxValue);
                 CustomWinnerHolder.WinnerRoles.Add(CustomRoles.Hunter);
             }
+            else if (Jackal == 0 && Remotekiller == 0 && MadBetrayer == 0
+                && MilkyWay == 0 && Pavlov == 0 && StandMasterCount == 0 && Imp == 0
+                && Hunter == 0 && EaterCount == 0 && FoxAndCrew - 1 <= Pirate) //海賊がクルーカウントなので海賊分の1を引く
+            {
+                reason = GameOverReason.ImpostorsByKill;
+                CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Pirate, byte.MaxValue);
+                CustomWinnerHolder.WinnerRoles.Add(CustomRoles.Pirate);
+            } 
             else if (Jackal == 0 && Remotekiller == 0 && MadBetrayer == 0
                 && MilkyWay == 0 && Pavlov == 0 && StandMasterCount == 0 && Imp == 0
                 && Hunter == 0 && EaterCount == 0) //クルー勝利
