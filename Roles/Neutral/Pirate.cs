@@ -26,6 +26,7 @@ public sealed class Pirate : RoleBase, IKiller
             (6, 5),
             true,
             from: From.TownOfHost_Y,
+            countType: CountTypes.Pirate,
             assignInfo: new RoleAssignInfo(CustomRoles.Pirate, CustomRoleTypes.Neutral)
             {
                 AssignCountRule = new(1, 1, 1)
