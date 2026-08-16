@@ -31,6 +31,7 @@ public sealed class BoostLighter : RoleBase
         BoostDuration = OptionBoostDuration.GetFloat();
         BoostCooldown = OptionBoostCooldown.GetFloat();
         AffectedByBlackout = OptionAffectedByBlackout.GetBool();
+        BoostLightMod = OptionBoostLightMod.GetFloat();
         isBoostActive = false;
         boostTimer = 0f;
         cooldownTimer = OptionBoostCooldown.GetFloat();
@@ -42,6 +43,8 @@ public sealed class BoostLighter : RoleBase
     static float BoostCooldown;
     static OptionItem OptionAffectedByBlackout;
     static bool AffectedByBlackout;
+    static OptionItem OptionBoostLightMod;
+    static float BoostLightMod;
 
     bool isBoostActive;
     float boostTimer;
@@ -52,6 +55,7 @@ public sealed class BoostLighter : RoleBase
         BoostLighterCooldown,
         BoostLighterDuration,
         BoostLighterAffectedByBlackout,
+        BoostLighterLightMod,
     }
 
     static void SetupOptionItem()
@@ -62,6 +66,8 @@ public sealed class BoostLighter : RoleBase
             new(2.5f, 20f, 2.5f), 10f, false).SetValueFormat(OptionFormat.Seconds);
         OptionAffectedByBlackout = BooleanOptionItem.Create(RoleInfo, 12, OptionName.BoostLighterAffectedByBlackout,
             true, false);
+        OptionBoostLightMod = FloatOptionItem.Create(RoleInfo, 13, OptionName.BoostLighterLightMod,
+            new(0.25f, 5f, 0.25f), 3f, false).SetValueFormat(OptionFormat.Percent);
     }
 
     public override void Add()
@@ -81,11 +87,13 @@ public sealed class BoostLighter : RoleBase
             : Mathf.Max(cooldownTimer, 0.1f);
         AURoleOptions.EngineerInVentMaxTime = 0f;
 
-        opt.SetVision(isBoostActive);
-
-        if (isBoostActive && !AffectedByBlackout)
+        if (isBoostActive)
         {
-            opt.SetFloat(FloatOptionNames.CrewLightMod, Main.NormalOptions.CrewLightMod);
+            bool blackoutActive = Utils.IsActive(SystemTypes.Electrical);
+            if (!AffectedByBlackout || !blackoutActive)
+            {
+                opt.SetFloat(FloatOptionNames.CrewLightMod, BoostLightMod);
+            }
         }
     }
 

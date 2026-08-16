@@ -138,6 +138,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
     static OptionItem OptionTamaVentCooldown;
     static OptionItem OptionTamaVentMaxTime;
     static OptionItem OptionTamaCanVentMove;
+    static OptionItem OptionTamaCountAsJackalKiller;
 
     enum OptionName
     {
@@ -161,6 +162,8 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
     public static float GetTamaVentMaxTime() => OptionTamaVentMaxTime?.GetFloat() ?? 0f;
     public static bool GetTamaCanVentMove() => OptionTamaCanVentMove?.GetBool() ?? false;
     public static bool GetCanUseSabotageOption() => OptionCanSabotage?.GetBool() ?? false;
+
+    public static bool GetTamaCountAsJackalKiller() => OptionTamaCountAsJackalKiller?.GetBool() ?? false;
 
     public static void HideRoleOptions(CustomRoles role)
     {
@@ -207,6 +210,8 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         OptionTamaCanVentMove = BooleanOptionItem.Create(RoleInfo, 31, "MadmateCanMovedByVent", false, false, OptionTamaCanVent);
 
         RoleAddAddons.Create(RoleInfo, 32, NeutralKiller: true);
+
+        OptionTamaCountAsJackalKiller = BooleanOptionItem.Create(RoleInfo, 33, "TamaCountAsJackalKiller", false, false);
 
         HideRoleOptions(CustomRoles.Tama);
     }
@@ -978,11 +983,12 @@ public sealed class Tama : RoleBase, IKiller
     }
 
     public Tama(PlayerControl player)
-        : base(RoleInfo, player, () => HasTask.False)
+    : base(RoleInfo, player, () => HasTask.False)
     {
         OwnerId = byte.MaxValue;
         hasLoaded = false;
         isLoading = false;
+        ApplyJackalKillerCount();
     }
 
     public byte OwnerId;
@@ -1011,6 +1017,10 @@ public sealed class Tama : RoleBase, IKiller
     {
         if (!JackalHadouHo.GetTamaCanLoad()) return false;
         return Player.IsAlive() && !hasLoaded && !isLoading && IsOwnerAlive();
+    }
+    private void ApplyJackalKillerCount()
+    {
+        MyState.SetCountType(JackalHadouHo.GetTamaCountAsJackalKiller() ? CountTypes.Jackal : CountTypes.Crew);
     }
 
     public bool CanUseSabotageButton() => false;
@@ -1068,6 +1078,8 @@ public sealed class Tama : RoleBase, IKiller
 
     public override void OnFixedUpdate(PlayerControl player)
     {
+        ApplyJackalKillerCount();
+
         if (!AmongUsClient.Instance.AmHost) return;
         if (!GameStates.IsInTask) return;
         if (OwnerId == byte.MaxValue) return;

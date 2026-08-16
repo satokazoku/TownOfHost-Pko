@@ -2278,6 +2278,7 @@
 "BoostLighterCooldown","Cooldown","クールタイム"
 "BoostLighterDuration","Boost Duration","ブースト持続時間"
 "BoostLighterAffectedByBlackout","Affected by Blackout","停電の影響を受ける"
+"BoostLighterLightMod","Vision Brightness","視界の明るさ"
 
 "## Neutral Role Setting"
 "SchrodingerCatExiledTeamChanges","Team Changes When Ejected","吊られた際、陣営が変化する","薛定谔的猫被放逐时会加入其他阵营","薛定諤的貓被丟出時陣營會轉變","Команда меняется после его Изгнания","Time Muda Quando Exilado",""
