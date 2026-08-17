@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+/*using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
@@ -498,4 +498,4 @@ public sealed class Gang : RoleBase, IAdditionalWinner
         hasGrantedAddon = reader.ReadBoolean();
         hasSeenImpostors = reader.ReadBoolean();
     }
-}
+}*/
