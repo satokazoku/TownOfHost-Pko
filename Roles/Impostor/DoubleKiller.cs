@@ -1,9 +1,12 @@
 using AmongUs.GameOptions;
+using Epic.OnlineServices.Presence;
 using Hazel;
 using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Madmate;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 namespace TownOfHost.Roles.Impostor;
 
@@ -123,11 +126,20 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
         }
 
         if (nearest == null) return;
-
+        if (nearest.Is(CustomRoles.Madpsycho))
+        {
+            if (Madpsycho.CanPsycho)
+            {
+                PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = Madpsycho.deathReasons[Madpsycho.OptionDeathReason.GetValue()];
+                nearest.RpcMurderPlayer(Player);
+                return;
+            }
+        }
         usedPhantomCount++;
         float savedKillTimer = Player.killTimer;
         Vector2 targetPos = nearest.transform.position;
         CustomRoleManager.OnCheckMurder(Player, nearest, nearest, nearest, true, true, 1, CustomDeathReason.Kill);
+        if (Player.IsAlive()) RPC.PlaySoundRPC(Player.PlayerId, Sounds.KillSound);
 
         SnapToPosition(targetPos);
 
