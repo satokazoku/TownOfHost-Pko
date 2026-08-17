@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Presets Gallery</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>プリセット一覧</h1>
+    <div class="controls">
+      <input id="search" placeholder="検索..." />
+      <select id="sort"><option value="new">新着順</option><option value="popular">人気順</option></select>
+      <input id="tags" placeholder="タグ (カンマ区切り)" />
+      <input id="version" placeholder="バージョン" style="width:80px;" />
+      <button id="btnSearch">検索</button>
+    </div>
+  </header>
+
+  <main>
+    <div id="list"></div>
+    <div id="pagination"></div>
+  </main>
+
+  <template id="card-tpl">
+    <div class="card">
+      <h3 class="name"></h3>
+      <div class="meta"></div>
+      <div class="tags"></div>
+      <div class="actions">
+        <button class="btn-copy">コピー</button>
+        <button class="btn-save">ファイル保存</button>
+        <button class="btn-load">直接ロード</button>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    const API_BASE = '/presets'; // change if hosted under different path
+  </script>
+  <script src="app.js"></script>
+</body>
+</html>

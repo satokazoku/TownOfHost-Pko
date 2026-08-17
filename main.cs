@@ -1,0 +1,560 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using AmongUs.GameOptions;
+using BepInEx;
+using BepInEx.Configuration;
+using BepInEx.Unity.IL2CPP;
+using HarmonyLib;
+using Il2CppInterop.Runtime.Injection;
+using TownOfHost.Attributes;
+using TownOfHost.Modules;
+using TownOfHost.Roles.Core;
+using UnityEngine;
+using static Unity.Services.LevelPlay.LevelPlayBannerPosition;
+
+[assembly: AssemblyFileVersionAttribute(TownOfHost.Main.PluginVersion)]
+[assembly: AssemblyInformationalVersionAttribute(TownOfHost.Main.PluginVersion)]
+namespace TownOfHost
+{
+    [BepInPlugin(PluginGuid, "Town Of Host-Pko", BepInExPluginVersion)]
+    [BepInIncompatibility("jp.ykundesu.supernewrolesnext")]
+    [BepInIncompatibility("jp.ykundesu.supernewroles")]
+    [BepInIncompatibility("me.yukieiji.extremeroles")]
+    [BepInIncompatibility("jp.dreamingpig.amongus.nebula")]
+    [BepInProcess("Among Us.exe")]
+    public class Main : BasePlugin
+    {
+        // == プログラム設定 / Program Config ==
+        // modの名前 / Mod Name (Default: Town Of Host)
+        public static readonly string ModName = "Town Of Host-Pko";
+        // modの色 / Mod Color (Default: #00bfff)
+        public static readonly string ModColor = "#FF9631";
+        // 公開ルームを許可する / Allow Public Room (Default: true)
+        public static readonly bool AllowPublicRoom = true;
+        // フォークID / ForkId (Default: OriginalTOH)
+        public static readonly string ForkId = "TOH-PKO";
+        // Discordボタンを表示するか / Show Discord Button (Default: true)
+        public static readonly bool ShowDiscordButton = true;
+        // Discordサーバーの招待リンク / Discord Server Invite URL (Default: https://discord.gg/PQ5CrVHC25)
+        public static readonly string DiscordInviteUrl = "https://discord.gg/PQ5CrVHC25";
+        public static readonly string MatchmakingRelayUrl = "https://tohp-relay.oyasai0831ohyasai.workers.dev/";
+        public static readonly string MatchmakingRelaySecret = "6rVp2N8xK5mQ9wA1zL4jS7tB3hG0eD9Y";
+        public static string PresetShareApiUrl = "https://pikeo-ai.pikeo-ai.workers.dev";
+        public static string PresetShareApiSecret = "(AmongUsTOHPkoPukupuku142satokoVERYCUTE)";
+        // ==========
+        public const string OriginalForkId = "OriginalTOH"; // Don't Change The Value. / この値を変更しないでください。
+        // == 認証設定 / Authentication Config ==
+        // デバッグキーの認証インスタンス
+        public static HashAuth DebugKeyAuth { get; private set; }
+        public static HashAuth ExplosionKeyAuth { get; private set; }
+        // デバッグキーのハッシュ値
+        public const string DebugKeyHash = "8e5f06e453e7d11f78ad96b2ca28ff472e085bdb053189612a0a2e0be7973841";
+        // 部屋爆破キーのハッシュ値
+        public const string ExplosionKeyHash = "e7d88aaf7ea075752792089196d9441c838e6ff47432a719fad6e17cd50a441e";
+        // デバッグキーのソルト
+        public const string DebugKeySalt = "59687b";
+        // デバッグキーのコンフィグ入力
+        public static ConfigEntry<string> DebugKeyInput { get; private set; }
+        public static ConfigEntry<string> ExplosionKeyInput { get; private set; }
+
+        public const string PluginGuid = "com.satokazoku.TownOfHost-Pko";
+
+        public const string BepInExPluginVersion = "5.34.19.94";
+        public const string PluginVersion = "5.34.19.94";//ほんとはx.y.z表記にしたかったけどx.y.z.km.ks表記だと警告だされる
+        public const string PluginShowVersion = "5.34.19.94";
+        public const string ModVersion = ".19.94";//リリースver用バージョン変更dc9b79
+
+        /// 配布するデバッグ版なのであればtrue。リリース時にはfalseにすること。
+        public static bool DebugVersion = false;
+
+        // サポートされている最低のAmongUsバージョン(Readmeも変える)
+        public static readonly string LowestSupportedVersion = "2026.3.31";
+        // このバージョンのみで公開ルームを無効にする場合
+        public static readonly bool IsPublicAvailableOnThisVersion = false;
+        public Harmony Harmony { get; } = new Harmony(PluginGuid);
+        public static Version version = Version.Parse(PluginVersion);
+        public static BepInEx.Logging.ManualLogSource Logger;
+        public static bool hasArgumentException = false;
+        public static string ExceptionMessage;
+        public static bool ExceptionMessageIsShown = false;
+        public static string credentialsText;
+        public static NormalGameOptionsV10 NormalOptions => GameOptionsManager.Instance.currentNormalGameOptions;
+        public static HideNSeekGameOptionsV10 HideNSeekSOptions => GameOptionsManager.Instance.currentHideNSeekGameOptions;
+        //Client Options
+        public static ConfigEntry<string> HideName { get; private set; }
+        public static ConfigEntry<string> HideColor { get; private set; }
+        public static ConfigEntry<bool> ForceJapanese { get; private set; }
+        public static ConfigEntry<bool> JapaneseRoleName { get; private set; }
+        public static ConfigEntry<float> MessageWait { get; private set; }
+        public static ConfigEntry<bool> ShowResults { get; private set; }
+        public static ConfigEntry<bool> Hiderecommendedsettings { get; private set; }
+        public static ConfigEntry<bool> UseWebHook { get; private set; }
+        public static ConfigEntry<bool> UseYomiage { get; private set; }
+        public static ConfigEntry<bool> CustomName { get; private set; }
+        public static ConfigEntry<bool> ShowGameSettingsTMP { get; private set; }
+        public static ConfigEntry<bool> CustomSprite { get; private set; }
+        public static ConfigEntry<bool> HideSomeFriendCodes { get; private set; }
+        public static ConfigEntry<bool> AutoSaveScreenShot { get; private set; }
+        public static ConfigEntry<bool> PreloadMapAssets { get; private set; }
+        public static ConfigEntry<float> MapTheme { get; private set; }
+        public static ConfigEntry<bool> ViewPingDetails { get; private set; }
+        public static ConfigEntry<bool> DebugChatopen { get; private set; }
+        public static ConfigEntry<bool> DebugSendAmout { get; private set; }
+        public static ConfigEntry<bool> DebugTours { get; private set; }
+        public static ConfigEntry<bool> ShowDistance { get; private set; }
+        public static ConfigEntry<bool> FpsLimitRemoval { get; private set; }
+        public static Dictionary<byte, PlayerVersion> playerVersion = new();
+        //Preset Name Options
+        public static ConfigEntry<string> Preset1 { get; private set; }
+        public static ConfigEntry<string> Preset2 { get; private set; }
+        public static ConfigEntry<string> Preset3 { get; private set; }
+        public static ConfigEntry<string> Preset4 { get; private set; }
+        public static ConfigEntry<string> Preset5 { get; private set; }
+        public static ConfigEntry<string> Preset6 { get; private set; }
+        public static ConfigEntry<string> Preset7 { get; private set; }
+        public static ConfigEntry<string> Preset8 { get; private set; }
+        public static ConfigEntry<string> Preset9 { get; private set; }
+        public static ConfigEntry<string> Preset10 { get; private set; }
+        public static ConfigEntry<string> Preset11 { get; private set; }
+        public static ConfigEntry<string> Preset12 { get; private set; }
+        public static ConfigEntry<string> Preset13 { get; private set; }
+        public static ConfigEntry<string> Preset14 { get; private set; }
+        public static ConfigEntry<string> Preset15 { get; private set; }
+        public static ConfigEntry<string> Preset16 { get; private set; }
+        public static ConfigEntry<string>[] Presets { get; private set; }
+        public static ConfigEntry<string> SKey { get; private set; }
+        public static ConfigEntry<string> JoinWord { get; private set; }
+        public static ConfigEntry<string> RemoveWord { get; private set; }
+        //Other Configs
+        public static ConfigEntry<string> BetaBuildURL { get; private set; }
+        public static ConfigEntry<float> LastKillCooldown { get; private set; }
+        public static ConfigEntry<float> LastShapeshifterCooldown { get; private set; }
+        public static ConfigEntry<bool> LastKickModClient { get; private set; }
+        public static bool UseingJapanese => ForceJapanese.Value || TranslationController.Instance.currentLanguage.languageID is SupportedLangs.Japanese;
+        public static OptionBackupData RealOptionsData;
+        public static Dictionary<byte, string> AllPlayerNames = new();
+        public static Dictionary<(byte, byte), string> LastNotifyNames;
+        public static Dictionary<byte, Color32> PlayerColors = new();
+        public static Dictionary<byte, CustomDeathReason> AfterMeetingDeathPlayers = new();
+        public static List<byte> meetingdeadlist = new();
+        public static Dictionary<CustomRoles, string> roleColors;
+        public static Dictionary<byte, List<uint>> AllPlayerTask = new();
+        public static List<byte> winnerList;
+        public static List<int> clientIdList;
+        public static List<byte> DisableTaskPlayerList;
+        public static List<(string, byte, string)> MessagesToSend;
+        public static int MegCount;
+        public static Dictionary<byte, float> AllPlayerKillCooldown = new();
+        public static bool HnSFlag = false;
+        public static bool showkillbutton = false;
+        public static bool AssignSameRoles = false;
+        public static string Alltask;
+        public static byte LastSab;
+        public static SystemTypes SabotageType;
+        public static bool IsActiveSabotage;
+        public static float SabotageActivetimer;
+        public static (float DiscussionTime, float VotingTime) MeetingTime;
+        public static int GameCount = 0;
+        public static bool SetRoleOverride = true;
+        /// <summary>ラグを考慮した奴。アジア、カスタム、ローカルは200ms(0.2s),他は400ms(0.4s)</summary>
+        public static float LagTime = 0.2f;
+        public static int ForcedGameEndColl;
+        public static bool ShowRoleIntro;
+        public static bool DontGameSet;
+        public static bool CanUseAbility;
+        public static CustomRoles HostRole = CustomRoles.NotAssigned;
+
+        /// <summary>
+        /// 基本的に速度の代入は禁止.スピードは増減で対応してください.
+        /// </summary>
+        public static Dictionary<byte, float> AllPlayerSpeed = new();
+        public const float MinSpeed = 0.0001f;
+        public static Dictionary<byte, bool> CheckShapeshift = new();
+        public static Dictionary<byte, byte> ShapeshiftTarget = new();
+        public static Dictionary<byte, CustomDeathReason> HostKill = new();
+        public static bool VisibleTasksCount;
+        public static string nickName = "";
+        public static string lobbyname = "";
+        public static float DefaultCrewmateVision;
+        public static float DefaultImpostorVision;
+        public static bool DebugAntiblackout = true;
+
+        public const float RoleTextSize = 2f;
+        public static Main Instance;
+        public static string BaseDirectory
+            => Path.GetFullPath(Path.Combine(
+                string.IsNullOrEmpty(BepInEx.Paths.BepInExRootPath) ? Application.persistentDataPath : BepInEx.Paths.BepInExRootPath,
+                "../TOHP_DATA"));
+        public static string GetPresetName(int presetIndex)
+        {
+            var translationKey = $"Preset_{presetIndex + 1}";
+            if (Presets == null || presetIndex < 0 || presetIndex >= Presets.Length)
+            {
+                return Translator.GetString(translationKey);
+            }
+
+            var preset = Presets[presetIndex];
+            return preset.Value == (string)preset.DefaultValue ? Translator.GetString(translationKey) : preset.Value;
+        }
+        public static void SetPresetName(int presetIndex, string value)
+        {
+            if (Presets == null || presetIndex < 0 || presetIndex >= Presets.Length) return;
+            Presets[presetIndex].Value = value;
+        }
+        public static void ResetPresetName(int presetIndex)
+        {
+            if (Presets == null || presetIndex < 0 || presetIndex >= Presets.Length) return;
+            Presets[presetIndex].Value = (string)Presets[presetIndex].DefaultValue;
+        }
+        public static void ResetPresetNames()
+        {
+            if (Presets == null) return;
+            for (var i = 0; i < Presets.Length; i++)
+            {
+                ResetPresetName(i);
+            }
+        }
+        private void BindPresetNames()
+        {
+            Presets = new ConfigEntry<string>[16];
+            for (var i = 0; i < Presets.Length; i++)
+            {
+                var presetNumber = i + 1;
+                Presets[i] = Config.Bind("Preset Name Options", $"Preset{presetNumber}", $"Preset_{presetNumber}");
+            }
+
+            Preset1 = Presets[0];
+            Preset2 = Presets[1];
+            Preset3 = Presets[2];
+            Preset4 = Presets[3];
+            Preset5 = Presets[4];
+            Preset6 = Presets[5];
+            Preset7 = Presets[6];
+            Preset8 = Presets[7];
+            Preset9 = Presets[8];
+            Preset10 = Presets[9];
+            Preset11 = Presets[10];
+            Preset12 = Presets[11];
+            Preset13 = Presets[12];
+            Preset14 = Presets[13];
+            Preset15 = Presets[14];
+            Preset16 = Presets[15];
+        }
+        public override void Load()
+        {
+            GameCount = 0;
+            Instance = this;
+
+            //Client Options
+            HideName = Config.Bind("Client Options", "Hide Game Code Name", "Town Of Host-Pko");
+            HideColor = Config.Bind("Client Options", "Hide Game Code Color", $"{ModColor}");
+            ForceJapanese = Config.Bind("Client Options", "Force Japanese", false);
+            JapaneseRoleName = Config.Bind("Client Options", "Japanese Role Name", true);
+            ShowResults = Config.Bind("Result", "Show Results", true);
+            Hiderecommendedsettings = Config.Bind("Client Options", "Hide recommended settings", false);
+            UseWebHook = Config.Bind("Client Options", "UseWebHook", false);
+            UseYomiage = Config.Bind("Client Options", "UseYomiage", false);
+            CustomName = Config.Bind("Client Options", "CustomName", true);
+            ShowGameSettingsTMP = Config.Bind("Client Options", "Show GameSettings", true);
+            CustomSprite = Config.Bind("Client Options", "CustomSprite", true);
+            HideSomeFriendCodes = Config.Bind("Client Options", "Hide Some Friend Codes", false);
+            AutoSaveScreenShot = Config.Bind("Client Options", "Auto Save Autro ScreenShot", false);
+            PreloadMapAssets = Config.Bind("Client Options", "Preload Map Assets", false);
+            MapTheme = Config.Bind("Client Options", "MapTheme", AmongUs.Data.Settings.AudioSettingsData.DEFAULT_MUSIC_VOLUME);
+            ViewPingDetails = Config.Bind("Client Options", "View Ping Details", false);
+            DebugChatopen = Config.Bind("Client Options", "Debug Chat open", false);
+            DebugSendAmout = Config.Bind("Client Options", "Debug Send Amout", false);
+            DebugTours = Config.Bind("Client Options", "DebugTours", false);
+            ShowDistance = Config.Bind("Client Options", "Show Distance", false);
+            FpsLimitRemoval = Config.Bind("Client Options", "Fps Limit Removal", false);
+            JoinWord = Config.Bind("StreamMenu", "JoinWord", "");
+            RemoveWord = Config.Bind("StreamMenu", "RemoveWord", "");
+            DebugKeyInput = Config.Bind("Authentication", "Debug Key", "");
+            ExplosionKeyInput = Config.Bind("Authentication", "Explosion Key", "");
+
+            Logger = BepInEx.Logging.Logger.CreateLogSource("TownOfHost-Pko");
+            TownOfHost.Logger.Enable();
+            TownOfHost.Logger.Disable("NotifyRoles");
+            TownOfHost.Logger.Disable("SendRPC");
+            TownOfHost.Logger.Disable("ReceiveRPC");
+            TownOfHost.Logger.Disable("SwitchSystem");
+            TownOfHost.Logger.Disable("CustomRpcSender");
+            TownOfHost.Logger.Disable("CoroutinPatcher");
+            //TownOfHost.Logger.isDetail = true;
+
+            try
+            {
+                System.Console.OutputEncoding = System.Text.Encoding.UTF8;
+            }
+            catch
+            {
+                TownOfHost.Logger.Error("System.Console.OutputEncodingの変更に失敗", "Main");
+            }
+
+            // 認証関連-初期化
+            DebugKeyAuth = new HashAuth(DebugKeyHash, DebugKeySalt);
+            ExplosionKeyAuth = new HashAuth(ExplosionKeyHash, DebugKeySalt);
+
+            // 認証関連-認証
+            DebugModeManager.Auth(DebugKeyAuth, DebugKeyInput.Value);
+
+            winnerList = new();
+            VisibleTasksCount = false;
+            MessagesToSend = new List<(string, byte, string)>();
+
+            BindPresetNames();
+            SKey = Config.Bind("Other", "countdata", "141c2e1c");
+            BetaBuildURL = Config.Bind("Other", "BetaBuildURL", "");
+            MessageWait = Config.Bind("Other", "MessageWait", 1f);
+            LastKillCooldown = Config.Bind("Other", "LastKillCooldown", (float)30);
+            LastShapeshifterCooldown = Config.Bind("Other", "LastShapeshifterCooldown", (float)30);
+            LastKickModClient = Config.Bind("Other", "LastKickModClientValue", false);
+
+            PluginModuleInitializerAttribute.InitializeAll(true);
+            Blacklist.FetchBlacklist();
+
+            IRandom.SetInstance(new NetRandomWrapper());
+
+            hasArgumentException = false;
+            ExceptionMessage = "";
+
+            try
+            {
+                AddondataInfo.SetRoleColor();
+
+                var type = typeof(RoleBase);
+                var roleClassArray =
+                CustomRoleManager.AllRolesClassType = Assembly.GetAssembly(type)
+                    .GetTypes()
+                    .Where(x => x.IsSubclassOf(type)).ToArray();
+
+                foreach (var roleClassType in roleClassArray)
+                    roleClassType.GetField("RoleInfo")?.GetValue(type);
+            }
+            catch (ArgumentException ex)
+            {
+                TownOfHost.Logger.Error("エラー:Dictionaryの値の重複を検出しました", "LoadDictionary");
+                TownOfHost.Logger.Exception(ex, "LoadDictionary");
+                hasArgumentException = true;
+                ExceptionMessage = ex.Message;
+                ExceptionMessageIsShown = false;
+            }
+            TownOfHost.Logger.Info($"{Application.version}", "AmongUs Version");
+            TownOfHost.Logger.Info($"{ModName} v.{PluginVersion}", "ModPluginVersion");
+            var handler = TownOfHost.Logger.Handler("GitVersion");
+            handler.Info($"{nameof(ThisAssembly.Git.Branch)}: {ThisAssembly.Git.Branch}");
+            handler.Info($"{nameof(ThisAssembly.Git.BaseTag)}: {ThisAssembly.Git.BaseTag}");
+            handler.Info($"{nameof(ThisAssembly.Git.Commit)}: {ThisAssembly.Git.Commit}");
+            handler.Info($"{nameof(ThisAssembly.Git.Commits)}: {ThisAssembly.Git.Commits}");
+            handler.Info($"{nameof(ThisAssembly.Git.IsDirty)}: {ThisAssembly.Git.IsDirty}");
+            handler.Info($"{nameof(ThisAssembly.Git.Sha)}: {ThisAssembly.Git.Sha}");
+            handler.Info($"{nameof(ThisAssembly.Git.Tag)}: {ThisAssembly.Git.Tag}");
+
+            ClassInjector.RegisterTypeInIl2Cpp<ErrorText>();
+
+            Harmony.PatchAll(Assembly.GetExecutingAssembly());
+            Application.quitting += new Action(UtilsOutputLog.SaveNowLog);
+            Application.quitting += new Action(SaveStatistics.Save);
+            Application.quitting += new Action(AchievementSaver.Save);
+            Statistics.NowStatistics = SaveStatistics.Load();
+            AchievementSaver.Load();
+        }
+
+        public static bool IsCs()
+        {
+            if (ServerManager.Instance == null) return false;
+            var sn = ServerManager.Instance.CurrentRegion.TranslateName;
+            if (sn is StringNames.ServerNA or StringNames.ServerEU or StringNames.ServerAS or StringNames.ServerSA)
+                return false;
+            else return true;
+        }
+        public static bool IsAndroid()//参考元、SNR
+        {
+            //Android対応は参加者限定で一旦様子見たいなぁって思ってます。
+            //
+            try
+            {
+                return Constants.GetPlatformType() == Platforms.Android;
+            }
+            catch (Exception e)
+            {
+                TownOfHost.Logger.Error(e.Message, "IsAndroidError");
+                return false;
+            }
+        }
+        public static bool IsPublicRoomAllowed(bool AllowCS = true)
+        {
+            if (!VersionChecker.IsSupported)
+                return false;
+            if (ModUpdater.BlockPublicRoom != null && ModUpdater.BlockPublicRoom.Value == true)
+                return false;
+            if (IsCs())
+                return AllowCS;
+
+            var hasRelayConfigured =
+                !string.IsNullOrWhiteSpace(MatchmakingRelayUrl)
+                && !MatchmakingRelayUrl.Equals("none", StringComparison.OrdinalIgnoreCase);
+
+            return !ModUpdater.hasUpdate
+                && !ModUpdater.isBroken
+                && AllowPublicRoom
+                && (IsPublicAvailableOnThisVersion || hasRelayConfigured);
+        }
+        public static bool IsroleAssigned
+            => !SetRoleOverride/* && Options.CurrentGameMode == CustomGameMode.Standard*/ || SelectRolesPatch.roleAssigned;
+    }
+    public enum CustomDeathReason
+    {
+        Kill,
+        Vote,
+        Suicide,
+        Spell,
+        FollowingSuicide,
+        Bite,
+        Bombed,
+        Misfire,
+        Torched,
+        Sniped,
+        Revenge,
+        Counter,
+        Execution,
+        Infected,
+        Grim,
+        Disconnected,
+        Fall,
+        Magic,
+        Guess,
+        TeleportKill,
+        Trap,
+        NotGather,
+        Hit,
+        Suffocation,
+        Swallowed,
+        Poisoned,
+        Launch,
+        Compression,
+        Evaporation,
+        Retaliation,
+        RuleViolation,
+        Sacrifice,
+        etc = -1
+    }
+    //WinData
+    public enum CustomWinner
+    {
+        Draw = -1,
+        Default = -2,
+        None = -3,
+        Impostor = CustomRoles.Impostor,
+        Crewmate = CustomRoles.Crewmate,
+        Jester = CustomRoles.Jester,
+        HappyJester = CustomRoles.HappyJester,
+        PlagueDoctor = CustomRoles.PlagueDoctor,
+        Terrorist = CustomRoles.Terrorist,
+        Lovers = CustomRoles.Lovers,
+        RedLovers = CustomRoles.RedLovers,
+        YellowLovers = CustomRoles.YellowLovers,
+        BlueLovers = CustomRoles.BlueLovers,
+        GreenLovers = CustomRoles.GreenLovers,
+        WhiteLovers = CustomRoles.WhiteLovers,
+        PurpleLovers = CustomRoles.PurpleLovers,
+        MadonnaLovers = CustomRoles.MadonnaLovers,
+        CupidLovers = CustomRoles.CupidLovers,
+        OneLove = CustomRoles.OneLove,
+        Executioner = CustomRoles.Executioner,
+        Arsonist = CustomRoles.Arsonist,
+        Egoist = CustomRoles.Egoist,
+        Jackal = CustomRoles.Jackal,
+        Remotekiller = CustomRoles.Remotekiller,
+        Chef = CustomRoles.Chef,
+        Monochromer = CustomRoles.Monochromer,
+        GrimReaper = CustomRoles.GrimReaper,
+        CountKiller = CustomRoles.CountKiller,
+        Workaholic = CustomRoles.Workaholic,
+        MassMedia = CustomRoles.MassMedia,
+        SantaClaus = CustomRoles.SantaClaus,
+        DoppelGanger = CustomRoles.DoppelGanger,
+        Vulture = CustomRoles.Vulture,
+        CurseMaker = CustomRoles.CurseMaker,
+        Fox = CustomRoles.Fox,
+        PhantomThief = CustomRoles.PhantomThief,
+        MilkyWay = CustomRoles.Vega,
+        MadBetrayer = CustomRoles.MadBetrayer,
+        Strawdoll = CustomRoles.Strawdoll,
+        Missioneer = CustomRoles.Missioneer,
+        God = CustomRoles.God,
+        Tuna = CustomRoles.Tuna,
+        Onmyoji = CustomRoles.Onmyoji,
+        Zombie = CustomRoles.Zombie,
+        Eater = CustomRoles.Eater,
+        Spelunker = CustomRoles.Spelunker,
+        Pavlov = CustomRoles.PavlovDog,
+        Moira = CustomRoles.Moira,
+        PoisonedBakery = CustomRoles.PoisonedBakery,
+        Monika = CustomRoles.Monika,
+        LoversBreaker = CustomRoles.LoversBreaker,
+        Chatter = CustomRoles.Chatter,
+        Suicider = CustomRoles.Suicider,
+        BatGirl = CustomRoles.BatGirl,
+        StandMaster = CustomRoles.StandMaster,
+        Shyboy = CustomRoles.Shyboy,
+        Villain = CustomRoles.Villain,
+        Scratcher = CustomRoles.Scratcher,
+        PokerFace = CustomRoles.PokerFace,
+        Lawyer = CustomRoles.Lawyer,
+        Pirate = CustomRoles.Pirate,
+        Victim = CustomRoles.Victim,
+        Amateras = CustomRoles.Amateras,
+        Ruler = CustomRoles.Ruler,
+        Hunter = CustomRoles.Hunter,
+
+        HASTroll = CustomRoles.HASTroll,
+        TaskPlayerB = CustomRoles.TaskPlayerB,
+        SuddenDeathRed = 1000, SuddenDeathBlue = 1001, SuddenDeathYellow = 1002, SuddenDeathGreen = 1003, SuddenDeathPurple = 1004
+    }
+    /*public enum CustomRoles : byte
+    {
+        Default = 0,
+        HASTroll = 1,
+        HASHox = 2
+    }*/
+    public enum SuffixModes
+    {
+        None = 0,
+        TOH,
+        Streaming,
+        Recording,
+        RoomHost,
+        OriginalName,
+        Timer
+    }
+    public enum VoteMode
+    {
+        Default,
+        Suicide,
+        SelfVote,
+        Skip
+    }
+
+    public enum TieMode
+    {
+        Default,
+        All,
+        Random
+    }
+
+    public enum CombinationRoles
+    {
+        None,
+        AssassinandMerlin,
+        DriverandBraid,
+        FoolandNue,
+        VegaandAltair,
+        AbuserandVictim,
+        PokerFace,
+        TheThreeLittlePigs
+    }
+}

@@ -1,0 +1,9 @@
+bin/
+obj/
+bin/
+FodyWeavers.xsd
+.vs/
+.vscode/
+.tmp_ehr_ref/
+.TownOfHost.proj/
+memo.md

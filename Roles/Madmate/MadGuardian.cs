@@ -1,0 +1,99 @@
+using AmongUs.GameOptions;
+
+using TownOfHost.Roles.Core;
+using TownOfHost.Roles.Core.Interfaces;
+using static TownOfHost.Options;
+
+namespace TownOfHost.Roles.Madmate;
+
+public sealed class MadGuardian : RoleBase, IKillFlashSeeable, IDeathReasonSeeable
+{
+    public static readonly SimpleRoleInfo RoleInfo =
+        SimpleRoleInfo.Create(
+            typeof(MadGuardian),
+            player => new MadGuardian(player),
+            CustomRoles.MadGuardian,
+            () => OptionCanUseVent.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate,
+            CustomRoleTypes.Madmate,
+            20400,
+            SetupOptionItem,
+            "mg",
+            OptionSort: (2, 0),
+            introSound: () => GetIntroSound(RoleTypes.Impostor),
+            from: From.TownOfHost
+        );
+    public MadGuardian(PlayerControl player)
+    : base(
+        RoleInfo,
+        player,
+        () => HasTask.ForRecompute
+    )
+    {
+        CanSeeWhoTriedToKill = OptionCanSeeWhoTriedToKill.GetBool();
+        MyTaskState.NeedTaskCount = OptionTaskTrigger.GetInt();
+    }
+
+    private static OptionItem OptionTaskTrigger;
+    private static OptionItem OptionCanSeeWhoTriedToKill;
+    private static OptionItem OptionCanUseVent;
+    public static OverrideTasksData Tasks;
+    enum OptionName
+    {
+        MadGuardianCanSeeWhoTriedToKill
+    }
+    private static bool CanSeeWhoTriedToKill;
+
+    private static void SetupOptionItem()
+    {
+        OptionCanSeeWhoTriedToKill = BooleanOptionItem.Create(RoleInfo, 10, OptionName.MadGuardianCanSeeWhoTriedToKill, false, false);
+        OptionCanUseVent = BooleanOptionItem.Create(RoleInfo, 13, GeneralOption.CanVent, false, false);
+        OptionTaskTrigger = IntegerOptionItem.Create(RoleInfo, 12, GeneralOption.TaskTrigger, new(0, 99, 1), 1, false).SetValueFormat(OptionFormat.Pieces);
+        //ID10120~10123を使用
+        Tasks = OverrideTasksData.Create(RoleInfo, 20);
+    }
+    public override bool OnCheckMurderAsTarget(MurderInfo info)
+    {
+        // フリーターの「就職」やジェイラーの「拘禁」のように、info.DoKillをfalseにしただけで
+        // 本当は殺しに来ていない相手に対してガードが発動してしまうのを防ぐ。
+        // OnCheckMurderAsKiller(攻撃側)はOnCheckMurderAsTarget(被害側)より先に評価されるため、
+        // ここでDoKillが既にfalseなら偽のキル判定だと分かる。
+        if (!info.DoKill) return true;
+
+        (var killer, var target) = info.AttemptTuple;
+
+        //MadGuardianを切れるかの判定処理
+        if (!MyTaskState.HasCompletedEnoughCountOfTasks(OptionTaskTrigger.GetInt())) return true;
+
+        UtilsGameLog.AddGameLog($"MadGuardian", UtilsName.GetPlayerColor(Player) + ":  " + string.Format(GetString("GuardMaster.Guard"), UtilsName.GetPlayerColor(killer, true)));
+        info.GuardPower = 2;
+
+        killer.SetKillCooldown();
+
+        if (!NameColorManager.TryGetData(killer, target, out var value) || value != RoleInfo.RoleColorCode)
+        {
+            if (killer.Is(CustomRoles.WolfBoy))
+                NameColorManager.Add(killer.PlayerId, target.PlayerId, "#ff1919");
+            else
+                NameColorManager.Add(killer.PlayerId, target.PlayerId);
+
+            if (CanSeeWhoTriedToKill)
+                NameColorManager.Add(target.PlayerId, killer.PlayerId, RoleInfo.RoleColorCode);
+            UtilsNotifyRoles.NotifyRoles();
+
+            if (killer.Is(CustomRoles.Impostor))
+                Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);
+        }
+
+        return false;
+    }
+    public bool? CheckKillFlash(MurderInfo info) => MadmateCanSeeKillFlash.GetBool();
+    public bool? CheckSeeDeathReason(PlayerControl seen) => MadmateCanSeeDeathReason.GetBool();
+    public override CustomRoles TellResults(PlayerControl player) => MadTellOpt();
+    public static System.Collections.Generic.Dictionary<int, Achievement> achievements = new();
+    [Attributes.PluginModuleInitializer]
+    public static void Load()
+    {
+        var n1 = new Achievement(RoleInfo, 0, 1, 0, 0);
+        achievements.Add(0, n1);
+    }
+}

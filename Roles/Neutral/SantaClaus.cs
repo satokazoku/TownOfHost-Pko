@@ -1,0 +1,354 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using AmongUs.GameOptions;
+
+using TownOfHost.Roles.Core;
+using TownOfHost.Roles.Core.Interfaces;
+using Hazel;
+
+namespace TownOfHost.Roles.Neutral;
+
+public sealed class SantaClaus : RoleBase, IAdditionalWinner
+{
+    public static readonly SimpleRoleInfo RoleInfo =
+        SimpleRoleInfo.Create(
+            typeof(SantaClaus),
+            player => new SantaClaus(player),
+            CustomRoles.SantaClaus,
+            () => RoleTypes.Engineer,
+            CustomRoleTypes.Neutral,
+            54000,
+            SetupOptionItem,
+            "Sac",
+            "#e05050",
+            (5, 4),
+            Desc: () =>
+            {
+                return string.Format(GetString("SantaClausDesc"), OptWinGivePresentCount.GetInt(), OptAddWin.GetBool() ? GetString("AddWin") : GetString("SoloWin"));
+            },
+            from: From.TownOfHost_K
+        );
+    public SantaClaus(PlayerControl player)
+    : base(
+        RoleInfo,
+        player,
+        () => HasTask.ForRecompute
+    )
+    {
+        WinGivePresentCount = OptWinGivePresentCount.GetInt();
+        AddWin = OptAddWin.GetBool();
+        MaxHavePresent = OptionMaxHavePresent.GetInt();
+
+        IWinflag = false;
+        MeetingNotify = false;
+        MeetingNotifyRoom = new();
+        havepresent = 0;
+        giftpresent = 0;
+        EntotuVentId = null;
+        EntotuVentPos = null;
+        meetinggift = 0;
+        GiftedPlayers.Clear();
+        Memo = "";
+        RoomName = "";
+    }
+    static OptionItem OptWinGivePresentCount; static int WinGivePresentCount;
+    static OptionItem OptAddWin; static bool AddWin;
+    static OptionItem Optpresent;
+    static OptionItem OptionMaxHavePresent; static int MaxHavePresent;
+    enum OptionName
+    {
+        SantaClausWinGivePresentCount,
+        CountKillerAddWin,//追加勝利
+        SantaClausGivePresent,
+        SantaClausMaxHavePresent
+    }
+    bool IWinflag;
+    bool MeetingNotify;
+    List<string> MeetingNotifyRoom;
+    int havepresent;
+    int giftpresent;
+    int? EntotuVentId;
+    int meetinggift;
+    Vector3? EntotuVentPos;
+    string Memo;
+    string RoomName;
+    static List<byte> GiftedPlayers = new();
+    private static void SetupOptionItem()
+    {
+        OptWinGivePresentCount = IntegerOptionItem.Create(RoleInfo, 10, OptionName.SantaClausWinGivePresentCount, new(1, 30, 1), 4, false);
+        OptionMaxHavePresent = IntegerOptionItem.Create(RoleInfo, 18, OptionName.SantaClausMaxHavePresent, new(1, 15, 1), 2, false);
+        OptAddWin = BooleanOptionItem.Create(RoleInfo, 15, OptionName.CountKillerAddWin, false, false);
+        SoloWinOption.Create(RoleInfo, 16, show: () => !OptAddWin.GetBool(), defo: 1);
+        Optpresent = BooleanOptionItem.Create(RoleInfo, 17, OptionName.SantaClausGivePresent, true, false);
+        OverrideTasksData.Create(RoleInfo, 20, tasks: (true, 0, 0, 3));
+    }
+    public override void Add() => SetPresentVent();
+    public override void ApplyGameOptions(IGameOptions opt)
+    {
+        AURoleOptions.EngineerCooldown = 1.1f;
+        AURoleOptions.EngineerInVentMaxTime = 1;
+    }
+    public override bool OnCompleteTask(uint taskid)
+    {
+        if (MyTaskState.IsTaskFinished && Player.IsAlive())
+        {
+            havepresent++;
+            UtilsNotifyRoles.NotifyRoles();
+
+            if (havepresent < MaxHavePresent)
+            {
+                _ = new LateTask(() =>
+                {
+                    Player.Data.RpcSetTasks(Array.Empty<byte>());
+                    MyTaskState.CompletedTasksCount = 0;
+                }, 1, "SetTask", true);
+            }
+        }
+        return true;
+    }
+    public override string GetProgressText(bool comms = false, bool GameLog = false)
+    {
+        var win = $"{giftpresent}/{WinGivePresentCount}";
+
+        return $"({havepresent}) <color=#e05050>({win})</color>";
+    }
+    public override void OnReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
+    {
+        Memo = "";
+        if (!MeetingNotify || !Player.IsAlive() || MeetingNotifyRoom.Count <= 0) return;
+
+        var text = "";
+        var count = 0;
+        while (meetinggift > 0)
+        {
+            var room = MeetingNotifyRoom[count++];
+            var chance = IRandom.Instance.Next(0, 20);
+            var mesnumber = 0;
+
+            if (chance > 18) mesnumber = 2;
+            if (chance > 15) mesnumber = 1;
+
+            var msg = string.Format(GetString($"SantaClausMeetingMeg{mesnumber}"), room);
+
+            MeetingNotify = false;
+            if (text is not "") text += "\n";
+            text += $"<size=60%><color=#e05050>{msg}</color></size>";
+
+            if (Optpresent.GetBool())
+            {
+                GiftPresent();
+            }
+            meetinggift--;
+        }
+        meetinggift = 0;
+        MeetingNotifyRoom.Clear();
+        Memo = text;
+    }
+    public override string MeetingAddMessage()
+    {
+        var send = Memo;
+        Memo = "";
+        return send;
+    }
+    public override bool OnEnterVent(PlayerPhysics physics, int ventId)
+    {
+        if (!Player.IsAlive() || ventId != EntotuVentId || havepresent <= 0 || EntotuVentPos == null) return false;
+
+        havepresent--;
+        //プレゼントを渡せたって言う処理
+        Player.RpcProtectedMurderPlayer();
+
+        if (havepresent < MaxHavePresent && MyTaskState.CompletedTasksCount == MyTaskState.AllTasksCount)
+        {
+            Player.Data.RpcSetTasks(Array.Empty<byte>());
+            MyTaskState.CompletedTasksCount = 0;
+        }
+        giftpresent++;
+        meetinggift++;
+        Player.SyncSettings();
+        EntotuVentId = null;
+        MeetingNotify = true;
+
+        // 通知の奴
+        MeetingNotifyRoom.Add(Player.GetShipRoomName());
+
+        GetArrow.Remove(Player.PlayerId, (Vector3)EntotuVentPos);
+        if (WinGivePresentCount <= giftpresent)
+        {
+            Logger.Info($"{Player?.Data?.GetLogPlayerName() ?? "null"}が勝利条件達成！", "SantaClaus");
+
+            if (!AddWin)//単独勝利設定なら即勝利で処理終わり
+            {
+                if (CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.SantaClaus, Player.PlayerId, true))
+                {
+                    CustomWinnerHolder.NeutralWinnerIds.Add(Player.PlayerId);
+                }
+                SetPresentVent();
+                return false;
+            }
+            else
+            {
+                IWinflag = true;
+            }
+        }
+        SetPresentVent(); //ここでSendRPCされます
+        UtilsNotifyRoles.NotifyRoles();
+
+        return false;
+    }
+    public override string GetLowerText(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
+    {
+        seen ??= seer;
+        //自分だけで完結しないならお帰り！
+        if (seen.PlayerId != seer.PlayerId) return "";
+        //会議、死亡するとおしまい
+        if (isForMeeting || !Player.IsAlive()) return "";
+
+        //配達先が決まっている時
+        if (EntotuVentPos != null && EntotuVentId != null && MaxHavePresent <= havepresent)
+            return $"<color=#e05050>{GetString("SantaClausLower1") + GetArrow.GetArrows(seer, (Vector3)EntotuVentPos)}({RoomName})</color>";
+
+        // プレゼントの用意をするんだぜ
+        var pos = "";
+        if (EntotuVentPos != null && EntotuVentId != null)
+        {
+            pos = GetString("SantaClausLower1") + GetArrow.GetArrows(seer, (Vector3)EntotuVentPos) + $"({RoomName})";
+        }
+        return $"<color=#e05050>{GetString("SantaClausLower2")}<size=60%>{pos}</size></color>";
+    }
+    public override string GetMark(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
+    {
+        seen ??= seer;
+        if (IWinflag && seen == seer) return Utils.AdditionalWinnerMark;
+        return "";
+    }
+    public bool CheckWin(ref CustomRoles winnerRole) => IWinflag;
+    public override string GetAbilityButtonText() => GetString("ChefButtonText");
+    public override bool OverrideAbilityButton(out string text)
+    {
+        text = "SantaClaus_Ability";
+        return true;
+    }
+    void SetPresentVent()
+    {
+        if (!AmongUsClient.Instance.AmHost) return;
+
+        // プレゼントの配達先リスト
+        List<Vent> AllVents = new(ShipStatus.Instance.AllVents);
+
+        var ev = AllVents[IRandom.Instance.Next(AllVents.Count)];
+
+        EntotuVentId = ev.Id;
+        EntotuVentPos = new Vector3(ev.transform.position.x, ev.transform.position.y);
+        GetArrow.Add(Player.PlayerId, (Vector3)EntotuVentPos);
+        SendRPC();
+        RoomName = ExtendedPlayerControl.GetShipRoomName(EntotuVentPos.Value);
+    }
+    CustomRoles[] giveaddons =
+    {
+        CustomRoles.Autopsy,
+        CustomRoles.Lighting,
+        CustomRoles.Moon,
+        CustomRoles.Guesser,
+        CustomRoles.Tiebreaker,
+        CustomRoles.Opener,
+        CustomRoles.Management,
+        CustomRoles.Speeding,
+        CustomRoles.MagicHand,
+        CustomRoles.Serial,
+        CustomRoles.Transparent,//なんでデバグがあるのかって?悪いサンタもおるやろ。
+        CustomRoles.InfoPoor,//   というか天邪鬼付与させたいとても(?)
+        CustomRoles.Water,
+        CustomRoles.Clumsy,
+        CustomRoles.Sunglasses
+    };
+    void GiftPresent()
+    {
+        List<PlayerControl> GiftTargets = new();
+        foreach (var player in PlayerCatch.AllAlivePlayerControls)
+        {
+            if (!player.IsAlive()) continue;
+            if (GiftedPlayers.Contains(player.PlayerId)) continue;
+            GiftTargets.Add(player);
+        }
+        if (GiftTargets.Count < 1)
+        {
+            Logger.Info($"ギフトのターゲットがいないって伝えなきゃ!", "SantaClaus");
+            return;
+        }
+
+        var target = GiftTargets[IRandom.Instance.Next(GiftTargets.Count)];
+        if (!target)
+        {
+            return;
+        }
+        var roles = giveaddons.Where(role => !target.Is(role)).ToList();
+        if (roles.Count < 1)
+        {
+            Logger.Info($"{target.Data.GetLogPlayerName()}には付与できないって伝えなきゃ！", "SantaClaus");
+            GiftedPlayers.Add(target.PlayerId);
+            return;
+        }
+
+        var giftrole = roles[IRandom.Instance.Next(roles.Count)];
+        if (giftrole.IsDebuffAddon()) Achievements.RpcCompleteAchievement(Player.PlayerId, 1, achievements[2]);
+        target.RpcSetCustomRole(giftrole);
+        Logger.Info($"{Player.Data.GetLogPlayerName()}:gift=>{target.Data.GetLogPlayerName()}({giftrole})", "SantaClaus");
+        _ = new LateTask(() => Utils.SendMessage(string.Format(GetString("SantaGiftAddonMessage"), UtilsRoleText.GetRoleColorAndtext(giftrole)), target.PlayerId), 5f, "SantaGiftMeg", true);
+    }
+
+    public void SendRPC()
+    {
+        using var sender = CreateSender();
+        sender.Writer.Write(havepresent);
+        sender.Writer.Write(giftpresent);
+        sender.Writer.Write(EntotuVentId.HasValue);
+        if (EntotuVentId.HasValue)
+            sender.Writer.Write(EntotuVentId.Value);
+    }
+
+    public override void ReceiveRPC(MessageReader reader)
+    {
+        var oldVentId = EntotuVentId;
+
+        havepresent = reader.ReadInt32();
+        giftpresent = reader.ReadInt32();
+        EntotuVentId = reader.ReadBoolean() ? reader.ReadInt32() : null;
+
+        //posが更新されたときのみ処理
+        if (oldVentId != EntotuVentId)
+        {
+            var vent = ShipStatus.Instance.AllVents.FirstOrDefault(x => x.Id == EntotuVentId);
+            Vector3? pos = vent == null ? null : new Vector3(vent.transform.position.x, vent.transform.position.y);
+
+            if (EntotuVentPos.HasValue)
+                GetArrow.Remove(Player.PlayerId, EntotuVentPos.Value);
+
+            if (vent != null && pos.HasValue)
+            {
+                GetArrow.Add(Player.PlayerId, pos.Value);
+                RoomName = ExtendedPlayerControl.GetShipRoomName(pos.Value);
+            }
+
+            EntotuVentPos = pos;
+        }
+    }
+    public override void CheckWinner(GameOverReason reason)
+    {
+        Achievements.RpcCompleteAchievement(Player.PlayerId, 1, achievements[0], giftpresent);
+        Achievements.RpcCompleteAchievement(Player.PlayerId, 1, achievements[1], giftpresent);
+    }
+    public static Dictionary<int, Achievement> achievements = new();
+    [Attributes.PluginModuleInitializer]
+    public static void Load()
+    {
+        var n1 = new Achievement(RoleInfo, 0, 5, 0, 0);
+        var sp1 = new Achievement(RoleInfo, 1, 50, 0, 2);
+        var l1 = new Achievement(RoleInfo, 2, 10, 0, 1);
+        achievements.Add(0, n1);
+        achievements.Add(1, sp1);
+        achievements.Add(2, l1);
+    }
+}

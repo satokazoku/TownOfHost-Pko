@@ -1,0 +1,129 @@
+using AmongUs.GameOptions;
+using Hazel;
+using TownOfHost.Modules;
+using TownOfHost.Roles.Core;
+using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Crewmate;
+using TownOfHost.Roles.Madmate;
+
+namespace TownOfHost.Roles.Impostor;
+
+public sealed class EvilMaker : RoleBase, IImpostor, IUsePhantomButton
+{
+    public static readonly SimpleRoleInfo RoleInfo =
+        SimpleRoleInfo.Create(
+            typeof(EvilMaker),
+            player => new EvilMaker(player),
+            CustomRoles.EvilMaker,
+            () => RoleTypes.Phantom,
+            CustomRoleTypes.Impostor,
+            4200,
+            SetupOptionItem,
+            "Em",
+            OptionSort: (2, 5),
+            from: From.TownOfHost_K
+        );
+    public EvilMaker(PlayerControl player)
+    : base(
+        RoleInfo,
+        player
+    )
+    {
+        KillCooldown = OptionKillCoolDown.GetFloat();
+        AbilityCooldown = OptionAbilityCoolDown.GetFloat();
+
+        Used = false;
+    }
+    static OptionItem OptionKillCoolDown; static float KillCooldown;
+    static OptionItem OptionAbilityCoolDown; static float AbilityCooldown;
+    bool Used;
+    private static void SetupOptionItem()
+    {
+        OptionKillCoolDown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.KillCooldown, OptionBaseCoolTime, 20f, false)
+                .SetValueFormat(OptionFormat.Seconds);
+        OptionAbilityCoolDown = FloatOptionItem.Create(RoleInfo, 11, GeneralOption.Cooldown, OptionBaseCoolTime, 20f, false)
+                .SetValueFormat(OptionFormat.Seconds);
+    }
+    public float CalculateKillCooldown() => KillCooldown;
+    bool IUsePhantomButton.IsPhantomRole => !Used;
+    bool IUsePhantomButton.IsresetAfterKill => false;
+    public override void ApplyGameOptions(IGameOptions opt) => AURoleOptions.PhantomCooldown = AbilityCooldown;
+    public void OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
+    {
+        ResetCooldown = true;
+
+        if (Used) return;
+
+        var target = Player.GetKillTarget(true);
+        if (target == null) return;
+        if ((target.GetCustomRole() is CustomRoles.SKMadmate or CustomRoles.King or CustomRoles.Merlin or CustomRoles.AlienHijack || target.IsTeammate(Player)) && !SuddenDeathMode.NowSuddenDeathMode) return;
+        if (target.Is(CustomRoles.Madpsycho))
+        {
+            if (Madpsycho.CanPsycho)
+            {
+                PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = Madpsycho.deathReasons[Madpsycho.OptionDeathReason.GetValue()];
+                target.RpcMurderPlayer(Player);
+                return;
+            }
+        }
+        Used = true;
+        AdjustKillCooldown = false;
+        if (SuddenDeathMode.NowSuddenDeathTemeMode)
+        {
+            target.SideKickChangeTeam(Player);
+        }
+
+        _ = new LateTask(() => Player.SetKillCooldown(target: target), Main.LagTime, "", true);
+        target.RpcProtectedMurderPlayer(Player);
+        target.RpcProtectedMurderPlayer(target);
+        UtilsGameLog.AddGameLog($"SideKick", string.Format(GetString("log.Sidekick"), UtilsName.GetPlayerColor(target, true) + $"({UtilsRoleText.GetTrueRoleName(target.PlayerId)})", UtilsName.GetPlayerColor(Player, true)));
+        target.RpcSetCustomRole(Player.Is(CustomRoles.JackalWolf) ? CustomRoles.Jackaldoll : CustomRoles.SKMadmate, log: null);
+        if (Player.Is(CustomRoles.JackalWolf))
+        {
+            if (!Utils.RoleSendList.Contains(target.PlayerId)) Utils.RoleSendList.Add(target.PlayerId);
+            Neutral.JackalDoll.Sidekick(target, Player);
+            UtilsOption.MarkEveryoneDirtySettings();
+            AdjustKillCooldown = true;
+            SendRPC();
+            return;
+        }
+        NameColorManager.Add(Player.PlayerId, target.PlayerId, "#ff1919");
+        NameColorManager.Add(target.PlayerId, Player.PlayerId, "#ff1919");
+        if (!Utils.RoleSendList.Contains(target.PlayerId)) Utils.RoleSendList.Add(target.PlayerId);
+
+        target.RpcSetRole(Options.SkMadCanUseVent.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate, true);
+        PlayerCatch.SKMadmateNowCount++;
+        target.MarkDirtySettings();
+        UtilsNotifyRoles.NotifyRoles();
+        AdjustKillCooldown = true;
+        SendRPC();
+    }
+    public override string GetAbilityButtonText() => GetString("Sidekick");
+    public override bool OverrideAbilityButton(out string text)
+    {
+        text = "Impostor_Side";
+        return true;
+    }
+
+    public override string GetLowerText(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
+    {
+        seen ??= seer;
+        if (seen.PlayerId != seer.PlayerId || isForMeeting || !Used || Options.CanMakeMadmateCount.GetInt() <= PlayerCatch.SKMadmateNowCount || !Player.IsAlive()) return "";
+
+        if (isForHud) return GetString("PhantomButtonSideKick");
+        return $"<size=50%>{GetString("PhantomButtonSideKick")}</size>";
+    }
+
+    public void SendRPC()
+    {
+        using var sender = CreateSender();
+        sender.Writer.Write(PlayerCatch.SKMadmateNowCount);
+        sender.Writer.Write(Used);
+    }
+
+    public override void ReceiveRPC(MessageReader reader)
+    {
+        PlayerCatch.SKMadmateNowCount = reader.ReadInt32();
+        Used = reader.ReadBoolean();
+    }
+}

@@ -1,0 +1,693 @@
+using System.Collections.Generic;
+using System.Linq;
+using AmongUs.GameOptions;
+using HarmonyLib;
+using Hazel;
+using TownOfHost.Modules;
+using TownOfHost.Patches.ISystemType;
+using TownOfHost.Roles.AddOns.Common;
+using TownOfHost.Roles.Core;
+using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Crewmate;
+using TownOfHost.Roles.Ghost;
+using TownOfHost.Roles.Impostor;
+using TownOfHost.Roles.Madmate;
+using TownOfHost.Roles.Neutral;
+using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
+
+namespace TownOfHost
+
+{
+    #region  ShapeShift
+    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CheckShapeshift))]
+    public static class PlayerControlCheckShapeshiftPatch
+    {
+        private static readonly LogHandler logger = Logger.Handler(nameof(PlayerControl.CheckShapeshift));
+
+        public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target, [HarmonyArgument(1)] bool shouldAnimate)
+        {
+            if (AmongUsClient.Instance.IsGameOver || !AmongUsClient.Instance.AmHost)
+            {
+                return false;
+            }
+
+            var roleclass = __instance.GetRoleClass();
+
+            // 無効な変身を弾く．これより前に役職等の処理をしてはいけない
+            if (!CheckInvalidShapeshifting(__instance, target, shouldAnimate))
+            {
+                __instance.RpcRejectShapeshift();
+                return false;
+            }
+
+            var shapeshifter = __instance;
+            var shapeshifting = shapeshifter.PlayerId != target.PlayerId;
+            // 変身したとき一番近い人をマッドメイトにする処理
+            if ((shapeshifter.CanMakeMadmate() ||
+            (shapeshifter.Is(CustomRoles.JackalWolf) && JackalWolf.OptionHaveRole.GetRole().CanMakeMadmate() && (JackalDoll.GetSideKickCount() <= JackalDoll.NowSideKickCount)))
+            && shapeshifting)
+            {
+                var sidekickable = roleclass as ISidekickable;
+                var targetRole = sidekickable?.SidekickTargetRole ?? CustomRoles.SKMadmate;
+                if (shapeshifter.Is(CustomRoles.JackalWolf)) targetRole = CustomRoles.Jackaldoll;
+                //var targetm = shapeshifter.GetKillTarget();
+                Vector2 shapeshifterPosition = shapeshifter.transform.position;//変身者の位置
+                Dictionary<PlayerControl, float> mpdistance = new();
+                float dis;
+                foreach (var pc in PlayerCatch.AllAlivePlayerControls)
+                {
+                    if ((pc.Data.Role.Role != RoleTypes.Shapeshifter || pc.GetCustomRole().GetRoleInfo()?.BaseRoleType.Invoke() != RoleTypes.Shapeshifter) && !pc.IsTeammate(shapeshifter) && !pc.Is(targetRole))
+                    {
+                        dis = Vector2.Distance(shapeshifterPosition, pc.transform.position);
+                        mpdistance.Add(pc, dis);
+                    }
+                }
+                if (mpdistance.Count != 0)
+
+                //if (targetm != null && !targetm.Is(targetRole) && !targetm.Is(CustomRoleTypes.Impostor))
+                {
+                    //shapeshifter.RpcShapeshift(shapeshifter, false);
+                    var min = mpdistance.OrderBy(c => c.Value).FirstOrDefault();//一番値が小さい
+                    PlayerControl targetm = min.Key;
+                    if (!(targetm.GetCustomRole() is CustomRoles.King or CustomRoles.Merlin or CustomRoles.AlienHijack or CustomRoles.Autocrat))
+                    {
+                        var source = shapeshifter.Is(CustomRoles.Egoist) || targetRole is CustomRoles.Jackaldoll
+                            ? Walkure.RoleChangeSource.Jackal
+                            : Walkure.RoleChangeSource.Impostor;
+                        if (Walkure.TryRejectRoleChange(shapeshifter, targetm, source))
+                        {
+                            shapeshifter.RpcRejectShapeshift();
+                            return false;
+                        }
+                        if (targetm.Is(CustomRoles.Madpsycho))
+                        {
+                            if (Madpsycho.CanPsycho)
+                            {
+                                PlayerState.GetByPlayerId(shapeshifter.PlayerId).DeathReason = Madpsycho.deathReasons[Madpsycho.OptionDeathReason.GetValue()];
+                                target.RpcMurderPlayer(shapeshifter);
+                                return false;
+                            }
+                        }
+                        if (SuddenDeathMode.NowSuddenDeathTemeMode)
+                        {
+                            targetm.SideKickChangeTeam(shapeshifter);
+                        }
+                        UtilsGameLog.AddGameLog("SideKick", string.Format(Translator.GetString("log.Sidekick"), UtilsName.GetPlayerColor(targetm, true) + $"({UtilsRoleText.GetTrueRoleName(targetm.PlayerId)})", UtilsName.GetPlayerColor(shapeshifter, true)));
+                        targetm.RpcSetCustomRole(targetRole);
+                        Logger.Info($"Make SKMadmate:{targetm.name}", "Shapeshift");
+                        shapeshifter.RpcProtectedMurderPlayer(targetm);
+                        targetm.RpcProtectedMurderPlayer(shapeshifter);
+                        targetm.RpcProtectedMurderPlayer(targetm);
+                        if (targetRole is CustomRoles.Jackaldoll)
+                        {
+                            JackalDoll.Sidekick(targetm, shapeshifter);
+                            if (!Utils.RoleSendList.Contains(targetm.PlayerId)) Utils.RoleSendList.Add(targetm.PlayerId);
+                            PlayerState.GetByPlayerId(targetm.PlayerId).SetCountType(CountTypes.Crew);
+                            UtilsOption.MarkEveryoneDirtySettings();
+                        }
+                        else
+                        {
+                            PlayerCatch.SKMadmateNowCount++;
+
+                            target.RpcSetRole(Options.SkMadCanUseVent.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate);
+                            NameColorManager.Add(targetm.PlayerId, shapeshifter.PlayerId, "#ff1919");
+                            if (!Utils.RoleSendList.Contains(targetm.PlayerId)) Utils.RoleSendList.Add(targetm.PlayerId);
+                            PlayerState.GetByPlayerId(targetm.PlayerId).SetCountType(CountTypes.Crew);
+                            UtilsGameLog.LastLogRole[targetm.PlayerId] += "<b>⇒" + Utils.ColorString(UtilsRoleText.GetRoleColor(targetm.GetCustomRole()), Translator.GetString($"{targetm.GetCustomRole()}")) + "</b>" + UtilsRoleText.GetSubRolesText(targetm.PlayerId);
+                            UtilsOption.MarkEveryoneDirtySettings();
+                            UtilsNotifyRoles.NotifyRoles();
+                            //shapeshifter.RpcRejectShapeshift();
+                            //return false;
+                        }
+                    }
+                }
+            }
+            // 役職の処理
+            if (Amnesia.CheckAbility(shapeshifter))
+                if (roleclass?.CheckShapeshift(target, ref shouldAnimate) == false && !MeetingHud.Instance)
+                {
+                    if (roleclass.CanDesyncShapeshift)
+                    {
+                        shouldAnimate &= !MeetingHud.Instance;
+                        shapeshifter.RpcSpecificRejectShapeshift(target, shouldAnimate);
+                    }
+                    else
+                    {
+                        shapeshifter.RpcRejectShapeshift();
+                    }
+                    return false;
+                }
+            shouldAnimate &= !MeetingHud.Instance;
+
+            shapeshifter.RpcShapeshift(target, shouldAnimate);
+            return false;
+        }
+        private static bool CheckInvalidShapeshifting(PlayerControl instance, PlayerControl target, bool animate)
+        {
+            logger.Info($"Checking shapeshift {instance.GetNameWithRole().RemoveHtmlTags()} -> {(target == null || target.Data == null ? "(null)" : target.GetNameWithRole().RemoveHtmlTags())} (animate:{animate})");
+
+            if (!target || target.Data == null)
+            {
+                logger.Info("targetがnullのため変身をキャンセルします");
+                return false;
+            }
+            if (!instance.IsAlive())
+            {
+                logger.Info("変身者が死亡しているため変身をキャンセルします");
+                return false;
+            }
+            if (instance.Is(CustomRoles.SKMadmate) || instance.Is(CustomRoles.Jackaldoll))
+            {
+                logger.Info("変身者がサイドキックされてるため変身をキャンセルします");
+                return false;
+            }
+            // RoleInfoによるdesyncシェイプシフター用の判定を追加
+            if (instance.Data.Role.Role != RoleTypes.Shapeshifter && instance.GetCustomRole().GetRoleInfo()?.BaseRoleType?.Invoke() != RoleTypes.Shapeshifter)
+            {
+                logger.Info("変身者がシェイプシフターではないため変身をキャンセルします");
+                return false;
+            }
+            if (instance.Data.Disconnected)
+            {
+                logger.Info("変身者が切断済のため変身をキャンセルします");
+                return false;
+            }
+            if (target.IsMushroomMixupActive() && animate)
+            {
+                logger.Info("キノコカオス中のため変身をキャンセルします");
+                return false;
+            }
+            if ((MeetingHud.Instance || GameStates.CalledMeeting) && animate)
+            {
+                logger.Info("会議中のため変身をキャンセルします");
+                return false;
+            }
+            return true;
+        }
+    }
+
+    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.Shapeshift))]
+    class ShapeshiftPatch
+    {
+        public static void Prefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target, [HarmonyArgument(1)] bool animate)
+        {
+            Logger.Info($"{__instance?.GetNameWithRole().RemoveHtmlTags()} => {target?.GetNameWithRole().RemoveHtmlTags()}", "Shapeshift");
+
+            var shapeshifter = __instance;
+            var shapeshifting = shapeshifter.PlayerId != target.PlayerId;
+
+            if (Main.CheckShapeshift.TryGetValue(shapeshifter.PlayerId, out var last) && last == shapeshifting)
+            {
+                Logger.Info($"{__instance?.GetNameWithRole().RemoveHtmlTags()}:Cancel Shapeshift.Prefix", "Shapeshift");
+                return;
+            }
+
+            Main.CheckShapeshift[shapeshifter.PlayerId] = shapeshifting;
+            Main.ShapeshiftTarget[shapeshifter.PlayerId] = target.PlayerId;
+
+            shapeshifter.GetRoleClass()?.OnShapeshift(target);
+            if (GameStates.IsMeeting) return;
+
+            if (!AmongUsClient.Instance.AmHost) return;
+
+            _ = new LateTask(() =>
+            {
+                foreach (var role in CustomRoleManager.AllActiveRoles.Values)
+                {
+                    role.ChangeColor();
+                }
+            }, 1.2f, "", true);
+
+            if (!shapeshifting)
+            {
+                Camouflage.RpcSetSkin(shapeshifter);
+            }
+            _ = new LateTask(() =>
+                shapeshifter.OnlySeeMyPet(target.Data.DefaultOutfit.PetId), animate ? 1.2f : 0.1f, "ShapeSetPet", null);
+
+            //変身解除のタイミングがずれて名前が直せなかった時のために強制書き換え
+            if (!shapeshifting)
+            {
+                _ = new LateTask(() =>
+                {
+                    UtilsNotifyRoles.NotifyRoles(NoCache: true);
+                },
+                1.2f, "ShapeShiftNotify");
+            }
+        }
+    }
+    #endregion
+    #region Phantom
+    //[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CheckVanish))]
+    class PlayerControlPhantomPatch
+    {
+        public static bool CheckVanish(PlayerControl __instance)
+        {
+            if (AmongUsClient.Instance.AmHost is false) return false;
+
+            if (__instance.PlayerId == PlayerControl.LocalPlayer.PlayerId) return false;
+
+            var AdjustKillCooldown = true;
+            bool? ResetCooldown = true;
+
+            var iusephantombutton = __instance.GetRoleClass() as IUsePhantomButton;
+            if (iusephantombutton != null && Main.CanUseAbility)
+                iusephantombutton.CheckOnClick(ref AdjustKillCooldown, ref ResetCooldown);
+
+            float TurnTimer = 0;
+            IUsePhantomButton.IPPlayerKillCooldown.TryGetValue(__instance.PlayerId, out TurnTimer);
+            Main.AllPlayerKillCooldown.TryGetValue(__instance.PlayerId, out var killcool);
+            /* 初手で、キルク修正がオフでキルクが10s以上で、10sのまま*/
+            if (MeetingStates.FirstMeeting && !Options.FixFirstKillCooldown.GetBool() && killcool > 10 &&
+            (PlayerState.GetByPlayerId(__instance.PlayerId)?.Is10secKillButton == true))
+                killcool = 10;
+            float cooldown = killcool - TurnTimer;
+            if (cooldown <= 1) cooldown = 0.005f;
+            if (iusephantombutton?.SyncAbilityCooldownWithKillCooldown == true)
+                iusephantombutton.SetSyncedAbilityCooldown(cooldown);
+            Logger.Info($"Use:{__instance.Data.GetLogPlayerName()}", "PhantomButton");
+
+            if (AdjustKillCooldown)
+            {
+                Main.AllPlayerKillCooldown[__instance.PlayerId] = cooldown < 10 ? cooldown : cooldown * 2;
+                __instance.SyncSettings();
+            }
+            var writer = CustomRpcSender.Create("Phantom OneClick", SendOption.None);
+            writer.StartMessage(__instance.GetClientId());
+
+            /*モーションのせいで1.5秒位ベント、キル不可になるのが...
+            writer.StartRpc(__instance.NetId, (byte)RpcCalls.StartVanish)
+                .EndRpc();
+            writer.StartRpc(__instance.NetId, (byte)RpcCalls.StartAppear)
+                .Write(true)//falseにしたら動かない。多分ベント用
+                .EndRpc();*/
+            if (ResetCooldown is not null)
+            {
+                writer.StartRpc(__instance.NetId, (byte)RpcCalls.SetRole)
+                    .Write((ushort)RoleTypes.Impostor)
+                    .Write(true)
+                    .EndRpc();
+                if ((__instance.GetRoleClass() as IUsePhantomButton)?.IsPhantomRole is true)
+                {
+                    writer.StartRpc(__instance.NetId, (byte)RpcCalls.SetRole)
+                        .Write((ushort)RoleTypes.Phantom)
+                        .Write(true)
+                        .EndRpc();
+                }
+            }
+            if (AdjustKillCooldown && 10 < cooldown)
+            {
+                writer.StartRpc(__instance.NetId, (byte)RpcCalls.MurderPlayer)
+                    .WriteNetObject(__instance)
+                    .Write((int)MurderResultFlags.FailedProtected)
+                    .EndRpc();
+            }
+            if (ResetCooldown is true && (__instance.GetRoleClass() as IUsePhantomButton)?.IsPhantomRole is true)
+            {
+                writer.StartRpc(__instance.NetId, (byte)RpcCalls.ProtectPlayer)
+                    .WriteNetObject(__instance)
+                    .Write(0)
+                    .EndRpc();
+            }
+            writer.EndMessage();
+            writer.SendMessage();
+            __instance.ResetKillCooldown();
+            if (AdjustKillCooldown)
+            {
+                Main.AllPlayerKillCooldown[__instance.PlayerId] = cooldown;
+                IUsePhantomButton.IPPlayerKillCooldown[__instance.PlayerId] = 0f;
+            }
+
+            return __instance.GetCustomRole() is CustomRoles.Phantom;
+        }
+    }
+    #endregion
+    #region  Vent
+
+    [HarmonyPatch(typeof(Vent), nameof(Vent.Use))]
+    class OcCoVentUsePatch
+    {
+        public static float timer;
+        public static bool Prefix(Vent __instance)
+        {
+            var user = PlayerControl.LocalPlayer;
+            var id = __instance.Id;
+
+            if (!AmongUsClient.Instance.AmHost) return true;
+            if (timer <= 0.3f) return false;
+            timer = 0;
+
+            if (CoEnterVentPatch.VentPlayers.ContainsKey(user.PlayerId)) return true;
+
+            if (Options.CurrentGameMode == CustomGameMode.HideAndSeek && Options.IgnoreVent.GetBool())
+                return false;
+
+            if (user.Is(CustomRoles.DemonicVenter)) return true;
+
+            var roleClass = user.GetRoleClass();
+            var pos = __instance.transform.position;
+            if (Amnesia.CheckAbilityreturn(user)) roleClass = null;
+            if ((!roleClass?.OnEnterVent(user.MyPhysics, id) ?? false) || !CoEnterVentPatch.CanUse(user.MyPhysics, id))
+            {
+                if (Options.CurrentGameMode is not CustomGameMode.TaskBattle)
+                {
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(user.MyPhysics.NetId, (byte)RpcCalls.BootFromVent, SendOption.None, user.GetClientId());
+                    writer.Write(id);
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+
+                    if (user?.Data?.Role?.Role is RoleTypes.Engineer)
+                    {
+                        user.Data.Role.SetCooldown();
+                    }
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    [HarmonyPatch(typeof(PlayerPhysics._CoEnterVent_d__47), nameof(PlayerPhysics._CoEnterVent_d__47.MoveNext))]
+    class OcCoEnterVentPatch
+    {
+        public static void Prefix(PlayerPhysics._CoEnterVent_d__47 __instance, ref bool __result)
+        {
+            if (__instance.__1__state is not 1) return;
+            if (CoEnterVentPatch.VentPlayers.ContainsKey(__instance.__4__this.myPlayer.PlayerId)) return;
+            if (__instance.__4__this.myPlayer.PlayerId == PlayerControl.LocalPlayer.PlayerId)
+            {
+                CoEnterVentPatch.Prefix(__instance.__4__this, __instance.id);
+            }
+        }
+    }
+    [HarmonyPatch(typeof(PlayerPhysics._CoExitVent_d__48), nameof(PlayerPhysics._CoExitVent_d__48.MoveNext))]
+    class OcCoExitVentPath
+    {
+        public static void Prefix(PlayerPhysics._CoExitVent_d__48 __instance)
+        {
+            if (__instance.__1__state is not 1) return;
+
+            if (__instance.__4__this.myPlayer.PlayerId == PlayerControl.LocalPlayer.PlayerId)
+            {
+                ExitVentPatch.Prefix(__instance.__4__this);
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(PlayerPhysics), nameof(PlayerPhysics.CoEnterVent))]
+    class CoEnterVentPatch
+    {
+        public static Dictionary<byte, float> VentPlayers = new();
+        public static Dictionary<byte, bool> OldOnEnterVent = new();
+        static bool MadBool = false;
+        public static bool Prefix(PlayerPhysics __instance, [HarmonyArgument(0)] int id)
+        {
+            if (AmongUsClient.Instance.AmHost)
+            {
+                var user = __instance.myPlayer;
+
+                if (MadBool)
+                {
+                    MadBool = false;
+                    if (!OldOnEnterVent.TryAdd(user.PlayerId, true))
+                    {
+                        OldOnEnterVent[user.PlayerId] = true;
+                    }
+                    return true;
+                }
+
+                if (Options.CurrentGameMode == CustomGameMode.HideAndSeek && Options.IgnoreVent.GetBool())
+                    __instance.RpcBootFromVent(id);
+
+                if (user.Is(CustomRoles.DemonicVenter))
+                {
+                    if (!OldOnEnterVent.TryAdd(user.PlayerId, true))
+                    {
+                        OldOnEnterVent[user.PlayerId] = true;
+                    }
+                    return true;
+                }
+                var roleClass = user.GetRoleClass();
+                var pos = __instance.transform.position;
+                if (Amnesia.CheckAbilityreturn(user)) roleClass = null;
+
+                if (!VentilationSystemUpdateSystemPatch.NowVentId.TryAdd(user.PlayerId, (byte)id))
+                {
+                    VentilationSystemUpdateSystemPatch.NowVentId[user.PlayerId] = (byte)id;
+                }
+
+                if (user != PlayerControl.LocalPlayer)
+                {
+                    if ((!roleClass?.OnEnterVent(__instance, id) ?? false) || !CanUse(__instance, id))
+                    {
+                        if (Options.CurrentGameMode == CustomGameMode.TaskBattle) return true;
+                        //一番遠いベントに追い出す
+                        var canuse = CanUse(__instance, id, false);
+                        if (!OldOnEnterVent.TryAdd(user.PlayerId, canuse))
+                        {
+                            OldOnEnterVent[user.PlayerId] = canuse;
+                        }
+
+                        foreach (var pc in PlayerCatch.AllPlayerControls)
+                        {
+                            if (pc == user) continue; //本人とホストは別の処理
+                            if (pc.PlayerId == PlayerControl.LocalPlayer.PlayerId && GameStates.CalledMeeting is false)
+                            {
+                                __instance.myPlayer.RpcSnapToDesync(pc, pos);
+                                continue;
+                            }
+                            Dictionary<int, float> Distance = new();
+                            Vector2 position = pc.transform.position;
+                            //一番遠いベントを調べて送る
+                            foreach (var vent in ShipStatus.Instance.AllVents)
+                                Distance.Add(vent.Id, Vector2.Distance(position, vent.transform.position));
+                            var ventid = Distance.OrderByDescending(x => x.Value).First().Key;
+                            var sender = CustomRpcSender.Create("Farthest Vent", SendOption.None)
+                                .StartMessage(pc.GetClientId())
+                                .AutoStartRpc(__instance.NetId, (byte)RpcCalls.BootFromVent, pc.GetClientId())
+                                .Write(ventid)
+                                .EndRpc()
+                                .EndMessage();
+                            sender.SendMessage();
+                            if (GameStates.CalledMeeting is false) __instance.myPlayer.RpcSnapToDesync(pc, pos);
+                        }
+                        //多分負荷あれだし、テープで無理やり戻した感じだから参考にしない方がいい、
+
+                        /*MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(__instance.NetId, (byte)RpcCalls.BootFromVent, SendOption.None, -1);
+                        writer.WritePacked(127);
+                        AmongUsClient.Instance.FinishRpcImmediately(writer);*/
+
+                        int clientId = user.GetClientId();
+                        {
+                            var sender = CustomRpcSender.Create("BootFromVent", SendOption.None);
+                            sender.AutoStartRpc(__instance.NetId, RpcCalls.BootFromVent, clientId)
+                                .Write(id).EndRpc();
+                            sender.AutoStartRpc(__instance.NetId, RpcCalls.EnterVent, clientId)
+                                .Write(id).EndRpc();
+                            sender.AutoStartRpc(user.NetId, RpcCalls.ProtectPlayer, clientId)
+                                .WriteNetObject(user)
+                                .Write(0).EndRpc();
+                            sender.EndMessage();
+                            sender.SendMessage();
+                        }
+
+                        _ = new LateTask(() =>
+                        {
+                            MessageWriter writer2 = AmongUsClient.Instance.StartRpcImmediately(__instance.NetId, (byte)RpcCalls.BootFromVent, SendOption.None, clientId);
+                            writer2.Write(id);
+                            AmongUsClient.Instance.FinishRpcImmediately(writer2);
+                            __instance.myPlayer.inVent = false;
+                            __instance.myPlayer.walkingToVent = false;
+                            __instance.myPlayer.moveable = true;
+                            __instance.myPlayer.Visible = true;
+                        }, 0.8f, "Vent- EnterVent", true);
+                        _ = new LateTask(() =>
+                        {
+                            __instance.myPlayer.inVent = false;
+                            __instance.myPlayer.walkingToVent = false;
+                            __instance.myPlayer.moveable = true;
+                            __instance.myPlayer.Visible = true;
+                        }, 1.5f, "FixVentState", true);
+                        return false;
+                    }
+                }
+                if (OldOnEnterVent.TryAdd(__instance.myPlayer.PlayerId, true)) OldOnEnterVent[__instance.myPlayer.PlayerId] = true;
+
+                //マッドでベント移動できない設定なら矢印を消す
+                if ((!roleClass?.CanVentMoving(__instance, id) ?? false) ||
+                    (SatsumatoImo.UsesMadmateCommonSettings(user) && !Options.MadmateCanMovedByVent.GetBool()))
+                {
+                    if (!MadBool && user.PlayerId == PlayerControl.LocalPlayer.PlayerId)
+                        MadBool = true;
+                    int clientId = user.GetClientId();
+                    _ = new LateTask(() =>
+                    {
+                        MessageWriter writer2 = AmongUsClient.Instance.StartRpcImmediately(__instance.NetId, (byte)RpcCalls.BootFromVent, SendOption.None, clientId);
+                        writer2.Write(id);
+                        AmongUsClient.Instance.FinishRpcImmediately(writer2);
+                    }, 0.1f, "Vent- BootFromVent", true);
+                    _ = new LateTask(() =>
+                    {
+                        VentPlayers.TryAdd(__instance.myPlayer.PlayerId, 0);
+                        MessageWriter writer2 = AmongUsClient.Instance.StartRpcImmediately(__instance.NetId, (byte)RpcCalls.EnterVent, SendOption.None, clientId);
+                        writer2.Write(id);
+                        AmongUsClient.Instance.FinishRpcImmediately(writer2);
+                    }, 0.25f, "Vent- EnterVent", null);
+                    //BootFromVentで255とかしてもできるが、タイミングがよくわかんないので上ので今のとこはおｋ
+                }
+                CustomRoleManager.OnEnterVent(__instance, id);
+            }
+            //if (Options.MaxInVentMode.GetBool())
+            VentPlayers.TryAdd(__instance.myPlayer.PlayerId, 0);
+            return true;
+        }
+        public static bool CanUse(PlayerPhysics pp, int id, bool log = true)
+        {
+            //役職処理はここで行ってしまうと色々とめんどくさくなるので上で。
+            var user = pp.myPlayer;
+
+            if (Sealer.BlocksVent(user))
+            {
+                if (log) Logger.Info($"{pp.name} is sealed from using vents.", "OnenterVent");
+                return false;
+            }
+            if (!(user.Data.Role.Role == RoleTypes.Engineer || user.GetCustomRole().GetRoleInfo()?.BaseRoleType.Invoke() == RoleTypes.Engineer))//エンジニアでなく
+            {
+                if (!user.CanUseImpostorVentButton()) //インポスターベントも使えない
+                {
+                    if (log) Logger.Info($"{pp.name}はエンジニアでもインポスターベントも使えないため弾きます。", "OnenterVent");
+                    return false;
+                }
+            }
+            if (Utils.CantUseVent)
+            {
+                if (log) Logger.Info($"{pp.name}がベントに入ろうとしましたがベントが無効化されているので弾きます。", "OnenterVent");
+                return false;
+            }
+            if (GameStates.IsMeeting || GameStates.CalledMeeting)
+            {
+                if (log) Logger.Info($"{pp.name}がベントに入ろうとしましたが、会議が発生しているので防ぎます", "OnEnterVent");
+                return false;
+            }
+            return true;
+        }
+    }
+
+    [HarmonyPatch(typeof(PlayerPhysics), nameof(PlayerPhysics.CoExitVent))]
+    class ExitVentPatch
+    {
+        public static bool Prefix(PlayerPhysics __instance)
+        {
+            if (AmongUsClient.Instance.AmHost is false) return true;
+            CoEnterVentPatch.VentPlayers.Remove(__instance.myPlayer.PlayerId);
+
+            var player = __instance.myPlayer;
+
+            if (CoEnterVentPatch.OldOnEnterVent.TryGetValue(player.PlayerId, out var canuse))
+            {
+                if (canuse is false)
+                {
+                    ReMove();
+                    return false;
+                }
+            }
+            if (Sealer.BlocksVent(player))
+            {
+                ReMove();
+                return false;
+            }
+            if (!(player.Data.Role.Role == RoleTypes.Engineer || player.GetCustomRole().GetRoleInfo()?.BaseRoleType.Invoke() == RoleTypes.Engineer))//エンジニアでなく
+            {
+                if (!player.CanUseImpostorVentButton()) //インポスターベントも使えない
+                {
+                    ReMove();
+                    return false;
+                }
+            }
+            if (Utils.CantUseVent)
+            {
+                ReMove();
+                return false;
+            }
+
+            if (Camouflage.IsCamouflage)
+            {
+                /* 
+                var sender = CustomRpcSender.Create(name: $"Camouflage.RpcSetSkin({player.Data.GetLogPlayerName()})");
+                byte color = (byte)ModColors.PlayerColor.Gray;
+
+                player.SetColor(color);
+                sender.AutoStartRpc(player.NetId, (byte)RpcCalls.SetColor)
+                    .Write(player.Data.NetId)
+                    .Write(color)
+                    .EndRpc();
+
+                player.SetHat("", color);
+                sender.AutoStartRpc(player.NetId, (byte)RpcCalls.SetHatStr)
+                    .Write("")
+                    .Write(player.GetNextRpcSequenceId(RpcCalls.SetHatStr))
+                    .EndRpc();
+
+                player.SetSkin("", color);
+                sender.AutoStartRpc(player.NetId, (byte)RpcCalls.SetSkinStr)
+                    .Write("")
+                    .Write(player.GetNextRpcSequenceId(RpcCalls.SetSkinStr))
+                    .EndRpc();
+
+                player.SetVisor("", color);
+                sender.AutoStartRpc(player.NetId, (byte)RpcCalls.SetVisorStr)
+                    .Write("")
+                    .Write(player.GetNextRpcSequenceId(RpcCalls.SetVisorStr))
+                    .EndRpc();
+                sender.SendMessage();*/
+            }
+            else if (Camouflage.ventplayr.Contains(player.PlayerId))
+                Camouflage.RpcSetSkin(player, force: null);
+
+            return true;
+
+            void ReMove()
+            {
+                if (VentilationSystemUpdateSystemPatch.NowVentId.TryGetValue(player.PlayerId, out var id))
+                {
+                    var vent = ShipStatus.Instance.AllVents.FirstOrDefault(x => x.Id == id);
+                    if (vent is null)
+                    {
+                        player.RpcSnapToForced(new Vector2(100f, 100f));
+                        Logger.Error($"無効なベントid{id}。", "Vent");
+                        return;
+                    }
+                    player.RpcSnapToForced(vent.transform.position + new Vector3(0f, 0.1f));
+                }
+            }
+        }
+    }
+    #endregion
+    #region CheckProtect
+    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CheckProtect))]
+    class CheckProtectPatch
+    {
+        public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target)
+        {
+            // ゴースト系能力
+            if (__instance.IsGhostRole())
+            {
+                Ghostbuttoner.UseAbility(__instance);
+                GhostFloodlight.UseAbility(__instance, target);
+                GhostSaboteur.UseAbility(__instance, target);
+                GhostNoiseSender.UseAbility(__instance, target);
+                GhostReseter.UseAbility(__instance, target);
+                GhostRumour.UseAbility(__instance, target);
+                GuardianAngel.UseAbility(__instance, target);
+                DemonicTracker.UseAbility(__instance, target);
+                DemonicCrusher.UseAbility(__instance);
+                DemonicVenter.UseAbility(__instance, target);
+                AsistingAngel.UseAbility(__instance, target);
+                return false;
+            }
+
+            return false;
+        }
+    }
+    #endregion
+}

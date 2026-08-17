@@ -1,0 +1,45 @@
+using System.Collections.Generic;
+using UnityEngine;
+using TownOfHost.Roles.Core;
+using static TownOfHost.Options;
+
+namespace TownOfHost.Roles.AddOns.Common
+{
+    public static class Stack
+    {
+        private static readonly int Id = 73100;
+        private static List<byte> playerIdList = new();
+        static AssignOptionItem AssignAddon;
+
+        public static void SetupCustomOption()
+        {
+            SetupRoleOptions(Id, TabGroup.Addons, CustomRoles.Stack, fromtext: UtilsOption.GetFrom(From.TownOfHost_K));
+            AddOnsAssignData.Create(Id + 10, CustomRoles.Stack, true, true, true, true);
+            ObjectOptionitem.Create(Id + 21, "AddonOption", true, "", TabGroup.Addons).SetOptionName(() => "Role Option").SetSubRoleOptionItem(CustomRoles.Stack);
+            AssignAddon = (AssignOptionItem)AssignOptionItem.Create(Id + 20, "AssignAddon", 0, TabGroup.Addons, false, addon: true,
+            notassing: [CustomRoles.LastImpostor, CustomRoles.LastNeutral, CustomRoles.Workhorse, CustomRoles.Amanojaku]).SetSubRoleOptionItem(CustomRoles.Stack); ;
+        }
+        public static void Init()
+        {
+            playerIdList = new();
+        }
+        public static void Add(byte playerId)
+        {
+            playerIdList.Add(playerId);
+
+            if (AmongUsClient.Instance.AmHost)
+            {
+                var pc = PlayerCatch.GetPlayerById(playerId);
+                if (pc == null) return;
+                foreach (var addon in AssignAddon.GetNowRoleValue())
+                {
+                    if (!CustomRolesHelper.CanHaveSubRole(pc.GetCustomRole(), addon)) continue;
+                    if (pc.Is(addon) is false)
+                    {
+                        PlayerState.GetByPlayerId(playerId).SetSubRole(addon);
+                    }
+                }
+            }
+        }
+    }
+}

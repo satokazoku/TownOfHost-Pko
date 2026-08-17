@@ -1,0 +1,214 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using AmongUs.GameOptions;
+using Hazel;
+using TownOfHost.Roles.Core;
+using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Madmate;
+using UnityEngine;
+using static TownOfHost.Modules.SelfVoteManager;
+
+namespace TownOfHost.Roles.Crewmate;
+
+public sealed class FortuneTeller : RoleBase, ISelfVoter
+{
+    public static readonly SimpleRoleInfo RoleInfo =
+        SimpleRoleInfo.Create(
+            typeof(FortuneTeller),
+            player => new FortuneTeller(player),
+            CustomRoles.FortuneTeller,
+            () => RoleTypes.Crewmate,
+            CustomRoleTypes.Crewmate,
+            31600,
+            SetupOptionItem,
+            "fo",
+            "#6b3ec3",
+            (3, 0),
+            introSound: () => GetIntroSound(RoleTypes.Scientist),
+            from: From.TownOfHost_K
+        );
+    public FortuneTeller(PlayerControl player)
+    : base(
+        RoleInfo,
+        player
+    )
+    {
+        Max = OptionMaximum.GetFloat();
+        Divination.Clear();
+        count = 0;
+        MeetingUsedcount = 0;
+        Awakened = !OptAwakening.GetBool() || OptionCanTaskcount.GetInt() < 1;
+        Votemode = (AbilityVoteMode)OptionVoteMode.GetValue();
+        rolename = Optionrolename.GetBool();
+        srole = OptionRole.GetBool();
+        cantaskcount = OptionCanTaskcount.GetFloat();
+        onemeetingmaximum = Option1MeetingMaximum.GetFloat();
+        impostorteams = new();
+    }
+
+    public static OptionItem OptionMaximum;
+    public static OptionItem OptionVoteMode;
+    public static OptionItem Optionrolename;
+    public static OptionItem OptionRole;
+    public static OptionItem OptionCanTaskcount;
+    public static OptionItem Option1MeetingMaximum;
+    public static OptionItem OptAwakening;
+    public float Max;
+    public AbilityVoteMode Votemode;
+    public bool rolename;
+    public bool srole;
+    int count;
+    float cantaskcount;
+    float onemeetingmaximum;
+    float MeetingUsedcount;
+    bool Awakened;
+    Dictionary<byte, CustomRoles> Divination = new();
+
+    enum Option
+    {
+        TellMaximum,
+        AbilityVotemode,
+        TellerCanSeeRolename, //占った相手の名前の上に占い結果を表示するかの設定
+        TellRole, //占い時役職を表示するか、陣営を表示するかの設定
+    }
+
+    private static void SetupOptionItem()
+    {
+        OptionMaximum = IntegerOptionItem.Create(RoleInfo, 10, Option.TellMaximum, new(1, 99, 1), 1, false)
+            .SetValueFormat(OptionFormat.Times);
+        OptionVoteMode = StringOptionItem.Create(RoleInfo, 11, Option.AbilityVotemode, EnumHelper.GetAllNames<AbilityVoteMode>(), 1, false);
+        Optionrolename = BooleanOptionItem.Create(RoleInfo, 12, Option.TellerCanSeeRolename, true, false);
+        OptionRole = BooleanOptionItem.Create(RoleInfo, 13, Option.TellRole, true, false);
+        OptionCanTaskcount = IntegerOptionItem.Create(RoleInfo, 14, GeneralOption.cantaskcount, new(0, 99, 1), 5, false);
+        Option1MeetingMaximum = IntegerOptionItem.Create(RoleInfo, 15, GeneralOption.MeetingMaxTime, new(0, 99, 1), 0, false)
+            .SetValueFormat(OptionFormat.Times).SetZeroNotation(OptionZeroNotation.Infinity);
+        OptAwakening = BooleanOptionItem.Create(RoleInfo, 16, GeneralOption.AbilityAwakening, false, false);
+    }
+
+    private void SendRPC(byte targetid, CustomRoles role)
+    {
+        using var sender = CreateSender();
+        sender.Writer.Write(count);
+        sender.Writer.Write(targetid);
+        sender.Writer.WritePacked((int)role);
+    }
+    public override void ReceiveRPC(MessageReader reader)
+    {
+        count = reader.ReadInt32();
+        Divination[reader.ReadByte()] = (CustomRoles)reader.ReadPackedInt32();
+    }
+    public override string GetSuffix(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
+    {
+        seen ??= seer;
+        if (Divination.TryGetValue(seen.PlayerId, out var role) && rolename)
+        {
+            if (srole) return $"<color={UtilsRoleText.GetRoleColorCode(role)}>" + GetString(role.ToString());
+            else return GetString(role.GetCustomRoleTypes().ToString());
+        }
+        return "";
+    }
+    public override string GetProgressText(bool comms = false, bool gamelog = false) => Utils.ColorString(!MyTaskState.HasCompletedEnoughCountOfTasks(cantaskcount) ? Color.gray : Max <= count ? Color.gray : Color.cyan, $"({Max - count})");
+    public override void OnStartMeeting() => MeetingUsedcount = 0;
+    bool ISelfVoter.CanUseVoted() => Canuseability() && Max > count && MyTaskState.HasCompletedEnoughCountOfTasks(cantaskcount) && (MeetingUsedcount < onemeetingmaximum || onemeetingmaximum == 0);
+    public override bool CheckVoteAsVoter(byte votedForId, PlayerControl voter)
+    {
+        if (!Canuseability()) return true;
+        if (Max > count && Is(voter) && MyTaskState.HasCompletedEnoughCountOfTasks((int)cantaskcount) && (MeetingUsedcount < onemeetingmaximum || onemeetingmaximum == 0))
+        {
+            var target = PlayerCatch.GetPlayerById(votedForId);
+            if (Votemode == AbilityVoteMode.NomalVote)
+            {
+                if (Player.PlayerId == votedForId || votedForId == SkipId) return true;
+                UseTellAbility(votedForId);
+                return false;
+            }
+            else
+            {
+                if (CheckSelfVoteMode(Player, votedForId, out var status))
+                {
+                    if (status is VoteStatus.Self)
+                        Utils.SendMessage(string.Format(GetString("SkillMode"), GetString("Mode.Divied"), GetString("Vote.Divied")) + GetString("VoteSkillMode"), Player.PlayerId);
+                    if (status is VoteStatus.Skip)
+                        Utils.SendMessage(GetString("VoteSkillFin"), Player.PlayerId);
+                    if (status is VoteStatus.Vote)
+                        UseTellAbility(votedForId);
+                    SetMode(Player, status is VoteStatus.Self);
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    public void UseTellAbility(byte votedForId)
+    {
+        var target = PlayerCatch.GetPlayerById(votedForId);
+        if (!target.IsAlive()) return;//死んでるならここで処理を止める。
+        if (target.Is(CustomRoles.Madpsycho))
+        {
+            if (Madpsycho.CanPsycho)
+            {
+                PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = Madpsycho.deathReasons[Madpsycho.OptionDeathReason.GetValue()];
+                target.RpcMurderPlayer(Player);
+                string send = "";
+                if (!Player.IsAlive())
+                {
+                    send = string.Format(GetString("Rpsych"), UtilsName.GetPlayerColor(Player, true), UtilsName.GetPlayerColor(target, true));
+                }
+                else
+                {
+                    send = string.Format(GetString("RMeetingKill"), UtilsName.GetPlayerColor(Player, true), UtilsName.GetPlayerColor(Player, true));
+                }
+                foreach (var spl in PlayerCatch.AllPlayerControls.Where(pc => !pc.IsAlive())) Utils.SendMessage(send, spl.PlayerId, GetString("RMSKillTitle"));
+
+                return;
+            }
+        }
+        count++;//全体のカウント
+        MeetingUsedcount++;//1会議のカウント
+        var role = target.GetTellResults(Player); //結果を変更するかチェック
+        var lasttext = GetString("Skill.Tellerfin") + (role.IsCrewmate() ? "!" : "...");
+        Divination[votedForId] = role;
+        SendRPC(votedForId, role);
+        Utils.SendMessage(string.Format(GetString("Skill.Teller"), UtilsName.GetPlayerColor(target, true), srole ? "<b>" + GetString($"{role}").Color(UtilsRoleText.GetRoleColor(role)) + "</b>" : GetString($"{role.GetCustomRoleTypes()}")) + lasttext + $"\n\n" + (onemeetingmaximum != 0 ? string.Format(GetString("RemainingOneMeetingCount"), Math.Min(onemeetingmaximum - MeetingUsedcount, Max - count)) : string.Format(GetString("RemainingCount"), Max - count) + (Votemode == AbilityVoteMode.SelfVote ? "\n\n" + GetString("VoteSkillFin") : "")), Player.PlayerId);
+        Logger.Info($"Player: {Player.name},Target: {target.name}, count: {count}", "FortuneTeller");
+        if (role.IsCrewmate() is false) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);
+        if (role.IsImpostorTeam() && !impostorteams.Contains(votedForId))
+        {
+            impostorteams.Add(votedForId);
+            if (impostorteams.Count == 3) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[1]);
+        }
+    }
+    public override CustomRoles Misidentify() => Awakened ? CustomRoles.NotAssigned : CustomRoles.Crewmate;
+    public override bool OnCompleteTask(uint taskid)
+    {
+        if (MyTaskState.HasCompletedEnoughCountOfTasks(cantaskcount))
+        {
+            if (Awakened == false)
+                if (!Utils.RoleSendList.Contains(Player.PlayerId))
+                    Utils.RoleSendList.Add(Player.PlayerId);
+            Awakened = true;
+        }
+        return true;
+    }
+    public override string GetLowerText(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
+    {
+        seen ??= seer;
+        if (isForMeeting && Player.IsAlive() && Awakened && seer.PlayerId == seen.PlayerId && Canuseability() && Max > count && MyTaskState.HasCompletedEnoughCountOfTasks(cantaskcount))
+        {
+            var mes = $"<color={RoleInfo.RoleColorCode}>{(Votemode == AbilityVoteMode.SelfVote ? GetString("SelfVoteRoleInfoMeg") : GetString("NomalVoteRoleInfoMeg"))}</color>";
+            return isForHud ? mes : $"<size=40%>{mes}</size>";
+        }
+        return "";
+    }
+    public List<byte> impostorteams = new();
+    public static Dictionary<int, Achievement> achievements = new();
+    [Attributes.PluginModuleInitializer]
+    public static void Load()
+    {
+        var n1 = new Achievement(RoleInfo, 0, 1, 0, 0);
+        var sp1 = new Achievement(RoleInfo, 1, 1, 0, 2);
+        achievements.Add(0, n1);
+        achievements.Add(1, sp1);
+    }
+}

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TownOfHost-Pko": {
+      "commandName": "Executable",
+      "executablePath": "$(AmongUs)\\Among Us.exe"
+    }
+  }
+}

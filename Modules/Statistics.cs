@@ -1,0 +1,474 @@
+using System.IO;
+using System.Linq;
+using System.Collections.Generic;
+using UnityEngine;
+
+using TownOfHost.Roles.Core;
+using static TownOfHost.Translator;
+using static TownOfHost.PlayerCatch;
+using static TownOfHost.UtilsRoleText;
+using System;
+
+namespace TownOfHost
+{
+    public class SaveStatistics
+    {
+        public static bool IsOldVersion = false;//過去バージョンで起動されているかの確認。データが壊れる可能性があるので統計しない。
+        private static readonly string PATH = new($"{Application.persistentDataPath}/TownOfHost_K/Statistics.txt");
+        public static void SetLogFolder()
+        {
+            try
+            {
+                if (!Directory.Exists($"{Application.persistentDataPath}/TownOfHost_K"))
+                    Directory.CreateDirectory($"{Application.persistentDataPath}/TownOfHost_K");
+            }
+            catch { }
+        }
+
+        public static void Save()
+        {
+            try
+            {
+                SetLogFolder();
+                if (File.Exists($"{Application.persistentDataPath}/TownOfHost_K/Statistics.txt"))
+                {
+                    File.Move($"{Application.persistentDataPath}/TownOfHost_K/Statistics.txt", PATH);
+                }
+                if (IsOldVersion) return;
+
+                if (Statistics.NowStatistics == null || Statistics.riset)
+                {
+                    var t = "";
+                    t += $"0!";
+
+                    foreach (var role in EnumHelper.GetAllValues<CustomRoles>())
+                    {
+                        var id = role.GetRoleInfo()?.ConfigId;
+                        t += $"{id}$0$0&";
+                    }
+                    t += "!";
+                    foreach (var kill in EnumHelper.GetAllValues<CustomDeathReason>())
+                    {
+                        t += $"{(int)kill}$0&";
+                    }
+                    t += "!";
+                    foreach (var dei in EnumHelper.GetAllValues<CustomDeathReason>())
+                    {
+                        t += $"{(int)dei}$0&";
+                    }
+                    t += "!";
+                    t += $"414";
+                    t += $"!0!0";
+                    t += "!";
+                    foreach (var mo in EnumHelper.GetAllValues<CustomGameMode>())
+                    {
+                        t += $"{(int)mo}$0$0&";
+                    }
+                    t += $"!{Main.version}";
+                    Main.SKey.Value = $"414";
+                    Statistics.riset = false;
+                    Logger.Info($"や<color>っ<size>ほ<line=ad>～！".RemoveHtmlTags(), "Statistics");
+                    File.WriteAllText(PATH, t);
+
+                    Statistics.NowStatistics = Load();
+                    return;
+                }
+
+                {
+                    var t = "";
+                    t += $"{Statistics.NowStatistics.gamecount}!";
+
+                    foreach (var role in Statistics.NowStatistics.Rolecount)
+                    {
+                        var id = role.Key.GetRoleInfo()?.ConfigId ?? -1;
+                        if (id == -1 && role.Key is CustomRoles.Amanojaku or CustomRoles.AsistingAngel or CustomRoles.SKMadmate)
+                        {
+                            switch (role.Key)
+                            {
+                                case CustomRoles.Amanojaku: id = 19100; break;
+                                case CustomRoles.AsistingAngel: id = 22000; break;
+                                case CustomRoles.SKMadmate: id = CustomRoles.Madmate.GetRoleInfo().ConfigId; break;
+                            }
+                        }
+                        t += $"{id}${role.Value.Item1}${role.Value.Item2}&";
+                    }
+                    t += "!";
+                    foreach (var kill in Statistics.NowStatistics.Killcount)
+                    {
+                        t += $"{(int)kill.Key}${kill.Value}&";
+                    }
+                    t += "!";
+                    foreach (var dei in Statistics.NowStatistics.diecount)
+                    {
+                        t += $"{(int)dei.Key}${dei.Value}&";
+                    }
+                    t += "!";
+                    var a = IRandom.Instance.Next(0, 5000);
+                    t += $"{a}";
+                    t += $"!{Statistics.NowStatistics.task.Item1}!{Statistics.NowStatistics.task.Item2}";
+
+                    t += "!";
+                    foreach (var mode in Statistics.NowStatistics.gamemodecount)
+                    {
+                        t += $"{(int)mode.Key}${mode.Value.count}${mode.Value.win}&";
+                    }
+                    t += $"!{Main.version}";
+
+                    File.WriteAllText(PATH, t);
+                    Main.SKey.Value = $"{a}";
+                }
+            }
+            catch
+            {
+                Logger.Error("Saveでエラー！", "Statistics");
+            }
+        }
+        public static Statistics Load()
+        {
+            try
+            {
+                SetLogFolder();
+                if (File.Exists($"{Application.persistentDataPath}/TownOfHost_K/Statistics.txt"))
+                {
+                    File.Move($"{Application.persistentDataPath}/TownOfHost_K/Statistics.txt", PATH);
+                }
+                else
+                {
+                    File.WriteAllText(PATH, "");
+                }
+                CustomRoleManager.CustomRoleIds.Add(19100, CustomRoles.Amanojaku);
+                CustomRoleManager.CustomRoleIds.Add(22000, CustomRoles.AsistingAngel);
+
+                string Text = File.ReadAllText(PATH);
+
+                if (Text == "")
+                {
+                    Logger.Info($"からぽ！", "Statistics-Load");
+                    Save();
+                    return null;
+                }
+                var age = Text.Split("!");
+                if (age.Count() is not 9 and not 7) return null;
+                int.TryParse(age[0], out int gamecount);
+
+                Dictionary<CustomRoles, (int win, int loss)> RoleCount = new();
+                Dictionary<CustomDeathReason, int> Killcount = new();
+                Dictionary<CustomDeathReason, int> diecount = new();
+                Dictionary<CustomGameMode, (int count, int win)> gamemodecount = new();
+
+                var rolea = age[1];
+                var roleage = rolea.Split("&");
+                foreach (var text in roleage)
+                {
+                    var subage = text.Split("$");
+
+                    if (subage.Count() != 3) { Logger.Error($"roleのsubageが3以外({subage.Count()})", "Statistics"); continue; }
+                    if (!int.TryParse(subage[0], out int roleid)) continue;
+                    if (!int.TryParse(subage[1], out int win)) continue;
+                    if (!int.TryParse(subage[2], out int loss)) continue;
+                    if (!CustomRoleManager.CustomRoleIds.TryGetValue(roleid, out var role)) continue;
+
+                    RoleCount.TryAdd(role, (win, loss));
+                }
+                var killa = age[2];
+                var kage = killa.Split("&");
+                foreach (var text in kage)
+                {
+                    var subage = text.Split("$");
+                    if (subage.Count() != 2) { Logger.Error($"killのsubageが2以外({subage.Count()})", "Statistics"); continue; }
+                    if (!int.TryParse(subage[0], out int dr)) continue;
+                    if (!int.TryParse(subage[1], out int count)) continue;
+
+                    CustomDeathReason deathReason = (CustomDeathReason)dr;
+                    Killcount.TryAdd(deathReason, count);
+                }
+
+                var diea = age[3];
+                var dieage = diea.Split("&");
+                /*if ((age[4] ?? "-") != Main.SKey.Value && (Main.SKey.Value is not "141c2e1c"))
+                {
+                    Statistics.riset = true;
+                    return null;
+                }*/
+                foreach (var text in dieage)
+                {
+                    var subage = text.Split("$");
+                    if (subage.Count() != 2) { Logger.Error($"dieのsubageが2以外({subage.Count()})", "Statistics"); continue; }
+                    if (!int.TryParse(subage[0], out int dr)) continue;
+                    if (!int.TryParse(subage[1], out int count)) continue;
+
+                    CustomDeathReason deathReason = (CustomDeathReason)dr;
+                    diecount.TryAdd(deathReason, count);
+                }
+                if (!int.TryParse(age[5], out int task)) task = 0;
+                if (!int.TryParse(age[6], out int all)) all = 0;
+
+                var version = Main.version;
+                if (age.Count() is not 7)
+                {
+                    var mode = age[7];
+                    var modeage = mode.Split("&");
+                    foreach (var text in modeage)
+                    {
+                        var subage = text.Split("$");
+                        if (subage.Count() != 3) { Logger.Error($"modeのsubageが3以外({subage.Count()})", "Statistics"); continue; }
+                        if (!int.TryParse(subage[0], out int gamemodenumber)) continue;
+                        if (!int.TryParse(subage[1], out int count)) continue;
+                        if (!int.TryParse(subage[2], out int win)) continue;
+
+                        CustomGameMode gamemode = (CustomGameMode)gamemodenumber;
+                        gamemodecount.TryAdd(gamemode, (count, win));
+                    }
+                    version = Version.Parse(age[8]);
+                    if (Main.version < version) IsOldVersion = true;
+                }
+                else
+                {
+                    foreach (var mo in EnumHelper.GetAllValues<CustomGameMode>())
+                    {
+                        gamemodecount.TryAdd(mo, (0, 0));
+                    }
+                }
+                return new Statistics(gamecount, RoleCount, Killcount, diecount, (task, all), gamemodecount, version);
+            }
+            catch
+            {
+                Logger.Error("Loadでエラーを吐いたのでリセット", "Statistics");
+                Statistics.riset = true;
+                return null;
+            }
+        }
+        public static string ShowText()
+        {
+            var text = "";
+
+            if (Statistics.NowStatistics == null)
+            {
+                return GetString("StatisticsError.Null");
+            }
+            if (IsOldVersion)
+            {
+                return GetString("StatisticsError.Oldversion");
+            }
+
+            text += $"<size=60%>{GetString("Statistics.GameCount")}：{Statistics.NowStatistics.gamecount}";
+
+            var role = "";
+            var wincount = 0;
+            var i = 0;
+            Dictionary<CustomRoleTypes, (int all, int win)> typecount = new();
+            foreach (var roledata in Statistics.NowStatistics.Rolecount.OrderBy(x => x.Key))
+            {
+                if (roledata.Value.Item1 == roledata.Value.Item2 && roledata.Value.Item2 == 0) continue;
+                if (roledata.Key.IsE()) continue;
+                if (!Event.CheckRole(roledata.Key)) continue;
+
+                role += i % 2 == 0 ? $"\n{GetRoleColorAndtext(roledata.Key)}：{roledata.Value.Item2}/{roledata.Value.Item1}<size=30%>({Getpercent(roledata.Value.Item2, roledata.Value.Item1)})</size>"
+                : $"<pos=70%>{GetRoleColorAndtext(roledata.Key)}：{roledata.Value.Item2}/{roledata.Value.Item1}<size=30%>({Getpercent(roledata.Value.Item2, roledata.Value.Item1)})</size></pos>";
+                i++;
+
+                if (roledata.Key > CustomRoles.NotAssigned) continue;
+
+                var roleTypes = roledata.Key.GetCustomRoleTypes();
+                if (typecount.TryAdd(roleTypes, (roledata.Value.Item1, roledata.Value.Item2)) is false)
+                {
+                    typecount[roleTypes] = (typecount[roleTypes].all + roledata.Value.Item1, typecount[roleTypes].win + roledata.Value.Item2);
+                }
+            }
+            var modetext = "";
+            foreach (var gamemodedata in Statistics.NowStatistics.gamemodecount)
+            {
+                if (gamemodedata.Value.Item1 == gamemodedata.Value.Item2 && gamemodedata.Value.Item2 == 0) continue;
+                if (gamemodedata.Key is CustomGameMode.All) continue;
+                var colorcode = "#ffffff";
+                switch (gamemodedata.Key)
+                {
+                    case CustomGameMode.Standard: colorcode = Main.ModColor; break;
+                    case CustomGameMode.HideAndSeek: colorcode = "#ff1919"; break;
+                    case CustomGameMode.StandardHAS: colorcode = "#ffff00"; break;
+                    case CustomGameMode.SuddenDeath: colorcode = "#ff9966"; break;
+                    case CustomGameMode.TaskBattle: colorcode = "#8cb8ff"; break;
+                    case CustomGameMode.MurderMystery: colorcode = "#1a389c"; break;
+                }
+                wincount += gamemodedata.Value.win;
+                modetext += $"\n<{colorcode}>{GetString(gamemodedata.Key.ToString())}</color> ： {gamemodedata.Value.win}/{gamemodedata.Value.count}<size=30%>({Getpercent(gamemodedata.Value.win, gamemodedata.Value.count)})</size>";
+            }
+            text += $"<pos=60%>★{GetString("Statistics.WinCount")}{wincount}</pos>";
+            var typetext = "";
+            foreach (var data in typecount)
+            {
+                if (data.Value.Item1 == data.Value.Item2 && data.Value.Item2 == 0) continue;
+
+                var colorcode = "#8cffff";
+                switch (data.Key)
+                {
+                    case CustomRoleTypes.Madmate: colorcode = "#ff7f50"; break;
+                    case CustomRoleTypes.Impostor: colorcode = "#ff1919"; break;
+                    case CustomRoleTypes.Neutral: colorcode = "#cccccc"; break;
+                }
+                typetext += $"\n<{colorcode}>{GetString($"{data.Key}")}</color> ： {data.Value.win}/{data.Value.all}<size=30%>({Getpercent(data.Value.win, data.Value.all)})</size>";
+            }
+            if (typetext != "") text += $"\n<u>★{GetString("Statistics.Typecount")}</u><size=50%>{typetext}</size>";
+            if (modetext != "") text += $"\n<u>★{GetString("Statistics.Modecount")}</u><size=50%>{modetext}</size>";
+            if (role != "") text += $"\n<u>★{GetString("Statistics.RoleWinCount")}</u><size=50%>{role}</size>";
+
+            var kill = "";
+            foreach (var killdata in Statistics.NowStatistics.Killcount)
+            {
+                if (killdata.Value == 0) continue;
+                kill += $"\n{GetString($"DeathReason.{killdata.Key}")} : {killdata.Value}";
+            }
+            if (kill != "") text += $"\n<u>★{GetString("Statistics.Killcount")}</u><size=50%>{kill}</size>";
+
+            var die = "";
+            foreach (var diedata in Statistics.NowStatistics.diecount)
+            {
+                if (diedata.Value == 0) continue;
+                die += $"\n{GetString($"DeathReason.{diedata.Key}")} : {diedata.Value}";
+            }
+            if (die != "") text += $"\n<u>★{GetString("Statistics.deadcount")}</u><size=50%>{die}</size>";
+
+            var task = "";
+            task = $"\n・{GetString("Statistics.taskcount")}：{Statistics.NowStatistics.task.Item1}"
+            + $"\n・{GetString("Statistics.completetaskcount")}：{Statistics.NowStatistics.task.Item2}";
+
+            return text + task;
+
+            string Getpercent(float a, float b)
+            {
+                if (a == 0 && b == 0) return "--";
+                float value = a / b;
+                double ret = Math.Round(value * 100);
+                return $"{ret}%";
+            }
+        }
+    }
+    public class Statistics
+    {
+        public static Statistics NowStatistics = null;
+        public static bool riset = false;
+        public int gamecount;
+        public Dictionary<CustomRoles, (int, int)> Rolecount;
+        public Dictionary<CustomDeathReason, int> Killcount;
+        public Dictionary<CustomDeathReason, int> diecount;
+        public (int, int) task;
+        public Dictionary<CustomGameMode, (int count, int win)> gamemodecount;
+        public Version version;
+
+        public Statistics(int gamecount, Dictionary<CustomRoles, (int, int)> Rolecount, Dictionary<CustomDeathReason, int> Killcount, Dictionary<CustomDeathReason, int> diecount, (int, int) task
+        , Dictionary<CustomGameMode, (int count, int win)> gamemodecount, Version version)
+        {
+            this.gamecount = gamecount;
+            this.Rolecount = Rolecount;
+            this.Killcount = Killcount;
+            this.diecount = diecount;
+            this.task = task;
+            this.gamemodecount = gamemodecount;
+            this.version = version;
+        }
+
+        public static string CheckAdd(bool InLoby)
+        {
+            if (SaveStatistics.IsOldVersion) return GetString("StatisticsError.Oldversion");
+            if (CustomWinnerHolder.WinnerTeam == CustomWinner.Default && !InLoby) return GetString("StatisticsError.forceend");
+#if DEBUG
+            if (DebugModeManager.EnableDebugMode.GetBool() || DebugModeManager.EnableTOHPDebugMode.GetBool()) return GetString("StatisticsError.Debug");
+#endif
+            if (GameStates.IsLocalGame) return GetString("StatisticsError.Local");
+            if (UtilsGameLog.LastLogRole.Count <= 4 && !InLoby) return GetString("StatisticsError.insufficient");
+            if (InLoby && AllPlayerControls.Count() <= 4) return GetString("StatisticsError.insufficient") + GetString("LobbyError.insufficient");
+
+            return "";
+        }
+
+        public static void Update()
+        {
+            var check = CheckAdd(false);
+            if (check is not "")
+            {
+                Logger.Info(check, "Statistics");
+                return;
+            }
+
+            var pc = PlayerControl.LocalPlayer;
+            var role = pc.GetCustomRole();
+            var mystate = PlayerState.GetByPlayerId(0);
+            var rc = NowStatistics.Rolecount;
+            var kc = NowStatistics.Killcount;
+            var dc = NowStatistics.diecount;
+            bool Iswinner = false;
+
+            if (Main.winnerList.Contains(pc.PlayerId))
+            {
+                Iswinner = true;
+            }
+
+            if (Options.CurrentGameMode is not CustomGameMode.Standard) goto pyoon;
+
+            {
+                if (!rc.TryGetValue(role, out var data)) goto pyoon;
+                var i1 = data.Item1;
+                var i2 = data.Item2;
+
+                if (pc.Is(CustomRoles.AsistingAngel))
+                {
+                    if (!rc.TryGetValue(CustomRoles.AsistingAngel, out var asidata)) goto pyoon;
+                    i1 = asidata.Item1;
+                    i2 = asidata.Item2;
+                    rc[CustomRoles.AsistingAngel] = (i1 + 1, i2 + (Iswinner ? 1 : 0));
+                }
+                else if (pc.Is(CustomRoles.Amanojaku))
+                {
+                    if (!rc.TryGetValue(CustomRoles.Amanojaku, out var asidata)) goto pyoon;
+                    i1 = asidata.Item1;
+                    i2 = asidata.Item2;
+                    rc[CustomRoles.Amanojaku] = (i1 + 1, i2 + (Iswinner ? 1 : 0));
+                }
+                if (Iswinner)
+                {
+                    i2 += 1;
+                }
+                rc[role] = (i1 + 1, i2);
+            }
+            goto pyoon;
+
+        pyoon:
+            var task = NowStatistics.task;
+            if (Options.CurrentGameMode is CustomGameMode.Standard)
+            {
+                if (!pc.IsAlive())
+                {
+                    if (dc.TryGetValue(mystate.DeathReason, out var count))
+                    {
+                        dc[mystate.DeathReason] = count + 1;
+                    }
+                }
+                foreach (var diedata in Main.HostKill)
+                {
+                    if (kc.TryAdd(diedata.Value, 1) is false)
+                    {
+                        kc[diedata.Value] = kc[diedata.Value] + 1;
+                    }
+                }
+
+                if (pc.Is(CustomRoleTypes.Crewmate) && role.GetRoleInfo()?.IsDesyncImpostor == false)
+                {
+                    var state = pc.GetPlayerTaskState();
+
+                    task = (task.Item1 + state.CompletedTasksCount, task.Item2 + (state.IsTaskFinished ? 1 : 0));
+                }
+            }
+            var newgamemodecount = NowStatistics.gamemodecount;
+            var modecount = NowStatistics.gamemodecount.TryGetValue(Options.CurrentGameMode, out var gamedata) ? gamedata : (0, 0);
+            var newcount = (modecount.Item1 + 1, modecount.Item2 + (Iswinner ? 1 : 0));
+            if (!newgamemodecount.TryAdd(Options.CurrentGameMode, newcount))
+            {
+                newgamemodecount[Options.CurrentGameMode] = newcount;
+            }
+
+            NowStatistics = new Statistics(NowStatistics.gamecount + 1, rc, kc, dc, task, newgamemodecount, Main.version);
+
+            SaveStatistics.Save();
+        }
+    }
+}

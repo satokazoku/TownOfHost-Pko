@@ -1,0 +1,10 @@
+body{font-family:Segoe UI,Meiryo,Arial,sans-serif;max-width:980px;margin:24px auto;padding:0 12px}
+header{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.controls{display:flex;gap:8px;align-items:center}
+#list{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.card{border:1px solid #ddd;padding:8px;border-radius:6px;background:#fff}
+.meta{font-size:12px;color:#666}
+.tags{margin-top:6px;font-size:12px}
+.actions{margin-top:8px;display:flex;gap:6px}
+.btn-copy,.btn-save,.btn-load{padding:6px 8px;border-radius:4px;border:1px solid #bbb;background:#f7f7f7;cursor:pointer}
+#pagination{margin-top:12px;text-align:center}

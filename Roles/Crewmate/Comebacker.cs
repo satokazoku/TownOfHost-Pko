@@ -1,0 +1,123 @@
+using System.Collections.Generic;
+
+using AmongUs.GameOptions;
+using UnityEngine;
+using HarmonyLib;
+
+using TownOfHost.Roles.Core;
+using Hazel;
+
+namespace TownOfHost.Roles.Crewmate;
+
+public sealed class Comebacker : RoleBase
+{
+    public static readonly SimpleRoleInfo RoleInfo =
+        SimpleRoleInfo.Create(
+            typeof(Comebacker),
+            player => new Comebacker(player),
+            CustomRoles.Comebacker,
+            () => RoleTypes.Engineer,
+            CustomRoleTypes.Crewmate,
+            31000,
+            SetupOptionItem,
+            "cb",
+            "#ff9966",
+            (9, 0),
+            from: From.TownOfHost_K
+        );
+    public Comebacker(PlayerControl player)
+    : base(
+        RoleInfo,
+        player
+    )
+    {
+        Cooldown = OptionCooldown.GetFloat();
+        OldPosition = new(999f, 999f);
+        ComebackPosString = "";
+        ventcount = 0;
+        pos = 0;
+    }
+    private static OptionItem OptionCooldown;
+    enum OptionName
+    {
+        Cooldown
+    }
+    private static float Cooldown;
+    private Vector2 OldPosition;
+    private string ComebackPosString;
+    private int pos;
+    private int ventcount;
+    private static void SetupOptionItem()
+    {
+        OptionCooldown = FloatOptionItem.Create(RoleInfo, 10, OptionName.Cooldown, new(0f, 180f, 0.5f), 30f, false)
+            .SetValueFormat(OptionFormat.Seconds);
+    }
+    public override void ApplyGameOptions(IGameOptions opt)
+    {
+        AURoleOptions.EngineerCooldown = Cooldown;
+        AURoleOptions.EngineerInVentMaxTime = 1.5f;
+    }
+    public override bool CanVentMoving(PlayerPhysics physics, int ventId) => false;
+    public override bool OnEnterVent(PlayerPhysics physics, int ventId)
+    {
+        if (OldPosition != new Vector2(999f, 999f))
+        {
+            var tp = OldPosition;
+            ventcount++;
+            pos += (int)Vector2.Distance(Player.GetTruePosition(), OldPosition);
+            _ = new LateTask(() =>
+            {
+                Player.RpcSnapToForced(tp + new Vector2(0f, 0.1f));
+                Logger.Info("ベントに飛ぶよ!", "Comebacker");
+            }, 1f, "TP");
+        }
+        ShipStatus.Instance.AllVents.DoIf(vent => vent.Id == ventId, vent => OldPosition = (Vector2)vent.transform.position);
+        Logger.Info("ベントを設定するよ!", "Comebacker");
+
+        ComebackPosString = Player.GetShipRoomName();
+        RpcSetVent();
+
+        UtilsNotifyRoles.NotifyRoles(Player, OnlyMeName: true);
+        return true;
+    }
+    public override string GetLowerText(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
+    {
+        seen ??= seer;
+
+        if (isForMeeting || !Player.IsAlive() || ComebackPosString == "") return "";
+
+        if (isForHud) return $"<color={RoleInfo.RoleColorCode}>{string.Format(GetString("ComebackLowerText"), ComebackPosString)}</color>";
+        return $"<size=50%><color={RoleInfo.RoleColorCode}>{string.Format(GetString("ComebackLowerText"), ComebackPosString)}</color></size>";
+    }
+
+    public void RpcSetVent()
+    {
+        if (!AmongUsClient.Instance.AmHost) return;
+        using var sender = CreateSender();
+    }
+    public override void ReceiveRPC(MessageReader reader)
+    {
+        Logger.Info("ベントを設定するよ!", "Comebacker");
+        ComebackPosString = Player.GetShipRoomName();
+    }
+    public override string GetAbilityButtonText() => GetString("CamebackerAbility");
+    public override bool OverrideAbilityButton(out string text)
+    {
+        text = "Comebacker_Ability";
+        return true;
+    }
+    public override void CheckWinner(GameOverReason reason)
+    {
+        Achievements.RpcCompleteAchievement(Player.PlayerId, 1, achievements[0], ventcount);
+        Achievements.RpcCompleteAchievement(Player.PlayerId, 1, achievements[1], pos);
+    }
+    public static Dictionary<int, Achievement> achievements = new();
+    [Attributes.PluginModuleInitializer]
+    public static void Load()
+    {
+        var n1 = new Achievement(RoleInfo, 0, 10, 0, 0);
+        var n2 = new Achievement(RoleInfo, 1, 500, 0, 2, true);
+        achievements.Add(0, n1);
+        achievements.Add(1, n2);
+    }
+}

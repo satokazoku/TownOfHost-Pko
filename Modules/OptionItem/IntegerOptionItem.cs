@@ -1,0 +1,78 @@
+using System;
+using TownOfHost.Roles.Core;
+
+namespace TownOfHost
+{
+    public class IntegerOptionItem : OptionItem
+    {
+        // 必須情報
+        public IntegerValueRule Rule;
+
+        // コンストラクタ
+        public IntegerOptionItem(int id, string name, int defaultValue, TabGroup tab, bool isSingleValue, IntegerValueRule rule, string From = "", bool HideValue = false)
+        : base(id, name, rule.GetNearestIndex(defaultValue), tab, isSingleValue, From, HideValue)
+        {
+            Rule = rule;
+        }
+        public static IntegerOptionItem Create(
+            int id, string name, IntegerValueRule rule, int defaultValue, TabGroup tab, bool isSingleValue, bool HideValue = false
+        )
+        {
+            return new IntegerOptionItem(
+                id, name, defaultValue, tab, isSingleValue, rule, HideValue: HideValue
+            );
+        }
+        public static IntegerOptionItem Create(
+            int id, string name, IntegerValueRule rule, int defaultValue, TabGroup tab, bool isSingleValue, string From, bool HideValue = false
+        )
+        {
+            return new IntegerOptionItem(
+                id, name, defaultValue, tab, isSingleValue, rule, From, HideValue
+            );
+        }
+        public static IntegerOptionItem Create(
+            int id, Enum name, IntegerValueRule rule, int defaultValue, TabGroup tab, bool isSingleValue
+        )
+        {
+            return new IntegerOptionItem(
+                id, name.ToString(), defaultValue, tab, isSingleValue, rule
+            );
+        }
+        public static IntegerOptionItem Create(
+            SimpleRoleInfo roleInfo, int idOffset, Enum name, IntegerValueRule rule, int defaultValue, bool isSingleValue, OptionItem parent = null
+        )
+        {
+            var opt = new IntegerOptionItem(
+                roleInfo.ConfigId + idOffset, name.ToString(), defaultValue, roleInfo.Tab, isSingleValue, rule
+            );
+            opt.SetParent(parent ?? roleInfo.RoleOption);
+            opt.SetParentRole(roleInfo.RoleName);
+            return opt;
+        }
+
+        // Getter
+        public override int GetInt() => Rule.GetValueByIndex(CurrentValue);
+        public override float GetFloat() => Rule.GetValueByIndex(CurrentValue);
+        public override string GetString()
+        {
+            return ApplyFormat(Rule.GetValueByIndex(CurrentValue).ToString());
+        }
+        public override string GetValueString(bool coloroff)
+        {
+            return ApplyFormat(Rule.GetValueByIndex(CurrentValue).ToString());
+        }
+        public override int GetValue()
+            => Rule.RepeatIndex(base.GetValue());
+
+        // Setter
+        public override void SetValue(int value, bool doSync = true)
+        {
+            base.SetValue(Rule.RepeatIndex(value), doSync);
+        }
+
+        internal static object Create(int v1, string v2, object value, int v3, bool v4)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}

@@ -1,0 +1,676 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Data;
+using System.Diagnostics;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using UnityEngine;
+
+using TownOfHost.Modules;
+using TownOfHost.Roles.Core;
+using static TownOfHost.Utils;
+using static TownOfHost.Translator;
+using static TownOfHost.PlayerCatch;
+using static TownOfHost.UtilsRoleText;
+using TownOfHost.Attributes;
+using Rewired;
+
+namespace TownOfHost
+{
+    #region  OutputLog
+    public static class UtilsOutputLog
+    {
+        public static DirectoryInfo GetLogFolder(bool auto = false)
+        {
+            var folder = Directory.CreateDirectory($"{Application.persistentDataPath}/TownOfHost_Pko/Logs");
+            if (auto)
+            {
+                folder = Directory.CreateDirectory($"{folder.FullName}/AutoLogs");
+            }
+            return folder;
+        }
+        public static void DumpLog()
+        {
+            if (Main.IsAndroid()) return;
+            if (Main.GameCount == 0 && !GameStates.IsNotJoined)
+            {
+                var logger = Logger.Handler("DumpLog");
+                logger.Info("------------基本設定------------");
+                var tmp = GameOptionsManager.Instance.CurrentGameOptions.ToHudString(GameData.Instance ? GameData.Instance.PlayerCount : 10).Split("\r\n").Skip(1).SkipLast(10);
+                foreach (var t in tmp) logger.Info(t);
+                logger.Info("------------詳細設定------------");
+                foreach (var o in OptionItem.AllOptions.Where(o => o is not ObjectOptionitem))
+                    if (!o.IsHiddenOn(Options.CurrentGameMode) && (o.Parent == null ? !o.GetString().Equals("0%") : o.Parent.InfoGetBool()) && o.IsEnabled.Invoke())
+                        logger.Info($"{(o.Parent == null ? o.Name.PadRightV2(40) : $"┗ {o.Name}".PadRightV2(41))}:{o.GetTextString().RemoveSN().RemoveHtmlTags()}");
+            }
+            var logs = GetLogFolder();
+            var filename = CopyLog(logs.FullName);
+            OpenDirectory(filename);
+            if (PlayerControl.LocalPlayer != null)
+                SendMessage(GetString("Message.LogsSavedInLogsFolder"));
+        }
+        public static byte[] ReadCurrentLog()
+        {
+            if (Main.IsAndroid()) return Array.Empty<byte>();
+
+            var logPath = $"{Environment.CurrentDirectory}/BepInEx/LogOutput.log";
+            using var input = new FileStream(logPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            using var output = new MemoryStream();
+            input.CopyTo(output);
+            return output.ToArray();
+        }
+        public static void SaveNowLog()
+        {
+            if (Main.IsAndroid()) return;
+            var logs = GetLogFolder(true);
+            // 3日以上前のログを削除 /* 元は7だけど、7も保存しててもなので...*/
+            logs.EnumerateFiles().Where(f => f.CreationTime < DateTime.Now.AddDays(-3)).ToList().ForEach(f => f.Delete());
+            CopyLog(logs.FullName);
+        }
+        public static string CopyLog(string path)
+        {
+            if (Main.IsAndroid()) return "";
+            string t = DateTime.Now.ToString("yyyy-MM-dd_HH.mm.ss");
+            string subver = CredentialsPatch.Subver.RemoveHtmlTags();
+            if (subver != "") subver = $"({subver})";
+            string fileName = $"{path}/TownOfHost_Pko-v{Main.PluginVersion}{subver}-{t}.log";
+            FileInfo file = new(@$"{Environment.CurrentDirectory}/BepInEx/LogOutput.log");
+            var logFile = file.CopyTo(fileName);
+            return logFile.FullName;
+        }
+        public static void OpenLogFolder()
+        {
+            if (Main.IsAndroid()) return;
+            var logs = GetLogFolder(true);
+            OpenDirectory(logs.FullName);
+        }
+        public static void OpenDirectory(string path)
+        {
+            Process.Start("Explorer.exe", $"/select,{path}");
+        }
+    }
+    #endregion
+    #region  GameLog
+    public static class UtilsGameLog
+    {
+        /// <summary>
+        /// AfterMeetingTaskが呼ばれた時に更新される。<br/>
+        /// ゲーム開始時は1。
+        /// </summary>
+        public static int day;
+        public static Dictionary<byte, string> LastLog = new();
+        public static Dictionary<byte, string> LastLogRole = new();
+        public static Dictionary<byte, string> LastLogPro = new();
+        public static Dictionary<byte, string> LastLogSubRole = new();
+        public static Dictionary<byte, string> LastLogLoveRole = new();
+        public static string GetLogtext(byte pc)
+        {
+            var longestNameByteCount = Main.AllPlayerNames?.Values?.Select(name => name.GetByteCount())?.OrderByDescending(byteCount => byteCount)?.FirstOrDefault() ?? 10;
+
+            var name = LastLog.TryGetValue(pc, out var log) ? log : "??";
+            var pro = LastLogPro.TryGetValue(pc, out var prog) ? prog : "(??)";
+            var role = LastLogRole.TryGetValue(pc, out var rolelog) ? rolelog : "???";
+            var addon = "??";
+            addon = LastLogLoveRole.TryGetValue(pc, out var m) ? m : "";
+
+            return name + pro + "：" + GetVitalText(pc, true, false) + " " + role + addon;
+        }
+        public static string SummaryTexts(byte id)
+        {
+            try
+            {
+                var builder = new StringBuilder();
+                // 全プレイヤー中最長の名前の長さからプレイヤー名の後の水平位置を計算する
+                // 1em ≒ 半角2文字
+                // 空白は0.5emとする
+                // SJISではアルファベットは1バイト，日本語は基本的に2バイト
+                var longestNameByteCount = Main.AllPlayerNames.Values.Select(name => name.GetByteCount()).OrderByDescending(byteCount => byteCount).FirstOrDefault();
+                //最大11.5emとする(★+日本語10文字分+半角空白)
+                var pos = Math.Min(((float)longestNameByteCount / 2) + 1.5f /* ★+末尾の半角空白 */ , 11.5f);
+                builder.Append(ColorString(Main.PlayerColors[id], Main.AllPlayerNames[id]));
+                builder.AppendFormat("<pos={0}em>", pos).Append(GetProgressText(id, ShowManegementText: false, gamelog: true)).Append("</pos>");
+                // "(00/00) " = 4em
+                pos += 6f;
+                builder.AppendFormat("<pos={0}em>", pos).Append(GetVitalText(id, true)).Append("</pos>");
+                // "Lover's Suicide " = 8em
+                // "回線切断 " = 4.5em
+                pos += DestroyableSingleton<TranslationController>.Instance.currentLanguage.languageID == SupportedLangs.English ? 8.5f : 5f;
+                builder.AppendFormat("<pos={0}em>", pos);
+                var role = GetTrueRoleName(id);
+                if (LastLogRole.ContainsKey(id))
+                    role = LastLogRole[id];
+                role = Regex.Replace(role, "<b>", "");
+                role = Regex.Replace(role, "</b>", "");
+                builder.Append(role);
+                builder.Append(LastLogSubRole.TryGetValue(id, out var m) ? m : GetSubRolesText(id, mark: true));
+                builder.Append("</pos>");
+                return builder.ToString();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"{ex}", "SummaryTexts");
+                return "???";
+            }
+        }
+        public static bool IsPavlovWinnerTeam()
+        {
+            static bool IsPavlovRole(CustomRoles role)
+                => role is CustomRoles.PavlovDog or CustomRoles.PavlovOwner or CustomRoles.PavlovDogImprint;
+
+            if ((int)CustomWinnerHolder.WinnerTeam >= 0 && IsPavlovRole((CustomRoles)CustomWinnerHolder.WinnerTeam))
+                return true;
+
+            foreach (var role in CustomWinnerHolder.WinnerRoles)
+                if (IsPavlovRole(role))
+                    return true;
+
+            foreach (var role in CustomWinnerHolder.AdditionalWinnerRoles)
+                if (IsPavlovRole(role))
+                    return true;
+
+            foreach (var id in CustomWinnerHolder.WinnerIds)
+            {
+                var winner = GetPlayerById(id);
+                if (winner != null && IsPavlovRole(winner.GetCustomRole()))
+                    return true;
+            }
+
+            return false;
+        }
+        /// <summary> WinnerTextを生成します </summary>
+        /// <returns>CustomWinnerText,CustomWinnerColor,WinText,barColor,winColorの順に返します</returns>
+        public static (string, string, string, Color, Color) GetWinnerText(string WinText = "", Color barColor = new Color(), Color winColor = new Color(), List<byte> winnerList = null)
+        {
+            string CustomWinnerText = "";
+            StringBuilder AdditionalWinnerText = new(32);
+            var CustomWinnerColor = GetRoleColorCode(CustomRoles.Crewmate);
+            var isPavlovWinner = IsPavlovWinnerTeam();
+
+            winnerList ??= Main.winnerList;
+
+            if ((int)CustomWinnerHolder.WinnerTeam < 1000)
+            {
+                var winnerRole = (CustomRoles)CustomWinnerHolder.WinnerTeam;
+                if (winnerRole >= 0)
+                {
+                    CustomWinnerText = GetRoleName(winnerRole);
+                    CustomWinnerColor = GetRoleColorCode(winnerRole);
+                    if (winnerRole.IsNeutral())
+                    {
+                        barColor = GetRoleColor(winnerRole);
+                    }
+                }
+            }
+            if (AmongUsClient.Instance.AmHost && PlayerState.GetByPlayerId(0).MainRole == CustomRoles.GM)
+            {
+                WinText = "Game Over";
+                winColor =
+                barColor = GetRoleColor(CustomRoles.GM);
+            }
+            switch (CustomWinnerHolder.WinnerTeam)
+            {
+                //通常勝利
+                case CustomWinner.Crewmate:
+                    barColor = Palette.CrewmateBlue;
+                    CustomWinnerColor = GetRoleColorCode(CustomRoles.Crewmate);
+                    break;
+                //特殊勝利
+                case CustomWinner.Terrorist: barColor = Color.red; break;
+                case CustomWinner.Lovers: barColor = GetRoleColor(CustomRoles.Lovers); break;
+                case CustomWinner.RedLovers: barColor = GetRoleColor(CustomRoles.RedLovers); break;
+                case CustomWinner.YellowLovers: barColor = GetRoleColor(CustomRoles.YellowLovers); break;
+                case CustomWinner.BlueLovers: barColor = GetRoleColor(CustomRoles.BlueLovers); break;
+                case CustomWinner.GreenLovers: barColor = GetRoleColor(CustomRoles.GreenLovers); break;
+                case CustomWinner.WhiteLovers: barColor = GetRoleColor(CustomRoles.WhiteLovers); break;
+                case CustomWinner.PurpleLovers: barColor = GetRoleColor(CustomRoles.PurpleLovers); break;
+                case CustomWinner.MadonnaLovers: barColor = GetRoleColor(CustomRoles.MadonnaLovers); break;
+                case CustomWinner.CupidLovers: barColor = GetRoleColor(CustomRoles.CupidLovers); break;
+                case CustomWinner.OneLove: CustomWinnerText = ColorString(GetRoleColor(CustomRoles.OneLove), GetString("OneLoveWin")); barColor = GetRoleColor(CustomRoles.OneLove); break;
+                case CustomWinner.God: CustomWinnerText = GetString("GodWinText"); barColor = GetRoleColor(CustomRoles.God); break;
+                case CustomWinner.Amateras: CustomWinnerText = GetString("AmaterasWinText"); barColor = GetRoleColor(CustomRoles.Amateras); break;
+                case CustomWinner.Ruler: CustomWinnerText = GetString("RulerWinText"); barColor = GetRoleColor(CustomRoles.Ruler); break;
+                case CustomWinner.MilkyWay: var MilkyWayColor = StringHelper.CodeColor(Roles.Neutral.Vega.TeamColor); CustomWinnerText = ColorString(MilkyWayColor, GetString("TeamMilkyWay")); barColor = MilkyWayColor; break;
+                case CustomWinner.TaskPlayerB:
+                    if (winnerList.Count is 0) break;
+                    if (winnerList.Count == 1)
+                        if (TaskBattle.IsRTAMode)
+                        {
+                            WinText = "Game Over";
+                            CustomWinnerText = $"{GetString("TaskBattle_Time")}: {HudManagerPatch.GetTaskBattleTimer().Replace(" : ", "：")}<size=0>";
+                        }
+                        else
+                        { CustomWinnerText = Main.AllPlayerNames[winnerList[0]] + $"({HudManagerPatch.GetTaskBattleTimerNonRta().Replace(" : ", "：")})"; }
+                    else
+                    {
+                        foreach (var (team, players) in TaskBattle.TaskBattleTeams)
+                        {
+                            if (players.Contains(winnerList[0]))
+                            {
+                                CustomWinnerText = string.Format(GetString("Team2"), team);
+                                break;
+                            }
+                        }
+                    }
+                    break;
+                case CustomWinner.SuddenDeathRed:
+                    WinText = "Game Over";
+                    winColor = ModColors.Red;
+                    barColor = ModColors.Red;
+                    CustomWinnerText = GetString("SuddenDeathRed");
+                    CustomWinnerColor = ModColors.codered;
+                    break;
+
+                case CustomWinner.SuddenDeathBlue:
+                    WinText = "Game Over";
+                    winColor = ModColors.Blue;
+                    barColor = ModColors.Blue;
+                    CustomWinnerText = GetString("SuddenDeathBlue");
+                    CustomWinnerColor = ModColors.codeblue;
+                    break;
+
+                case CustomWinner.SuddenDeathYellow:
+                    WinText = "Game Over";
+                    winColor = ModColors.Yellow;
+                    barColor = ModColors.Yellow;
+                    CustomWinnerText = GetString("SuddenDeathYellow");
+                    CustomWinnerColor = ModColors.codeyellow;
+                    break;
+
+                case CustomWinner.SuddenDeathGreen:
+                    WinText = "Game Over";
+                    winColor = ModColors.Green;
+                    barColor = ModColors.Green;
+                    CustomWinnerText = GetString("SuddenDeathGreen");
+                    CustomWinnerColor = ModColors.codegreen;
+                    break;
+
+                case CustomWinner.SuddenDeathPurple:
+                    WinText = "Game Over";
+                    winColor = ModColors.Purple;
+                    barColor = ModColors.Purple;
+                    CustomWinnerText = GetString("SuddenDeathPurple");
+                    CustomWinnerColor = ModColors.codepurple;
+                    break;
+                //廃村処理
+                case CustomWinner.Draw:
+                    WinText = GetString("ForceEnd");
+                    winColor = Color.white;
+                    barColor = Color.gray;
+                    CustomWinnerText = GetString("ForceEndText");
+                    CustomWinnerColor = StringHelper.ColorCode(Color.gray);
+                    break;
+                //全滅
+                case CustomWinner.None:
+                    WinText = "";
+                    winColor = Color.black;
+                    barColor = Color.gray;
+                    CustomWinnerText = GetString("EveryoneDied");
+                    CustomWinnerColor = StringHelper.ColorCode(Color.gray);
+                    break;
+            }
+            if (CustomWinnerHolder.ForceEveryoneWinsText)
+            {
+                CustomWinnerColor = GetRoleColorCode(CustomRoles.Ruler);
+                barColor = GetRoleColor(CustomRoles.Ruler);
+                CustomWinnerText = $"<{CustomWinnerColor}>{GetString("RulerEveryoneWinsText")}</color>";
+                return (CustomWinnerText, CustomWinnerColor, WinText, barColor, winColor);
+            }
+
+            if (isPavlovWinner && !SuddenDeathMode.NowSuddenDeathMode)
+            {
+                CustomWinnerText = GetString("TeamPavlov");
+                CustomWinnerColor = GetRoleColorCode(CustomRoles.PavlovDog);
+                barColor = GetRoleColor(CustomRoles.PavlovDog);
+            }
+            if (CustomWinnerHolder.WinnerTeam is not CustomWinner.None and not CustomWinner.Draw)
+                if (SuddenDeathMode.NowSuddenDeathMode && !SuddenDeathMode.NowSuddenDeathTemeMode)
+                {
+                    var winnerRole = (CustomRoles)CustomWinnerHolder.WinnerTeam;
+                    var winner = CustomWinnerHolder.WinnerIds.FirstOrDefault();
+                    var color = Color.white;
+                    if (Main.PlayerColors.TryGetValue(winner, out var co)) color = co;
+                    WinText = "Game Over";
+                    winColor = color;
+                    barColor = color;
+                    var name = "";
+                    if (Main.AllPlayerNames.ContainsKey(winner)) name = ColorString(Main.PlayerColors[winner], Main.AllPlayerNames[winner]);
+                    CustomWinnerText = "<size=60%>" + name + ColorString(GetRoleColor(winnerRole), $"({GetRoleName(winnerRole)})") + $"{GetString("Win")}</size>";
+                }
+
+            if (!isPavlovWinner)
+                foreach (var role in CustomWinnerHolder.AdditionalWinnerRoles)
+                {
+                    AdditionalWinnerText.Append('＆').Append(ColorString(GetRoleColor(role), GetRoleName(role)));
+                }
+            if (CustomWinnerHolder.WinnerTeam is not CustomWinner.Draw and not CustomWinner.None and not CustomWinner.OneLove and not CustomWinner.God && !SuddenDeathMode.NowSuddenDeathMode)
+            {
+                CustomWinnerText = $"<{CustomWinnerColor}>{CustomWinnerText}{AdditionalWinnerText}{GetString("Win")}</color>";
+            }
+            else
+            {
+                CustomWinnerText = $"<{CustomWinnerColor}>{CustomWinnerText}";
+            }
+
+            return (CustomWinnerText, CustomWinnerColor, WinText, barColor, winColor);
+        }
+        public static StringBuilder GetRTAText(List<byte> winnerList = null)
+        {
+            var AddCommon = TaskBattle.NumCommonTasks.GetInt();
+            var AddLong = TaskBattle.NumLongTasks.GetInt();
+            var AddShort = TaskBattle.NumShortTasks.GetInt();
+            if (!TaskBattle.TaskAddMode.GetBool())
+                (AddCommon, AddLong, AddShort) = (0, 0, 0);
+            StringBuilder sb = new();
+            winnerList ??= Main.winnerList;
+
+            if (!(CustomWinnerHolder.WinnerTeam is CustomWinner.None or CustomWinner.Draw))
+                sb.Append($"{GetString("TaskPlayerB")}:\n　{Main.AllPlayerNames[winnerList[0]] ?? "?"}");
+
+            sb.Append($"\n{GetString("TaskCount")}:")
+            .Append($"\n　{GetString(StringNames.GameCommonTasks)}: {Main.NormalOptions.NumCommonTasks}{$"{(AddCommon > 0 ? $"+ {AddCommon} * {TaskBattle.MaxAddCount.GetInt()}" : "")}"}")
+            .Append($"\n　{GetString(StringNames.GameLongTasks)}: {Main.NormalOptions.NumLongTasks}{$"{(AddLong > 0 ? $"+ {AddLong} * {TaskBattle.MaxAddCount.GetInt()}" : "")}"}")
+            .Append($"\n　{GetString(StringNames.GameShortTasks)}: {Main.NormalOptions.NumShortTasks}{$"{(AddShort > 0 ? $"+ {AddShort} * {TaskBattle.MaxAddCount.GetInt()}" : "")}"}")
+            .Append($"\n{GetString("TaskBattle_Time")}: {HudManagerPatch.GetTaskBattleTimer()}")
+            .Append($"\n{GetString(StringNames.GameMapName)}: {(MapNames)Main.NormalOptions.MapId}")
+            .Append($"\n{GetString(StringNames.GamePlayerSpeed)} : {Main.NormalOptions.PlayerSpeedMod}")
+            .Append($"\nSpawn:{TaskBattle.roomname}")
+            .Append(Options.DisableTasks.GetBool() ? $"\n・{GetString("DisableTasks")}" : "")
+            .Append(Options.UploadDataIsLongTask.GetBool() ? $"\n・{GetString("UploadDataIsLongTask")}" : "")
+            .Append($"\n{GetString("Vent")}: " + GetString(TaskBattle.TaskBattleCanVent.GetBool() ? "On" : "Off"));//マップの設定なども記載しなければならない
+            if (TaskBattle.TaskBattleCanVent.GetBool())
+                sb.Append($"\n　クールダウン:{TaskBattle.TaskBattleVentCooldown.GetFloat()}");
+            if (TaskBattle.AllMapMode.GetBool())
+            {
+                foreach (var mapdata in TaskBattle.Maptimer)
+                {
+                    var timer = mapdata.Value;
+                    int hours = (int)timer / 3600;
+                    int minutes = (int)timer % 3600 / 60;
+                    int seconds = (int)timer % 60;
+                    int milliseconds = (int)(timer % 1 * 1000);
+
+                    sb.Append($"\n{(MapNames)mapdata.Key}  => " + (hours > 0
+                            ? string.Format("{0:00} : {1:00} : {2:00}.{3:000}", hours, minutes, seconds, milliseconds)
+                            : string.Format("{0:00} : {1:00}.{2:000}", minutes, seconds, milliseconds)));
+                }
+            }
+            return sb;
+        }
+        public static void ShowLastResult(byte PlayerId = byte.MaxValue, bool IsMonochrome = false)
+        {
+            if (AmongUsClient.Instance.IsGameStarted)
+            {
+                SendMessage(GetString("CantUse.lastresult"), PlayerId);
+                return;
+            }
+            var sb = new StringBuilder();
+
+            var winnerColor = ((CustomRoles)CustomWinnerHolder.WinnerTeam).GetRoleInfo()?.RoleColor ?? GetRoleColor((CustomRoles)CustomWinnerHolder.WinnerTeam);
+
+            sb.Append("""<align="center">""");
+            sb.Append(GetString("LastResult")).Append("</size>");
+            sb.Append('\n').Append("<size=80%>").Append(SetEverythingUpPatch.LastWinsText.RemoveSizeTags());
+            sb.Append("</align>");
+
+            sb.Append("<size=65%>\n");
+            List<byte> cloneRoles = new(PlayerState.AllPlayerStates.Keys);
+
+            foreach (var pc in cloneRoles) if (GetPlayerById(pc) == null) continue;
+
+            var count = 0;
+            foreach (var id in Main.winnerList)
+            {
+                sb.Append($"\n★ ").Append(GetLogtext(id));
+                cloneRoles.Remove(id);
+                count++;
+            }
+            foreach (var id in cloneRoles)
+            {
+                sb.Append($"\n　 ").Append(GetLogtext(id));
+                count++;
+            }
+            sb.Append("</color>   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+            sb.Append(string.Format(GetString("Result.Task"), Main.Alltask));
+            var text = sb.ToString().RemoveDeltext("<b>").RemoveDeltext("</b>");
+            if (Options.ExChatMonochrome.GetBool() || IsMonochrome) text = text.RemoveColorTags();
+            SendMessage(text, PlayerId, checkl: true, setsize: true);
+        }
+        public static void ShowLastWins(byte PlayerId = byte.MaxValue)
+        {
+            SendMessage("<size=0>", PlayerId, $"{SetEverythingUpPatch.LastWinsText}");
+        }
+        public static void ShowKillLog(byte PlayerId = byte.MaxValue, bool IsMonochrome = false)
+        {
+            if (GameStates.IsInGame)
+            {
+                SendMessage(GetString("CantUse.killlog"), PlayerId);
+                return;
+            }
+
+            var send = BuildKillLogText(IsMonochrome);
+            if (!string.IsNullOrEmpty(send))
+                SendMessage(send, PlayerId, checkl: true, setsize: true);
+        }
+        public static string BuildKillLogText(bool IsMonochrome = false)
+        {
+            var mes = new StringBuilder();
+            mes.Append($"{GetString("GameLog")}\n{gamelog}");
+            var last = GameLog.Values.LastOrDefault();
+            foreach (var log in GameLog)
+            {
+                mes.Append(log.Value);
+
+                if ((last ?? "??") == log.Value)
+                {
+                    var meg = GetString($"{(CustomRoles)CustomWinnerHolder.WinnerTeam}") + GetString("Team") + GetString("Win");
+                    var winnerColor = ((CustomRoles)CustomWinnerHolder.WinnerTeam).GetRoleInfo()?.RoleColor ?? GetRoleColor((CustomRoles)CustomWinnerHolder.WinnerTeam);
+                    if (IsPavlovWinnerTeam())
+                    {
+                        meg = GetString("TeamPavlov") + GetString("Win");
+                        winnerColor = GetRoleColor(CustomRoles.PavlovDog);
+                    }
+
+                    switch (CustomWinnerHolder.WinnerTeam)
+                    {
+                        case CustomWinner.God: meg = GetString("GodWinText"); break;
+                        case CustomWinner.Amateras: meg = GetString("AmaterasWinText"); break;
+                        case CustomWinner.Ruler: meg = GetString("RulerWinText"); break;
+                        case CustomWinner.Draw: meg = GetString("ForceEnd"); break;
+                        case CustomWinner.None: meg = GetString("EveryoneDied"); break;
+                        case CustomWinner.SuddenDeathRed: meg = GetString("SuddenDeathRed"); winnerColor = ModColors.Red; break;
+                        case CustomWinner.SuddenDeathBlue: meg = GetString("SuddenDeathBlue"); winnerColor = ModColors.Blue; break;
+                        case CustomWinner.SuddenDeathYellow: meg = GetString("SuddenDeathYellow"); winnerColor = ModColors.Yellow; break;
+                        case CustomWinner.SuddenDeathGreen: meg = GetString("SuddenDeathGreen"); winnerColor = ModColors.Green; break;
+                        case CustomWinner.SuddenDeathPurple: meg = GetString("SuddenDeathPurple"); winnerColor = ModColors.Purple; break;
+                    }
+
+                    if (CustomWinnerHolder.ForceEveryoneWinsText)
+                    {
+                        meg = GetString("RulerEveryoneWinsText");
+                        winnerColor = GetRoleColor(CustomRoles.Ruler);
+                    }
+
+                    var Star = "★";
+                    var send = mes.ToString() + "\n\n" + $"{Star}{meg}{Star}".Color(winnerColor);
+
+                    if (Options.ExChatMonochrome.GetBool() || IsMonochrome) send = send.RemoveColorTags();
+                    return send.RemoveDeltext("<b>").RemoveDeltext("</b>");
+                }
+            }
+            return "";
+        }
+        public static void ShowAchievement(byte playerid)
+        {
+            if (GameStates.IsInGame)
+            {
+                SendMessage(GetString("CantUse.Achievement"), playerid);
+                return;
+            }
+            var key = playerid.GetPlayerControl().GetClient()?.ProductUserId ?? $"{GetPlayerInfoById(playerid).GetLogPlayerName()}";
+            if (Achievements.AllPlayerAchievements.TryGetValue(key, out var achievements) && achievements?.Count is not null and not 0)
+            {
+                var text = GetString("Achievement") + "<size=80%>";
+                foreach (var achievement in achievements)
+                {
+                    var mark = "";
+                    var color = "";
+                    switch (achievement.Difficulty)
+                    {
+                        case 0: mark += "◎"; color = "<#674020>"; break;
+                        case 1: mark += "◆"; color = "<#aacbf7>"; break;
+                        case 2: mark += "★"; color = "<#ffea4e>"; break;
+                        case 3: mark += "ф"; color = "<#17f7aa>"; break;
+                    }
+                    text += $"\n{color}{mark}" + "  ";
+                    text += $"～{Achievements.GetAchievementNames(achievement, "Title")}～</color>" +
+                    (achievement.role is CustomRoles.NotAssigned ? "" : $"<size=60%>({GetRoleColorAndtext(achievement.role)})</size>");
+                    text += $"<size=60%>{Achievements.GetAchievementNames(achievement, "Info")}</size>";
+                }
+                SendMessage(text, playerid);
+            }
+            else
+            {
+                SendMessage(GetString("Null.Achievement"), playerid);
+            }
+        }
+        public static void Reset()
+        {
+            Main.showkillbutton = false;
+            day = 1;
+            Main.ShowRoleIntro = true;
+            Main.IsActiveSabotage = false;
+            Main.SabotageActivetimer = 0;
+            Main.ForcedGameEndColl = 0;
+            Main.GameCount++;
+            Main.CanUseAbility = false;
+            GameLog = new();
+            TodayLog = "";
+            var startgametext = string.Format(GetString("log.Start"), Main.GameCount);
+            AddGameLogsub($"<size=60%>{DateTime.Now:HH.mm.ss} [Start]{startgametext}\n" + string.Format(GetString("Message.Day").RemoveDeltext("【").RemoveDeltext("】"), day).Color(Palette.Orange));
+        }
+        public static void WriteGameLog()
+        {
+            if (!GameLog.TryAdd(day, TodayLog))
+            {
+                Logger.Info("なんかTryAddが失敗に終わったよ!", "WriteGameLog");
+            }
+            else if (GameLog.TryGetValue(day, out var Oldlog))
+            {
+                if (Oldlog != TodayLog)
+                {
+                    GameLog[day] = Oldlog + TodayLog;
+                }
+            }
+            TodayLog = "";
+        }
+        public static string gamelog;
+        static string TodayLog;
+        public static Dictionary<int, string> GameLog = new();
+        public static void AddGameLog(string Name, string Meg) => TodayLog += $"\n[{Name}]　" + Meg;
+        public static void AddGameLogsub(string Meg) => TodayLog += Meg;
+    }
+    #endregion
+    #region WebHook
+    public static class UtilsWebHook
+    {
+        public static void WH_ShowActiveRoles()
+        {
+            StringBuilder sb;
+            if (GameModeManager.IsStandardClass())
+            {
+
+                sb = new StringBuilder("```cs\n").Append(GetString("Roles")).Append(':');
+                sb.AppendFormat("\n# {0}:{1}", GetRoleName(CustomRoles.GM), Options.EnableGM.GetString().RemoveHtmlTags());
+                CustomRoleTypes? rr = null;//☆インポスターも表示させるため
+                foreach (CustomRoles role in EnumHelper.GetAllValues<CustomRoles>())
+                {
+                    if (role is CustomRoles.GM or CustomRoles.NotAssigned) continue;
+                    if (rr == null && rr != role.GetCustomRoleTypes() && role.IsEnable())
+                    {
+                        rr = role.GetCustomRoleTypes();
+                        if (role.IsSubRole())
+                            sb.AppendFormat($"\n☆{GetString("Addons")}");
+                        else
+                        {
+                            sb.AppendFormat($"\n☆{GetString($"{rr}")}");
+                        }
+                    }
+                    if (role is CustomRoles.HASFox or CustomRoles.HASTroll) continue;
+                    var mark = "〇";
+                    switch (role.GetCustomRoleTypes())
+                    {
+                        case CustomRoleTypes.Impostor: mark = "Ⓘ"; break;
+                        case CustomRoleTypes.Crewmate: mark = "Ⓒ"; break;
+                        case CustomRoleTypes.Madmate: mark = "Ⓜ"; break;
+                        case CustomRoleTypes.Neutral: mark = "Ⓝ"; break;
+                    }
+                    if (role.IsSubRole())
+                    {
+                        if (role.IsBuffAddon()) mark = "Ⓐ";
+                        else if (role.IsDebuffAddon()) mark = "Ⓓ";
+                        else if (role.IsLovers()) mark = "Ⓛ";
+                        else if (role.IsGhostRole()) mark = "Ⓖ";
+                        else mark = "〇";
+                    }
+                    if (role.IsEnable()) sb.AppendFormat($"\n {mark}" + "\"{0}\"   {1}×{2}", role.GetCombinationName(false), $"{role.GetChance()}%", role.GetCount());
+                }
+            }
+            else
+            {
+                sb = new StringBuilder("```cs\n").Append(GetString(Options.CurrentGameMode.ToString()));
+                sb.Append("\n\n").Append(GetString("TaskPlayerB") + ":");
+                foreach (var pc in PlayerCatch.AllPlayerControls)
+                    sb.Append("\n  " + pc.name);
+            }
+            sb.Append("\n```");
+            Webhook.Send(sb.ToString());
+        }
+        public static void WH_ShowLastResult()
+        {
+            var sb = new StringBuilder();
+
+            var winnerColor = ((CustomRoles)CustomWinnerHolder.WinnerTeam).GetRoleInfo()?.RoleColor ?? Palette.DisabledGrey;
+            var tb = Options.CurrentGameMode == CustomGameMode.TaskBattle;
+            sb.Append(GetString("LastResult"));
+            if (!tb) sb.Append("\n## ").Append(SetEverythingUpPatch.LastWinsText).Append('\n');
+            List<byte> cloneRoles = new(PlayerState.AllPlayerStates.Keys);
+            foreach (var id in Main.winnerList)
+            {
+                var sr = GetSubRolesText(id).RemoveColorTags() != "";
+                sb.Append("\n**★ ").Append(Main.AllPlayerNames[id] + "**");
+                if (!tb)
+                {
+                    sb.Append("\n┣  ").Append(GetVitalText(id)).Append('　');
+                    sb.Append(GetProgressText(id, ShowManegementText: false, gamelog: true).RemoveColorTags());
+                    sb.Append(sr ? "\n┣  " : "\n┗   ").Append(GetTrueRoleName(id, false).RemoveColorTags());
+                    if (sr) sb.Append("\n┗  ").Append(GetSubRolesText(id).RemoveColorTags());
+                }
+                else
+                {
+                    sb.Append('\n').Append($"{Main.AllPlayerNames[id]}{GetString("Win")}").Append('\n');
+                    sb.Append('　').Append(GetProgressText(id, ShowManegementText: false, gamelog: true).RemoveColorTags());
+                }
+                cloneRoles.Remove(id);
+            }
+            foreach (var id in cloneRoles)
+            {
+                var sr = GetSubRolesText(id).RemoveColorTags() != "";
+                sb.Append("\n〇 ").Append(Main.AllPlayerNames[id]);
+                if (!tb)
+                {
+                    sb.Append("\n┣  ").Append(GetVitalText(id)).Append('　');
+                    sb.Append(GetProgressText(id, ShowManegementText: false, gamelog: true).RemoveColorTags());
+                    sb.Append(sr ? "\n┣  " : "\n┗   ").Append(GetTrueRoleName(id, false).RemoveColorTags());
+                    if (sr) sb.Append("\n┗  ").Append(GetSubRolesText(id).RemoveColorTags());
+                }
+                else
+                    sb.Append('　').Append(GetProgressText(id, gamelog: true).RemoveColorTags());
+            }
+            Webhook.Send(sb.ToString());
+            Webhook.Send($"```\n{EndGamePatch.KillLog.RemoveHtmlTags()}\n```");
+        }
+    }
+}
+    #endregion
