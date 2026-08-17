@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,19 @@ using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Crewmate;
 using TownOfHost.Roles.Madmate;
+=======
+using System.Collections.Generic;
+using System.Linq;
+using Hazel;
+
+using AmongUs.GameOptions;
+using TownOfHost.Roles.Core;
+using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Crewmate;
+using TownOfHost.Roles.AddOns.Common;
+using TownOfHost.Roles.AddOns.Neutral;
+using System;
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
 namespace TownOfHost.Roles.Impostor;
 
@@ -86,6 +100,7 @@ public sealed class UnFortuner : RoleBase, IImpostor, IUsePhantomButton
             ResetCooldown = false;
             return;
         }
+<<<<<<< HEAD
         if (target.Is(CustomRoles.Madpsycho))
         {
             if (Madpsycho.CanPsycho)
@@ -95,6 +110,8 @@ public sealed class UnFortuner : RoleBase, IImpostor, IUsePhantomButton
                 return;
             }
         }
+=======
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         AdjustKillCooldown = false;
         ResetCooldown = true;
         giveplayerid.Add(target.PlayerId);

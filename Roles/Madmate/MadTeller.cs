@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 using System;
 using System.Linq;
 using AmongUs.GameOptions;
@@ -5,6 +6,16 @@ using Hazel;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using UnityEngine;
+=======
+using AmongUs.GameOptions;
+using UnityEngine;
+using Hazel;
+using System;
+
+using TownOfHost.Roles.Core;
+using TownOfHost.Roles.Core.Interfaces;
+
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 using static TownOfHost.Modules.SelfVoteManager;
 
 namespace TownOfHost.Roles.Madmate;
@@ -140,6 +151,7 @@ public sealed class MadTeller : RoleBase, IKillFlashSeeable, IDeathReasonSeeable
         int chance = IRandom.Instance.Next(1, 101);
         var target = PlayerCatch.GetPlayerById(votedForId);
         if (!target.IsAlive()) return;
+<<<<<<< HEAD
         if (target.Is(CustomRoles.Madpsycho))
         {
             if (Madpsycho.CanPsycho)
@@ -160,6 +172,8 @@ public sealed class MadTeller : RoleBase, IKillFlashSeeable, IDeathReasonSeeable
                 return;
             }
         }
+=======
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         count++;
         MeetingUsedcount++;
         SendRPC();

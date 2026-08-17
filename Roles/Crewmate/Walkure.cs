@@ -2,12 +2,19 @@ using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
+<<<<<<< HEAD
+=======
+using UnityEngine;
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Impostor;
+<<<<<<< HEAD
 using TownOfHost.Roles.Madmate;
 using UnityEngine;
+=======
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 using static TownOfHost.Modules.SelfVoteManager;
 
 namespace TownOfHost.Roles.Crewmate;
@@ -214,6 +221,7 @@ public sealed class Walkure : RoleBase, ISelfVoter, IKiller
             Utils.SendMessage(GetString("WalkureRevealInvalid"), Player.PlayerId);
             return;
         }
+<<<<<<< HEAD
         if (target.Is(CustomRoles.Madpsycho))
         {
             if (Madpsycho.CanPsycho)
@@ -234,6 +242,9 @@ public sealed class Walkure : RoleBase, ISelfVoter, IKiller
                 return;
             }
         }
+=======
+
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         var limit = OptionMeetingRevealLimit.GetInt();
         if (limit != 0 && meetingRevealCount >= limit)
         {

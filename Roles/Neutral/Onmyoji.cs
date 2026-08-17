@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
+<<<<<<< HEAD
 using MS.Internal.Xml.XPath;
 using TownOfHost.Patches;
 using TownOfHost.Roles.Core;
@@ -13,6 +14,18 @@ using static TownOfHost.Modules.SelfVoteManager;
 using static TownOfHost.PlayerCatch;
 using static TownOfHost.Translator;
 using static TownOfHost.Utils;
+=======
+using UnityEngine;
+
+using TownOfHost.Roles.Core;
+using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Crewmate;
+using TownOfHost.Patches;
+using static TownOfHost.PlayerCatch;
+using static TownOfHost.Utils;
+using static TownOfHost.Translator;
+using static TownOfHost.Modules.SelfVoteManager;
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
 namespace TownOfHost.Roles.Neutral;
 
@@ -169,6 +182,7 @@ public sealed class Onmyoji : RoleBase, IKiller, ISelfVoter
 
         (_, var target) = info.AttemptTuple;
         if (!IsValidShikigamiTarget(target)) return;
+<<<<<<< HEAD
         if (target.Is(CustomRoles.Madpsycho))
         {
             if (Madpsycho.CanPsycho)
@@ -178,6 +192,9 @@ public sealed class Onmyoji : RoleBase, IKiller, ISelfVoter
                 return;
             }
         }
+=======
+
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         nominateMode = false;
         ApplyModeDesync(false);
         AddShikigami(target);
@@ -416,6 +433,7 @@ public sealed class Onmyoji : RoleBase, IKiller, ISelfVoter
         if (ShikigamiIds.Count >= 1) return;
         if (!IsValidShikigamiTarget(target)) return;
         if (Walkure.TryRejectRoleChange(Player, target, Walkure.RoleChangeSource.Jackal)) return;
+<<<<<<< HEAD
         if (target.Is(CustomRoles.Madpsycho))
         {
             if (Madpsycho.CanPsycho)
@@ -425,6 +443,9 @@ public sealed class Onmyoji : RoleBase, IKiller, ISelfVoter
                 return;
             }
         }
+=======
+
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         ShikigamiIds.Add(target.PlayerId);
         TargetArrow.Add(Player.PlayerId, target.PlayerId);
 

@@ -3,10 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
+<<<<<<< HEAD
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Madmate;
 using UnityEngine;
+=======
+using UnityEngine;
+using TownOfHost.Roles.Core;
+using TownOfHost.Roles.Core.Interfaces;
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 using static TownOfHost.Modules.SelfVoteManager;
 
 namespace TownOfHost.Roles.Crewmate;
@@ -250,6 +256,7 @@ public sealed class SuspiciousTeller : RoleBase, ISelfVoter
     private void UseTellAbility(byte votedForId)
     {
         var target = PlayerCatch.GetPlayerById(votedForId);
+<<<<<<< HEAD
         if (target.Is(CustomRoles.Madpsycho))
         {
             if (Madpsycho.CanPsycho)
@@ -271,6 +278,10 @@ public sealed class SuspiciousTeller : RoleBase, ISelfVoter
             }
         }
         if (target == null || target.Data.Disconnected || !target.IsAlive() || target.PlayerId == Player.PlayerId) return;
+=======
+        if (target == null || target.Data.Disconnected || !target.IsAlive() || target.PlayerId == Player.PlayerId) return;
+
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         usedCount++;
         meetingUsedCount++;
 

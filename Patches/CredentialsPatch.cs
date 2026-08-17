@@ -148,10 +148,17 @@ namespace TownOfHost
 
                 VersionChecker.Check();
 #if DEBUG
+<<<<<<< HEAD
                 /*if (OptionItem.IdDuplicated)
                 {
                     ErrorText.Instance.AddError(ErrorCode.OptionIDDuplicate);
                 }*/
+=======
+                if (OptionItem.IdDuplicated)
+                {
+                    ErrorText.Instance.AddError(ErrorCode.OptionIDDuplicate);
+                }
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 #endif
 
                 if (SpecialEventText == null && TOHPLogo != null)

@@ -5,9 +5,14 @@ using AmongUs.GameOptions;
 using Hazel;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+<<<<<<< HEAD
 using TownOfHost.Roles.Madmate;
 using static TownOfHost.Modules.SelfVoteManager;
 using static UnityEngine.GraphicsBuffer;
+=======
+
+using static TownOfHost.Modules.SelfVoteManager;
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
 namespace TownOfHost.Roles.Impostor;
 
@@ -141,6 +146,7 @@ public sealed class EvilSatellite : RoleBase, IImpostor
             {
                 //設定回数と同じor多いともう使えない
                 if (usecount <= 0) return;
+<<<<<<< HEAD
                 var target = PlayerCatch.GetPlayerById(playerid);
                 if (target.Is(CustomRoles.Madpsycho))
                 {
@@ -162,6 +168,8 @@ public sealed class EvilSatellite : RoleBase, IImpostor
                         return;
                     }
                 }
+=======
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
                 usecount--;
                 SendRPC();
                 List<SystemTypes> spk = new(!OptionRandom.GetBool() ? Routelist.ToArray() : Routelist.OrderBy(x => Guid.NewGuid()).ToArray());

@@ -6,7 +6,10 @@ using AmongUs.GameOptions;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Modules;
+<<<<<<< HEAD
 using TownOfHost.Roles.Madmate;
+=======
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
 namespace TownOfHost.Roles.Neutral;
 
@@ -146,6 +149,7 @@ public sealed class Arsonist : RoleBase, IKiller, IUsePhantomButton
     public void OnCheckMurderAsKiller(MurderInfo info)
     {
         var (killer, target) = info.AttemptTuple;
+<<<<<<< HEAD
         if (target.Is(CustomRoles.Madpsycho))
         {
             info.DoKill = false;
@@ -157,6 +161,9 @@ public sealed class Arsonist : RoleBase, IKiller, IUsePhantomButton
                 return;
             }
         }
+=======
+
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         Logger.Info("Arsonist start douse", "OnCheckMurderAsKiller");
         killer.SetKillCooldown(DouseTime);
         if (!IsDoused[target.PlayerId] && TargetInfo == null)

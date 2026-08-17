@@ -1,4 +1,5 @@
 using System;
+<<<<<<< HEAD
 using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
@@ -9,6 +10,18 @@ using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Madmate;
 using UnityEngine;
 using static TownOfHost.Modules.SelfVoteManager;
+=======
+using System.Linq;
+using UnityEngine;
+using AmongUs.GameOptions;
+using System.Collections.Generic;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
+
+using TownOfHost.Roles.Core;
+using static TownOfHost.Modules.SelfVoteManager;
+using Hazel;
+using TownOfHost.Roles.Core.Interfaces;
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
 namespace TownOfHost.Roles.Crewmate;
 
@@ -158,6 +171,7 @@ public sealed class Satellite : RoleBase, ISelfVoter
 
     public void UseAbility(byte votedForId)
     {
+<<<<<<< HEAD
         var target = PlayerCatch.GetPlayerById(votedForId);
         if (target.Is(CustomRoles.Madpsycho))
         {
@@ -178,6 +192,8 @@ public sealed class Satellite : RoleBase, ISelfVoter
                 return;
             }
         }
+=======
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         if (Utils.IsActive(SystemTypes.Comms))
         {
             Utils.SendMessage(string.Format(GetString("SatelliteModeInfoFall") + string.Format(GetString("EvilSateliteSkillInfo3"), maximum - UsedSkillCount), Player.PlayerId, $"<{RoleInfo.RoleColorCode}>{string.Format(GetString("SatelliteTitle"), UtilsName.GetPlayerColor(votedForId))}"), Player.PlayerId);

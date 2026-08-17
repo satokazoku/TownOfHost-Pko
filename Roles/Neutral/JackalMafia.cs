@@ -1,12 +1,23 @@
+<<<<<<< HEAD
 using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
+=======
+using AmongUs.GameOptions;
+using UnityEngine;
+
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Crewmate;
+<<<<<<< HEAD
 using TownOfHost.Roles.Madmate;
 using UnityEngine;
+=======
+using Hazel;
+using System.Linq;
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
 namespace TownOfHost.Roles.Neutral
 {
@@ -142,6 +153,7 @@ namespace TownOfHost.Roles.Neutral
                 ResetCooldown = false;
                 return;
             }
+<<<<<<< HEAD
             if (target.Is(CustomRoles.Madpsycho))
             {
                 if (Madpsycho.CanPsycho)
@@ -151,6 +163,8 @@ namespace TownOfHost.Roles.Neutral
                     return;
                 }
             }
+=======
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
             if (Walkure.TryRejectRoleChange(Player, target, Walkure.RoleChangeSource.Jackal)) return;
             if (SuddenDeathMode.NowSuddenDeathTemeMode)
             {

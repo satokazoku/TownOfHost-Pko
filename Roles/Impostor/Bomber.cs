@@ -1,11 +1,20 @@
 using System.Collections.Generic;
 using System.Linq;
+<<<<<<< HEAD
 using AmongUs.GameOptions;
 using Hazel;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Madmate;
 using UnityEngine;
+=======
+using UnityEngine;
+using AmongUs.GameOptions;
+using Hazel;
+
+using TownOfHost.Roles.Core;
+using TownOfHost.Roles.Core.Interfaces;
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
 namespace TownOfHost.Roles.Impostor
 {
@@ -83,6 +92,7 @@ namespace TownOfHost.Roles.Impostor
             var target = Player.GetKillTarget(true);
             Logger.Info($"{Player?.Data?.GetLogPlayerName() ?? "???"} => {target?.Data?.GetLogPlayerName() ?? "失敗"}", "Bomber");
             if (target == null || BomberExplosionPlayers.ContainsKey(target?.PlayerId ?? byte.MaxValue)) return;
+<<<<<<< HEAD
             if (target.Is(CustomRoles.Madpsycho))
             {
                 if (Madpsycho.CanPsycho)
@@ -92,6 +102,9 @@ namespace TownOfHost.Roles.Impostor
                     return;
                 }
             }
+=======
+
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
             AdjustKillCooldown = false;
             if (!BomberExplosionPlayers.TryAdd(target.PlayerId, 0f)) return;
             BomberExplosion--;

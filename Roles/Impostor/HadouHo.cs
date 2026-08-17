@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+using System.Linq;
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 using AmongUs.GameOptions;
 using Hazel;
 using TownOfHost.Modules;
@@ -41,7 +45,10 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
         IsFiring = false;
         _prevCharging = false;
         _prevBeamMark = false;
+<<<<<<< HEAD
         Charging = false;
+=======
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         CustomRoleManager.LowerOthers.Add(GetLowerTextOthers);
     }
 
@@ -56,7 +63,11 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
     bool spawnCooldownStarted = false;
     bool _prevCharging;
     bool _prevBeamMark;
+<<<<<<< HEAD
     public static bool Charging;
+=======
+
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
     static OptionItem OptionCoolDown;
     static float Cooldown;
     public static float CooldownValue => Cooldown;
@@ -71,7 +82,11 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
     static OptionItem OptionKillImpostor;
     static bool KillImpostor;
 
+<<<<<<< HEAD
     enum OptionName { HadouHoChargeTime, HadouHoSelfDestruct, HadouHoKillImpostor,HadouHoBeamTime }
+=======
+    enum OptionName { HadouHoChargeTime, HadouHoSelfDestruct, HadouHoKillImpostor, HadouHoBeamTime }
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
     static void SetUpOptionItem()
     {
@@ -102,7 +117,10 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
                 Player.SyncSettings();
             }
             IsCharging = false;
+<<<<<<< HEAD
             Charging = false;
+=======
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
             ShowBeamMark = false;
             IsFiring = false;
             SetRoleTextHeight(false);
@@ -127,7 +145,10 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
 
         IsFiring = true;
         IsCharging = true;
+<<<<<<< HEAD
         Charging = true;
+=======
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         chargeTimer = 0f;
         Main.AllPlayerSpeed[Player.PlayerId] = Main.MinSpeed;
         Player.MarkDirtySettings();
@@ -158,7 +179,10 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
     {
         IsCharging = false;
         ShowBeamMark = false;
+<<<<<<< HEAD
         Charging = false;
+=======
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         IsFiring = false;
         chargeTimer = 0f;
         HasHit = false;
@@ -263,9 +287,21 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
         bool facingLeft = BeamFacingLeft;
         var myPos = Player.GetTruePosition();
         Vector2 dir = facingLeft ? Vector2.left : Vector2.right;
+<<<<<<< HEAD
         foreach (var target in PlayerCatch.AllAlivePlayerControls)
         {
             if (target.PlayerId == Player.PlayerId) continue;
+=======
+        // ループ中にOnCheckMurderで対象が死亡すると、AllAlivePlayerControlsの中身が
+        // その場で変化してしまう(シェリフのキルモード解除RPC等、死亡時の副作用が絡む場合に
+        // 顕著)。開始前にスナップショットを取り、ループ中の死亡は都度チェックすることで
+        // 以降の対象判定がおかしくなるのを防ぐ。
+        foreach (var target in PlayerCatch.AllAlivePlayerControls.ToArray())
+        {
+            if (!Player.IsAlive()) break;
+            if (target.PlayerId == Player.PlayerId) continue;
+            if (!target.IsAlive()) continue;
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
             if (!KillImpostor && target.GetCustomRole().IsImpostor() && !SuddenDeathMode.NowSuddenDeathMode) continue;
             var toTarget = target.GetTruePosition() - myPos;
             float dot = Vector2.Dot(toTarget, dir);

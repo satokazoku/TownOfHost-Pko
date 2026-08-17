@@ -12,9 +12,15 @@ using TownOfHost.Roles.Crewmate;
 using TownOfHost.Roles.Ghost;
 using TownOfHost.Roles.Impostor;
 using TownOfHost.Roles.Madmate;
+<<<<<<< HEAD
 using TownOfHost.Roles.Neutral;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
+=======
+using UnityEngine;
+
+using TownOfHost.Roles.Neutral;
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
 namespace TownOfHost
 
@@ -80,6 +86,7 @@ namespace TownOfHost
                             shapeshifter.RpcRejectShapeshift();
                             return false;
                         }
+<<<<<<< HEAD
                         if (targetm.Is(CustomRoles.Madpsycho))
                         {
                             if (Madpsycho.CanPsycho)
@@ -89,6 +96,9 @@ namespace TownOfHost
                                 return false;
                             }
                         }
+=======
+
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
                         if (SuddenDeathMode.NowSuddenDeathTemeMode)
                         {
                             targetm.SideKickChangeTeam(shapeshifter);

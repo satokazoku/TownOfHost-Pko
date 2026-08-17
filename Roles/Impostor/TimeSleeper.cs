@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+/*
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 using System.Collections.Generic;
 using AmongUs.GameOptions;
 using Hazel;
@@ -291,4 +295,9 @@ public sealed class TimeSleeper : RoleBase, IImpostor, IUsePhantomButton
         text = "TimeSleeper_Ability";
         return true;
     }
+<<<<<<< HEAD
 }
+=======
+}
+*/
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf

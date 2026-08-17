@@ -918,7 +918,10 @@ public enum CustomRoles
     MadHacker,
     MadSheriff,
     MadWare,
+<<<<<<< HEAD
     Madpsycho,
+=======
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
     //DEBUG only Madmate
     //Crewmate(Vanilla)
     Engineer,
@@ -1009,6 +1012,10 @@ public enum CustomRoles
     Police,
     NiceWorkaholic,
     Jailer,
+<<<<<<< HEAD
+=======
+    BoostLighter,
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
     //DEBUG only Crewmate
     Analyzer,
     //Neutral
@@ -1054,6 +1061,10 @@ public enum CustomRoles
     TheFirstLittlePig,
     TheSecondLittlePig,
     TheThirdLittlePig,
+<<<<<<< HEAD
+=======
+    Dancer,
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
     //TOH-K
     Remotekiller,
     Chef,

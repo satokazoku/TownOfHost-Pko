@@ -31,6 +31,10 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
         CanVent = OptionCanVent.GetBool();
         CanSabotage = OptionCanSabotage.GetBool();
         usedPhantomCount = 0;
+<<<<<<< HEAD
+=======
+        phantomNowCool = 0f;
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
     }
 
     static OptionItem OptionPhantomCooldown;
@@ -43,6 +47,10 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
     static bool CanSabotage;
     static OptionItem OptionPhantomUsageCount;
     int usedPhantomCount;
+<<<<<<< HEAD
+=======
+    float phantomNowCool;
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
     enum OptionName
     {
@@ -76,7 +84,21 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
     public override void ApplyGameOptions(IGameOptions opt)
     {
         if (usedPhantomCount < OptionPhantomUsageCount.GetInt())
+<<<<<<< HEAD
             AURoleOptions.PhantomCooldown = PhantomCooldown;
+=======
+            AURoleOptions.PhantomCooldown = Mathf.Max(phantomNowCool, 0.1f);
+    }
+
+    public override void OnFixedUpdate(PlayerControl player)
+    {
+        if (!AmongUsClient.Instance.AmHost) return;
+        if (phantomNowCool > 0f)
+        {
+            phantomNowCool -= Time.fixedDeltaTime;
+            if (phantomNowCool < 0f) phantomNowCool = 0f;
+        }
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
     }
 
     bool IUsePhantomButton.IsPhantomRole => usedPhantomCount < OptionPhantomUsageCount.GetInt();
@@ -119,19 +141,32 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
 
         SnapToPosition(targetPos);
 
+<<<<<<< HEAD
+=======
+        phantomNowCool = PhantomCooldown;
+
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         _ = new LateTask(() =>
         {
             if (!Player.IsAlive()) return;
             RestoreKillCooldown(savedKillTimer);
+<<<<<<< HEAD
+=======
+            Player.RpcResetAbilityCooldown(Sync: true);
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         }, 0.2f, "DoubleKillerRestoreCD", true);
     }
 
     private void RestoreKillCooldown(float cooldown)
     {
         cooldown = Mathf.Max(cooldown, 0f);
+<<<<<<< HEAD
         Player.RpcProtectedMurderPlayer();
         Player.SetKillTimer(cooldown);
         Player.SyncSettings();
+=======
+        Player.SetKillCooldown(cooldown, delay: true);
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
     }
 
     private void SnapToPosition(Vector2 position)

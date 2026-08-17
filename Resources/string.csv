@@ -89,7 +89,10 @@
 "Teleporter","Teleporter","テレポーター"
 "EvilLinker","EvilLinker","イビルリンカー"
 "Minimalist","Minimalist","ミニマリスト","极简主义者","極簡主義者","Минималист","Minimalista","Minimalista"
+<<<<<<< HEAD
 "Evilk","",""
+=======
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 "Evolver","Evolver","エボルバー"
 "Conjurer","Conjurer","魔術師"
 "Swooper","Swooper","スウーパー"
@@ -116,7 +119,10 @@
 "MadSuicide","MadSuicide","マッドスーサイド"
 "MadBetrayer","MadBetrayer","マッドベトレイヤー"
 "MadSheriff","MadSheriff","マッドシェリフ"
+<<<<<<< HEAD
 "Madpsycho","Mad Psycho","マッドサイコ"
+=======
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 "Betrayer","Betrayer","ベトレイヤー"
 "MadHacker","MadHacker","マッドハッカー"
 "MadWare","MadWare","マッドウェア"
@@ -206,6 +212,10 @@
 "NiceEraser","NiceEraser","ナイスイレイサー"
 "MagicalGirl","Magical Girl","魔法少女"
 "Walkure","Walkure","ワルキューレ"
+<<<<<<< HEAD
+=======
+"BoostLighter","Boost Lighter","ブーストライター"
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 "#CrewmateName"
 
 "# ニュートラル役職"
@@ -526,7 +536,10 @@
 "MadWareInfo","Ship has a vulnerability","この船には脆弱性がある"
 "NueInfo","Possess me to Impostor","あの愚図を見つけ出し、吸収せよ"
 "BlackSantaInfo","Grant overwhelming power to the naughty children","悪い子には圧倒的力を授けよう"
+<<<<<<< HEAD
 "MadpsychoInfo","*","僕にかかわった人はみんな死んでいくんだ。"
+=======
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 "#MadmateInfo"
 
 "# 特殊クルー役職"
@@ -609,6 +622,10 @@
 "NiceEraserInfo","Rehabilitate the wicked.","悪人を更生させよう"
 "MagicalGirlInfo","☆ Revolution ☆","へ〜んしんっ☆"
 "WalkureInfo","Reveal yourself and receive divine favor.","名乗りを上げ、加護を得よう"
+<<<<<<< HEAD
+=======
+"BoostLighterInfo","Light up the dark, and see further than anyone else.","闇を照らし、誰よりも遠くを見通せ。"
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 "#CrewmateInfo"
 
 "# ニュートラル役職"
@@ -876,8 +893,12 @@
 "MadSuicideInfoLong","You are a crewmate, but you act as the impostors\n You have two suicide ability.","クルーだがインポスターの味方をする。\nインポスターと互いに認識できない。\n2つの自決能力を持つマッドメイト。\nキルボタンを使用することでシェリフ誤爆のように自決する。\n※他視点からはキルターゲットに殺されるがONの場合は、\n　キルターゲットからは自爆、\n　他視点からはキルターゲットがキルしたように見える。\n\nワンクリックボタンを使用することでその場で自決する。"
 "MadBetrayerInfoLong","You are a crewmate, but you act as the impostors\n Possesses the ability to kill an Impostor after completing all tasks.\nWhen the Impostor is killed, the role changes to Betrayer, gaining the ability to kill anyone.\nUpon becoming a Betrayer, the win condition changes to:\n“All harmful killing roles are dead, and the number of surviving Betrayers is equal to or greater than the number of Crewmates.”","クルーだがインポスターの味方をする。\n全てのタスクを完了させるとインポスターをキルできる能力を持つ。\n\nインポスターをキルすると、役職がベトレイヤーに変化し、全員を殺すことができるようになる。\nベトレイヤーになると勝利条件が\n「有害なキル役職が死亡しており、生き残っているベトレイヤーの人数がクルーと同じかそれ以上」に変化する。"
 "MadSheriffInfoLong","You are a crewmate, but you act as the impostors.\nUsing the Kill button makes you misfire and die.\nIf enabled, the target also dies.","クルーだがインポスターの味方をする。\nキルボタンを使うと誤爆して自殺する。\n設定が有効な場合は対象も死亡する。"
+<<<<<<< HEAD
 "MadpsychoInfoLong","","クルーだがインポスターの味方をする。キルされたとき、そのキルを無効化して相手をキルする。(ガードレベル1を貫通できるキルを除く)\nまた会議ターン中に能力を自身に使われた場合使用した人を即座にキルする。\nタスクターン中に能力を使われた場合(アーソニストの塗り、ジャッカルのサイドキックなど)もその能力を無効化してキルする。"
 "MadWareInfoLong","","クルーだがインポスターの味方をする。\nサボタージュを修復するとポイントが手に入る。\nポイントが一定以上たまると、\n・インポスターが誰か　　・サボタージュのクール減少\n・自身にアドオン付与\n等のバフがかかる。\n\nマッドメイト共通設定の「通信妨害」「停電」修復可否設定にかかわらずサボタージュを修復できる。"
+=======
+"MadWareInfoLong","","クルーだがインポスターの見方をする。\nサボタージュを修復するとポイントが手に入る。\nポイントが一定以上たまると、\n・インポスターが誰か　　・サボタージュのクール減少\n・自身にアドオン付与\n等のバフがかかる。\n\nマッドメイト共通設定の「通信妨害」「停電」修復可否設定にかかわらずサボタージュを修復できる。"
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 "NueInfoLong","A combination role paired with the <#8b6d61>Fool.</color>\nAlthough a Crewmate, the Nue sides with the Impostors.\nAfter completing a certain number of tasks and voting for themselves during a meeting, the Nue enters Guess Mode.\nWhile in Guess Mode, voting for the Fool will kill the Fool.\nOnce the Fool dies, the meeting immediately ends, and the Nue gains access to a Suicidal Attack ability.\nIf the guess fails, the Nue dies instead.\nAfter the Suicidal Attack is unlocked, the Nue will kill a target but will die by self-destruction shortly afterward.","<#8b6d61>愚か者</color>とのコンビネーション役職。\n\nクルーだがインポスターの味方をする。\n鵺(ぬえ)は一定数タスクを完了させ、会議で自投票することで推測モードになる\n推測モード中に愚か者に投票することで、愚か者が死亡する\n死亡後、会議が即座に終了し、鵺に自爆特攻能力が解放される。\n推測に失敗すると自身が死亡する。\n\n自爆特攻が解放されると、キルを行った後、一定時間後に自身が自殺する。"
 "MadHackerInfoLong","","クルーだがインポスターの味方をする。\nタスクターン中、シェイプシフト画面から死者の情報を得ることができる。\n設定によって死者の死体位置を得たり死者の死因を得る事もできる。\nインポスターのキルか確認できる設定有効時、×が\n赤=>インポスター　灰=>その他のキラー 橙=>自殺等となる。"
 "BlackCatInfoLong","a","インポスターの味方のクルーメイトです。\nいわゆる狂人と呼ばれる役職です。\n勝利条件はクルーメイトの勝利ではなく、インポスターの勝利です。\nその勝利に自身の生死は問われないので、あの手この手でインポスターを勝利に導きましょう。"
@@ -964,6 +985,10 @@
 "NiceNekomataInfoLong","","会議に関する能力を有するクルーメイトです。\n追放されるとランダムで生存者を一人道連れにします。"
 "MagicalGirlInfoLong","Complete the required tasks, then self-vote in a meeting to show transformable roles.\nVote a listed player to transform into the role shown for that player.\nThe transformation lasts for the configured number of turns, and a role you have already transformed into cannot be selected again","一定タスク完了時に会議時に自投票をすると変身モードに入る\n変身モード中に指定されたプレイヤーに投票すると、\n設定された役職に一定ターン変化することができる。\nただし、オールラウンダー、さつまといも、子方、ウォーカー、マーリンには変身ができない。\n変身は役ごとに一回のみ可能で、クルーにのみ変身ができる。\n変身後の役職設定はその役の設定に依存します。\nぽんこつ占い師が占い師と錯覚する設定がONの場合、役選択時に占い師と表示されます。\nまた、ゲッサーでは変身先の役職/魔法少女で撃ち殺せる。"
 "WalkureInfoLong","Self-vote during a meeting to enter Revelation Mode.\nWhile in Revelation Mode, vote another player to reveal yourself as Walkure to them.\nRevealed players may be able to see your role, depending on settings.\nAs your reveal count increases, you gain configured buffs and may unlock a kill ability.\nIf enough players vote for you, you are exiled regardless of the normal vote result.\nWhen you die or are exiled, some crewmates may follow you in death or lose their roles.\nAttempts to change your role can be reflected, causing the actor to self-destruct.\nIf required reveals to win is enabled, you cannot win unless you reach the configured reveal count.","会議で自投票すると名乗りモードに入る。\n名乗りモード中に自分以外へ投票すると、その相手に自分がワルキューレであることを名乗り出る。\n設定によっては、名乗られた相手からワルキューレの役職が見えるようになる。\n名乗り回数が増えると、設定された加護を得たり、キル能力を解放したりできる。\n一定数以上の票を受けると、通常の投票結果に関係なく追放される。\n死亡または追放されると、一部のクルーが後追いしたり役職を失ったりする。\n役職変更を受けた場合、設定に応じて反射し、実行者を自滅させる。\n勝利に必要な名乗り回数が有効な場合、設定回数を満たしていないと勝利できない。"
+<<<<<<< HEAD
+=======
+"BoostLighterInfoLong","Pet your pet to temporarily boost your vision. Check your remaining time through the vent cooldown display.","ペットを撫でると一定時間、視界がブーストされる。残り時間はベントのクールダウン表示で確認できる。"
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 "#CrewmateInfoLong"
 
 "# ニュートラル役職"
@@ -1039,7 +1064,11 @@
 "PursuerInfoLong","(Neutrals):\nThe client died, so the lawyer became a pursuer.\nIf you yourself are still alive at the end of the game, you win an additional victory. It is also possible to prevent kills for a set number of times.","依頼人が死亡したので弁護士は追跡者になった。\n自身がゲーム終了時に生存していれば追加で勝利となる。また、設定回数分キルを防ぐことが可能。","(中立阵营):\n当客户死了 律师将会变成起诉人\n如果起诉人在游戏结束时还活着，它将单独获得胜利. 也可以在设定的次数内阻止死亡",
 "MonikaInfoLong","","キルボタン「抹消」で対象を半死亡の「ゴミ箱」レイヤーへ送る。ゴミ箱の者は会議での発言・投票・能力を失うが、ゴミ箱・死亡者とは秘匿チャットで会話できる。ゴミ箱に居ない生存者が2名になると特殊会議で追加の勝者を選び、0～1名になるとモニカと残り全員が勝利する。"
 "PokerFaceInfoLong","PokerfaceWinnerOnlyAlive,Only surviving poker faces win.","生き残ったポーカーフェイスのみ勝利する"
+<<<<<<< HEAD
 "HunterInfoLong","Select a target on the Shape Shift screen; when you get close to that target, you’ll warp to it and kill it. (The range is about a size smaller than the Skeld cafeteria.)\nAfter making a kill, your name turns brown and your movement speed increases.\nYour vision of the surrounding area will also be blocked for a certain amount of time.\nYou win when the number of Hunters equals the number of Crewmates.","シェイプシフト画面でターゲットを決め、そのターゲットに近づくとターゲットにワープしキルします。(範囲はスケルドのカフェテリアより一回り小さいぐらいです。)\nキルした後、自身の名前の色が茶色になり、足が速くなります。\n周りの視界も一定時間見えなくなります。\n狩人とカウント=クルーメイトの役職が同数になると勝利します。\nシュレディンガーの猫を仲間にすることはできません。"
+=======
+"HunterInfoLong","Select a target on the Shape Shift screen; when you get close to that target, you’ll warp to it and kill it. (The range is about a size smaller than the Skeld cafeteria.)\nAfter making a kill, your name turns brown and your movement speed increases.\nYour vision of the surrounding area will also be blocked for a certain amount of time.\nYou win when the number of Hunters equals the number of Crewmates.","シェイプシフト画面でターゲットを決め、そのターゲットに近づくとターゲットにワープしキルします。(範囲はスケルドのカフェテリアより一回り小さいぐらいです。)\nキルした後、自身の名前の色が茶色になり、足が速くなります。\n周りの視界も一定時間見えなくなります。\n狩人とカウント=クルーメイトの役職が同数になると勝利します。"
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 "BatGirlInfoLong","Self-vote in a meeting to enter infatuation mode, then vote someone to set them as your prince.\nPress the phantom ability button to commit suicide.\nIf someone stays near your prince for a set time, only that player gets a notice at the next meeting.\nSolo Win: You and your prince die in the same turn.\nAdd Win: Both you and your prince are alive when the match ends.","会議で自投票すると一目惚れモードに変更できる。\n一目惚れモード中に自分以外へ投票すると、その人を王子様に指定できる。\nファントムボタンでその場で自決できる。\n王子様の一定範囲内に設定秒数いるプレイヤーには、次の会議開始時にその人だけ通知が届く。\n\n単独勝利：バットガールと王子様が同じターン中に死亡する。\n・王子様がタスクターン中に死亡した場合、会議開始前にバットガールが自決すれば単独勝利できる。\n・バットガールが先に自決した場合でも、会議開始前に王子様が死亡すれば単独勝利できる。\n・王子様が会議中に死亡した場合、同じ会議サイクル内でバットガールが死亡または追放されれば単独勝利できる。\n・王子様が追放された場合、バットガールは後追いする。\n\n追加勝利：試合終了時に王子様とバットガールの両者が生存している（王子様の陣営勝敗は問わない）。\n\nその他：バットガールから王子様は視認できるが、王子様からバットガールは視認できない。\nまた、キルボタンに能力はない。\n王子様が死亡し、バットガールが生存したまま会議が終わった場合は会議終了後に後追いする。"
 "BatGirlInfoLongAddWin","Self-vote in a meeting to enter infatuation mode, then vote someone to set them as your prince.\nPress the phantom ability button to commit suicide.\nIf someone stays near your prince for a set time, only that player gets a notice at the next meeting.\n\nSolo Win: You and your prince die in the same turn.\n- If your prince dies during task time, you can still solo win by committing suicide before the next meeting starts.\n- Even if you die first, solo win is possible if your prince dies before the meeting starts.\n- If your prince dies during a meeting, you can solo win by dying or being exiled in that same meeting cycle.\n- If your prince is exiled, you will follow.\n\nAdd Win: Both you and your prince are alive when the match ends (prince side doesn't matter).\n\nOther: You can see your prince, but your prince cannot identify you.\nYour kill button has no active effect.\nIf your prince dies and the meeting ends while you are still alive, you follow after the meeting ends.","会議で自投票すると一目惚れモードに変更できる。\n一目惚れモード中に自分以外へ投票すると、その人を王子様に指定できる。\nファントムボタンでその場で自決できる。\n王子様の一定範囲内に設定秒数いるプレイヤーには、次の会議開始時にその人だけ通知が届く。\n\n勝利条件：試合終了時に王子様とバットガールの両者が生存している（王子様の陣営勝敗は問わない）。\nまた、バットガールから王子様は視認できるが、王子様からバットガールは視認できない。\nまた、キルボタンに能力はない。\n王子様が死亡し、バットガールが生存したまま会議が終わった場合は会議終了後に後追いする。"
 "BatGirlInfoLongSoloOnly","Self-vote in a meeting to enter infatuation mode, then vote someone to set them as your prince.\nPress the phantom ability button to commit suicide.\nIf someone stays near your prince for a set time, only that player gets a notice at the next meeting.\n\nSolo Win: You and your prince die in the same turn.\n- If your prince dies during task time, you can still solo win by committing suicide before the next meeting starts.\n- Even if you die first, solo win is possible if your prince dies before the meeting starts.\n- If your prince dies during a meeting, you can solo win by dying or being exiled in that same meeting cycle.\n- If your prince is exiled, you will follow.\n\nAdd Win: Disabled in current settings.\n\nOther: You can see your prince, but your prince cannot identify you.\nYour kill button has no active effect.\nIf your prince dies and the meeting ends while you are still alive, you follow after the meeting ends.","会議で自投票すると一目惚れモードに変更できる。\n一目惚れモード中に自分以外へ投票すると、その人を王子様に指定できる。\nファントムボタンでその場で自決できる。\n王子様の一定範囲内に設定秒数いるプレイヤーには、次の会議開始時にその人だけ通知が届く。\n\n勝利条件:バットガールと王子様が同じターン中に死亡する。\n・王子様がタスクターン中に死亡した場合、会議開始前にバットガールが自決すれば単独勝利できる。\n・バットガールが先に自決した場合でも、会議開始前に王子様が死亡すれば単独勝利できる。\n・王子様が会議中に死亡した場合、同じ会議内でバットガールが死亡または追放されれば単独勝利できる。\n・王子様が追放された場合、バットガールは後追いする。\nまた、バットガールから王子様は視認できるが、王子様からバットガールは視認できない。\nまた、キルボタンに能力はない。\n王子様が死亡し、バットガールが生存したまま会議が終わった場合は会議終了後に後追いする。"
@@ -2006,7 +2035,13 @@
 "SantaGiftRateNiceGuesser","Chance to gift Nice Guesser","ナイスゲッサー排出確率"
 "SantaGiftLimit","Maximum number of gifts","プレゼントの配布上限回数"
 "SantaCanGiftLovers","Can gift to Lovers","ラバーズにもプレゼントを配れる"
+<<<<<<< HEAD
 "SantaCanGiftMadmate","Can gift to Madmate","マッドメイト陣営にもプレゼントを配れる"
+=======
+"SantaCanGiftMadmate","Can gift to Madmate","マッドロールにもプレゼントを配れる"
+"SantaCanTaskCount","Can gift to players with tasks","能力を発揮するタスク数"
+"SantaCanGiftJackalDoll","Can gift to Jackal Doll","ジャッカルドールにもプレゼントを配れる"
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 "RabbitRedistributionLongTasks","Redistribution Long Tasks","再配布ロングタスク数"
 "RabbitRedistributionCommonTasks","Redistribution Common Tasks","再配布通常タスク数"
 "RabbitRedistributionShortTasks","Redistribution Short Tasks","再配布ショートタスク数"
@@ -2219,7 +2254,11 @@
 "NiceEraserVoteMode","Reform Method","更生方法"
 "NiceEraserTaskCount","Tasks to Enable Ability","能力を発揮するタスク数"
 "NiceEraserOneMeetingMaximum","Uses Per Meeting","1会議での能力使用可能回数"
+<<<<<<< HEAD
 "Mode.NiceEraser","Reform Mode","<color=#d0ff00>更生モード</color>"
+=======
+"Mode.NiceEraser","Reform Mode","更生"
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 "Vote.NiceEraser","Vote to reform","誰かに投票で更生"
 "NiceEraserInvalidTarget","You can't reform that player.","その相手は更生できません。"
 "NiceEraserAlreadyQueued","That player is already queued for reform.","その相手はすでに更生予約済みです。"
@@ -2281,6 +2320,13 @@
 "WalkureKillButtonText","Judgment","断罪"
 "Mode.Walkure","Revelation Mode","名乗りモード"
 "Vote.Walkure","Vote to reveal yourself","誰かに投票で名乗り"
+<<<<<<< HEAD
+=======
+"BoostLighterCooldown","Cooldown","クールタイム"
+"BoostLighterDuration","Boost Duration","ブースト持続時間"
+"BoostLighterAffectedByBlackout","Affected by Blackout","停電の影響を受ける"
+"BoostLighterLightMod","Vision Brightness","視界の明るさ"
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
 "## Neutral Role Setting"
 "SchrodingerCatExiledTeamChanges","Team Changes When Ejected","吊られた際、陣営が変化する","薛定谔的猫被放逐时会加入其他阵营","薛定諤的貓被丟出時陣營會轉變","Команда меняется после его Изгнания","Time Muda Quando Exilado",""
@@ -3062,7 +3108,10 @@
 "MadAvengerCo","{0} is NeutralKiller.","マッドアベンジャーが{0}を推測した。\n革命に一歩近づいた。"
 "MadAvengerDie","{0} fall.","マッドアベンジャーが{0}を推測した。\n残念だったな。"
 "FoxTelldie","{0} telled Fox","{0}が妖狐を占い、呪殺したようだぜ"
+<<<<<<< HEAD
 "Rpsych","*","{0}が{1}に能力を使おうとして{1}が<color=#ff1919>マッドサイコ</color>だからキルされたんだってさ。"
+=======
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
 "Message.TairouTitle","【===== Alive Tairo =====】","【===== 大狼生存中 =====】"
 "Message.TairouAlive","I have a bad feeling about the village","村に嫌な気配がする..."
@@ -3215,7 +3264,10 @@
 "DeathReason.Retaliation","Retaliation","報復"
 "DeathReason.Sacrifice","Sacrifice","殉死"
 "DeathReason.etc","Other","その他","其他","其他","Другое","Outros",""
+<<<<<<< HEAD
 "Counter","Counter","返り討ち"
+=======
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 "Alive","Alive","生存","存活","存活","Выжил","Vivo",""
 "Win","Wins","勝利","胜利","勝利"," Победили","Vitória",""
 "Last-","Last","ラスト","仅存","獨活","Последний ","Último",""
@@ -3851,5 +3903,9 @@
 "DummyHunterMyKillText","My Kills","自分のキル数"
 "DummyHunterTopText","Top","トップ"
 "DummyHunterPlayer","DummyHunter","ダミーハンター","傀儡猎人","傀儡獵人","ОхотникЗаКуклами","ChasseurDeMannequins",""
+<<<<<<< HEAD
 "DummyHunterPlayerInfo","Use the Phantom button to hunt dummies.","ファントムボタンでダミーを狩れ。"
 "psychoDeathReason","","キル反射時の死因"
+=======
+"DummyHunterPlayerInfo","Use the Phantom button to hunt dummies.","ファントムボタンでダミーを狩れ。"
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf

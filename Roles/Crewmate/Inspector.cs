@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Text;
+<<<<<<< HEAD
 using AmongUs.GameOptions;
 using Hazel;
 using TownOfHost.Roles.Core;
@@ -7,6 +8,15 @@ using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Madmate;
 using UnityEngine;
 using static TownOfHost.Modules.SelfVoteManager;
+=======
+using UnityEngine;
+using AmongUs.GameOptions;
+
+using TownOfHost.Roles.Core;
+using static TownOfHost.Modules.SelfVoteManager;
+using Hazel;
+using TownOfHost.Roles.Core.Interfaces;
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
 namespace TownOfHost.Roles.Crewmate;
 
@@ -264,6 +274,7 @@ public sealed class Inspector : RoleBase, ISelfVoter
     {
         var target = PlayerCatch.GetPlayerById(votedForId);
         if (!target.IsAlive()) return;//死んでるならここで処理を止める。
+<<<<<<< HEAD
         if (target.Is(CustomRoles.Madpsycho))
         {
             if (Madpsycho.CanPsycho)
@@ -284,6 +295,8 @@ public sealed class Inspector : RoleBase, ISelfVoter
                 return;
             }
         }
+=======
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         count++;//全体のカウント
         TargetPlayerId = votedForId;
         SendRPC();

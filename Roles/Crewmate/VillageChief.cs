@@ -1,6 +1,7 @@
 using System;
 using AmongUs.GameOptions;
 using Hazel;
+<<<<<<< HEAD
 using TownOfHost.Patches;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
@@ -10,6 +11,16 @@ using static TownOfHost.Modules.SelfVoteManager;
 using static TownOfHost.PlayerCatch;
 using static TownOfHost.Translator;
 using static TownOfHost.Utils;
+=======
+using UnityEngine;
+using TownOfHost.Roles.Core;
+using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Patches;
+using static TownOfHost.PlayerCatch;
+using static TownOfHost.Utils;
+using static TownOfHost.Translator;
+using static TownOfHost.Modules.SelfVoteManager;
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
 namespace TownOfHost.Roles.Crewmate;
 
@@ -291,6 +302,7 @@ public sealed class VillageChief : RoleBase, IKiller, ISelfVoter
 
         if (!Utils.RoleSendList.Contains(target.PlayerId))
             Utils.RoleSendList.Add(target.PlayerId);
+<<<<<<< HEAD
         if (target.Is(CustomRoles.Madpsycho))
         {
             if (Madpsycho.CanPsycho)
@@ -300,6 +312,9 @@ public sealed class VillageChief : RoleBase, IKiller, ISelfVoter
                 return;
             }
         }
+=======
+
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         var previousRole = target.GetCustomRole();
         target.RpcSetCustomRole(CustomRoles.Sheriff, log: null);
 

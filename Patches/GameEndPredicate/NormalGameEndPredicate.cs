@@ -268,6 +268,10 @@ namespace TownOfHost
             int EaterCount = 0;
             int PavlovOwnerAlive = 0;
             int PavlovOwnerRemaining = 0;
+<<<<<<< HEAD
+=======
+            int Pirate = 0;
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
             
             foreach (var pc in PlayerCatch.AllAlivePlayerControls)
             {

@@ -1,10 +1,16 @@
 using System;
+<<<<<<< HEAD
 using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Madmate;
 using static UnityEngine.GraphicsBuffer;
+=======
+using AmongUs.GameOptions;
+using Hazel;
+using TownOfHost.Roles.Core;
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
 namespace TownOfHost.Roles.Crewmate;
 
@@ -64,6 +70,7 @@ public sealed class Observer : RoleBase
         if (Is(voter) && RemainingMonitoring >= 1 && Awakened)
         {
             ObserverTarget = votedForId;
+<<<<<<< HEAD
             var target = PlayerCatch.GetPlayerById(ObserverTarget);
             if (target.Is(CustomRoles.Madpsycho))
             {
@@ -83,6 +90,8 @@ public sealed class Observer : RoleBase
                     foreach (var spl in PlayerCatch.AllPlayerControls.Where(pc => !pc.IsAlive())) Utils.SendMessage(send, spl.PlayerId, GetString("RMSKillTitle"));
                 }
             }
+=======
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         }
 
         return true;

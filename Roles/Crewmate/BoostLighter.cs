@@ -1,0 +1,212 @@
+using AmongUs.GameOptions;
+using Hazel;
+using TownOfHost.Modules;
+using TownOfHost.Patches;
+using TownOfHost.Roles.Core;
+using TownOfHost.Roles.Core.Interfaces;
+using UnityEngine;
+
+namespace TownOfHost.Roles.Crewmate;
+
+public sealed class BoostLighter : RoleBase
+{
+    public static readonly SimpleRoleInfo RoleInfo =
+        SimpleRoleInfo.Create(
+            typeof(BoostLighter),
+            player => new BoostLighter(player),
+            CustomRoles.BoostLighter,
+            () => RoleTypes.Engineer,
+            CustomRoleTypes.Crewmate,
+            38700,
+            SetupOptionItem,
+            "bl",
+            "#ffe066",
+            (5, 1),
+            from: From.None
+        );
+
+    public BoostLighter(PlayerControl player)
+        : base(RoleInfo, player)
+    {
+        BoostDuration = OptionBoostDuration.GetFloat();
+        BoostCooldown = OptionBoostCooldown.GetFloat();
+        AffectedByBlackout = OptionAffectedByBlackout.GetBool();
+        BoostLightMod = OptionBoostLightMod.GetFloat();
+        isBoostActive = false;
+        boostTimer = 0f;
+        cooldownTimer = OptionBoostCooldown.GetFloat();
+    }
+
+    static OptionItem OptionBoostDuration;
+    static float BoostDuration;
+    static OptionItem OptionBoostCooldown;
+    static float BoostCooldown;
+    static OptionItem OptionAffectedByBlackout;
+    static bool AffectedByBlackout;
+    static OptionItem OptionBoostLightMod;
+    static float BoostLightMod;
+
+    bool isBoostActive;
+    float boostTimer;
+    float cooldownTimer;
+
+    enum OptionName
+    {
+        BoostLighterCooldown,
+        BoostLighterDuration,
+        BoostLighterAffectedByBlackout,
+        BoostLighterLightMod,
+    }
+
+    static void SetupOptionItem()
+    {
+        OptionBoostCooldown = FloatOptionItem.Create(RoleInfo, 10, OptionName.BoostLighterCooldown,
+            new(2.5f, 60f, 2.5f), 30f, false).SetValueFormat(OptionFormat.Seconds);
+        OptionBoostDuration = FloatOptionItem.Create(RoleInfo, 11, OptionName.BoostLighterDuration,
+            new(2.5f, 20f, 2.5f), 10f, false).SetValueFormat(OptionFormat.Seconds);
+        OptionAffectedByBlackout = BooleanOptionItem.Create(RoleInfo, 12, OptionName.BoostLighterAffectedByBlackout,
+            true, false);
+        OptionBoostLightMod = FloatOptionItem.Create(RoleInfo, 13, OptionName.BoostLighterLightMod,
+            new(0.25f, 5f, 0.25f), 3f, false).SetValueFormat(OptionFormat.Percent);
+    }
+
+    public override void Add()
+    {
+        PetActionManager.Register(Player.PlayerId, ActivateBoost);
+    }
+
+    public override void OnDestroy()
+    {
+        PetActionManager.Unregister(Player.PlayerId);
+    }
+
+    public override void ApplyGameOptions(IGameOptions opt)
+    {
+        AURoleOptions.EngineerCooldown = isBoostActive
+            ? Mathf.Max(BoostDuration - boostTimer, 0.1f)
+            : Mathf.Max(cooldownTimer, 0.1f);
+        AURoleOptions.EngineerInVentMaxTime = 0f;
+
+        if (isBoostActive)
+        {
+            bool blackoutActive = Utils.IsActive(SystemTypes.Electrical);
+            if (!AffectedByBlackout || !blackoutActive)
+            {
+                opt.SetFloat(FloatOptionNames.CrewLightMod, BoostLightMod);
+            }
+        }
+    }
+
+    public override bool CanClickUseVentButton => false;
+    public override bool OnEnterVent(PlayerPhysics physics, int ventId) => false;
+
+    public void ActivateBoost()
+    {
+        if (!Player.IsAlive()) return;
+        if (isBoostActive) return;
+        if (cooldownTimer > 0f) return;
+
+        isBoostActive = true;
+        boostTimer = 0f;
+
+        Player.MarkDirtySettings();
+        if (AmongUsClient.Instance.AmHost)
+            Player.SyncSettings();
+
+        SendRpc();
+        UtilsNotifyRoles.NotifyRoles(OnlyMeName: true);
+        Logger.Info($"{Player.Data.GetLogPlayerName()} が視界ブーストを発動", "BoostLighter");
+    }
+
+    private void DeactivateBoost()
+    {
+        if (!isBoostActive) return;
+        isBoostActive = false;
+        boostTimer = 0f;
+        cooldownTimer = BoostCooldown;
+
+        Player.MarkDirtySettings();
+        if (AmongUsClient.Instance.AmHost)
+            Player.SyncSettings();
+
+        SendRpc();
+        UtilsNotifyRoles.NotifyRoles(OnlyMeName: true);
+    }
+
+    public override void OnFixedUpdate(PlayerControl player)
+    {
+        if (!isBoostActive && cooldownTimer > 0f)
+        {
+            cooldownTimer -= Time.fixedDeltaTime;
+            if (cooldownTimer < 0f) cooldownTimer = 0f;
+        }
+
+        if (!isBoostActive) return;
+        if (!AmongUsClient.Instance.AmHost) return;
+        if (!Player.IsAlive()) { DeactivateBoost(); return; }
+
+        boostTimer += Time.fixedDeltaTime;
+        if (boostTimer >= BoostDuration)
+            DeactivateBoost();
+    }
+
+    public override void OnStartMeeting()
+    {
+        if (isBoostActive)
+            DeactivateBoost();
+    }
+
+    public override void AfterMeetingTasks()
+    {
+        if (!AmongUsClient.Instance.AmHost) return;
+        if (!Player.IsAlive()) return;
+
+        cooldownTimer = BoostCooldown;
+        Player.RpcResetAbilityCooldown();
+    }
+
+    public override string GetLowerText(PlayerControl seer, PlayerControl seen = null,
+        bool isForMeeting = false, bool isForHud = false)
+    {
+        seen ??= seer;
+        if (!Is(seer) || seer.PlayerId != seen.PlayerId || !Player.IsAlive()) return "";
+        if (isForMeeting) return "";
+
+        string size = isForHud ? "" : "<size=60%>";
+        string color = RoleInfo.RoleColorCode;
+
+        if (isBoostActive)
+        {
+            float remaining = Mathf.Max(0f, BoostDuration - boostTimer);
+            return $"{size}<color={color}>【視界ブースト中】{remaining:F1}s</color>";
+        }
+
+        return $"{size}<color={color}>ペットなで → 視界ブースト発動</color>";
+    }
+
+    public override string GetProgressText(bool comms = false, bool GameLog = false)
+    {
+        if (!Player.IsAlive()) return "";
+        if (isBoostActive)
+        {
+            float remaining = Mathf.Max(0f, BoostDuration - boostTimer);
+            return $"<color={RoleInfo.RoleColorCode}>({remaining:F1}s)</color>";
+        }
+        return "";
+    }
+
+    void SendRpc()
+    {
+        using var sender = CreateSender();
+        sender.Writer.Write(isBoostActive);
+        sender.Writer.Write(boostTimer);
+        sender.Writer.Write(cooldownTimer);
+    }
+
+    public override void ReceiveRPC(MessageReader reader)
+    {
+        isBoostActive = reader.ReadBoolean();
+        boostTimer = reader.ReadSingle();
+        cooldownTimer = reader.ReadSingle();
+    }
+}

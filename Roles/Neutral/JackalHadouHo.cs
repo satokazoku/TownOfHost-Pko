@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 using AmongUs.GameOptions;
 using Hazel;
 using TownOfHost.Modules;
@@ -9,6 +10,19 @@ using UnityEngine;
 using static TownOfHost.Modules.SelfVoteManager;
 using static TownOfHost.PlayerCatch;
 using static TownOfHost.Translator;
+=======
+using System.Linq;
+using AmongUs.GameOptions;
+using Hazel;
+using TownOfHost.Modules;
+using TownOfHost.Roles.Core;
+using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Patches;
+using UnityEngine;
+using static TownOfHost.PlayerCatch;
+using static TownOfHost.Translator;
+using static TownOfHost.Modules.SelfVoteManager;
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
 namespace TownOfHost.Roles.Neutral;
 
@@ -69,7 +83,10 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         skMode = false;
         nowcool = KillCooldown;
         LastCooltime = (int)KillCooldown;
+<<<<<<< HEAD
         Charging = false;
+=======
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
         skCandidateId = byte.MaxValue;
         skNearTimer = 0f;
@@ -81,7 +98,10 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
 
     public bool IsCharging;
     public bool IsSuperCharging;
+<<<<<<< HEAD
     public static bool Charging;
+=======
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
     float chargeTimer;
     float superChargeTimer;
     float PlayerSpeed;
@@ -140,6 +160,10 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
     static OptionItem OptionTamaVentCooldown;
     static OptionItem OptionTamaVentMaxTime;
     static OptionItem OptionTamaCanVentMove;
+<<<<<<< HEAD
+=======
+    static OptionItem OptionTamaCountAsJackalKiller;
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
     enum OptionName
     {
@@ -164,6 +188,11 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
     public static bool GetTamaCanVentMove() => OptionTamaCanVentMove?.GetBool() ?? false;
     public static bool GetCanUseSabotageOption() => OptionCanSabotage?.GetBool() ?? false;
 
+<<<<<<< HEAD
+=======
+    public static bool GetTamaCountAsJackalKiller() => OptionTamaCountAsJackalKiller?.GetBool() ?? false;
+
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
     public static void HideRoleOptions(CustomRoles role)
     {
         if (Options.CustomRoleSpawnChances != null && Options.CustomRoleSpawnChances.TryGetValue(role, out var sp))
@@ -210,6 +239,11 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
 
         RoleAddAddons.Create(RoleInfo, 32, NeutralKiller: true);
 
+<<<<<<< HEAD
+=======
+        OptionTamaCountAsJackalKiller = BooleanOptionItem.Create(RoleInfo, 33, "TamaCountAsJackalKiller", false, false);
+
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         HideRoleOptions(CustomRoles.Tama);
     }
 
@@ -256,7 +290,10 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
                 Player.SyncSettings();
             }
             IsCharging = false;
+<<<<<<< HEAD
             Charging = false;
+=======
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
             IsSuperCharging = false;
             ShowBeamMark = false;
             IsFiring = false;
@@ -355,6 +392,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         {
             info.DoKill = false;
             (_, var target) = info.AttemptTuple;
+<<<<<<< HEAD
             if (target.Is(CustomRoles.Madpsycho))
             {
                 if (Madpsycho.CanPsycho)
@@ -364,6 +402,8 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
                     return;
                 }
             }
+=======
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
             DoSideKick(target);
 
             skMode = false;
@@ -410,7 +450,11 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         if (IsFiring || ShowBeamMark || !Player.IsAlive() || IsCharging || IsSuperCharging) return;
 
         IsFiring = true;
+<<<<<<< HEAD
         Charging = true;
+=======
+
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         if (IsLoaded)
         {
             IsSuperCharging = true;
@@ -470,7 +514,10 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         IsCharging = false;
         IsSuperCharging = false;
         ShowBeamMark = false;
+<<<<<<< HEAD
         Charging = false;
+=======
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         chargeTimer = 0f;
         superChargeTimer = 0f;
         HasHit = false;
@@ -683,9 +730,17 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         if (!AmongUsClient.Instance.AmHost || !Player.IsAlive()) return;
         var myPos = Player.GetTruePosition();
         Vector2 dir = BeamFacingLeft ? Vector2.left : Vector2.right;
+<<<<<<< HEAD
         foreach (var target in PlayerCatch.AllAlivePlayerControls)
         {
             if (target.PlayerId == Player.PlayerId) continue;
+=======
+        foreach (var target in PlayerCatch.AllAlivePlayerControls.ToArray())
+        {
+            if (!Player.IsAlive()) break;
+            if (target.PlayerId == Player.PlayerId) continue;
+            if (!target.IsAlive()) continue;
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
             if (!KillJackal && target.GetCustomRole() is CustomRoles.Jackal or CustomRoles.JackalMafia
                 or CustomRoles.JackalAlien or CustomRoles.Jackaldoll or CustomRoles.JackalHadouHo
                 or CustomRoles.Tama && !SuddenDeathMode.NowSuddenDeathMode) continue;
@@ -704,9 +759,17 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         if (!AmongUsClient.Instance.AmHost || !Player.IsAlive()) return;
         var myPos = Player.GetTruePosition();
         Vector2 dir = BeamFacingLeft ? Vector2.left : Vector2.right;
+<<<<<<< HEAD
         foreach (var target in PlayerCatch.AllAlivePlayerControls)
         {
             if (target.PlayerId == Player.PlayerId) continue;
+=======
+        foreach (var target in PlayerCatch.AllAlivePlayerControls.ToArray())
+        {
+            if (!Player.IsAlive()) break;
+            if (target.PlayerId == Player.PlayerId) continue;
+            if (!target.IsAlive()) continue;
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
             if (!KillJackal && target.GetCustomRole() is CustomRoles.Jackal or CustomRoles.JackalMafia
                 or CustomRoles.JackalAlien or CustomRoles.Jackaldoll or CustomRoles.JackalHadouHo
                 or CustomRoles.Tama && !SuddenDeathMode.NowSuddenDeathMode) continue;
@@ -770,6 +833,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         Player.RpcProtectedMurderPlayer(target);
         target.RpcProtectedMurderPlayer(Player);
         target.RpcProtectedMurderPlayer(target);
+<<<<<<< HEAD
         if (target.Is(CustomRoles.Madpsycho))
         {
             if (Madpsycho.CanPsycho)
@@ -779,6 +843,8 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
                 return;
             }
         }
+=======
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         target.RpcSetCustomRole(CustomRoles.Tama, log: null);
         if (target.GetRoleClass() is Tama tama) tama.SetOwner(Player.PlayerId);
         if (!Utils.RoleSendList.Contains(target.PlayerId)) Utils.RoleSendList.Add(target.PlayerId);
@@ -996,11 +1062,19 @@ public sealed class Tama : RoleBase, IKiller
     }
 
     public Tama(PlayerControl player)
+<<<<<<< HEAD
         : base(RoleInfo, player, () => HasTask.False)
+=======
+    : base(RoleInfo, player, () => HasTask.False)
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
     {
         OwnerId = byte.MaxValue;
         hasLoaded = false;
         isLoading = false;
+<<<<<<< HEAD
+=======
+        ApplyJackalKillerCount();
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
     }
 
     public byte OwnerId;
@@ -1030,6 +1104,13 @@ public sealed class Tama : RoleBase, IKiller
         if (!JackalHadouHo.GetTamaCanLoad()) return false;
         return Player.IsAlive() && !hasLoaded && !isLoading && IsOwnerAlive();
     }
+<<<<<<< HEAD
+=======
+    private void ApplyJackalKillerCount()
+    {
+        MyState.SetCountType(JackalHadouHo.GetTamaCountAsJackalKiller() ? CountTypes.Jackal : CountTypes.Crew);
+    }
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
     public bool CanUseSabotageButton() => false;
     public bool CanUseImpostorVentButton() => JackalHadouHo.GetTamaCanVent();
@@ -1086,6 +1167,11 @@ public sealed class Tama : RoleBase, IKiller
 
     public override void OnFixedUpdate(PlayerControl player)
     {
+<<<<<<< HEAD
+=======
+        ApplyJackalKillerCount();
+
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         if (!AmongUsClient.Instance.AmHost) return;
         if (!GameStates.IsInTask) return;
         if (OwnerId == byte.MaxValue) return;
@@ -1184,4 +1270,8 @@ public sealed class Tama : RoleBase, IKiller
         text = "Tama_Kill";
         return true;
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf

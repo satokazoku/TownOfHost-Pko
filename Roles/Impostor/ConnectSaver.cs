@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 using System.Linq;
 using System.Runtime.Intrinsics.Arm;
 using AmongUs.GameOptions;
@@ -10,6 +11,16 @@ using UnityEngine;
 using static TownOfHost.Modules.SelfVoteManager;
 using static UnityEngine.GraphicsBuffer;
 using static UnityEngine.UIElements.UIR.Allocator2D;
+=======
+using AmongUs.GameOptions;
+using Hazel;
+using UnityEngine;
+using System.Linq;
+
+using TownOfHost.Roles.Core;
+using TownOfHost.Roles.Core.Interfaces;
+using static TownOfHost.Modules.SelfVoteManager;
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
 namespace TownOfHost.Roles.Impostor;
 
@@ -156,6 +167,7 @@ public sealed class ConnectSaver : RoleBase, IImpostor, ISelfVoter
 
             var targetpc1 = PlayerCatch.GetPlayerById(target1);
             var targetpc2 = PlayerCatch.GetPlayerById(target2);
+<<<<<<< HEAD
             if (targetpc1.Is(CustomRoles.Madpsycho))
             {
                 if (Madpsycho.CanPsycho)
@@ -196,6 +208,9 @@ public sealed class ConnectSaver : RoleBase, IImpostor, ISelfVoter
                     return;
                 }
             }
+=======
+
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
             if (!targetpc1.IsAlive() || targetpc1 == null) target1 = byte.MaxValue;
             if (!targetpc2.IsAlive() || targetpc2 == null) target2 = byte.MaxValue;
 

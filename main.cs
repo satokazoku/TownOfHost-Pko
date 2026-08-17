@@ -509,6 +509,10 @@ namespace TownOfHost
         Victim = CustomRoles.Victim,
         Amateras = CustomRoles.Amateras,
         Ruler = CustomRoles.Ruler,
+<<<<<<< HEAD
+=======
+        Dancer = CustomRoles.Dancer,
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         Hunter = CustomRoles.Hunter,
 
         HASTroll = CustomRoles.HASTroll,

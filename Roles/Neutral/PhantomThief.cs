@@ -1,9 +1,17 @@
 using AmongUs.GameOptions;
+<<<<<<< HEAD
 using Hazel;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Madmate;
 using UnityEngine;
+=======
+using UnityEngine;
+
+using TownOfHost.Roles.Core;
+using TownOfHost.Roles.Core.Interfaces;
+using Hazel;
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
 namespace TownOfHost.Roles.Neutral;
 
@@ -120,6 +128,7 @@ public sealed class PhantomThief : RoleBase, IKiller, IKillFlashSeeable, IRoomTa
 
         if (OptionCantSetCount.GetFloat() > PlayerCatch.AllAlivePlayersCount) return;
         if (targetId != byte.MaxValue) return;
+<<<<<<< HEAD
         if (target.Is(CustomRoles.Madpsycho))
         {
             if (Madpsycho.CanPsycho)
@@ -129,6 +138,9 @@ public sealed class PhantomThief : RoleBase, IKiller, IKillFlashSeeable, IRoomTa
                 return;
             }
         }
+=======
+
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         killer.ResetKillCooldown();
         targetId = target.PlayerId;
         this.target = target;

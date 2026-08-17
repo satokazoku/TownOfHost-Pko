@@ -5,7 +5,10 @@ using Hazel;
 using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+<<<<<<< HEAD
 using TownOfHost.Roles.Madmate;
+=======
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
 namespace TownOfHost.Roles.Neutral;
 
@@ -87,6 +90,7 @@ public sealed class Chef : RoleBase, IKiller, IAdditionalWinner
     public void OnCheckMurderAsKiller(MurderInfo info)
     {
         var (killer, target) = info.AttemptTuple;
+<<<<<<< HEAD
         if (target.Is(CustomRoles.Madpsycho))
         {
             info.DoKill = false;
@@ -98,6 +102,8 @@ public sealed class Chef : RoleBase, IKiller, IAdditionalWinner
                 return;
             }
         }
+=======
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         if (ChefTarget.Contains(target.PlayerId))
         {
             info.DoKill = false;

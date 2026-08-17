@@ -2,14 +2,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using AmongUs.GameOptions;
+<<<<<<< HEAD
 using HarmonyLib;
 using Hazel;
+=======
+using UnityEngine;
+using HarmonyLib;
+using Hazel;
+
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Crewmate;
+<<<<<<< HEAD
 using TownOfHost.Roles.Madmate;
 using UnityEngine;
+=======
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 using static TownOfHost.Roles.Impostor.Alien;
 
 namespace TownOfHost.Roles.Neutral;
@@ -853,6 +863,7 @@ public sealed class JackalAlien : RoleBase, IMeetingTimeAlterable, ILNKiller, IS
             ResetCooldown = false;
             return;
         }
+<<<<<<< HEAD
         if (target.Is(CustomRoles.Madpsycho))
         {
             if (Madpsycho.CanPsycho)
@@ -862,6 +873,8 @@ public sealed class JackalAlien : RoleBase, IMeetingTimeAlterable, ILNKiller, IS
                 return;
             }
         }
+=======
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         if (Walkure.TryRejectRoleChange(Player, target, Walkure.RoleChangeSource.Jackal)) return;
         if (SuddenDeathMode.NowSuddenDeathTemeMode)
         {

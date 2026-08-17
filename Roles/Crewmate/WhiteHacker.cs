@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
@@ -6,6 +7,14 @@ using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Madmate;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
+=======
+using UnityEngine;
+using AmongUs.GameOptions;
+using Hazel;
+
+using TownOfHost.Roles.Core;
+using TownOfHost.Modules;
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
 namespace TownOfHost.Roles.Crewmate;
 
@@ -116,6 +125,7 @@ public sealed class WhiteHacker : RoleBase
             {
                 count++;
                 targetId = sourceVotedForId;
+<<<<<<< HEAD
                 var target = PlayerCatch.GetPlayerById(targetId);
                 if (target.Is(CustomRoles.Madpsycho))
                 {
@@ -143,6 +153,12 @@ public sealed class WhiteHacker : RoleBase
                     Utils.SendMessage(string.Format(GetString("Skill.WhiteHacker"), UtilsName.GetPlayerColor(PlayerCatch.GetPlayerById(sourceVotedForId), true), Maximum - count), Player.PlayerId);
                     SendRPC();
                 }
+=======
+                Useing = true;
+                Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);
+                Utils.SendMessage(string.Format(GetString("Skill.WhiteHacker"), UtilsName.GetPlayerColor(PlayerCatch.GetPlayerById(sourceVotedForId), true), Maximum - count), Player.PlayerId);
+                SendRPC();
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
             }
         }
         return (null, null, true);

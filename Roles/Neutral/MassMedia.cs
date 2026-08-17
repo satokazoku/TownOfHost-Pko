@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+<<<<<<< HEAD
 using AmongUs.GameOptions;
 using Hazel;
 using TownOfHost.Modules;
@@ -8,6 +9,17 @@ using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Madmate;
 using UnityEngine;
+=======
+
+using AmongUs.GameOptions;
+using UnityEngine;
+
+using TownOfHost.Modules;
+using TownOfHost.Roles.Core;
+using TownOfHost.Roles.Core.Interfaces;
+using Hazel;
+using TownOfHost.Roles.AddOns.Common;
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
 namespace TownOfHost.Roles.Neutral;
 
@@ -147,6 +159,7 @@ public sealed class MassMedia : RoleBase, IKiller, IKillFlashSeeable
     public void OnCheckMurderAsKiller(MurderInfo info)
     {
         var (killer, target) = info.AttemptTuple;
+<<<<<<< HEAD
         if (target.Is(CustomRoles.Madpsycho))
         {
             info.DoKill = false;
@@ -158,6 +171,8 @@ public sealed class MassMedia : RoleBase, IKiller, IKillFlashSeeable
                 return;
             }
         }
+=======
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         if (Is(killer))
         {
             if (Targetid != byte.MaxValue)

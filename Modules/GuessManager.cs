@@ -18,8 +18,13 @@ using static TownOfHost.Translator;
 
 namespace TownOfHost;
 
+<<<<<<< HEAD
 //参考→https://github.com/0xDrMoe/TownofHost-Enhanced
 //上手くいかない部分はこっちも参考にしました→https://github.com/AsumuAkaguma/TownOfHost_ForE
+=======
+//参考→https://github.com/0xDrMoe/TownofHost-Enhanced/releases/tag/v1.0.1
+//上手くいかない部分はこっちも参考にしました→https://github.com/AsumuAkaguma/TownOfHost_ForE/releases/tag/vBOMB!
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 public static class GuessManager
 {
 

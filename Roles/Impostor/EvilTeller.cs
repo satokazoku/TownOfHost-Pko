@@ -1,10 +1,18 @@
 using System.Collections.Generic;
 using AmongUs.GameOptions;
+<<<<<<< HEAD
 using Hazel;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Madmate;
 using UnityEngine;
+=======
+using UnityEngine;
+
+using TownOfHost.Roles.Core;
+using TownOfHost.Roles.Core.Interfaces;
+using Hazel;
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
 namespace TownOfHost.Roles.Impostor;
 
@@ -96,6 +104,7 @@ public sealed class EvilTeller : RoleBase, IImpostor, IUsePhantomButton
         var target = Player.GetKillTarget(true);
         if (target == null) { ResetCooldown = false; return; }
         if (target.IsTeammate(Player)) { ResetCooldown = false; return; }
+<<<<<<< HEAD
         if (target.Is(CustomRoles.Madpsycho))
         {
             if (Madpsycho.CanPsycho)
@@ -105,6 +114,9 @@ public sealed class EvilTeller : RoleBase, IImpostor, IUsePhantomButton
                 return;
             }
         }
+=======
+
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         if (seentarget.ContainsKey(target.PlayerId) || TargetInfo != null) { ResetCooldown = false; return; }
 
         TargetInfo = new(target.PlayerId, 0f);

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,17 @@ using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Madmate;
 using UnityEngine;
 using static TownOfHost.Modules.SelfVoteManager;
+=======
+using System.Collections.Generic;
+using System;
+using AmongUs.GameOptions;
+using UnityEngine;
+using Hazel;
+
+using TownOfHost.Roles.Core;
+using static TownOfHost.Modules.SelfVoteManager;
+using TownOfHost.Roles.Core.Interfaces;
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
 namespace TownOfHost.Roles.Crewmate;
 
@@ -144,6 +156,7 @@ public sealed class FortuneTeller : RoleBase, ISelfVoter
     {
         var target = PlayerCatch.GetPlayerById(votedForId);
         if (!target.IsAlive()) return;//死んでるならここで処理を止める。
+<<<<<<< HEAD
         if (target.Is(CustomRoles.Madpsycho))
         {
             if (Madpsycho.CanPsycho)
@@ -164,6 +177,8 @@ public sealed class FortuneTeller : RoleBase, ISelfVoter
                 return;
             }
         }
+=======
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         count++;//全体のカウント
         MeetingUsedcount++;//1会議のカウント
         var role = target.GetTellResults(Player); //結果を変更するかチェック

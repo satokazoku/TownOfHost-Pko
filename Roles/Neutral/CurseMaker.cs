@@ -1,10 +1,18 @@
 using System.Collections.Generic;
 using AmongUs.GameOptions;
+<<<<<<< HEAD
 using Hazel;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Madmate;
 using UnityEngine;
+=======
+using UnityEngine;
+
+using TownOfHost.Roles.Core;
+using TownOfHost.Roles.Core.Interfaces;
+using Hazel;
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
 namespace TownOfHost.Roles.Neutral;
 
@@ -97,6 +105,7 @@ public sealed class CurseMaker : RoleBase, IKiller, IUsePhantomButton
     {
         fall = false;
         var (killer, target) = info.AttemptTuple;
+<<<<<<< HEAD
         if (target.Is(CustomRoles.Madpsycho))
         {
             info.DoKill = false;
@@ -108,6 +117,8 @@ public sealed class CurseMaker : RoleBase, IKiller, IUsePhantomButton
                 return;
             }
         }
+=======
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         info.DoKill = false;
         if (CursedPlayers.ContainsKey(target.PlayerId) || TargetInfo != null) return;
 

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 using System;
 using System.Linq;
 using AmongUs.GameOptions;
@@ -7,6 +8,16 @@ using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Madmate;
 using UnityEngine;
 using static TownOfHost.Modules.SelfVoteManager;
+=======
+using AmongUs.GameOptions;
+using UnityEngine;
+using Hazel;
+using TownOfHost.Roles.Core;
+using System;
+using static TownOfHost.Modules.SelfVoteManager;
+using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Madmate;
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
 namespace TownOfHost.Roles.Crewmate;
 
@@ -163,6 +174,7 @@ public sealed class ShrineMaiden : RoleBase, ISelfVoter
         SendRPC();
         var t1 = role1.GetCustomRoleTypes();
         var t2 = role2.GetCustomRoleTypes();
+<<<<<<< HEAD
         if (target1.Is(CustomRoles.Madpsycho))
         {
             if (Madpsycho.CanPsycho)
@@ -203,6 +215,8 @@ public sealed class ShrineMaiden : RoleBase, ISelfVoter
                 return;
             }
         }
+=======
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         var madmate = Options.MadTellOpt().GetCustomRoleTypes();
         //マッドならimpにする
         if (SatsumatoImo.UsesMadmateCommonSettings(role1) && t1 == CustomRoleTypes.Madmate) t1 = madmate is CustomRoleTypes.Madmate ? CustomRoleTypes.Impostor : madmate;

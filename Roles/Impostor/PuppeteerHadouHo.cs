@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+using System.Linq;
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 using AmongUs.GameOptions;
 using Hazel;
 using TownOfHost.Modules;
@@ -255,9 +259,17 @@ public sealed class PuppeteerHadouHo : RoleBase, IImpostor, IUsePhantomButton
         bool facingLeft = BeamFacingLeft;
         var myPos = Player.GetTruePosition();
         Vector2 dir = facingLeft ? Vector2.left : Vector2.right;
+<<<<<<< HEAD
         foreach (var target in PlayerCatch.AllAlivePlayerControls)
         {
             if (target.PlayerId == Player.PlayerId) continue;
+=======
+        foreach (var target in PlayerCatch.AllAlivePlayerControls.ToArray())
+        {
+            if (!Player.IsAlive()) break;
+            if (target.PlayerId == Player.PlayerId) continue;
+            if (!target.IsAlive()) continue;
+>>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
             var toTarget = target.GetTruePosition() - myPos;
             float dot = Vector2.Dot(toTarget, dir);
             if (dot <= 0) continue;
