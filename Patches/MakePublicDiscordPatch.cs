@@ -437,6 +437,7 @@ namespace TownOfHost
                 CountTypes.Pavlov => true,
                 CountTypes.StandMaster => true,
                 CountTypes.Villain => true,
+                CountTypes.Hunter => true,
                 _ => false,
             };
         }

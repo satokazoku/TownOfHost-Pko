@@ -128,6 +128,7 @@ public abstract class GameEndPredicate
                 CountTypes.Eater => CustomWinner.Eater,
                 CountTypes.Monika => CustomWinner.Monika,
                 CountTypes.StandMaster => CustomWinner.StandMaster,
+                CountTypes.Hunter => CustomWinner.Hunter,
                 CountTypes.Villain => CustomWinner.Villain,
                 _ => (CustomWinner)role,
             };
