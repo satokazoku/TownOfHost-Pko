@@ -41,6 +41,8 @@ public sealed class Dancer : RoleBase, IKiller
     static OptionItem OptForecastDuration;
     static OptionItem OptFollowingSuicide;
     static OptionItem OptCanVent;
+    static OptionItem OptLastDanceMode;
+    static OptionItem OptDeathNotification;
 
     enum OptionName
     {
@@ -50,6 +52,8 @@ public sealed class Dancer : RoleBase, IKiller
         DancerDanceRange,
         DancerForecastDuration,
         DancerFollowingSuicide,
+        DancerLastDanceMode,
+        DancerDeathNotification,
     }
 
     // ダンス(ゆらぎ)検出用
@@ -62,12 +66,16 @@ public sealed class Dancer : RoleBase, IKiller
     bool eventInvoked;
     Vector2 danceStartPos;
 
-    // 死の舞踏/死の預言
-    float danceCooldownRemaining;
-    int killChargesLeft;
+    // 死のダンス管理: 死体のそばで踊ると"次の1回"だけ死のダンスになるトグル方式(本家準拠)
+    bool nextIsDeathDance;
     readonly HashSet<byte> usedCorpseOwnerIds = new();
+
+    // 死の預言
     readonly Dictionary<byte, float> activeMarks = new(); // playerId -> 残り秒数
     readonly HashSet<byte> completedMarks = new(); // キル or 予言成就済み
+
+    // ラストダンスモード
+    bool winReady;
 
     static void SetupOptionItem()
     {
@@ -85,6 +93,8 @@ public sealed class Dancer : RoleBase, IKiller
             .SetValueFormat(OptionFormat.Seconds);
         OptFollowingSuicide = BooleanOptionItem.Create(RoleInfo, 15, OptionName.DancerFollowingSuicide, true, false);
         OptCanVent = BooleanOptionItem.Create(RoleInfo, 16, GeneralOption.CanVent, true, false);
+        OptLastDanceMode = BooleanOptionItem.Create(RoleInfo, 17, OptionName.DancerLastDanceMode, false, false);
+        OptDeathNotification = BooleanOptionItem.Create(RoleInfo, 18, OptionName.DancerDeathNotification, true, false);
     }
 
     public float CalculateKillCooldown() => 0f;
@@ -92,8 +102,17 @@ public sealed class Dancer : RoleBase, IKiller
     public bool CanUseSabotageButton() => false;
     public bool CanUseImpostorVentButton() => OptCanVent?.GetBool() ?? true;
 
-    public override void Add() => ResetRuntimeState();
-    public override void AfterMeetingTasks() => ResetDanceProgress();
+    public override void Add()
+    {
+        ResetRuntimeState();
+        ApplyDeathNotificationDesync();
+    }
+
+    public override void AfterMeetingTasks()
+    {
+        ResetDanceProgress();
+        ApplyDeathNotificationDesync();
+    }
 
     void ResetRuntimeState()
     {
@@ -104,11 +123,11 @@ public sealed class Dancer : RoleBase, IKiller
         dancingProgress = 0f;
         notDancingProgress = 0f;
         eventInvoked = false;
-        danceCooldownRemaining = 0f;
-        killChargesLeft = 0;
+        nextIsDeathDance = false;
         usedCorpseOwnerIds.Clear();
         activeMarks.Clear();
         completedMarks.Clear();
+        winReady = false;
     }
 
     void ResetDanceProgress()
@@ -122,6 +141,23 @@ public sealed class Dancer : RoleBase, IKiller
         eventInvoked = false;
     }
 
+    // サイキックと同じ要領: 死体が出た時にバニラのノイズメーカー通知が鳴るよう、
+    // 自分視点で全プレイヤーをノイズメーカーとしてデシンクしておく(自作の矢印システムは不要)。
+    void ApplyDeathNotificationDesync()
+    {
+        if (!OptDeathNotification.GetBool()) return;
+        if (!Player.IsAlive()) return;
+
+        foreach (var pc in PlayerCatch.AllAlivePlayerControls)
+        {
+            if (pc.PlayerId == Player.PlayerId) continue;
+            if (Player == PlayerControl.LocalPlayer)
+                pc.StartCoroutine(pc.CoSetRole(RoleTypes.Noisemaker, true));
+            else
+                pc.RpcSetRoleDesync(RoleTypes.Noisemaker, Player.GetClientId());
+        }
+    }
+
     public override void OnFixedUpdate(PlayerControl player)
     {
         if (!AmongUsClient.Instance.AmHost) return;
@@ -131,9 +167,6 @@ public sealed class Dancer : RoleBase, IKiller
             return;
         }
         if (!GameStates.IsInTask || GameStates.CalledMeeting || GameStates.Intro) return;
-
-        if (danceCooldownRemaining > 0f)
-            danceCooldownRemaining = Mathf.Max(0f, danceCooldownRemaining - Time.fixedDeltaTime);
 
         UpdateMarkTimers();
         UpdateDanceDetection();
@@ -156,7 +189,7 @@ public sealed class Dancer : RoleBase, IKiller
             ? Mathf.Min(danceGauge + Time.fixedDeltaTime * 4.2f, 1f)
             : Mathf.Max(danceGauge - Time.fixedDeltaTime * 2.7f, 0f);
 
-        bool isDancing = danceGauge > 0.7f && danceCooldownRemaining <= 0f;
+        bool isDancing = danceGauge > 0.7f;
 
         if (isDancing)
         {
@@ -168,8 +201,6 @@ public sealed class Dancer : RoleBase, IKiller
             {
                 eventInvoked = true;
                 OnDanceComplete(danceStartPos);
-                ResetDanceProgress();
-                danceCooldownRemaining = OptDanceCooldown.GetFloat();
             }
         }
         else
@@ -180,39 +211,54 @@ public sealed class Dancer : RoleBase, IKiller
         }
     }
 
-    // ダンス完遂時: 範囲内の死体でチャージ回復、範囲内の生存者をキル(チャージがあれば)か予言マークする
+    // ダンス完遂時。死体のそばで踊ったかで「次の」ダンスが死のダンスになるかを決める(トグル/フラグ方式、蓄積しない)。
     void OnDanceComplete(Vector2 origin)
     {
         // NoS本家のパーティクル演出はホストMODで再現できないため、守護のパリン音(RpcProtectPlayer)で代用する。
         Player.RpcProtectPlayer(Player, Player.Data.DefaultOutfit.ColorId);
 
+        bool isDeathDance = nextIsDeathDance;
         float range = OptDanceRange.GetFloat();
 
+        bool foundFreshCorpse = false;
         foreach (var corpse in Object.FindObjectsOfType<DeadBody>())
         {
             if (Vector2.Distance(origin, corpse.transform.position) > range) continue;
             if (!usedCorpseOwnerIds.Add(corpse.ParentId)) continue;
-            killChargesLeft++;
+            foundFreshCorpse = true;
         }
+        // 死のダンスを終えると通常に戻るが、その場に未使用の死体があれば次も即死のダンスになる。
+        nextIsDeathDance = foundFreshCorpse;
 
-        foreach (var target in PlayerCatch.AllAlivePlayerControls)
+        var nearbyTargets = PlayerCatch.AllAlivePlayerControls
+            .Where(p => p.PlayerId != Player.PlayerId)
+            .Where(p => Vector2.Distance(origin, p.GetTruePosition()) <= range)
+            .Where(p => !completedMarks.Contains(p.PlayerId))
+            .ToList();
+
+        if (isDeathDance)
         {
-            if (target.PlayerId == Player.PlayerId) continue;
-            if (Vector2.Distance(origin, target.GetTruePosition()) > range) continue;
-            if (completedMarks.Contains(target.PlayerId)) continue;
-
-            if (killChargesLeft > 0)
+            foreach (var target in nearbyTargets)
             {
-                killChargesLeft--;
                 activeMarks.Remove(target.PlayerId);
                 completedMarks.Add(target.PlayerId);
                 CustomRoleManager.OnCheckMurder(Player, target, Player, target, true, deathReason: CustomDeathReason.Kill);
             }
-            else
-            {
-                activeMarks[target.PlayerId] = OptForecastDuration.GetFloat();
-            }
         }
+        else
+        {
+            foreach (var target in nearbyTargets)
+                activeMarks[target.PlayerId] = OptForecastDuration.GetFloat();
+        }
+
+        if (!winReady && completedMarks.Count >= OptNumToWin.GetInt())
+        {
+            if (!OptLastDanceMode.GetBool() || nearbyTargets.Count > 0)
+                winReady = true;
+        }
+
+        ResetDanceProgress();
+        SendRPC();
     }
 
     void UpdateMarkTimers()
@@ -244,16 +290,21 @@ public sealed class Dancer : RoleBase, IKiller
     public override void OnExileWrapUp(NetworkedPlayerInfo exiled, ref bool DecidedWinner)
     {
         if (!AmongUsClient.Instance.AmHost) return;
+
         TryCompleteMark(exiled.PlayerId);
+
+        // 自分自身が追放された場合も道連れ判定にかける
+        if (exiled.PlayerId == Player.PlayerId) TryFollowingSuicide();
     }
 
     void TryCompleteMark(byte targetId)
     {
         if (!activeMarks.Remove(targetId)) return;
         completedMarks.Add(targetId);
+        SendRPC();
     }
 
-    // 自分が死亡した際、予言中のプレイヤーを道連れにする(オプション)
+    // 自分が(会議以外で)死亡した際、予言中のプレイヤーを道連れにする(オプション)
     public override void OnMurderPlayerAsTarget(MurderInfo info) => TryFollowingSuicide();
 
     void TryFollowingSuicide()
@@ -269,6 +320,7 @@ public sealed class Dancer : RoleBase, IKiller
             target.RpcMurderPlayerV2(target);
         }
         activeMarks.Clear();
+        SendRPC();
     }
 
     public static bool CheckWin(ref GameOverReason reason)
@@ -277,7 +329,7 @@ public sealed class Dancer : RoleBase, IKiller
         {
             if (pc.GetRoleClass() is not Dancer dancer) continue;
             if (!pc.IsAlive()) continue;
-            if (dancer.completedMarks.Count < OptNumToWin.GetInt()) continue;
+            if (!dancer.winReady) continue;
 
             if (CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Dancer, pc.PlayerId, AddWin: false))
             {
@@ -306,8 +358,9 @@ public sealed class Dancer : RoleBase, IKiller
         if (!Is(seer) || seer.PlayerId != seen.PlayerId || isForMeeting || !Player.IsAlive()) return "";
 
         string sz = isForHud ? "" : "<size=60%>";
-        string killPart = killChargesLeft > 0 ? $" 死の舞踏x{killChargesLeft}" : "";
-        return $"{sz}<color={RoleInfo.RoleColorCode}>予言 {completedMarks.Count}/{OptNumToWin.GetInt()}{killPart}</color>";
+        string deathDancePart = nextIsDeathDance ? " <color=#00CFFF>次は死のダンス</color>" : "";
+        string readyPart = winReady && OptLastDanceMode.GetBool() ? " <color=#ffff00>ラストダンス待機中</color>" : "";
+        return $"{sz}<color={RoleInfo.RoleColorCode}>予言 {completedMarks.Count}/{OptNumToWin.GetInt()}{deathDancePart}{readyPart}</color>";
     }
 
     public override string GetProgressText(bool comms = false, bool GameLog = false)
@@ -316,7 +369,8 @@ public sealed class Dancer : RoleBase, IKiller
     public void SendRPC()
     {
         using var sender = CreateSender();
-        sender.Writer.Write(killChargesLeft);
+        sender.Writer.Write(nextIsDeathDance);
+        sender.Writer.Write(winReady);
         sender.Writer.Write((byte)completedMarks.Count);
         foreach (var id in completedMarks) sender.Writer.Write(id);
         sender.Writer.Write((byte)activeMarks.Count);
@@ -329,7 +383,9 @@ public sealed class Dancer : RoleBase, IKiller
 
     public override void ReceiveRPC(MessageReader reader)
     {
-        killChargesLeft = reader.ReadInt32();
+        nextIsDeathDance = reader.ReadBoolean();
+        winReady = reader.ReadBoolean();
+
         completedMarks.Clear();
         var completedCount = reader.ReadByte();
         for (int i = 0; i < completedCount; i++) completedMarks.Add(reader.ReadByte());

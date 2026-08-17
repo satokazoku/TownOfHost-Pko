@@ -176,15 +176,6 @@ namespace TownOfHost.Roles
                     break;
             }
 
-            if (AssignRoleList.Contains(CustomRoles.LoversBreaker)
-                && LoversBreaker.ShouldRemoveFromAssignment(AssignRoleList))
-            {
-                int removedCount = AssignRoleList.RemoveAll(role => role == CustomRoles.LoversBreaker);
-                if (AssignCount.TryGetValue(CustomRoleTypes.Neutral, out var neutralCount))
-                    AssignCount[CustomRoleTypes.Neutral] = Math.Max(0, neutralCount - removedCount);
-                Logger.Info($"ラバーズ系役職が配役されなかったため爆ぜ師を{removedCount}人分除外", "AssignRoleList");
-            }
-
             AssignRoleList.Sort();
 
             if (SuddenDeathMode.SuddenSharingRoles.GetBool())

@@ -31,12 +31,11 @@ namespace TownOfHost.Roles.Neutral
                     "#cd853f",
                     (1, 5),
                     true,
+                    countType: CountTypes.Hunter,
                      assignInfo: new RoleAssignInfo(CustomRoles.Hunter, CustomRoleTypes.Neutral)
                     {
                         AssignCountRule = new(1, 1, 1)
-                    },
-                    countType: CountTypes.Hunter,
-                    from: From.TownOfHost_Pko
+                    }
                 );
         public Hunter(PlayerControl player)
         : base(

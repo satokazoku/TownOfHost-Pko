@@ -140,6 +140,11 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
     static OptionItem OptionTamaVentMaxTime;
     static OptionItem OptionTamaCanVentMove;
     static OptionItem OptionTamaCountAsJackalKiller;
+    static OptionItem OptionImpostorCanSidekick;
+    static OptionItem OptionSidekickCanSeeOldImpostorTeammates;
+    static OptionItem OptionImpostorCanSeeNameColor;
+    static OptionItem OptionSidekickPromotion;
+    static OptionItem OptionTamaCountAsKillerOnlyWhenPromotionEnabled;
 
     enum OptionName
     {
@@ -150,10 +155,15 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         JackalHadouHoSelfDestruct,
         JackalHadouHoKillJackal,
         JackalHadouHoSidekickCooldown,
+        JackalHadouHoImpostorCanSidekick,
+        JackalHadouHoSidekickCanSeeOldImpostorTeammates,
+        JackalHadouHoImpostorCanSeeNameColor,
+        JackalHadouHoSidekickPromotion,
         TamaOption,
         TamaCanLoad,
         TamaLoadCooldown,
-        TamaCanVentMove
+        TamaCanVentMove,
+        TamaCountAsKillerOnlyWhenPromotionEnabled,
     }
 
     public static float GetTamaLoadCooldown() => OptionTamaLoadCooldown?.GetFloat() ?? 10f;
@@ -164,6 +174,12 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
     public static bool GetTamaCanVentMove() => OptionTamaCanVentMove?.GetBool() ?? false;
     public static bool GetCanUseSabotageOption() => OptionCanSabotage?.GetBool() ?? false;
     public static bool GetTamaCountAsJackalKiller() => OptionTamaCountAsJackalKiller?.GetBool() ?? false;
+<<<<<<< Updated upstream
+=======
+    public static bool GetTamaCountAsKillerOnlyWhenPromotionEnabled() => OptionTamaCountAsKillerOnlyWhenPromotionEnabled?.GetBool() ?? false;
+    public static bool GetSidekickPromotion() => OptionSidekickPromotion?.GetBool() ?? false;
+
+>>>>>>> Stashed changes
     public static void HideRoleOptions(CustomRoles role)
     {
         if (Options.CustomRoleSpawnChances != null && Options.CustomRoleSpawnChances.TryGetValue(role, out var sp))
@@ -194,12 +210,16 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         OptionCanMakeSidekick = BooleanOptionItem.Create(RoleInfo, 21, GeneralOption.CanCreateSideKick, true, false);
         OptionSidekickCooldown = FloatOptionItem.Create(RoleInfo, 22, OptionName.JackalHadouHoSidekickCooldown, new(0f, 180f, 0.5f), 30f, false, OptionCanMakeSidekick)
             .SetValueFormat(OptionFormat.Seconds);
+        OptionImpostorCanSidekick = BooleanOptionItem.Create(RoleInfo, 23, OptionName.JackalHadouHoImpostorCanSidekick, false, false, OptionCanMakeSidekick);
+        OptionSidekickCanSeeOldImpostorTeammates = BooleanOptionItem.Create(RoleInfo, 24, OptionName.JackalHadouHoSidekickCanSeeOldImpostorTeammates, false, false, OptionImpostorCanSidekick);
+        OptionImpostorCanSeeNameColor = BooleanOptionItem.Create(RoleInfo, 34, OptionName.JackalHadouHoImpostorCanSeeNameColor, false, false, OptionImpostorCanSidekick);
+        OptionSidekickPromotion = BooleanOptionItem.Create(RoleInfo, 35, OptionName.JackalHadouHoSidekickPromotion, false, false, OptionCanMakeSidekick);
 
         ObjectOptionitem.Create(RoleInfo, 25, OptionName.TamaOption, true, "")
             .SetOptionName(() => "TAMA OPTION");
         OptionTamaCanLoad = BooleanOptionItem.Create(RoleInfo, 26, "TamaCanLoad", true, false);
         OptionTamaLoadCooldown = FloatOptionItem.Create(RoleInfo, 27, "TamaLoadCooldown", new(0f, 60f, 0.5f), 10f, false, OptionTamaCanLoad)
-    .SetValueFormat(OptionFormat.Seconds);
+            .SetValueFormat(OptionFormat.Seconds);
         OptionTamaCanVent = BooleanOptionItem.Create(RoleInfo, 28, GeneralOption.CanVent, false, false);
         OptionTamaVentCooldown = FloatOptionItem.Create(RoleInfo, 29, GeneralOption.Cooldown, new(0f, 180f, 0.5f), 0f, false, OptionTamaCanVent)
             .SetValueFormat(OptionFormat.Seconds);
@@ -210,6 +230,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
 
         RoleAddAddons.Create(RoleInfo, 32, NeutralKiller: true);
         OptionTamaCountAsJackalKiller = BooleanOptionItem.Create(RoleInfo, 33, "TamaCountAsJackalKiller", false, false);
+        OptionTamaCountAsKillerOnlyWhenPromotionEnabled = BooleanOptionItem.Create(RoleInfo, 36, OptionName.TamaCountAsKillerOnlyWhenPromotionEnabled, false, false, OptionTamaCountAsJackalKiller);
 
         HideRoleOptions(CustomRoles.Tama);
     }
@@ -285,7 +306,10 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         AURoleOptions.PhantomCooldown = Cooldown;
     }
 
-    public override bool CanUseAbilityButton() => true;
+    public override bool CanUseAbilityButton() => !IsSuperCharging && !IsSuperBeam;
+
+    public bool CanUseEmergencyButton() => !IsSuperCharging && !IsSuperBeam;
+
     bool IUsePhantomButton.IsPhantomRole => true;
     bool IUsePhantomButton.IsresetAfterKill => true;
 
@@ -430,10 +454,8 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         Player.MarkDirtySettings();
         Main.AllPlayerKillCooldown[Player.PlayerId] = 60f;
         Player.SetKillCooldown(60f);
+        Player.SyncSettings();
         _ = new LateTask(() => { Player.SyncSettings(); }, 0.1f, "JackalHadouHoKillTimer", true);
-        Player.SyncSettings();
-        Main.AllPlayerKillCooldown[Player.PlayerId] = 60f;
-        Player.SyncSettings();
         _prevCharging = IsCharging;
         _prevSuperCharging = IsSuperCharging;
         _prevBeamMark = ShowBeamMark;
@@ -443,10 +465,11 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
 
     void StartSuperChargeFlashLoop()
     {
-        int count = (int)(SuperChargeTime / 0.1f);
+        const float flashInterval = 0.5f;
+        int count = (int)(SuperChargeTime / flashInterval);
         for (int i = 1; i <= count; i++)
         {
-            float t = i * 0.1f;
+            float t = i * flashInterval;
             _ = new LateTask(() =>
             {
                 if (IsDead || !Player.IsAlive() || !IsSuperCharging) return;
@@ -765,7 +788,8 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         var targetRole = target.GetCustomRole();
         if (targetRole is CustomRoles.King or CustomRoles.Autocrat or CustomRoles.Jackal or CustomRoles.JackalAlien
             or CustomRoles.Jackaldoll or CustomRoles.JackalMafia or CustomRoles.JackalHadouHo
-            or CustomRoles.Merlin)
+            or CustomRoles.Merlin
+            || ((targetRole.IsImpostor() || targetRole is CustomRoles.Egoist) && !OptionImpostorCanSidekick.GetBool()))
         {
             Utils.SendMessage("<color=#00b4eb>この役職はSKにできません。</color>", Player.PlayerId);
             SendRpc(); return;
@@ -786,6 +810,25 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         target.RpcSetCustomRole(CustomRoles.Tama, log: null);
         if (target.GetRoleClass() is Tama tama) tama.SetOwner(Player.PlayerId);
         if (!Utils.RoleSendList.Contains(target.PlayerId)) Utils.RoleSendList.Add(target.PlayerId);
+
+        if (OptionSidekickCanSeeOldImpostorTeammates.GetBool())
+        {
+            var state = PlayerState.GetByPlayerId(target.PlayerId);
+            foreach (var imp in PlayerCatch.AllPlayerFirstTypes.Where(x => x.Value is CustomRoleTypes.Impostor))
+            {
+                if (state.TargetColorData.ContainsKey(imp.Key)) NameColorManager.Remove(target.PlayerId, imp.Key);
+                NameColorManager.Add(target.PlayerId, imp.Key, "ffffff");
+            }
+        }
+        if (OptionImpostorCanSeeNameColor.GetBool())
+        {
+            foreach (var imp in PlayerCatch.AllPlayerFirstTypes.Where(x => x.Value is CustomRoleTypes.Impostor))
+            {
+                var impostorstate = PlayerState.GetByPlayerId(imp.Key);
+                if (impostorstate.TargetColorData.ContainsKey(target.PlayerId)) NameColorManager.Remove(imp.Key, target.PlayerId);
+                NameColorManager.Add(imp.Key, target.PlayerId, "ffffff");
+            }
+        }
 
         UtilsGameLog.AddGameLog("JackalHadouHoSideKick",
             string.Format(GetString("log.Sidekick"),
@@ -1037,7 +1080,9 @@ public sealed class Tama : RoleBase, IKiller
     }
     private void ApplyJackalKillerCount()
     {
-        MyState.SetCountType(JackalHadouHo.GetTamaCountAsJackalKiller() ? CountTypes.Jackal : CountTypes.Crew);
+        var shouldCount = JackalHadouHo.GetTamaCountAsJackalKiller()
+            && (!JackalHadouHo.GetTamaCountAsKillerOnlyWhenPromotionEnabled() || JackalHadouHo.GetSidekickPromotion());
+        MyState.SetCountType(shouldCount ? CountTypes.Jackal : CountTypes.Crew);
     }
 
     public bool CanUseSabotageButton() => false;
@@ -1115,6 +1160,13 @@ public sealed class Tama : RoleBase, IKiller
 
         if (player.IsAlive() && (owner == null || !owner.IsAlive() || owner.GetCustomRole() != CustomRoles.JackalHadouHo))
         {
+            if (!JackalHadouHo.GetSidekickPromotion())
+            {
+                OwnerId = byte.MaxValue;
+                SendRPC();
+                return;
+            }
+
             OwnerId = byte.MaxValue;
             MyState.SetCountType(CountTypes.Jackal);
             if (!Utils.RoleSendList.Contains(Player.PlayerId))

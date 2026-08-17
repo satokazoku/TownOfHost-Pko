@@ -495,7 +495,6 @@ namespace TownOfHost
         Moira = CustomRoles.Moira,
         PoisonedBakery = CustomRoles.PoisonedBakery,
         Monika = CustomRoles.Monika,
-        LoversBreaker = CustomRoles.LoversBreaker,
         Chatter = CustomRoles.Chatter,
         Suicider = CustomRoles.Suicider,
         BatGirl = CustomRoles.BatGirl,

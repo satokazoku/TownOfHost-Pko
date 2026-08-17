@@ -350,17 +350,6 @@ namespace TownOfHost
             if (PlayerCatch.AllAlivePlayerControls.Any(pc => pc.GetRoleClass() is Victim victim && victim.IsAwakened))
                 return false;
 
-            // 爆ぜ師の条件達成そのものをゲーム終了トリガーにする。
-            // 死亡後勝利設定にも対応するため、死亡者を含む全プレイヤーを確認する。
-            foreach (var pc in PlayerCatch.AllPlayerControls)
-            {
-                if (pc.GetRoleClass() is LoversBreaker loversBreaker && loversBreaker.TryWinNow())
-                {
-                    reason = GameOverReason.ImpostorsByKill;
-                    return true;
-                }
-            }
-
             if (Imp == 0 && FoxAndCrew == 0 && Jackal == 0 && Remotekiller == 0
                 && MilkyWay == 0 && MadBetrayer == 0 && Pavlov == 0 && StandMasterCount == 0
                 && EaterCount == 0 && Hunter == 0)//全滅

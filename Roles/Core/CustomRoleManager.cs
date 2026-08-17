@@ -1042,7 +1042,6 @@ public enum CustomRoles
     Moira,
     PoisonedBakery,
     Monika,
-    LoversBreaker,
     Suicider,
     PokerFace,
     Ogre,
