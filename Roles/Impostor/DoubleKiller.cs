@@ -139,7 +139,7 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
         }
         else
         {
-            if (Player.IsAlive()) RPC.PlaySoundRPC(Player.PlayerId, Sounds.KillSound); //キル音なるまでラグ
+            if (Player.IsAlive()) RPC.PlaySoundRPC(Player.PlayerId, Sounds.KillSound);
 
             Player.RpcResetAbilityCooldown(Sync: true);
             float savedKillTimer = Player.killTimer;
