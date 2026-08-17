@@ -34,7 +34,7 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
         CanVent = OptionCanVent.GetBool();
         CanSabotage = OptionCanSabotage.GetBool();
         usedPhantomCount = 0;
-        phantomNowCool = 0f;
+        CanSubkill = true;
     }
 
     static OptionItem OptionPhantomCooldown;
@@ -47,7 +47,6 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
     static bool CanSabotage;
     static OptionItem OptionPhantomUsageCount;
     int usedPhantomCount;
-    float phantomNowCool;
 
     enum OptionName
     {
@@ -66,13 +65,15 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
             .SetValueFormat(OptionFormat.Seconds);
         OptionCanVent = BooleanOptionItem.Create(RoleInfo, 12, OptionName.DoubleKillerCanVent, true, false);
         OptionCanSabotage = BooleanOptionItem.Create(RoleInfo, 13, OptionName.DoubleKillerCanSabotage, true, false);
-        OptionPhantomUsageCount = IntegerOptionItem.Create(RoleInfo, 14, OptionName.DoubleKillerPhantomUsageCount, new(1, 10, 1), 1, false)
+        OptionPhantomUsageCount = IntegerOptionItem.Create(RoleInfo, 14, OptionName.DoubleKillerPhantomUsageCount, new(1, 14, 1), 1, false)
             .SetValueFormat(OptionFormat.Times);
     }
 
     public float CalculateKillCooldown() => KillCooldown;
     public bool CanUseSabotageButton() => CanSabotage;
     public bool CanUseImpostorVentButton() => CanVent;
+
+    public bool CanSubkill;
 
     public override bool CanClickUseVentButton => CanVent;
     public override bool OnEnterVent(PlayerPhysics physics, int ventId) => CanVent;
@@ -81,16 +82,34 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
     public override void ApplyGameOptions(IGameOptions opt)
     {
         if (usedPhantomCount < OptionPhantomUsageCount.GetInt())
-            AURoleOptions.PhantomCooldown = Mathf.Max(phantomNowCool, 0.1f);
+            AURoleOptions.PhantomCooldown = PhantomCooldown;
     }
 
     public override void OnFixedUpdate(PlayerControl player)
     {
         if (!AmongUsClient.Instance.AmHost) return;
-        if (phantomNowCool > 0f)
+        if (!CanSubkill) //サブキルが押せないバグがあったのでこれで様子見かな。
         {
-            phantomNowCool -= Time.fixedDeltaTime;
-            if (phantomNowCool < 0f) phantomNowCool = 0f;
+            if (PhantomCooldown < 1f) //キルク1未満でも一秒待たない。
+            {
+                _ = new LateTask(() =>
+                {
+                    if (!CanSubkill)
+                    {
+                        CanSubkill = true;
+                    }
+                }, PhantomCooldown, "", true);
+            }
+            else
+            {
+                _ = new LateTask(() =>
+                {
+                    if (!CanSubkill)
+                    {
+                        CanSubkill = true;
+                    }
+                }, 1f, "", true);
+            }
         }
     }
 
@@ -102,61 +121,47 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
         AdjustKillCooldown = false;
         ResetCooldown = false;
 
-        if (usedPhantomCount >= OptionPhantomUsageCount.GetInt() || !Player.IsAlive()) return;
+        var target = Player.GetKillTarget(true);
+        var targetrole = target.GetCustomRole();
 
-        PlayerControl nearest = null;
-        float minDist = Main.NormalOptions.KillDistance switch
+        if (usedPhantomCount >= OptionPhantomUsageCount.GetInt() || !Player.IsAlive() || targetrole.IsImpostor() || target == null || !CanSubkill)
         {
-            0 => 1f,
-            1 => 1.8f,
-            _ => 2.5f
-        };
-
-        foreach (var target in PlayerCatch.AllAlivePlayerControls)
-        {
-            if (target.PlayerId == Player.PlayerId) continue;
-            if (target.GetCustomRole().IsImpostor() && !SuddenDeathMode.NowSuddenDeathMode) continue;
-
-            float dist = Vector2.Distance(Player.GetTruePosition(), target.GetTruePosition());
-            if (dist < minDist)
-            {
-                minDist = dist;
-                nearest = target;
-            }
+            return;
         }
-
-        if (nearest == null) return;
-        if (nearest.Is(CustomRoles.Madpsycho))
+        else if (target.Is(CustomRoles.Madpsycho))
         {
             if (Madpsycho.CanPsycho)
             {
                 PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = Madpsycho.deathReasons[Madpsycho.OptionDeathReason.GetValue()];
-                nearest.RpcMurderPlayer(Player);
+                target.RpcMurderPlayer(Player);
                 return;
             }
         }
-        usedPhantomCount++;
-        float savedKillTimer = Player.killTimer;
-        Vector2 targetPos = nearest.transform.position;
-        CustomRoleManager.OnCheckMurder(Player, nearest, nearest, nearest, true, true, 1, CustomDeathReason.Kill);
-        if (Player.IsAlive()) RPC.PlaySoundRPC(Player.PlayerId, Sounds.KillSound);
-
-        SnapToPosition(targetPos);
-
-        phantomNowCool = PhantomCooldown;
-
-        _ = new LateTask(() =>
+        else
         {
-            if (!Player.IsAlive()) return;
-            RestoreKillCooldown(savedKillTimer);
-            Player.RpcResetAbilityCooldown(Sync: true);
-        }, 0.2f, "DoubleKillerRestoreCD", true);
-    }
+            if (Player.IsAlive()) RPC.PlaySoundRPC(Player.PlayerId, Sounds.KillSound); //キル音なるまでラグ
 
-    private void RestoreKillCooldown(float cooldown)
-    {
-        cooldown = Mathf.Max(cooldown, 0f);
-        Player.SetKillCooldown(cooldown, delay: true);
+            Player.RpcResetAbilityCooldown(Sync: true);
+            float savedKillTimer = Player.killTimer;
+            Vector2 targetPos = target.transform.position;
+            CanSubkill = false; // Murderが実行されないうちにサブキル不可にする。
+            CustomRoleManager.OnCheckMurder(Player, target, target, target, true, true, 1, CustomDeathReason.Kill);
+            SnapToPosition(targetPos);
+        }
+        if (PhantomCooldown < 1f) //キルク1未満でも一秒待たない。
+        {
+            _ = new LateTask(() =>
+            {
+                CanSubkill = true;
+            }, PhantomCooldown, "", true);
+        }
+        else
+        {
+            _ = new LateTask(() =>
+            {
+                CanSubkill = true;
+            }, 1f, "", true);
+        }
     }
 
     private void SnapToPosition(Vector2 position)

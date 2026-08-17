@@ -46,9 +46,9 @@ public sealed class Madpsycho : RoleBase
     private static void SetupOptionItems()
     {
         var cRolesString = deathReasons.Select(x => x.ToString()).ToArray();
+        OptionCanVent = BooleanOptionItem.Create(RoleInfo, 9, GeneralOption.CanVent, false, false);
         OptionDeathReason = StringOptionItem.Create(RoleInfo, 10, OptionName.psychoDeathReason, cRolesString, 1, false);
-        OptionTaskTrigger = IntegerOptionItem.Create(RoleInfo, 12, GeneralOption.TaskTrigger, new(0, 99, 1), 1, false).SetValueFormat(OptionFormat.Pieces);
-        OptionCanVent = BooleanOptionItem.Create(RoleInfo, 10, GeneralOption.CanVent, false, false);
+        OptionTaskTrigger = IntegerOptionItem.Create(RoleInfo, 11, GeneralOption.TaskTrigger, new(0, 99, 1), 1, false).SetValueFormat(OptionFormat.Pieces);
         OverrideTasksData.Create(RoleInfo, 20);
     }
     public static readonly CustomDeathReason[] deathReasons =
