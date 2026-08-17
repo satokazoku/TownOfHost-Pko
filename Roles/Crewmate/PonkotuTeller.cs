@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,16 +8,6 @@ using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Madmate;
 using UnityEngine;
 using static TownOfHost.Modules.SelfVoteManager;
-=======
-using System.Collections.Generic;
-using AmongUs.GameOptions;
-using UnityEngine;
-using Hazel;
-using TownOfHost.Roles.Core;
-using System;
-using static TownOfHost.Modules.SelfVoteManager;
-using TownOfHost.Roles.Core.Interfaces;
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
 namespace TownOfHost.Roles.Crewmate;
 
@@ -183,7 +172,6 @@ public sealed class PonkotuTeller : RoleBase, ISelfVoter
         int chance = IRandom.Instance.Next(0, 101);
         var target = PlayerCatch.GetPlayerById(votedForId);
         if (!target.IsAlive()) return;
-<<<<<<< HEAD
         if (target.Is(CustomRoles.Madpsycho))
         {
             if (Madpsycho.CanPsycho)
@@ -204,8 +192,6 @@ public sealed class PonkotuTeller : RoleBase, ISelfVoter
                 return;
             }
         }
-=======
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         if (GameTell.TryGetValue(votedForId, out var telledrole) && OptionDontChengeGame.GetBool())
         {
             Logger.Info($"Player: {Player.name},Target: {target.name}, count: {count}(再掲)", "PonkotuTeller");

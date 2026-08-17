@@ -4,10 +4,7 @@ using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Crewmate;
-<<<<<<< HEAD
 using TownOfHost.Roles.Madmate;
-=======
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
 namespace TownOfHost.Roles.Impostor;
 
@@ -82,7 +79,6 @@ public sealed class Mafia : RoleBase, IImpostor, IUsePhantomButton
         if (!SKMad || Options.CanMakeMadmateCount.GetInt() <= PlayerCatch.SKMadmateNowCount) return;
         var target = Player.GetKillTarget(true);
         if (target == null || target.GetCustomRole() is CustomRoles.King or CustomRoles.Merlin or CustomRoles.AlienHijack || (target.IsTeammate(Player) && !SuddenDeathMode.NowSuddenDeathTemeMode)) return;
-<<<<<<< HEAD
         if (target.Is(CustomRoles.Madpsycho))
         {
             if (Madpsycho.CanPsycho)
@@ -92,9 +88,6 @@ public sealed class Mafia : RoleBase, IImpostor, IUsePhantomButton
                 return;
             }
         }
-=======
-
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         SKMad = false;
         SendRPC();
         if (SuddenDeathMode.NowSuddenDeathTemeMode)

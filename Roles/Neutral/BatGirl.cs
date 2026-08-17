@@ -2,18 +2,11 @@ using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
-<<<<<<< HEAD
 using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Madmate;
 using UnityEngine;
-=======
-using UnityEngine;
-using TownOfHost.Modules;
-using TownOfHost.Roles.Core;
-using TownOfHost.Roles.Core.Interfaces;
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 using static TownOfHost.Modules.SelfVoteManager;
 
 namespace TownOfHost.Roles.Neutral;
@@ -162,7 +155,6 @@ public sealed class BatGirl : RoleBase, ISelfVoter, IUsePhantomButton, IAddition
             Utils.SendMessage(GetString("BatGirlPrinceInvalid"), Player.PlayerId);
             return;
         }
-<<<<<<< HEAD
         if (target.Is(CustomRoles.Madpsycho))
         {
             if (Madpsycho.CanPsycho)
@@ -183,9 +175,6 @@ public sealed class BatGirl : RoleBase, ISelfVoter, IUsePhantomButton, IAddition
                 return;
             }
         }
-=======
-
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         princeId = target.PlayerId;
         inLoveMode = false;
         SetMode(Player, false);

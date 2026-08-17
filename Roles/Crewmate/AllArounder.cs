@@ -8,10 +8,7 @@ using TownOfHost.Modules.ChatManager;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Impostor;
-<<<<<<< HEAD
 using TownOfHost.Roles.Madmate;
-=======
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 using TownOfHost.Roles.Neutral;
 using UnityEngine;
 using static TownOfHost.Modules.SelfVoteManager;
@@ -251,7 +248,6 @@ public sealed class AllArounder : RoleBase, ISystemTypeUpdateHook, IKillFlashSee
         PlayerState state;
         var target = PlayerCatch.GetPlayerById(votedForId);
         if (!target.IsAlive()) return;
-<<<<<<< HEAD
         if (target.Is(CustomRoles.Madpsycho))
         {
             if (Madpsycho.CanPsycho)
@@ -272,8 +268,6 @@ public sealed class AllArounder : RoleBase, ISystemTypeUpdateHook, IKillFlashSee
                 return;
             }
         }
-=======
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         if (!AmongUsClient.Instance.AmHost) return;
         var meetingHud = MeetingHud.Instance;
         var hudManager = DestroyableSingleton<HudManager>.Instance.KillOverlay;

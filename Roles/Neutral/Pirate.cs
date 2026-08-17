@@ -498,9 +498,5 @@ public sealed class Gang : RoleBase, IAdditionalWinner
         hasGrantedAddon = reader.ReadBoolean();
         hasSeenImpostors = reader.ReadBoolean();
     }
-<<<<<<< HEAD
 }
 */
-=======
-}*/
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf

@@ -1,21 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
-<<<<<<< HEAD
 using AmongUs.GameOptions;
 using Hazel;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Madmate;
 using UnityEngine;
-=======
-using UnityEngine;
-using AmongUs.GameOptions;
-
-using TownOfHost.Roles.Core;
-using TownOfHost.Roles.Core.Interfaces;
-using Hazel;
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
-
 namespace TownOfHost.Roles.Neutral;
 
 public sealed class Strawdoll : RoleBase, IKiller, IUsePhantomButton
@@ -140,7 +130,6 @@ public sealed class Strawdoll : RoleBase, IKiller, IUsePhantomButton
     {
         info.DoKill = false;
         var (killer, target) = info.AttemptTuple;
-<<<<<<< HEAD
         if (target.Is(CustomRoles.Madpsycho))
         {
             if (Madpsycho.CanPsycho)
@@ -150,9 +139,6 @@ public sealed class Strawdoll : RoleBase, IKiller, IUsePhantomButton
                 return;
             }
         }
-=======
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
-
         if (Target == null)
         {
             Target = target;

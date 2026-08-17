@@ -2,22 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-<<<<<<< HEAD
 using AmongUs.GameOptions;
 using Hazel;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Madmate;
 using UnityEngine;
-=======
-using Hazel;
-using UnityEngine;
-using AmongUs.GameOptions;
-
-using TownOfHost.Roles.Core;
-using TownOfHost.Roles.Core.Interfaces;
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
-
 namespace TownOfHost.Roles.Neutral;
 
 public sealed class PlagueDoctor : RoleBase, IKiller
@@ -186,7 +176,6 @@ public sealed class PlagueDoctor : RoleBase, IKiller
     public void OnCheckMurderAsKiller(MurderInfo info)
     {
         var (killer, target) = info.AttemptTuple;
-<<<<<<< HEAD
         info.DoKill = false;
         if (InfectCount > 0)
         {
@@ -199,18 +188,10 @@ public sealed class PlagueDoctor : RoleBase, IKiller
                     return;
                 }
             }
-=======
-        if (InfectCount > 0)
-        {
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
             InfectCount--;
             killer.RpcProtectedMurderPlayer(target);
             DirectInfect(target);
         }
-<<<<<<< HEAD
-=======
-        info.DoKill = false;
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
     }
     public override void OnMurderPlayerAsTarget(MurderInfo info)
     {

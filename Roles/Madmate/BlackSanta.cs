@@ -20,11 +20,7 @@ public sealed class BlackSanta : RoleBase, IKiller, IKillFlashSeeable, IDeathRea
             typeof(BlackSanta),
             player => new BlackSanta(player),
             CustomRoles.BlackSanta,
-<<<<<<< HEAD
-            () => RoleTypes.Crewmate,
-=======
             () => OptCanUseVent.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate,
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
             CustomRoleTypes.Madmate,
             22600,
             SetupOptionItem,
@@ -71,12 +67,7 @@ public sealed class BlackSanta : RoleBase, IKiller, IKillFlashSeeable, IDeathRea
     int giftCount;
     bool giftMode;
     bool tasksCompleted;
-
-<<<<<<< HEAD
-=======
     private static RoleTypes TaskModeRoleType => (OptCanUseVent?.GetBool() ?? true) ? RoleTypes.Engineer : RoleTypes.Crewmate;
-
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
     private enum OptionName
     {
         SantaAbilityCooldown,
@@ -193,15 +184,12 @@ public sealed class BlackSanta : RoleBase, IKiller, IKillFlashSeeable, IDeathRea
         Cooldown = OptCooldown.GetFloat();
         PetActionManager.Register(Player.PlayerId, OnPetUsed);
         CheckAndAddNameColorToImpostors();
-<<<<<<< HEAD
-=======
 
         if (KnowsImpostors())
         {
             giftMode = true;
             ApplyModeDesync(true);
         }
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
     }
 
     public override void OnDestroy()
@@ -212,11 +200,7 @@ public sealed class BlackSanta : RoleBase, IKiller, IKillFlashSeeable, IDeathRea
     private void OnPetUsed()
     {
         if (!Player.IsAlive()) return;
-<<<<<<< HEAD
-        if (tasksCompleted) return;
-=======
         if (tasksCompleted || KnowsImpostors()) return;
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
         giftMode = !giftMode;
         ApplyModeDesync(giftMode);
@@ -229,11 +213,7 @@ public sealed class BlackSanta : RoleBase, IKiller, IKillFlashSeeable, IDeathRea
         if (Is(PlayerControl.LocalPlayer)) return;
         if (!Player.IsAlive()) return;
 
-<<<<<<< HEAD
-        var roleType = toGiftMode ? RoleTypes.Impostor : RoleTypes.Crewmate;
-=======
         var roleType = toGiftMode ? RoleTypes.Impostor : TaskModeRoleType;
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         foreach (var pc in PlayerCatch.AllAlivePlayerControls)
         {
             var role = pc.GetCustomRole();
@@ -249,18 +229,6 @@ public sealed class BlackSanta : RoleBase, IKiller, IKillFlashSeeable, IDeathRea
         CheckAndAddNameColorToImpostors();
 
         if (!AmongUsClient.Instance.AmHost) return true;
-<<<<<<< HEAD
-        if (tasksCompleted) return true;
-        if (!MyTaskState.IsTaskFinished) return true;
-
-        tasksCompleted = true;
-        if (!giftMode)
-        {
-            giftMode = true;
-            ApplyModeDesync(true);
-        }
-
-=======
 
         bool becameLockedIn = false;
 
@@ -281,8 +249,6 @@ public sealed class BlackSanta : RoleBase, IKiller, IKillFlashSeeable, IDeathRea
         }
 
         if (becameLockedIn) ApplyModeDesync(true);
-
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         SendRPC();
         UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
         return true;
@@ -327,11 +293,7 @@ public sealed class BlackSanta : RoleBase, IKiller, IKillFlashSeeable, IDeathRea
     }
 
     public override RoleTypes? AfterMeetingRole
-<<<<<<< HEAD
-        => giftMode ? RoleTypes.Impostor : RoleTypes.Crewmate;
-=======
         => giftMode ? RoleTypes.Impostor : TaskModeRoleType;
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
     public override void AfterMeetingTasks()
     {
@@ -454,8 +416,6 @@ public sealed class BlackSanta : RoleBase, IKiller, IKillFlashSeeable, IDeathRea
         killer.SetKillCooldown();
         killer.RpcResetAbilityCooldown();
 
-<<<<<<< HEAD
-=======
         _ = new LateTask(() =>
         {
             if (!Player.IsAlive()) return;
@@ -463,8 +423,6 @@ public sealed class BlackSanta : RoleBase, IKiller, IKillFlashSeeable, IDeathRea
             if (target != null && target.IsAlive())
                 target.RpcResetAbilityCooldown();
         }, 0.3f, "BlackSanta_PostGiftFix", true);
-
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         Logger.Info($"{Player.Data?.GetLogPlayerName()} が {target.Data?.GetLogPlayerName()} に {role} をプレゼント", "BlackSanta");
         _ = new LateTask(() => UtilsNotifyRoles.NotifyRoles(ForceLoop: true), 0.2f, "BlackSanta Gift");
     }

@@ -1,19 +1,11 @@
 using System.Collections.Generic;
 using System.Text;
-<<<<<<< HEAD
 using AmongUs.GameOptions;
 using Epic.OnlineServices.Presence;
 using Hazel;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Madmate;
-=======
-using Hazel;
-
-using AmongUs.GameOptions;
-using TownOfHost.Roles.Core;
-using TownOfHost.Roles.Core.Interfaces;
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 using TownOfHost.Roles.Neutral;
 
 namespace TownOfHost.Roles.Impostor
@@ -215,7 +207,6 @@ namespace TownOfHost.Roles.Impostor
             {
                 ResetCooldown = true;
                 var target = Player.GetKillTarget(true);
-<<<<<<< HEAD
                 if (target.Is(CustomRoles.Madpsycho))
                 {
                     if (Madpsycho.CanPsycho)
@@ -225,8 +216,6 @@ namespace TownOfHost.Roles.Impostor
                         return;
                     }
                 }
-=======
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
                 if (target != null)
                 {
                     var targetroleclass = target?.GetRoleClass();

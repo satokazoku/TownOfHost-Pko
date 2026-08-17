@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
@@ -7,16 +6,6 @@ using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Madmate;
 using static TownOfHost.Modules.SelfVoteManager;
-=======
-using AmongUs.GameOptions;
-using System.Linq;
-
-using TownOfHost.Roles.Core;
-using TownOfHost.Attributes;
-using static TownOfHost.Modules.SelfVoteManager;
-using Hazel;
-using TownOfHost.Roles.Core.Interfaces;
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
 namespace TownOfHost.Roles.Neutral;
 
@@ -155,7 +144,6 @@ public sealed class Madonna : RoleBase, ISelfVoter
                 UtilsGameLog.AddGameLog($"Madonna", string.Format(GetString("Log.MadoonaFa"), UtilsName.GetPlayerColor(Player, true), UtilsName.GetPlayerColor(target, true)));
             }
             else
-<<<<<<< HEAD
         if (target.Is(CustomRoles.Madpsycho))
         {
             if (Madpsycho.CanPsycho)
@@ -177,9 +165,6 @@ public sealed class Madonna : RoleBase, ISelfVoter
             }
         }
         if (!target.IsLovers() && !target.Is(CustomRoles.Vega) && !target.Is(CustomRoles.Altair))
-=======
-                if (!target.IsLovers() && !target.Is(CustomRoles.Vega) && !target.Is(CustomRoles.Altair))
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
                 {
                     IsNonLover = false;
                     SendRPC();

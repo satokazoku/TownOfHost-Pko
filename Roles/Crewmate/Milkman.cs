@@ -139,9 +139,6 @@ public sealed class Milkman : RoleBase, IKiller
         SendRpc();
         UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
     }
-
-<<<<<<< HEAD
-=======
     private void SetRoleForMilkmanClient(PlayerControl target, RoleTypes role, int clientId)
     {
         if (target == PlayerControl.LocalPlayer && Is(PlayerControl.LocalPlayer))
@@ -152,8 +149,6 @@ public sealed class Milkman : RoleBase, IKiller
 
         target.RpcSetRoleDesync(role, clientId);
     }
-
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
     private void SwitchMode(bool toDelivery)
     {
         deliveryMode = toDelivery;
@@ -163,19 +158,11 @@ public sealed class Milkman : RoleBase, IKiller
         {
             var role = pc.GetCustomRole();
             if (role.IsImpostor())
-<<<<<<< HEAD
-                pc.RpcSetRoleDesync(
-                    toDelivery ? RoleTypes.Scientist : role.GetRoleTypes(),
-                    Player.GetClientId());
-            if (Is(pc))
-                pc.RpcSetRoleDesync(
-=======
                 SetRoleForMilkmanClient(pc,
                     toDelivery ? RoleTypes.Scientist : role.GetRoleTypes(),
                     Player.GetClientId());
             if (Is(pc))
                 SetRoleForMilkmanClient(pc,
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
                     toDelivery ? RoleTypes.Impostor : RoleTypes.Engineer,
                     Player.GetClientId());
         }
@@ -326,21 +313,13 @@ public sealed class Milkman : RoleBase, IKiller
 
         deliveryMode = false;
 
-<<<<<<< HEAD
-        Player.RpcSetRoleDesync(RoleTypes.Engineer, Player.GetClientId());
-=======
         SetRoleForMilkmanClient(Player, RoleTypes.Engineer, Player.GetClientId());
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
         foreach (var pc in PlayerCatch.AllAlivePlayerControls)
         {
             var role = pc.GetCustomRole();
             if (role.IsImpostor())
-<<<<<<< HEAD
-                pc.RpcSetRoleDesync(role.GetRoleTypes(), Player.GetClientId());
-=======
                 SetRoleForMilkmanClient(pc, role.GetRoleTypes(), Player.GetClientId());
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         }
 
         SendRpc();

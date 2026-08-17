@@ -4,11 +4,7 @@ using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Crewmate;
-<<<<<<< HEAD
 using TownOfHost.Roles.Madmate;
-=======
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
-
 namespace TownOfHost.Roles.Impostor;
 
 public sealed class EvilMaker : RoleBase, IImpostor, IUsePhantomButton
@@ -60,7 +56,6 @@ public sealed class EvilMaker : RoleBase, IImpostor, IUsePhantomButton
         var target = Player.GetKillTarget(true);
         if (target == null) return;
         if ((target.GetCustomRole() is CustomRoles.SKMadmate or CustomRoles.King or CustomRoles.Merlin or CustomRoles.AlienHijack || target.IsTeammate(Player)) && !SuddenDeathMode.NowSuddenDeathMode) return;
-<<<<<<< HEAD
         if (target.Is(CustomRoles.Madpsycho))
         {
             if (Madpsycho.CanPsycho)
@@ -70,9 +65,6 @@ public sealed class EvilMaker : RoleBase, IImpostor, IUsePhantomButton
                 return;
             }
         }
-=======
-
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         Used = true;
         AdjustKillCooldown = false;
         if (SuddenDeathMode.NowSuddenDeathTemeMode)

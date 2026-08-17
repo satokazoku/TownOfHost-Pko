@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-<<<<<<< HEAD
 using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
@@ -8,14 +7,6 @@ using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Madmate;
 using UnityEngine;
 using static TownOfHost.Modules.SelfVoteManager;
-=======
-using AmongUs.GameOptions;
-using UnityEngine;
-using TownOfHost.Roles.Core;
-using static TownOfHost.Modules.SelfVoteManager;
-using Hazel;
-using TownOfHost.Roles.Core.Interfaces;
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 
 namespace TownOfHost.Roles.Crewmate;
 
@@ -163,7 +154,6 @@ public sealed class AmateurTeller : RoleBase, ISelfVoter
     {
         var target = PlayerCatch.GetPlayerById(votedForId);
         if (!target.IsAlive()) return;
-<<<<<<< HEAD
         if (target.Is(CustomRoles.Madpsycho))
         {
             if (Madpsycho.CanPsycho)
@@ -184,8 +174,6 @@ public sealed class AmateurTeller : RoleBase, ISelfVoter
                 return;
             }
         }
-=======
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         count++;
         Use = true;
         UseTarget = target.PlayerId;

@@ -1,25 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-<<<<<<< HEAD
 using AmongUs.GameOptions;
 using Hazel;
 using MS.Internal.Xml.XPath;
-=======
 
-using AmongUs.GameOptions;
-using Hazel;
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 using TownOfHost.Roles.AddOns.Common;
 using TownOfHost.Roles.AddOns.Neutral;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
-<<<<<<< HEAD
 using TownOfHost.Roles.Madmate;
 using static UnityEngine.GraphicsBuffer;
-=======
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
-
 namespace TownOfHost.Roles.Crewmate;
 
 public sealed class Fortuner : RoleBase, IKiller
@@ -124,7 +115,6 @@ public sealed class Fortuner : RoleBase, IKiller
             info.DoKill = false;
             return;
         }
-<<<<<<< HEAD
         var (killer, target) = info.AttemptTuple;
         if (target.Is(CustomRoles.Madpsycho))
         {
@@ -134,8 +124,6 @@ public sealed class Fortuner : RoleBase, IKiller
             target.RpcMurderPlayer(Player);
             return;
         }
-=======
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         giveplayerid.Add(info.AppearanceTarget.PlayerId);
         Logger.Info($"{info.AppearanceTarget.PlayerId}-{UseCount}", "F<EGTfaAr>or<canoacw>tu<na!>n<ruanor1>er".RemoveHtmlTags());
         info.DoKill = false;

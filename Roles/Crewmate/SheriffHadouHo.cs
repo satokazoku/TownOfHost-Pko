@@ -1,7 +1,4 @@
-<<<<<<< HEAD
-=======
 using System.Linq;
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 using AmongUs.GameOptions;
 using Hazel;
 using TownOfHost.Modules;
@@ -40,10 +37,7 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
         SelfDestructOnMiss = OptionSelfDestructOnMiss.GetBool();
         BeamColorModeValue = OptionBeamColorMode.GetValue();
         IsCharging = false;
-<<<<<<< HEAD
         Charging = false;
-=======
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         chargeTimer = 0f;
         PlayerSpeed = 0f;
         ShowBeamMark = false;
@@ -85,11 +79,7 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
     bool beamMode;
     float nowcool;
     int LastCooltime;
-<<<<<<< HEAD
     public static bool Charging;
-=======
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
-
     bool IsBeamUnlocked =>
         BeamUnlockTaskCount <= 0 ||
         (MyTaskState != null && MyTaskState.CompletedTasksCount >= BeamUnlockTaskCount);
@@ -194,9 +184,6 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
         SendRpc();
         UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
     }
-
-<<<<<<< HEAD
-=======
     private void SetRoleForSheriffHadouHoClient(PlayerControl target, RoleTypes role, int clientId)
     {
         if (target == PlayerControl.LocalPlayer && Is(PlayerControl.LocalPlayer))
@@ -207,8 +194,6 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
 
         target.RpcSetRoleDesync(role, clientId);
     }
-
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
     void ApplyModeDesync(bool toBeamMode)
     {
         if (!Player.IsAlive()) return;
@@ -216,19 +201,11 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
         {
             var role = pc.GetCustomRole();
             if (role.IsImpostor())
-<<<<<<< HEAD
-                pc.RpcSetRoleDesync(
-                    toBeamMode ? RoleTypes.Scientist : role.GetRoleTypes(),
-                    Player.GetClientId());
-            if (Is(pc))
-                pc.RpcSetRoleDesync(
-=======
                 SetRoleForSheriffHadouHoClient(pc,
                     toBeamMode ? RoleTypes.Scientist : role.GetRoleTypes(),
                     Player.GetClientId());
             if (Is(pc))
                 SetRoleForSheriffHadouHoClient(pc,
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
                     toBeamMode ? RoleTypes.Phantom : RoleTypes.Engineer,
                     Player.GetClientId());
         }
@@ -249,10 +226,7 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
 
         IsFiring = true;
         IsCharging = true;
-<<<<<<< HEAD
         Charging = true;
-=======
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         chargeTimer = 0f;
         Main.AllPlayerSpeed[Player.PlayerId] = Main.MinSpeed;
         Player.MarkDirtySettings();
@@ -278,10 +252,7 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
     {
         IsCharging = false;
         ShowBeamMark = false;
-<<<<<<< HEAD
         Charging = false;
-=======
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         IsFiring = false;
         HasHit = false;
         chargeTimer = 0f;
@@ -314,11 +285,7 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
         {
             ResetBeamState();
             beamMode = false;
-<<<<<<< HEAD
-            Player.RpcSetRoleDesync(RoleTypes.Engineer, Player.GetClientId());
-=======
             SetRoleForSheriffHadouHoClient(Player, RoleTypes.Engineer, Player.GetClientId());
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
             UtilsNotifyRoles.NotifyRoles(); SendRpc();
             return;
         }
@@ -428,17 +395,11 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
         var myPos = Player.GetTruePosition();
         Vector2 dir = facingLeft ? Vector2.left : Vector2.right;
 
-<<<<<<< HEAD
-        foreach (var target in PlayerCatch.AllAlivePlayerControls)
-        {
-            if (target.PlayerId == Player.PlayerId) continue;
-=======
         foreach (var target in PlayerCatch.AllAlivePlayerControls.ToArray())
         {
             if (!Player.IsAlive()) break;
             if (target.PlayerId == Player.PlayerId) continue;
             if (!target.IsAlive()) continue;
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
             var toTarget = target.GetTruePosition() - myPos;
             float dot = Vector2.Dot(toTarget, dir);
             if (dot <= 0) continue;

@@ -2,18 +2,11 @@ using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
-<<<<<<< HEAD
 using TownOfHost.Attributes;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Madmate;
 using UnityEngine;
-=======
-using UnityEngine;
-using TownOfHost.Roles.Core;
-using TownOfHost.Roles.Core.Interfaces;
-using TownOfHost.Attributes;
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 using static TownOfHost.PlayerCatch;
 
 namespace TownOfHost.Roles.Neutral;
@@ -172,10 +165,6 @@ public sealed class Cupid : RoleBase, IKiller, IAdditionalWinner
 
         if (hasDesignated) return;
         if (target.PlayerId == killer.PlayerId) return;
-<<<<<<< HEAD
-=======
-
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
         if (target.IsLovers() || target.Is(CustomRoles.OneLove)
             || target.Is(CustomRoles.Vega) || target.Is(CustomRoles.Altair)
             || target.Is(CustomRoles.Madonna))

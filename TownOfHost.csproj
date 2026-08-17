@@ -7,11 +7,7 @@
 		<Authors>tukasa0001(EmptyBottle), integral0131</Authors>
 		<langVersion>preview</langVersion>
 		<AssemblyName>TownOfHost-Pko</AssemblyName>
-<<<<<<< HEAD
-		<NoWarn>MSB3246,MSB3073,CS0469</NoWarn>
-=======
 		<NoWarn>MSB3246</NoWarn>
->>>>>>> dcd67e7ec6cde3d9d9f89ff2ca548e7182003ccf
 		<AmongUs>C:\Program Files (x86)\Steam\steamapps\common\Among Us tohp</AmongUs>
 	</PropertyGroup>
 
