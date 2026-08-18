@@ -174,12 +174,8 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
     public static bool GetTamaCanVentMove() => OptionTamaCanVentMove?.GetBool() ?? false;
     public static bool GetCanUseSabotageOption() => OptionCanSabotage?.GetBool() ?? false;
     public static bool GetTamaCountAsJackalKiller() => OptionTamaCountAsJackalKiller?.GetBool() ?? false;
-<<<<<<< Updated upstream
-=======
     public static bool GetTamaCountAsKillerOnlyWhenPromotionEnabled() => OptionTamaCountAsKillerOnlyWhenPromotionEnabled?.GetBool() ?? false;
     public static bool GetSidekickPromotion() => OptionSidekickPromotion?.GetBool() ?? false;
-
->>>>>>> Stashed changes
     public static void HideRoleOptions(CustomRoles role)
     {
         if (Options.CustomRoleSpawnChances != null && Options.CustomRoleSpawnChances.TryGetValue(role, out var sp))
