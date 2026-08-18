@@ -34,7 +34,7 @@ namespace TownOfHost
             {
                 //1ページに基本ゲーム設定を格納
                 StringBuilder gameoptionsb = new();
-                GameOptionsManager.Instance.CurrentGameOptions.ToHudString(GameData.Instance ? GameData.Instance.PlayerCount : 10).Split("\r\n").SkipLast(10)
+                GameOptionsManager.Instance.CurrentGameOptions.ToHudString(GameData.Instance ? GameData.Instance.PlayerCount : 10).Split("\r\n").SkipLast(11)
                 .Do(option => gameoptionsb.Append(option + "\r\n"));
                 pages.Add(gameoptionsb.ToString() + "\r\n");
             }
