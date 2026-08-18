@@ -469,17 +469,26 @@ namespace TownOfHost
             ModNewsHistory.JsonAndAllModNews.Add(news);
         }
     }
+
     [HarmonyPatch(typeof(EjectMainMenu), nameof(EjectMainMenu.EjectCrewmate))]
     class EjectMainMenuEjectCrewmatePatch
     {
         public static int i = 0;
+        public static bool Prefix(EjectMainMenu __instance)
+        {
+            //クールダウン処理を消したver  // pressStateがnullになっていてエラーが発生していたためエラーを発生させないためにっ
+            PlayerParticle playerParticle = __instance.pool.Get<PlayerParticle>();
+            PlayerMaterial.SetColors(IRandom.Instance.Next(0, 18), (Renderer)(object)playerParticle.myRend); // (0~17)
+            __instance.PlacePlayer(playerParticle, initial: false);
+            return false;
+        }
         public static void Postfix(EjectMainMenu __instance)
         {
             try
             {
                 i++;
-                __instance.pressState.SetActive(false);
-                __instance.ejectButton.SetActive(true);
+                __instance.pressState?.SetActive(false);
+                __instance.ejectButton?.SetActive(true);
                 __instance.onCooldown = false;
                 if (10 < i && i < 60)
                 {
