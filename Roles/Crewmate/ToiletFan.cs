@@ -50,6 +50,7 @@ public sealed class ToiletFan : RoleBase
     public override bool OnEnterVent(PlayerPhysics physics, int ventId)
     {
         flug = Main.NormalOptions.MapId is 4 ? 1 : 2;
+        if (flug is not 1) return false;
         ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Doors, 79);
         ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Doors, 80);
         ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Doors, 81);
