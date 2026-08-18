@@ -2288,7 +2288,7 @@
 "BoostLighterCooldown","Cooldown","クールタイム"
 "BoostLighterDuration","Boost Duration","ブースト持続時間"
 "BoostLighterAffectedByBlackout","Affected by Blackout","停電の影響を受ける"
-"BoostLighterLightMod","Vision Brightness","視界の明るさ"
+"BoostLighterVision","Vision Brightness","視界の明るさ"
 
 "## Neutral Role Setting"
 "SchrodingerCatExiledTeamChanges","Team Changes When Ejected","吊られた際、陣営が変化する","薛定谔的猫被放逐时会加入其他阵营","薛定諤的貓被丟出時陣營會轉變","Команда меняется после его Изгнания","Time Muda Quando Exilado",""
@@ -2645,6 +2645,14 @@
 "RulerRule.GameEndAllEmptiness","If the game ends during the next turn, everyone becomes Emptiness.","次のターン中に試合が終了すると全員空虚者になる"
 "RulerRule.GameEndAllWin","If the game ends during the next turn, everyone wins.","次のターン中に試合が終了すると全員勝利する"
 "RulerRule.RandomTogetherDeath","Stay with a randomly chosen player for {0} seconds during the next turn and you die.","次のターン中にランダムで選ばれた人と{0}秒間一緒にいると死亡する"
+"DancerNumToWin","Prophecies Needed to Win","勝利に必要な死の預言数"
+"DancerDanceCooldown","Dance Cooldown","ダンスクールダウン"
+"DancerDanceDuration","Time Required to Dance","ダンスに必要な時間"
+"DancerDanceRange","Dance Range","ダンス範囲"
+"DancerForecastDuration","Death Prophecy Duration","死の預言の有効時間"
+"DancerFollowingSuicide","Following Suicide on Death","死亡時の道連れ"
+"DancerLastDanceMode","Last Dance Mode","ラストダンスモード"
+"DancerDeathNotification","Death Notification","死体発生の通知"
 
 "## Unit Role Setting"
 "BraidKillCooldown","Bread Task Complete Driver Killcool","ブレイドが全タスク完了時のキルクール"

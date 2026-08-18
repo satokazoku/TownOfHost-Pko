@@ -30,8 +30,8 @@ public sealed class BoostLighter : RoleBase
     {
         BoostDuration = OptionBoostDuration.GetFloat();
         BoostCooldown = OptionBoostCooldown.GetFloat();
+        BoostVision = OptionBoostVision.GetFloat();
         AffectedByBlackout = OptionAffectedByBlackout.GetBool();
-        BoostLightMod = OptionBoostLightMod.GetFloat();
         isBoostActive = false;
         boostTimer = 0f;
         cooldownTimer = OptionBoostCooldown.GetFloat();
@@ -41,10 +41,10 @@ public sealed class BoostLighter : RoleBase
     static float BoostDuration;
     static OptionItem OptionBoostCooldown;
     static float BoostCooldown;
+    static OptionItem OptionBoostVision;
+    static float BoostVision;
     static OptionItem OptionAffectedByBlackout;
     static bool AffectedByBlackout;
-    static OptionItem OptionBoostLightMod;
-    static float BoostLightMod;
 
     bool isBoostActive;
     float boostTimer;
@@ -54,8 +54,8 @@ public sealed class BoostLighter : RoleBase
     {
         BoostLighterCooldown,
         BoostLighterDuration,
+        BoostLighterVision,
         BoostLighterAffectedByBlackout,
-        BoostLighterLightMod,
     }
 
     static void SetupOptionItem()
@@ -64,10 +64,10 @@ public sealed class BoostLighter : RoleBase
             new(2.5f, 60f, 2.5f), 30f, false).SetValueFormat(OptionFormat.Seconds);
         OptionBoostDuration = FloatOptionItem.Create(RoleInfo, 11, OptionName.BoostLighterDuration,
             new(2.5f, 20f, 2.5f), 10f, false).SetValueFormat(OptionFormat.Seconds);
-        OptionAffectedByBlackout = BooleanOptionItem.Create(RoleInfo, 12, OptionName.BoostLighterAffectedByBlackout,
+        OptionBoostVision = FloatOptionItem.Create(RoleInfo, 12, OptionName.BoostLighterVision,
+            new(0.0f, 5.0f, 0.05f), 1.5f, false).SetValueFormat(OptionFormat.Multiplier);
+        OptionAffectedByBlackout = BooleanOptionItem.Create(RoleInfo, 13, OptionName.BoostLighterAffectedByBlackout,
             true, false);
-        OptionBoostLightMod = FloatOptionItem.Create(RoleInfo, 13, OptionName.BoostLighterLightMod,
-            new(0.25f, 5f, 0.25f), 3f, false).SetValueFormat(OptionFormat.Percent);
     }
 
     public override void Add()
@@ -87,14 +87,19 @@ public sealed class BoostLighter : RoleBase
             : Mathf.Max(cooldownTimer, 0.1f);
         AURoleOptions.EngineerInVentMaxTime = 0f;
 
-        if (isBoostActive)
+        if (!isBoostActive) return;
+
+        if (!AffectedByBlackout)
         {
-            bool blackoutActive = Utils.IsActive(SystemTypes.Electrical);
-            if (!AffectedByBlackout || !blackoutActive)
-            {
-                opt.SetFloat(FloatOptionNames.CrewLightMod, BoostLightMod);
-            }
+            opt.SetVision(true);
+            opt.SetFloat(FloatOptionNames.CrewLightMod, Main.NormalOptions.ImpostorLightMod);
+            return;
         }
+
+        bool blackoutActive = Utils.IsActive(SystemTypes.Electrical);
+        if (blackoutActive) return;
+
+        opt.SetFloat(FloatOptionNames.CrewLightMod, BoostVision);
     }
 
     public override bool CanClickUseVentButton => false;
@@ -144,6 +149,8 @@ public sealed class BoostLighter : RoleBase
         if (!isBoostActive) return;
         if (!AmongUsClient.Instance.AmHost) return;
         if (!Player.IsAlive()) { DeactivateBoost(); return; }
+        if (!AffectedByBlackout)
+            Player.MarkDirtySettings();
 
         boostTimer += Time.fixedDeltaTime;
         if (boostTimer >= BoostDuration)
@@ -164,7 +171,6 @@ public sealed class BoostLighter : RoleBase
         cooldownTimer = BoostCooldown;
         Player.RpcResetAbilityCooldown();
     }
-
     public override string GetLowerText(PlayerControl seer, PlayerControl seen = null,
         bool isForMeeting = false, bool isForHud = false)
     {
@@ -176,23 +182,9 @@ public sealed class BoostLighter : RoleBase
         string color = RoleInfo.RoleColorCode;
 
         if (isBoostActive)
-        {
-            float remaining = Mathf.Max(0f, BoostDuration - boostTimer);
-            return $"{size}<color={color}>【視界ブースト中】{remaining:F1}s</color>";
-        }
+            return $"{size}<color={color}>【視界ブースト中】</color>";
 
         return $"{size}<color={color}>ペットなで → 視界ブースト発動</color>";
-    }
-
-    public override string GetProgressText(bool comms = false, bool GameLog = false)
-    {
-        if (!Player.IsAlive()) return "";
-        if (isBoostActive)
-        {
-            float remaining = Mathf.Max(0f, BoostDuration - boostTimer);
-            return $"<color={RoleInfo.RoleColorCode}>({remaining:F1}s)</color>";
-        }
-        return "";
     }
 
     void SendRpc()

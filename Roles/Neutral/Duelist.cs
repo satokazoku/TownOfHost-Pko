@@ -27,7 +27,7 @@ public sealed class Duelist : RoleBase, IAdditionalWinner
         );
 
     public Duelist(PlayerControl player)
-        : base(RoleInfo, player, () => HasTask.True)
+        : base(RoleInfo, player, () => HasTask.ForRecompute)
     {
         archenemyPlayerId = byte.MaxValue;
         hasChosenArchenemy = false;
