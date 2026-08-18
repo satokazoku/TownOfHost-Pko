@@ -26,14 +26,14 @@ namespace TownOfHost.Patches
                 if (jackalHo.IsCharging || jackalHo.ShowBeamMark)
                     return false;
             }
-
+            /*
             //波動砲シェリフ
             if (__instance.GetRoleClass() is Roles.Crewmate.SheriffHadouHo sheriffHo)
             {
                 if (sheriffHo.IsCharging || sheriffHo.ShowBeamMark)
                     return false;
             }
-
+            */
             return true;
         }
     }

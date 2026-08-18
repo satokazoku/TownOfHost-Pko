@@ -70,10 +70,10 @@ public sealed class Madpsycho : RoleBase
     {
         var killer = info.AttemptKiller;
         if (info.KillPower >= 2) return true;
-        if (killer.Is(CustomRoles.SheriffHadouHo) && SheriffHadouHo.Charging)
+        /*if (killer.Is(CustomRoles.SheriffHadouHo) && SheriffHadouHo.Charging)
         {
             return true;
-        }
+        }*/
         if (killer.Is(CustomRoles.HadouHo) && HadouHo.Charging)
         {
             return true;

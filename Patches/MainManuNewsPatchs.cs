@@ -725,6 +725,19 @@ public class ModNewsHistory
                 };
                 AllModNews.Add(news);
             }
+            {
+                var news = new ModNews
+                {
+                    Number = 100101,
+                    Title = ":thinking:",
+                    SubTitle = "<color=#FF9631>●TOH-Pko v5.34.20.95</color>",
+                    ShortTitle = "<color=#FF9631>●TOH-Pko v5.34.20.95</color>",
+                    Text = "・ジャッカルドールバグ修正\r\n・/n rでスモークメーカーがニュートラルから出るバグを修正\r\n・ダブルキラーバグ修正\r\n・イビルムービングのキルク２倍になるバグを修正\r\n・なんかミスでサンタのオプション追加できてなかったので追加\r\n・ラビットオプション追加\r\n・波動砲オプション追加\r\n・波動砲ジャッカルオプション追加\r\n・波動砲シェリフオプション追加\r\n・弾オプション追加\r\n・新役職:マッドサイコの追加\r\n・新役職:狩人の追加\r\n・スモークメーカーのスモークの最大値を650に変更\r\n・波動砲仕様変更\r\n・波動砲ジャッカル仕様変更\r\n・波動砲シェリフ仕様変更\r\n・アーソニスト仕様変更\r\n・侍仕様変更\r\n・Kのアプデに対応\r\n・ナイス猫又オプション削除\r\n・黒猫オプション削除\r\n・一旦波動砲シェリフ削除\r\n・一旦タイムリーパーリストラ\r\n・爆ぜ師リストラ\r\n"
+                    ,
+                    Date = "2026-8-19"
+                };
+                AllModNews.Add(news);
+            }
             AnnouncementPopUp.UpdateState = AnnouncementPopUp.AnnounceState.NotStarted;
         }
     }

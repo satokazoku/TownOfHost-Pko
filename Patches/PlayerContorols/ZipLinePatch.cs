@@ -30,12 +30,13 @@ namespace TownOfHost
                 if (jackalHo.IsCharging || jackalHo.ShowBeamMark)
                     return false;
             }
+            /*
             if (__instance.GetRoleClass() is Roles.Crewmate.SheriffHadouHo crewmateHo)
             {
                 if (crewmateHo.IsCharging || crewmateHo.ShowBeamMark)
                     return false;
             }
-
+            */
             if (!fromTop && Options.CantUseZipLineTotop.GetBool()) return false;
             if (fromTop && Options.CantUseZipLineTodown.GetBool()) return false;
 
@@ -124,11 +125,13 @@ namespace TownOfHost
                 if (jackalHo.IsCharging || jackalHo.ShowBeamMark)
                     return false;
             }
+            /*
             if (player.GetRoleClass() is Roles.Crewmate.SheriffHadouHo sheriffHo)
             {
                 if (sheriffHo.IsCharging || sheriffHo.ShowBeamMark)
                     return false;
             }
+            */
             return true;
 
         }

@@ -1,3 +1,4 @@
+/*
 using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
@@ -598,3 +599,4 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
         return true;
     }
 }
+*/

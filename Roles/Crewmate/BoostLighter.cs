@@ -102,7 +102,7 @@ public sealed class BoostLighter : RoleBase
         opt.SetFloat(FloatOptionNames.CrewLightMod, BoostVision);
     }
 
-    public override bool CanClickUseVentButton => false;
+    public override bool CanClickUseVentButton => true;
     public override bool OnEnterVent(PlayerPhysics physics, int ventId) => false;
 
     public void ActivateBoost()
@@ -149,8 +149,6 @@ public sealed class BoostLighter : RoleBase
         if (!isBoostActive) return;
         if (!AmongUsClient.Instance.AmHost) return;
         if (!Player.IsAlive()) { DeactivateBoost(); return; }
-        if (!AffectedByBlackout)
-            Player.MarkDirtySettings();
 
         boostTimer += Time.fixedDeltaTime;
         if (boostTimer >= BoostDuration)
@@ -171,6 +169,7 @@ public sealed class BoostLighter : RoleBase
         cooldownTimer = BoostCooldown;
         Player.RpcResetAbilityCooldown();
     }
+
     public override string GetLowerText(PlayerControl seer, PlayerControl seen = null,
         bool isForMeeting = false, bool isForHud = false)
     {
