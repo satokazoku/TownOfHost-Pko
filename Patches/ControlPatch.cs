@@ -240,7 +240,7 @@ namespace TownOfHost
             //投票をクリア
             if (Input.GetKeyDown(KeyCode.V) && GameStates.IsMeeting && !GameStates.IsOnlineGame)
             {
-                MeetingHud.Instance.RpcClearVote(AmongUsClient.Instance.ClientId);
+                MeetingHud.Instance.RpcClearVote(PlayerControl.LocalPlayer.PlayerId);
             }
             //自分自身を追放
             if (GetKeysDown(KeyCode.Return, KeyCode.E, KeyCode.LeftShift) && GameStates.IsInGame && PlayerControl.LocalPlayer.IsAlive())

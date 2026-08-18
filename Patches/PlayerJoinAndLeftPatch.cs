@@ -39,6 +39,7 @@ namespace TownOfHost
             StreamerInfo.JoinGame();
             SlotRoleAssign.Reset();
             ErrorText.Instance.Clear();
+            Logger.Info("a", "a");
             foreach (var pc in PlayerCatch.AllPlayerControls)
             {
                 if (pc == null) continue;
@@ -47,6 +48,7 @@ namespace TownOfHost
                 OnPlayerJoinedPatch.checkjoin(pc.GetClient());
             }
             CustomSpawnManager.UpdateOptionName();
+            Logger.Info("a2", "a");
             if (AmongUsClient.Instance.AmHost) //以下、ホストのみ実行
             {
                 _ = new LateTask(() =>
@@ -54,6 +56,7 @@ namespace TownOfHost
                     CreatePlayerPatch.OnComebackMessage();
                     IsSendWait = false;
                 }, 8, "LateGameLogSend", true);
+                Logger.Info("a3", "a");
                 if (Main.NormalOptions.KillCooldown == 0f)
                     Main.NormalOptions.KillCooldown = Main.LastKillCooldown.Value;
 
@@ -61,7 +64,7 @@ namespace TownOfHost
                 if (AURoleOptions.ShapeshifterCooldown == 0f)
                     AURoleOptions.ShapeshifterCooldown = Main.LastShapeshifterCooldown.Value;
 
-                NormalGameOptionsV10 gameOptions = Main.NormalOptions.TryCast<NormalGameOptionsV10>();
+                NormalGameOptionsV11 gameOptions = Main.NormalOptions.TryCast<NormalGameOptionsV11>();
                 if (Main.NormalOptions.NumImpostors == 0 && GameStates.IsOnlineGame)
                     gameOptions.SetInt(Int32OptionNames.NumImpostors, 1);
 
@@ -73,6 +76,8 @@ namespace TownOfHost
                 gameOptions.RoleOptions.SetRoleRate(RoleTypes.Phantom, 0, 0);
                 gameOptions.RoleOptions.SetRoleRate(RoleTypes.Detective, 0, 0);
                 gameOptions.RoleOptions.SetRoleRate(RoleTypes.Viper, 0, 0);
+                gameOptions.RoleOptions.SetRoleRate(RoleTypes.Judge, 0, 0);
+                Logger.Info("a4", "a");
                 Main.NormalOptions.roleOptions.TryGetRoleOptions(RoleTypes.GuardianAngel, out GuardianAngelRoleOptionsV10 roleData);
                 gameOptions.SetBool(BoolOptionNames.ConfirmImpostor, false);
                 gameOptions.SetInt(Int32OptionNames.TaskBarMode, 2);
@@ -80,12 +85,14 @@ namespace TownOfHost
                 {
                     Main.NormalOptions.SetInt(Int32OptionNames.MaxPlayers, 15);
                 }
+                Logger.Info("a5", "a");
                 roleData.ProtectionDurationSeconds = 9999999999;
                 foreach (var option in OptionItem.AllOptions)
                 {
                     if ((Event.OptionLoad.Contains(option.Name) && !Event.Special) &&
                     (Event.CheckRole(option.CustomRole) is false)) option.SetValue(0);
                 }
+                Logger.Info("a6", "a");
                 VanillaOptionHolder.SetVanillaValue();
 
                 if (TaskBattle.IsAllMapMode)
@@ -97,6 +104,7 @@ namespace TownOfHost
                         GameStartManager.Instance.BeginGame();
                     }, 1f, "NextStart", true);
                 }
+                Logger.Info("a7", "a");
             }
         }
     }

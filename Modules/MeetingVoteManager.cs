@@ -42,7 +42,7 @@ public class MeetingVoteManager
         allVotes = new(15);
         foreach (var voteArea in meetingHud.playerStates)
         {
-            allVotes[voteArea.TargetPlayerId] = new(voteArea.TargetPlayerId);
+            allVotes[voteArea.PlayerId] = new(voteArea.PlayerId);
         }
     }
     /// <summary>
@@ -198,17 +198,17 @@ public class MeetingVoteManager
         var states = new List<MeetingHud.VoterState>();
         foreach (var voteArea in meetingHud.playerStates)
         {
-            var voteData = AllVotes.TryGetValue(voteArea.TargetPlayerId, out var value) ? value : null;
+            var voteData = AllVotes.TryGetValue(voteArea.PlayerId, out var value) ? value : null;
             if (voteData == null)
             {
-                logger.Warn($"{PlayerCatch.GetPlayerById(voteArea.TargetPlayerId).GetNameWithRole().RemoveHtmlTags()} の投票データがありません");
+                logger.Warn($"{PlayerCatch.GetPlayerById(voteArea.PlayerId).GetNameWithRole().RemoveHtmlTags()} の投票データがありません");
                 continue;
             }
             for (var i = 0; i < voteData.NumVotes; i++)
             {
                 states.Add(new()
                 {
-                    VoterId = voteArea.TargetPlayerId,
+                    VoterId = voteArea.PlayerId,
                     VotedForId = voteData.VotedFor,
                 });
             }
@@ -225,7 +225,7 @@ public class MeetingVoteManager
 
         if (AntiBlackout.OverrideExiledPlayer())
         {
-            meetingHud.RpcVotingComplete(states.ToArray(), null, true);
+            meetingHud.RpcVotingComplete(states.ToArray(), null, true, false, 0);
             ExileControllerWrapUpPatch.AntiBlackout_LastExiled = result.Exiled;
             PlayerCatch.AllPlayerControls.Do(pc => AntiBlackout.isRoleCache.Add(pc.PlayerId));
         }
@@ -250,7 +250,7 @@ public class MeetingVoteManager
                 sender.EndRpc();
                 sender.SendMessage();
             }
-            meetingHud.VotingComplete(states.ToArray(), null, true);
+            meetingHud.VotingComplete(states.ToArray(), null, true, false, 0);
         }
         if (result.Exiled != null)
         {
@@ -286,8 +286,8 @@ public class MeetingVoteManager
         Dictionary<byte, int> Tie = new();
         foreach (var voteArea in meetingHud.playerStates)
         {
-            votes[voteArea.TargetPlayerId] = 0;
-            Tie[voteArea.TargetPlayerId] = 0;
+            votes[voteArea.PlayerId] = 0;
+            Tie[voteArea.PlayerId] = 0;
         }
         if (!votes.TryAdd(Skip, 0)) votes[Skip] = 0;
         if (!Tie.TryAdd(Skip, 0)) Tie[Skip] = 0;
@@ -613,7 +613,7 @@ public class MeetingVoteManager
             importantTextTask.transform.SetParent(AmongUsClient.Instance.transform, false);
             meetingHud.SetForegroundForDead();
         }
-        PlayerVoteArea voteArea = meetingHud.playerStates.First(x => x.TargetPlayerId == pc.PlayerId);
+        PlayerVoteArea voteArea = meetingHud.playerStates.First(x => x.PlayerId == pc.PlayerId);
         if (voteArea is not null)
         {
             if (ResetVote)
@@ -628,8 +628,8 @@ public class MeetingVoteManager
                 {
                     int client = pc.GetClientId();
                     meetingHud.CastVote(pc.PlayerId, NoVote);
-                    meetingHud.RpcClearVote(client);
-                    meetingHud.ClearVote();
+                    meetingHud.RpcClearVote(pc.PlayerId);
+                    meetingHud.ClearVote(pc.PlayerId, pc == PlayerControl.LocalPlayer);
                     voteArea.UnsetVote();
                 }
             }
@@ -641,16 +641,16 @@ public class MeetingVoteManager
 
         foreach (var playerVoteArea in meetingHud.playerStates)
         {
-            var voteAreaPlayer = PlayerCatch.GetPlayerById(playerVoteArea.TargetPlayerId);
-            if (playerVoteArea.VotedFor != pc.PlayerId) continue;
+            var voteAreaPlayer = PlayerCatch.GetPlayerById(playerVoteArea.PlayerId);
+            if (playerVoteArea.VotedForId != pc.PlayerId) continue;
 
             if (AmongUsClient.Instance.AmHost)
             {
                 if (ResetVote)
                 {
                     meetingHud.CastVote(pc.PlayerId, NoVote);
-                    meetingHud.RpcClearVote(voteAreaPlayer.GetClientId());
-                    meetingHud.ClearVote();
+                    meetingHud.RpcClearVote(voteAreaPlayer.PlayerId);
+                    meetingHud.ClearVote(voteAreaPlayer.PlayerId, voteAreaPlayer == PlayerControl.LocalPlayer);
                     playerVoteArea.UnsetVote();
                 }
                 else

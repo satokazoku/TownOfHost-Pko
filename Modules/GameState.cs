@@ -95,6 +95,7 @@ namespace TownOfHost
                     RoleTypes.Shapeshifter => CustomRoles.Shapeshifter,
                     RoleTypes.Phantom => CustomRoles.Phantom,
                     RoleTypes.Viper => CustomRoles.Viper,
+                    RoleTypes.Judge => CustomRoles.Judge,
                     _ => CustomRoles.Crewmate,
                 };
         }

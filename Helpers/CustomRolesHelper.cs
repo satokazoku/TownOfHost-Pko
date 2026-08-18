@@ -43,7 +43,7 @@ namespace TownOfHost
             var roleInfo = role.GetRoleInfo();
             if (roleInfo != null)
                 return roleInfo.CustomRoleType == CustomRoleTypes.Neutral || role == CustomRoles.Jackaldoll;
-            return role is CustomRoles.HASTroll or CustomRoles.HASFox;
+            return role is CustomRoles.HASTroll or CustomRoles.HASFox or CustomRoles.Emptiness;
         }
         public static bool IsCrewmate(this CustomRoles role) => role.GetRoleInfo()?.CustomRoleType == CustomRoleTypes.Crewmate || (role is not CustomRoles.Amanojaku and not CustomRoles.GM and not CustomRoles.Twins and not CustomRoles.Faction && !role.IsImpostorTeam() && role > 0 && !role.IsAddOn() && !role.IsGhostRole() && !role.IsLovers() && !role.IsNeutral());
         public static bool IsVanilla(this CustomRoles role)
@@ -59,7 +59,8 @@ namespace TownOfHost
                 CustomRoles.Impostor or
                 CustomRoles.Shapeshifter or
                 CustomRoles.Phantom or
-                CustomRoles.Viper;
+                CustomRoles.Viper or
+                CustomRoles.Judge;
         }
         public static bool IsAddOn(this CustomRoles roles)
         {
@@ -173,7 +174,7 @@ namespace TownOfHost
         public static bool IsCrewmate(this RoleTypes role) =>
             role is RoleTypes.Crewmate or RoleTypes.CrewmateGhost or
                     RoleTypes.Engineer or RoleTypes.GuardianAngel or
-                    RoleTypes.Noisemaker or RoleTypes.Scientist or RoleTypes.Tracker or RoleTypes.Detective;
+                    RoleTypes.Noisemaker or RoleTypes.Scientist or RoleTypes.Tracker or RoleTypes.Detective or RoleTypes.Judge;
         public static bool IsSubRole(this CustomRoles role) => role.IsAddOn() || role.IsLovers() || role.IsGhostRole() || role is CustomRoles.Amanojaku or CustomRoles.Twins or CustomRoles.Faction;
         public static bool IsLovers(this CustomRoles roles, bool checkonelover = true)
         {

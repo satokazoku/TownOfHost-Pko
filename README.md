@@ -23,7 +23,7 @@ TOH-Kで起きたバグは本家や他MODには報告しないでまずはkに�
 ## [Wiki](https://github.com/KYMario/TownOfHost-K/wiki)もあるよ!
 
 ## リリース
-AmongUsバージョン : **17.3.0**~<br>
+AmongUsバージョン : **18.0.0**~<br>
 
 **最新版は[こちら](https://github.com/KYMario/TownOfHost-K/releases/latest)**<br>
 過去バージョンは[こちら](https://github.com/KYMario/TownOfHost-K/releases)<br>
@@ -131,15 +131,15 @@ HostModなので部屋主のみModを導入すれば、<br>
 **TownOfHost-Kの開発者**<br>
 　暇な人 KY/けーわい<br>
 　　[Youtube](https://www.youtube.com/@MTGC_KY)<br>
-　　[Twitter(X)](https://x.com/ky_mario_ky) ・ [Bluesky](https://bsky.app/profile/kymario.bsky.social)<br>
+　　[Twitter(X)](https://x.com/ky_mario_ky)<br>
 
 　タイガー<br>
 　　[Youtube](https://www.youtube.com/@torataiga-)<br>
-　　[Twitter(X)](https://x.com/TVppJ90s9G2sPkq) ・ [Bluesky](https://bsky.app/profile/taiga1.bsky.social)<br>
+　　[Twitter(X)](https://x.com/TVppJ90s9G2sPkq)<br>
 
 　夜藍<br>
 　　[Youtube](https://www.youtube.com/@Yoran_Furan)<br>
-　　[Twitter(X)](https://x.com/Yoran_FuranOshi) ・ [Bluesky](https://bsky.app/profile/yoran-furanoshi.bsky.social)<br>
+　　[Twitter(X)](https://x.com/Yoran_FuranOshi)<br>
 
 　ねむa<br>
 　　[Twitter(X)](https://x.com/nemu_adatoomou)<br>

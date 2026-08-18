@@ -886,6 +886,7 @@ public enum CustomRoles
     Tracker,
     Noisemaker,
     Detective,
+    Judge,
     //Crewmate
     Bait,
     Lighter,

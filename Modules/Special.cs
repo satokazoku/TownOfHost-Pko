@@ -171,8 +171,7 @@ public sealed class SpeedStar : RoleBase, IImpostor, IUsePhantomButton
         Event.OptionLoad.Add("SpeedStar");
         Event.OptionLoad.Add("Chameleon");
         Event.OptionLoad.Add("Cakeshop");
-        Event.OptionLoad.Add("Altair");
-        Event.OptionLoad.Add("Vega");
+        Event.OptionLoad.Add("VegaandAltair");
     }
     public override void ApplyGameOptions(IGameOptions opt) => AURoleOptions.PhantomCooldown = cooldown;
     public void OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)

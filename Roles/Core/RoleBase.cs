@@ -457,6 +457,7 @@ public abstract class RoleBase : IDisposable
             RoleTypes.Phantom => StringNames.PhantomAbility,
             RoleTypes.GuardianAngel => StringNames.ProtectAbility,
             RoleTypes.Detective => StringNames.DetectiveAbilityNotes,
+            //RoleTypes.Judge => StringNames.Judge,
             RoleTypes.ImpostorGhost or RoleTypes.CrewmateGhost => StringNames.HauntAbilityName,
             _ => null//アプデ対応用
         };

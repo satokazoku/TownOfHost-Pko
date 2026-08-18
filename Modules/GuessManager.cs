@@ -272,6 +272,9 @@ public static class GuessManager
             case CustomRoles.Viper:
                 if (role == CustomRoles.Viper) result = false;
                 break;
+            case CustomRoles.Judge:
+                if (role == CustomRoles.Judge) result = false;
+                break;
         }
 
         return result;
@@ -502,6 +505,9 @@ public static class GuessManager
                 break;
             case CustomRoles.Viper:
                 role = CustomRoles.Viper;
+                break;
+            case CustomRoles.Judge:
+                role = CustomRoles.Judge;
                 break;
         }
 

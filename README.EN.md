@@ -20,7 +20,7 @@ Additionally, questions and bug reports regarding TownOfHost-K are accepted on t
 ## [Wiki](https://github.com/KYMario/TownOfHost-K/wiki)
 
 ## Release
-AmongUs version : **17.3.0**~<br>
+AmongUs version : **18.0.0**~<br>
 
 **The latest version is[Here](https://github.com/KYMario/TownOfHost-K/releases/latest)**<br>
 Previous versions are [Here](https://github.com/KYMario/TownOfHost-K/releases)<br>
@@ -127,15 +127,15 @@ For other features and changes, please refer to the main wiki.
 **TownOfHost-K Developer**<br>
 　ky<br>
 　　[Youtube](https://www.youtube.com/@MTGC_KY)<br>
-　　[Twitter(X)](https://x.com/ky_mario_ky) ・ [Bluesky](https://bsky.app/profile/kymario.bsky.social)<br>
+　　[Twitter(X)](https://x.com/ky_mario_ky)<br>
 
 　ToraTiger<br>
 　　[Youtube](https://www.youtube.com/@torataiga-)<br>
-　　[Twitter(X)](https://x.com/TVppJ90s9G2sPkq) ・ [Bluesky](https://bsky.app/profile/taiga1.bsky.social)<br>
+　　[Twitter(X)](https://x.com/TVppJ90s9G2sPkq)<br>
 
 　Yoran<br>
 　　[YouTube](https://www.youtube.com/@Yoran_Furan)<br>
-　　[Twitter(X)](https://x.com/Yoran_FuranOshi) ・ [Bluesky](https://bsky.app/profile/yoran-furanoshi.bsky.social)<br>
+　　[Twitter(X)](https://x.com/Yoran_FuranOshi)<br>
 
 　nemuA<br>
 　　[Twitter(X)](https://x.com/nemu_adatoomou)<br>
