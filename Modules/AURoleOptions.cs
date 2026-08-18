@@ -68,6 +68,11 @@ namespace TownOfHost
             get => Opt.GetBool(BoolOptionNames.NoisemakerImpostorAlert);
             set => Opt.SetBool(BoolOptionNames.NoisemakerImpostorAlert, value);
         }
+        public static float JudgeTaskRequirementPercentage
+        {
+            get => Opt.GetFloat(FloatOptionNames.JudgeTaskRequirementPercentage);
+            set => Opt.SetFloat(FloatOptionNames.JudgeTaskRequirementPercentage, value);
+        }
         public static float PhantomCooldown
         {
             get => Opt.GetFloat(FloatOptionNames.PhantomCooldown);

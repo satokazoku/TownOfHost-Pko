@@ -225,6 +225,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
             .SetValueFormat(OptionFormat.Seconds);
         OptionTamaCanVentMove = BooleanOptionItem.Create(RoleInfo, 31, "MadmateCanMovedByVent", false, false, OptionTamaCanVent);
 
+        ObjectOptionitem.Create(RoleInfo, 40, "AddonOption", true, null).SetOptionName(() => "Sidekick Setting");
         RoleAddAddons.Create(RoleInfo, 32, NeutralKiller: true);
         OptionTamaCountAsJackalKiller = BooleanOptionItem.Create(RoleInfo, 33, "TamaCountAsJackalKiller", false, false);
         OptionTamaCountAsKillerOnlyWhenPromotionEnabled = BooleanOptionItem.Create(RoleInfo, 36, OptionName.TamaCountAsKillerOnlyWhenPromotionEnabled, false, false, OptionTamaCountAsJackalKiller);

@@ -116,20 +116,9 @@ namespace TownOfHost.Roles.AddOns.Common
         ///</summary>
         private static List<PlayerControl> AssignTargetList(AddOnsAssignData data)
         {
-            if (data.Role == CustomRoles.Sealer) return Sealer.AssignTargetList();
-
             var rnd = IRandom.Instance;
             var candidates = new List<PlayerControl>();
-            var validPlayers = PlayerCatch.AllPlayerControls.Where(pc =>
-            {
-                var role = pc.GetCustomRole();
-                if (!ValidRoles.Contains(role)) return false;
-
-                if (!CustomRolesHelper.CanHaveSubRole(role, data.Role)) return false;
-                if (data.Role == CustomRoles.Securer && !Securer.CanBeAssigned(pc)) return false;
-
-                return true;
-            });
+            var validPlayers = PlayerCatch.AllPlayerControls.Where(pc => ValidRoles.Contains(pc.GetCustomRole()));
 
             if (data.CrewmateMaximum != null)
             {
@@ -143,7 +132,7 @@ namespace TownOfHost.Roles.AddOns.Common
                     {
                         if (crewmates.Count == 0) break;
                         var selectedCrewmate = crewmates[rnd.Next(crewmates.Count)];
-                        if (data.Role is CustomRoles.Amnesia && (selectedCrewmate.Is(CustomRoles.King) || selectedCrewmate.Is(CustomRoles.Autocrat)))
+                        if (data.Role is CustomRoles.Amnesia && selectedCrewmate.Is(CustomRoles.King))
                         {
                             crewmates.Remove(selectedCrewmate);
                             continue;
@@ -170,14 +159,6 @@ namespace TownOfHost.Roles.AddOns.Common
                         impostors.Remove(selectedImpostor);
                     }
                 }
-            }
-
-            if (data.Role == CustomRoles.Securer)
-            {
-                var jackals = validPlayers
-                    .Where(pc => Securer.ShouldAssignToJackalRole(pc.GetCustomRole()))
-                    .Where(pc => !candidates.Contains(pc));
-                candidates.AddRange(jackals);
             }
 
             if (data.MadmateMaximum != null)

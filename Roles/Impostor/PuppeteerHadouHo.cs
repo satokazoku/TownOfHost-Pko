@@ -1,3 +1,4 @@
+/*
 using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
@@ -388,3 +389,4 @@ public sealed class PuppeteerHadouHo : RoleBase, IImpostor, IUsePhantomButton
         return true;
     }
 }
+*/

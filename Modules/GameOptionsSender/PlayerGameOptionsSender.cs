@@ -32,7 +32,7 @@ namespace TownOfHost.Modules
 
         public IGameOptions cachedGameOptions = null;
         public override IGameOptions BasedGameOptions =>
-            Main.RealOptionsData.Restore(cachedGameOptions ?? (cachedGameOptions = new NormalGameOptionsV10(new UnityLogger().Cast<ILogger>()).Cast<IGameOptions>()));
+            Main.RealOptionsData.Restore(cachedGameOptions ?? (cachedGameOptions = new NormalGameOptionsV11(new UnityLogger().Cast<ILogger>()).Cast<IGameOptions>()));
         public override bool IsDirty { get; protected set; }
 
         public PlayerControl player;
@@ -92,9 +92,10 @@ namespace TownOfHost.Modules
                 var detective = IsAlive ? opt.GetFloat(FloatOptionNames.DetectiveSuspectLimit) : 0;
                 var guardancool = opt.GetFloat(FloatOptionNames.GuardianAngelCooldown);
                 var vip = opt.GetFloat(FloatOptionNames.ViperDissolveTime);
+                var jud = opt.GetFloat(FloatOptionNames.JudgeTaskRequirementPercentage);
 
                 string NowOption = $"{killCooldown},{killDistance},{impostorLight},{crewLight},{playerSpeed},{numEmergency},{emergencyCooldown},{discussionTime},{votingTime},{anonymousVotes},{numCommonTasks},{numLongTasks},{numShortTasks},{visualTasks},{taskBarMode},{confirmImpostor}";
-                NowOption += $"{engcooldown},{engmaxtime},{scicooldown},{scibattery},{trackercool},{trackerdelay},{tarckduration},{noisealert},{noiseimp},{shapecool},{ShapeshifterDuration},{shapeskin},{phantom},{detective},{vip},{guardancool}";
+                NowOption += $"{engcooldown},{engmaxtime},{scicooldown},{scibattery},{trackercool},{trackerdelay},{tarckduration},{noisealert},{noiseimp},{shapecool},{ShapeshifterDuration},{shapeskin},{phantom},{detective},{vip},{guardancool},{jud}";
                 if (OldOptionstext == NowOption)//再度送信するならキャンセル
                 {
                     return;

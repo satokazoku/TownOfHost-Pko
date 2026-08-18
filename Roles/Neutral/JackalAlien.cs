@@ -565,7 +565,7 @@ public sealed class JackalAlien : RoleBase, IMeetingTimeAlterable, ILNKiller, IS
 
                 var min = targetDistance.OrderBy(c => c.Value).FirstOrDefault();//一番値が小さい
                 var target = min.Key;
-                var KillRange = NormalGameOptionsV10.KillDistances[Mathf.Clamp(Main.NormalOptions.KillDistance, 0, 2)];
+                var KillRange = NormalGameOptionsV11.KillDistances[Mathf.Clamp(Main.NormalOptions.KillDistance, 0, 2)];
                 if (min.Value <= KillRange && puppet.CanMove && target.CanMove)
                 {
                     PuppetCooltime.Remove(puppet.PlayerId);
@@ -1327,6 +1327,7 @@ public sealed class JackalAlien : RoleBase, IMeetingTimeAlterable, ILNKiller, IS
         OptionMeetingKill = BooleanOptionItem.Create(RoleInfo, 52, OptionName.PenguinMeetingKill, false, false, OptionModePenguin);
         OptionModeComebaker = FloatOptionItem.Create(RoleInfo, 54, OptionName.AlienCComebacker, new(0, 100, 5), 100, false).SetValueFormat(OptionFormat.Percent);
         OptionModeNomal = FloatOptionItem.Create(RoleInfo, 8, OptionName.AlienCNomal, new(0, 100, 5), 100, false).SetValueFormat(OptionFormat.Percent);
+        ObjectOptionitem.Create(RoleInfo, 99, "AddonOption", true, null).SetOptionName(() => "Sidekick Setting");
         RoleAddAddons.Create(RoleInfo, 100, NeutralKiller: true);
     }
     #endregion

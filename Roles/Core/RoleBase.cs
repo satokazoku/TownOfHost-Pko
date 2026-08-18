@@ -457,6 +457,7 @@ public abstract class RoleBase : IDisposable
             RoleTypes.Phantom => StringNames.PhantomAbility,
             RoleTypes.GuardianAngel => StringNames.ProtectAbility,
             RoleTypes.Detective => StringNames.DetectiveAbilityNotes,
+            //RoleTypes.Judge => StringNames.Judge,
             RoleTypes.ImpostorGhost or RoleTypes.CrewmateGhost => StringNames.HauntAbilityName,
             _ => null//アプデ対応用
         };
@@ -547,7 +548,18 @@ public abstract class RoleBase : IDisposable
     /// </summary>
     public virtual void CheckWinner(GameOverReason reason)
     { }
+    /// <summary>
+    /// ジャッジの役職能力が呼ばれたときに処理。<br/>
+    /// 無かったことにするならfalse。
+    /// </summary>
+    /// <returns></returns>
+    public virtual bool CallJudgeVote(PlayerControl voter, PlayerControl votefor, ref byte ExilePlayerid) => true;
 
+    /// <summary>
+    /// 追加で役職を持っているのか。<br/>
+    /// /mなどで表示されるようになる
+    /// </summary>
+    /// <returns></returns>
     public virtual CustomRoles HaveAddRole() => CustomRoles.NotAssigned;
     /// <summary>
     /// 自身を別役職だと思い込む。

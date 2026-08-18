@@ -143,8 +143,18 @@ public sealed class Vega : RoleBase, IKiller, IAdditionalWinner
     public override void ApplyGameOptions(IGameOptions opt) => opt.SetVision(HasImpostorVision);
 
     public override void StartGameTasks() => SetAltair();
-    public override void AfterMeetingTasks() => CheckAlive();
-
+    public override void AfterMeetingTasks()
+    {
+        if (Event.CheckRole(CustomRoles.Vega) is false)
+        {
+            Logger.Info($"お星様へと帰ったとさ。", "Vega");
+            Player.RpcSetCustomRole(CustomRoles.Emptiness);
+            Altair.RpcSetCustomRole(CustomRoles.Emptiness);
+            Options.CustomRoleSpawnChances[CustomRoles.Vega].SetValue(0, true, false);
+            return;
+        }
+        CheckAlive();
+    }
     public override void OnExileWrapUp(NetworkedPlayerInfo exiled, ref bool DecidedWinner) => CheckAlive(exiled?.Object);
     public override void ReceiveRPC(MessageReader reader) => Rendezvous();
 

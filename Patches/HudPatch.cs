@@ -115,6 +115,11 @@ namespace TownOfHost
 
             if (SetHudActivePatch.IsActive)
             {
+                //一回けす。
+                if (__instance.MatchInfoButton?.gameObject?.active is true)
+                {
+                    __instance.MatchInfoButton.gameObject.SetActive(false);
+                }
                 if (player.IsAlive())
                 {
                     __instance.AdminButton.Hide();

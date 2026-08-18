@@ -279,7 +279,7 @@ namespace TownOfHost
                 }
                 if (pc.GetCustomRole() is CustomRoles.MadBetrayer)
                 {
-                    if (Roles.Madmate.MadBetrayer.IsMadmate())
+                    if (Roles.Madmate.MadBetrayer.IsMadmate() is false)
                     {
                         MadBetrayer++;
                     }

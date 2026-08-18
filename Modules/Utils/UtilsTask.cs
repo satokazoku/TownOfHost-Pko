@@ -79,6 +79,7 @@ namespace TownOfHost
                                         case RoleTypes.Noisemaker:
                                         case RoleTypes.Tracker:
                                         case RoleTypes.Detective:
+                                        case RoleTypes.Judge:
                                             ch = true;
                                             break;
                                     }

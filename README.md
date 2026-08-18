@@ -14,7 +14,7 @@ TOH-Pkoで起きたバグは本家や他MODには報告しないでまずはTOH-
 [TOHKはこちら](https://github.com/KYMario/TownOfHost-K)<br>
 
 ## リリース
-AmongUsバージョン : **17.3.0**~<br>
+AmongUsバージョン : **18.0.0**~<br>
 
 **最新版は[こちら](https://github.com/satokazoku/TownOfHost-Pko/releases/latest)**<br>
 過去バージョンは[こちら](https://github.com/satokazoku/TownOfHost-Pko/releases)<br>
@@ -87,7 +87,67 @@ Modが使えなくなるよ!<br>
 　しぇとこch<br>
 　　[Youtube](https://youtube.com/channel/UCM1gs89uwjOJF3EcVc1ZEOA?si=a1ffdwsBjGbJKig6)<br>
 
+<<<<<<< HEAD
 ※本家TownOfHost,TownOfHost_K様の開発者はここでは省略させていただきます
+=======
+HostModなので部屋主のみModを導入すれば、<br>
+参加者はModを導入する必要もカスタムサーバー追加等の面倒な手間なしで<br>
+導入者が部屋を建て、その部屋に入ることでTownOfHost-Kを遊ぶことができます！<br>
+
+詳しい仕様などは[Wiki](https://github.com/KYMario/TownOfHost-K/wiki)やゲーム内確認できます<br>
+
+## 役職について
+かなりの数があるので[Wiki](https://github.com/KYMario/TownOfHost-K/wiki)をご確認ください。
+
+## 機能,モードについて
+
+<details>
+
+<summary>モード</summary>
+
+- [スタンダード](https://github.com/KYMario/TownOfHost-K/wiki/スタンダード)
+- - [役職入りかくれんぼ](https://github.com/KYMario/TownOfHost-K/wiki/役職入りかくれんぼ)
+- - [サドンデスモード](https://github.com/KYMario/TownOfHost-K/wiki/サドンデスモード)
+- [かくれんぼ](https://github.com/KYMario/TownOfHost-K/wiki/かくれんぼ)
+- [タスクバトル](https://github.com/KYMario/TownOfHost-K/wiki/タスクバトル)
+
+</details>
+
+その他機能、変更点などは基本wikiをご覧ください。<br>
+
+> **Note**
+> - 棒読みちゃんを起動してる時のみ読み上げ設定をONにしてください (自動でOFFになります)
+> - [TOHK_DATA\options.txt](#オプションファイル)からポートを設定できます。
+
+#### 外部リンク
+　TownOfHost-K<br>
+　　[Twitter(X)](https://x.com/Tohkserver_k)<br>
+
+**TownOfHost-Kの開発者**<br>
+　暇な人 KY/けーわい<br>
+　　[Youtube](https://www.youtube.com/@MTGC_KY)<br>
+　　[Twitter(X)](https://x.com/ky_mario_ky)<br>
+
+　タイガー<br>
+　　[Youtube](https://www.youtube.com/@torataiga-)<br>
+　　[Twitter(X)](https://x.com/TVppJ90s9G2sPkq)<br>
+
+　夜藍<br>
+　　[Youtube](https://www.youtube.com/@Yoran_Furan)<br>
+　　[Twitter(X)](https://x.com/Yoran_FuranOshi)<br>
+
+　ねむa<br>
+　　[Twitter(X)](https://x.com/nemu_adatoomou)<br>
+
+　はろん<br>
+　　[Twitter(X)](https://x.com/HellWeen11)<br>
+
+**TownOfHost-Kのサポーター**<br>
+　りぃりぃ<br>
+　　[Twitter(X)](https://x.com/rixirixi0202)<br>
+
+※本家TownOfHost様の開発者はここでは省略させていただきます
+>>>>>>> f13a74f9331cfb145f3a2b4ee089fcedf85b10eb
 #### クレジット
 [Town Of Host](https://github.com/tukasa0001/TownOfHost)<br>
 　Fork元の本家です。<br>TownOfHost様にある機能はTownOfHost-Pkoでも大体実装されています<br>

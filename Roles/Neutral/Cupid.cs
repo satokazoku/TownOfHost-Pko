@@ -66,7 +66,7 @@ public sealed class Cupid : RoleBase, IKiller, IAdditionalWinner
 
     public static readonly CustomRoles[] ChangeRoles =
     {
-        CustomRoles.Crewmate, CustomRoles.Jester, CustomRoles.Opportunist, CustomRoles.Madmate, CustomRoles.Monochromer
+        CustomRoles.Crewmate, CustomRoles.Jester, CustomRoles.Opportunist,CustomRoles.Madmate,CustomRoles.Turncoat//,CustomRoles.Monochromer
     };
 
     enum Option

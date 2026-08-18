@@ -184,7 +184,7 @@ public sealed class AlienHijack : RoleBase, IMeetingTimeAlterable, IImpostor, IN
                 CustomRoleManager.AllActiveRoles[playerid] = MaenoRole;
                 UtilsNotifyRoles.NotifyRoles();
             }, 2, "Modosu", true);
-            Player.RpcSetCustomRole(MaenoCRole);
+            Player.RpcSetCustomRole(MaenoCRole, setRole: false);
         }
         UetukeNokori--;
     }
@@ -550,7 +550,7 @@ public sealed class AlienHijack : RoleBase, IMeetingTimeAlterable, IImpostor, IN
 
                 var min = targetDistance.OrderBy(c => c.Value).FirstOrDefault();//一番値が小さい
                 var target = min.Key;
-                var KillRange = NormalGameOptionsV10.KillDistances[Mathf.Clamp(Main.NormalOptions.KillDistance, 0, 2)];
+                var KillRange = NormalGameOptionsV11.KillDistances[Mathf.Clamp(Main.NormalOptions.KillDistance, 0, 2)];
                 if (min.Value <= KillRange && puppet.CanMove && target.CanMove)
                 {
                     PuppetCooltime.Remove(puppet.PlayerId);

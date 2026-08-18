@@ -261,7 +261,7 @@ namespace TownOfHost
                 }
                 else
                 {
-                    RoleTypes[] RoleTypesList = { RoleTypes.Scientist, RoleTypes.Engineer, RoleTypes.Tracker, RoleTypes.Noisemaker, RoleTypes.Shapeshifter, RoleTypes.Phantom, RoleTypes.Detective, RoleTypes.Viper };
+                    RoleTypes[] RoleTypesList = { RoleTypes.Scientist, RoleTypes.Engineer, RoleTypes.Tracker, RoleTypes.Noisemaker, RoleTypes.Shapeshifter, RoleTypes.Phantom, RoleTypes.Detective, RoleTypes.Viper, RoleTypes.Judge };
                     foreach (var roleTypes in RoleTypesList)
                     {
                         var roleOpt = Main.NormalOptions.roleOptions;
@@ -365,6 +365,7 @@ namespace TownOfHost
             List<PlayerControl> Shapeshifters = new();
             List<PlayerControl> Phantoms = new();
             List<PlayerControl> Vipers = new();
+            List<PlayerControl> Judges = new();
 
             foreach (var pc in PlayerCatch.AllPlayerControls.Where(pc => !pc.IsTestBot()))
             {
@@ -418,6 +419,10 @@ namespace TownOfHost
                     case RoleTypes.Viper:
                         Vipers.Add(pc);
                         role = CustomRoles.Viper;
+                        break;
+                    case RoleTypes.Judge:
+                        Judges.Add(pc);
+                        role = CustomRoles.Judge;
                         break;
                     default:
                         Logger.seeingame(string.Format(GetString("Error.InvalidRoleAssignment"), pc?.Data?.GetLogPlayerName()));
@@ -509,6 +514,7 @@ namespace TownOfHost
                         RoleTypes.Tracker => Trackers,
                         RoleTypes.Noisemaker => Noisemakers,
                         RoleTypes.Detective => Detectives,
+                        RoleTypes.Judge => Judges,
                         RoleTypes.GuardianAngel => GuardianAngels,
                         _ => Crewmates,
                     };
@@ -558,7 +564,7 @@ namespace TownOfHost
                     }
                 }
 
-                RoleTypes[] RoleTypesList = { RoleTypes.Scientist, RoleTypes.Engineer, RoleTypes.Tracker, RoleTypes.Noisemaker, RoleTypes.Shapeshifter, RoleTypes.Phantom, RoleTypes.Detective, RoleTypes.Viper };
+                RoleTypes[] RoleTypesList = { RoleTypes.Scientist, RoleTypes.Engineer, RoleTypes.Tracker, RoleTypes.Noisemaker, RoleTypes.Shapeshifter, RoleTypes.Phantom, RoleTypes.Detective, RoleTypes.Viper, RoleTypes.Judge };
                 foreach (var roleTypes in RoleTypesList)
                 {
                     var roleOpt = Main.NormalOptions.roleOptions;

@@ -89,7 +89,7 @@ public sealed class JackalDoll : RoleBase
     public static Dictionary<byte, (byte Owner, CustomRoles Ownerrole)> BossAndSidekicks = new();
     public static readonly CustomRoles[] ChangeRoles =
     {
-        CustomRoles.Crewmate, CustomRoles.Madmate , CustomRoles.Jester, CustomRoles.Opportunist,CustomRoles.Monochromer
+        CustomRoles.Crewmate, CustomRoles.Madmate , CustomRoles.Jester, CustomRoles.Opportunist,CustomRoles.Turncoat//,CustomRoles.Monochromer
     };
     public static int GetSideKickCount()
     {

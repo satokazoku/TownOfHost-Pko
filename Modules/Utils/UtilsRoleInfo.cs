@@ -52,6 +52,7 @@ namespace TownOfHost
                 roleCommands.Add(CustomRoles.Tracker, "Trac");
                 roleCommands.Add(CustomRoles.Noisemaker, "Nem");//アプデ対応用 仮
                 roleCommands.Add(CustomRoles.Detective, "Det");
+                roleCommands.Add(CustomRoles.Judge, "ju");
 
                 ConcatCommands(CustomRoleTypes.Crewmate);
 
@@ -323,6 +324,7 @@ namespace TownOfHost
                 "科学者" => GetString("Scientist"),
                 "トラッカー" => GetString("Tracker"),
                 "ノイズメーカー" => GetString("Noisemaker"),
+                "裁判官" or "ジャッジ" => GetString("Judge"),
                 "巫女" or "みこ" or "ふじょ" => GetString("ShrineMaiden"),
                 "クルー" or "クルーメイト" => GetString("Crewmate"),
                 "狼少年" or "オオカミ少年" or "おおかみ少年" => GetString("WolfBoy"),

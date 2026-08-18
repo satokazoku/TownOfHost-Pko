@@ -19,6 +19,7 @@
 "Shapeshifter","Shapeshifter","シェイプシフター","变形者","變形者","Оборотень","Metamorfo","Metamorfo"
 "Phantom","Phantom","ファントム"
 "Viper","Viper","バイパー"
+"Judge","Judge","ジャッジ"
 
 "# 特殊インポスター役職"
 "BountyHunter","Bounty Hunter","バウンティハンター","赏金猎人","賞金獵人","Охотник за головами","Caçador de Recompensas","Caçador de Recompensas"
@@ -2800,7 +2801,7 @@
 "CanWhiteCrew","Can Guess White Crew","確白役職を推測できる"
 "AddSpeed","AddSpeed","加速値(バニラの足の速さ + 設定値)"
 "NumberOfLovers","Number Of Lovers (Pairs)","ラバーズの組数(x2人数)","恋人对数","戀人最大數量(2位玩家)","Количество Любовников (x2участника)","Quantidade de Amantes (Pares)",""
-"addaddons","Add Addons","属性を付与する"
+"addaddons","%role% Add Addons","%role%に属性を付与する"
 "LoversRole","Lovers can confirm positions with each other.","恋人同士で役職を確認できる","","","",""
 "LoversRoleAddwin","Addwin","追加勝利"
 "LoverSoloWin3players","Immediate victory with less than 3 survivors","生存人数が3人以下で即単独勝利する"

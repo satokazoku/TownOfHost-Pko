@@ -88,8 +88,11 @@ namespace TownOfHost
             this.IsImpostor = role.IsImpostor();
             this.IdStart = idStart;
             this.Role = role;
+            var rolename = RoleName == CustomRoles.NotAssigned ? role : RoleName;
+            Dictionary<string, string> replacementDic = new() { { "%role%", Utils.ColorString(UtilsRoleText.GetRoleColor(rolename), UtilsRoleText.GetRoleName(rolename)) } };
             GiveAddons = BooleanOptionItem.Create(idStart++, "addaddons", DefaaultOn || NeutralKiller, tab, false).SetParent(Options.CustomRoleSpawnChances[role]).SetParentRole(role)
                     .SetValueFormat(OptionFormat.None).SetParentRole(role);
+            GiveAddons.ReplacementDictionary = replacementDic;
             GiveGuesser = BooleanOptionItem.Create(idStart++, "GiveGuesser", false, tab, false).SetParent(GiveAddons).SetParentRole(role);
             CanGuessTime = IntegerOptionItem.Create(idStart++, "CanGuessTime", new(1, 15, 1), 3, tab, false).SetParent(GiveGuesser).SetParentRole(role)
                 .SetValueFormat(OptionFormat.Players);

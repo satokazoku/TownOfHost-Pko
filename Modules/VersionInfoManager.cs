@@ -1,17 +1,14 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using HarmonyLib;
 using TMPro;
 using UnityEngine;
-
-using TownOfHost.Roles.Core;
 using UnityEngine.Networking;
 
 namespace TownOfHost.Modules;
@@ -292,7 +289,7 @@ class VersionInfoManager
             var versions = JsonSerializer.Deserialize<Dictionary<string, VersionInfo>>(result);
             if (versions == null) return false;
             Versions = versions;
-            if (Versions.ContainsKey(Main.PluginVersion)) version = Versions[Main.PluginVersion];
+            if (GetMatchedVersionInfo(Main.PluginVersion, out var verInfo)) version = verInfo;
             if (Versions.ContainsKey("AllVersion")) allversion = Versions["AllVersion"];
             return true;
         }
@@ -301,6 +298,45 @@ class VersionInfoManager
             Logger.Error($"バージョン情報の取得に失敗！\n{ex}", "CheckVersionJson", false);
             return false;
         }
+    }
+
+    [MemberNotNullWhen(true, nameof(versionInfo))]
+    private static bool GetMatchedVersionInfo(string version, out VersionInfo versionInfo)
+    {
+        //まず完全一致があるのなら、それを返さなければ
+        if (Versions.TryGetValue(version, out versionInfo))
+            return true;
+        var versionParts = version.Split('.');
+        var minIndex = 9999; //とりあえず大きい数
+        foreach (var (ver, info) in Versions)
+        {
+            //部分一致があればそれを取得(何かの間違いで上で完全一致が取れなくてもここで取れるハズ)
+            if (!IsMatchVersion(ver, versionParts, out int index) || index >= minIndex)
+                continue;
+            minIndex = index;
+            versionInfo = info;
+        }
+        return versionInfo != null;
+    }
+
+    /// <param name="checkVersion">検索するバージョンパターン</param>
+    /// <param name="versionParts">パターンに一致するか比較するバージョンをsplit('.')したもの</param>
+    /// <returns>一致する場合trueを返します</returns>
+    private static bool IsMatchVersion(string checkVersion, string[] versionParts, out int index)
+    {
+        var checkParts = checkVersion.Split('.');
+
+        for (index = 0; index < checkParts.Length; index++)
+        {
+            if (checkParts[index] == "*")
+                return true;
+            // 元のバージョンよりverの長さが大きい or うちの子(バージョン)と違う ならfalse
+            if (index >= versionParts.Length || checkParts[index] != versionParts[index])
+                return false;
+        }
+
+        //全部一致してー..*がなくて数が一緒ならー まぁタブンダイジョウブデショ
+        return checkParts.Length == versionParts.Length;
     }
 
     /// <summary>カスタムなフラグを取得 </summary> <param name="id">0から63まで</param>

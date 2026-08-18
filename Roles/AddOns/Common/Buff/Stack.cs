@@ -7,7 +7,7 @@ namespace TownOfHost.Roles.AddOns.Common
 {
     public static class Stack
     {
-        private static readonly int Id = 73100;
+        private static readonly int Id = 23700;
         private static List<byte> playerIdList = new();
         static AssignOptionItem AssignAddon;
 
@@ -30,10 +30,8 @@ namespace TownOfHost.Roles.AddOns.Common
             if (AmongUsClient.Instance.AmHost)
             {
                 var pc = PlayerCatch.GetPlayerById(playerId);
-                if (pc == null) return;
                 foreach (var addon in AssignAddon.GetNowRoleValue())
                 {
-                    if (!CustomRolesHelper.CanHaveSubRole(pc.GetCustomRole(), addon)) continue;
                     if (pc.Is(addon) is false)
                     {
                         PlayerState.GetByPlayerId(playerId).SetSubRole(addon);
