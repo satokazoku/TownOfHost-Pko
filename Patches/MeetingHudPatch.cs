@@ -21,6 +21,7 @@ using static TownOfHost.Translator;
 using TownOfHost.Modules.ChatManager;
 using System;
 using InnerNet;
+using Hazel;
 
 namespace TownOfHost;
 
@@ -89,6 +90,30 @@ public static class MeetingHudPatch
             }
             MeetingVoteManager.Instance?.SetVote(srcPlayerId, suspectPlayerId);
             return true;
+        }
+    }
+    [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.SetJudgeOverrule))]
+    public static class SetJudgeOverrulePatch
+    {
+        public static ushort OverruleNonce;
+        public static bool Prefix(MeetingHud __instance, [HarmonyArgument(0)] PlayerId judgePlayerId /* 投票した人 */ , [HarmonyArgument(1)] PlayerId targetPlayerId, [HarmonyArgument(2)] ushort overruleNonce)
+        {
+            Logger.Info($"{judgePlayerId} => {targetPlayerId} , {overruleNonce}", "SetJudge");
+            var voter = PlayerCatch.GetPlayerById(judgePlayerId);
+            var votefor = PlayerCatch.GetPlayerById(targetPlayerId);
+            var roleclass = voter.GetRoleClass();
+            var ExilePlayerid = byte.MaxValue;
+
+            if (roleclass?.CallJudgeVote(voter, votefor, ref ExilePlayerid) is true)
+            {
+                OverruleNonce = overruleNonce;
+                MeetingVoteManager.Instance?.SetVote(judgePlayerId, targetPlayerId, Isjudgevote: true, ovex: ExilePlayerid);
+                MeetingVoteManager.Instance?.EndMeeting();
+                return false;
+            }
+
+            __instance.RpcClearVote(voter.PlayerId);
+            return false;
         }
     }
     public static string Oniku = "";

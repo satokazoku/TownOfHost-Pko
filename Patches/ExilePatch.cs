@@ -291,6 +291,7 @@ namespace TownOfHost
                         SecondBegin = false;
                         return true;
                     }
+                    modinit.wasOverruled = result.Value.OverrideExiled != byte.MaxValue;
                     modinit.networkedPlayer = result.Value.Exiled;
                     modinit.outfit = Camouflage.PlayerSkins.TryGetValue(result.Value.Exiled.PlayerId, out var skin) ? skin : result.Value.Exiled.DefaultOutfit;
                     modinit.voteTie = false;
