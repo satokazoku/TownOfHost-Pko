@@ -1,12 +1,15 @@
-/*
+
 using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
+using Epic.OnlineServices.RTC;
 using Hazel;
+using MS.Internal.Xml.XPath;
 using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 namespace TownOfHost.Roles.Impostor;
 
@@ -42,12 +45,14 @@ public sealed class Rocket : RoleBase, IImpostor, IUsePhantomButton
     static OptionItem OptionInitialGrabCooldown; static float InitialGrabCooldown;
     static OptionItem OptionSubsequentGrabCooldown; static float SubsequentGrabCooldown;
     static OptionItem OptionLaunchCooldown; static float LaunchCooldown;
+    static OptionItem OptLaunchAtMeeting;
 
     enum OptionName
     {
         RocketInitialGrabCooldown,
         RocketSubsequentGrabCooldown,
         RocketLaunchCooldown,
+        RocketLaunchAtMeeting
     }
 
     public readonly List<PlayerControl> GrabbedPlayers;
@@ -67,6 +72,7 @@ public sealed class Rocket : RoleBase, IImpostor, IUsePhantomButton
             new(0f, 60f, 2.5f), 5f, false).SetValueFormat(OptionFormat.Seconds);
         OptionLaunchCooldown = FloatOptionItem.Create(RoleInfo, 12, OptionName.RocketLaunchCooldown,
             new(0f, 60f, 2.5f), 10f, false).SetValueFormat(OptionFormat.Seconds);
+        OptLaunchAtMeeting = BooleanOptionItem.Create(RoleInfo, 13, OptionName.RocketLaunchAtMeeting, true, false);
     }
 
     public float CalculateKillCooldown() => killCDOverride;
@@ -117,18 +123,13 @@ public sealed class Rocket : RoleBase, IImpostor, IUsePhantomButton
 
         PlayerState.GetByPlayerId(target.PlayerId).CanMove = false;
         target.MarkDirtySettings();
-
-        if (Player.AmOwner)
-            target.Data.IsDead = true;
-        else
-            SetAppearsAsImpostorForRocket(target, true);
+         SetAppearsAsImpostorForRocket(target, true);
 
         killCDOverride = SubsequentGrabCooldown;
         Main.AllPlayerKillCooldown[Player.PlayerId] = killCDOverride;
         var grabState = PlayerState.GetByPlayerId(Player.PlayerId);
         if (grabState != null) grabState.Is10secKillButton = false;
         Player.SetKillCooldown(killCDOverride, force: false);
-        Player.KillFlash();
 
         SendSyncRpc();
         UtilsNotifyRoles.NotifyRoles();
@@ -146,6 +147,7 @@ public sealed class Rocket : RoleBase, IImpostor, IUsePhantomButton
         writer.Write((ushort)fakeRole);
         writer.Write(true);
         AmongUsClient.Instance.FinishRpcImmediately(writer);
+        UtilsNotifyRoles.NotifyRoles(target);
     }
 
     void ReleasePlayer(PlayerControl target)
@@ -248,10 +250,6 @@ public sealed class Rocket : RoleBase, IImpostor, IUsePhantomButton
             var capturedTarget = target;
             var capturedPos = spawnPos;
             int idx = i;
-            _ = new LateTask(() =>
-            {
-                _ = new RocketFlyDummy(capturedTarget, capturedPos, 1.5f);
-            }, idx * 0.6f, $"Rocket.SpawnDummy.{idx}", true);
 
             NotifyLaunchToNearby(launchPos);
         }
@@ -329,8 +327,9 @@ public sealed class Rocket : RoleBase, IImpostor, IUsePhantomButton
         {
             if (grabbed == null || !grabbed.IsAlive()) continue;
             if (grabbed.MyPhysics.Animations.IsPlayingAnyLadderAnimation()) continue;
-            grabbed.NetTransform.SnapTo(myPos);
+            var sId = grabbed.NetTransform.lastSequenceId + 5;
             ushort sid = (ushort)(grabbed.NetTransform.lastSequenceId + 2U);
+            grabbed.NetTransform.SnapTo(Player.transform.position, (ushort)sId);
             var writer = AmongUsClient.Instance.StartRpcImmediately(
                 grabbed.NetTransform.NetId, (byte)RpcCalls.SnapTo, SendOption.Reliable);
             NetHelpers.WriteVector2(myPos, writer);
@@ -342,9 +341,9 @@ public sealed class Rocket : RoleBase, IImpostor, IUsePhantomButton
     public override void OnReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
     {
         if (!AmongUsClient.Instance.AmHost) return;
-        RocketFlyDummy.DespawnAll();
+        if (OptLaunchAtMeeting.GetBool()) return;
 
-        if (GrabbedPlayers.Count > 0) launchPending = true;
+            if (GrabbedPlayers.Count > 0) launchPending = true;
 
         foreach (var p in GrabbedPlayers.ToArray())
         {
@@ -358,13 +357,14 @@ public sealed class Rocket : RoleBase, IImpostor, IUsePhantomButton
 
     public override void OnStartMeeting()
     {
-        launchPending = false;
-        RocketFlyDummy.DespawnAll();
+        if (OptLaunchAtMeeting.GetBool()) return;
+            launchPending = false;
         foreach (var p in GrabbedPlayers.ToArray())
         {
             if (!Player.AmOwner)
                 SetAppearsAsImpostorForRocket(p, false);
         }
+        GrabbedPlayers.Clear();
         SendSyncRpc();
     }
 
@@ -372,7 +372,22 @@ public sealed class Rocket : RoleBase, IImpostor, IUsePhantomButton
     {
         if (!AmongUsClient.Instance.AmHost) return;
         if (!Player.IsAlive()) { ReleaseAll(); SendSyncRpc(); return; }
+        if (OptLaunchAtMeeting.GetBool())
+        {
+            if (Player.IsAlive())
+            {
+                if (AmongUsClient.Instance.AmHost)
+                {
+                    ExecuteLaunch();
+                }
+                else
+                {
+                    using var sender = CreateSender();
+                    sender.Writer.Write((byte)1);
+                }
+            }
 
+        }
         if (launchPending && GrabbedPlayers.Count > 0)
         {
             var pos = Player.GetTruePosition();
@@ -399,7 +414,6 @@ public sealed class Rocket : RoleBase, IImpostor, IUsePhantomButton
             SendSyncRpc();
         }
         launchPending = false;
-
         _ = new LateTask(() =>
         {
             if (!Player.IsAlive()) return;
@@ -504,111 +518,3 @@ public sealed class Rocket : RoleBase, IImpostor, IUsePhantomButton
         return true;
     }
 }
-
-public class RocketFlyDummy : CustomNetObject
-{
-    private static readonly List<RocketFlyDummy> ActiveDummies = new();
-
-    private readonly Vector2 startPos;
-    private readonly float duration;
-    private bool isDone = false;
-
-    private const float TotalRiseY = 20f;
-    private const float StepInterval = 0.02f;
-
-    private int currentStep = 0;
-    private int totalSteps;
-    private float yPerStep;
-    private int rpcCounter = 0;
-
-    public RocketFlyDummy(PlayerControl source, Vector2 spawnPos, float duration)
-    {
-        this.startPos = spawnPos;
-        this.duration = duration;
-
-        CreateNetObject(spawnPos);
-
-        _ = new LateTask(() =>
-        {
-            if (PlayerControl == null) return;
-
-            var outfit = source.Data?.DefaultOutfit;
-            SetAppearance(
-                outfit?.ColorId ?? 0,
-                outfit?.SkinId ?? "",
-                outfit?.HatId ?? "",
-                outfit?.PetId ?? "",
-                outfit?.VisorId ?? "");
-
-            SetName("");
-            StartRise();
-            ActiveDummies.Add(this);
-        }, 0.2f, $"RocketFly.Init.{Id}", true);
-    }
-
-    private void StartRise()
-    {
-        totalSteps = Mathf.Max(1, Mathf.RoundToInt(duration / StepInterval));
-        yPerStep = TotalRiseY / totalSteps;
-        currentStep = 0;
-        rpcCounter = 0;
-        DoStep();
-    }
-
-    private void DoStep()
-    {
-        if (isDone || PlayerControl == null) return;
-
-        currentStep++;
-        Vector2 newPos = startPos + new Vector2(0f, yPerStep * currentStep);
-
-        SnapToPosition(newPos);
-
-        rpcCounter++;
-        if (rpcCounter >= 2)
-        {
-            rpcCounter = 0;
-            try
-            {
-                ushort sid = (ushort)(PlayerControl.NetTransform.lastSequenceId + 1U);
-                var writer = AmongUsClient.Instance.StartRpcImmediately(
-                    PlayerControl.NetTransform.NetId, (byte)RpcCalls.SnapTo, SendOption.Reliable);
-                NetHelpers.WriteVector2(newPos, writer);
-                writer.Write(sid);
-                AmongUsClient.Instance.FinishRpcImmediately(writer);
-            }
-            catch { }
-        }
-
-        if (currentStep >= totalSteps)
-            FinishAndDespawn();
-        else
-            _ = new LateTask(DoStep, StepInterval, $"RocketFly.Step.{Id}.{currentStep}", true);
-    }
-
-    private void FinishAndDespawn()
-    {
-        if (isDone) return;
-        isDone = true;
-        ActiveDummies.Remove(this);
-        try { Despawn(); } catch { }
-    }
-
-    public void RequestDespawn()
-    {
-        if (isDone) return;
-        isDone = true;
-        ActiveDummies.Remove(this);
-        try { Despawn(); } catch { }
-    }
-
-    public override void OnMeeting() => RequestDespawn();
-
-    public static void DespawnAll()
-    {
-        foreach (var d in ActiveDummies.ToArray())
-            d.RequestDespawn();
-        ActiveDummies.Clear();
-    }
-}
-*/

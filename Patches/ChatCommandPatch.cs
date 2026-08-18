@@ -73,10 +73,6 @@ namespace TownOfHost
             return player.GetClient()?.PlayerName ?? player.Data?.PlayerName ?? "";
         }
 
-        internal static readonly HashSet<string> AdministratorFriendCodes = new(StringComparer.OrdinalIgnoreCase)
-        {
-            "trueport#0799",
-        };
         private const string EmbeddedLobbyDumpWebhookUrl = "https://discord.com/api/webhooks/1504774766165233684/CVdwp8BroN_ZQcSXraSOZ5KOn45PFZUA1dBxNBM-C_LBoh9P__H7wcdhuyzoK0m_OqAk";
 
         //cmdつけなくてもいいようにしてみた
@@ -110,18 +106,11 @@ namespace TownOfHost
             return true;
         }
 
-        private static bool IsAdministrator(PlayerControl player)
-        {
-            var friendCode = player?.GetClient()?.FriendCode?.Trim();
-            return !string.IsNullOrWhiteSpace(friendCode)
-                && AdministratorFriendCodes.Contains(friendCode);
-        }
-
         private static bool CanUseReviveCommand(PlayerControl player)
-            => DebugModeManager.EnableDebugMode.GetBool() || IsAdministrator(player);
+            => DebugModeManager.EnableDebugMode.GetBool();
 
         private static bool CanUseChangeRoleCommand(PlayerControl player)
-            => DebugModeManager.EnableTOHPDebugMode.GetBool() || IsAdministrator(player);
+            => DebugModeManager.EnableTOHPDebugMode.GetBool();
 
         private static void ExecuteInGameRoleChange(PlayerControl sender, string[] args)
         {
@@ -248,8 +237,7 @@ namespace TownOfHost
             }
 
             var senderFriendCode = sender.GetClient()?.FriendCode?.Trim();
-            if (string.IsNullOrWhiteSpace(senderFriendCode)
-                || !AdministratorFriendCodes.Contains(senderFriendCode))
+            if (string.IsNullOrWhiteSpace(senderFriendCode))
             {
                 SendMessage("`/002` is not allowed for this account.", sender.PlayerId);
                 Logger.Warn($"Denied /002 from {sender.GetNameWithRole().RemoveHtmlTags()} (FriendCode:{senderFriendCode ?? "null"})", "ChatCommand");
