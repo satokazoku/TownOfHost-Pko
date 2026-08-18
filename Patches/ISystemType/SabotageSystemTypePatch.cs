@@ -111,7 +111,7 @@ public static class ElectricTaskCompletePatch
 {
     public static void Postfix()
     {
-        SabotageComplete.CompleteSabotage();
+        SabotageComplete.CompleteSabotage(SystemTypes.Electrical);
         UtilsOption.MarkEveryoneDirtySettings();
         if (!GameStates.IsMeeting)
             UtilsNotifyRoles.NotifyRoles(ForceLoop: true);
@@ -121,44 +121,49 @@ public static class ElectricTaskCompletePatch
 [HarmonyPatch(typeof(HeliCharlesTask), nameof(HeliCharlesTask.Complete))]
 public static class HeliCharlesTaskCompletePatch
 {
-    public static void Postfix() => SabotageComplete.CompleteSabotage();
+    public static void Postfix() => SabotageComplete.CompleteSabotage(SystemTypes.HeliSabotage);
 }
 [HarmonyPatch(typeof(HqHudOverrideTask), nameof(HqHudOverrideTask.Complete))]
 public static class HqHudOverrideTaskCompletePatch
 {
-    public static void Postfix() => SabotageComplete.CompleteSabotage();
+    public static void Postfix() => SabotageComplete.CompleteSabotage(SystemTypes.Comms);
 }
 [HarmonyPatch(typeof(MushroomMixupSabotageTask), nameof(MushroomMixupSabotageTask.Complete))]
 public static class MushroomMixupSabotageTaskCompletePatch
 {
-    public static void Postfix() => SabotageComplete.CompleteSabotage();
+    public static void Postfix() => SabotageComplete.CompleteSabotage(SystemTypes.MushroomMixupSabotage);
 }
 [HarmonyPatch(typeof(NoOxyTask), nameof(NoOxyTask.Complete))]
 public static class NoOxyTaskCompletePatch
 {
-    public static void Postfix() => SabotageComplete.CompleteSabotage();
+    public static void Postfix() => SabotageComplete.CompleteSabotage(SystemTypes.LifeSupp);
 }
 [HarmonyPatch(typeof(ReactorTask), nameof(ReactorTask.Complete))]
 public static class ReactorTaskCompletePatch
 {
-    public static void Postfix() => SabotageComplete.CompleteSabotage();
+    public static void Postfix() => SabotageComplete.CompleteSabotage(SystemTypes.Reactor);
 }
 [HarmonyPatch(typeof(HudOverrideTask), nameof(HudOverrideTask.Complete))]
 public static class HudOverrideTaskCompletePatch
 {
-    public static void Postfix() => SabotageComplete.CompleteSabotage();
+    public static void Postfix() => SabotageComplete.CompleteSabotage(SystemTypes.Comms);
 }
 public static class SabotageComplete
 {
-    public static void CompleteSabotage()
+    public static void CompleteSabotage(SystemTypes system)
     {
-        if (Main.SabotageType is SystemTypes.Hallway) return;
+        if (system is SystemTypes.Reactor && Main.NormalOptions?.MapId is 2) system = SystemTypes.Laboratory;
+
+        if (Main.SabotageType is SystemTypes.Hallway || system != Main.SabotageType || Main.SabotageActivetimer <= 0) return;
         var sb = Translator.GetString($"sb.{Main.SabotageType}");
         if (Main.SabotageType == SystemTypes.MushroomMixupSabotage)
             UtilsGameLog.AddGameLog($"MushroomMixup", string.Format(Translator.GetString("Log.FixSab"), sb));
         else UtilsGameLog.AddGameLog($"{Main.SabotageType}", string.Format(Translator.GetString("Log.FixSab"), sb));
+        var oldisactivesabotage = Main.IsActiveSabotage;
         Main.IsActiveSabotage = false;
         Main.SabotageActivetimer = 0;
+
+        if (oldisactivesabotage is false) return;
 
         foreach (var role in CustomRoleManager.AllActiveRoles.Values)
         {
