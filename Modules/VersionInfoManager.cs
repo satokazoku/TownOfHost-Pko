@@ -1,17 +1,14 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using HarmonyLib;
 using TMPro;
 using UnityEngine;
-
-using TownOfHost.Roles.Core;
 using UnityEngine.Networking;
 
 namespace TownOfHost.Modules;
