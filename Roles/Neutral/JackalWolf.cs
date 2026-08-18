@@ -83,6 +83,7 @@ public sealed class JackalWolf : RoleBase, ILNKiller, IUsePhantomButton, IDouble
         OptionJJackalCanKillMafia = BooleanOptionItem.Create(RoleInfo, 14, JackalMafia.JackalOption.JackalCanKillMafia, false, false);
         OptionJJackalMafiaCanAlsoBeExposedToJackal = BooleanOptionItem.Create(RoleInfo, 15, JackalMafia.JackalOption.JackalMafiaCanAlsoBeExposedToJackal, false, false);
         OptionJackalCanAlsoBeExposedToJMafia = BooleanOptionItem.Create(RoleInfo, 16, JackalMafia.JackalOption.JackalCanAlsoBeExposedToJMafia, true, false);
+        ObjectOptionitem.Create(RoleInfo, 24, "AddonOption", true, null).SetOptionName(() => "Sidekick Setting");
         RoleAddAddons.Create(RoleInfo, 25, NeutralKiller: true);
     }
     public override void Add()

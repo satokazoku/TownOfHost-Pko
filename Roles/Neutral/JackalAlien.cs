@@ -1314,6 +1314,7 @@ public sealed class JackalAlien : RoleBase, IMeetingTimeAlterable, ILNKiller, IS
         OptionMeetingKill = BooleanOptionItem.Create(RoleInfo, 52, OptionName.PenguinMeetingKill, false, false, OptionModePenguin);
         OptionModeComebaker = FloatOptionItem.Create(RoleInfo, 54, OptionName.AlienCComebacker, new(0, 100, 5), 100, false).SetValueFormat(OptionFormat.Percent);
         OptionModeNomal = FloatOptionItem.Create(RoleInfo, 8, OptionName.AlienCNomal, new(0, 100, 5), 100, false).SetValueFormat(OptionFormat.Percent);
+        ObjectOptionitem.Create(RoleInfo, 99, "AddonOption", true, null).SetOptionName(() => "Sidekick Setting");
         RoleAddAddons.Create(RoleInfo, 100, NeutralKiller: true);
     }
     #endregion
