@@ -2229,6 +2229,28 @@ public class ModNewsHistory
                 };
                 AllModNews.Add(news);
             }
+            {
+                var news = new ModNews
+                {
+                    Number = 100083,
+                    Title = "Zzz....",
+                    SubTitle = "<color=#00c1ff>Town Of Host-K v.51.14.32.52</color>",
+                    ShortTitle = "<color=#00c1ff>◆TOH-K v.51.14.32.52</color>",
+                    Text = "<size=80%>くそねむい。Zzz...。\n"
+                    + "<size=125%>【バグ修正】</size><size=50%>\n"
+                    + "・トイレファンがトイレ以外のドアを開けれた問題の修正\n"
+                    + "・一定条件下で治ってないのにサボが治ったと判定される問題の修正\n"
+                    + "・マッドべトレイヤーのカウントが正常に動作しない問題の修正\n"
+                    + "\n<size=125%>【仕様変更】</size>\n"
+                    + "・マドンナ/ジャッカルドールの役職変更からモノクラーを削除。裏切り者を追加。\n"
+                    + "・アドオン設定名の調整。\n"
+                    + "・あもあすのあぷでにたいおう。\n"
+                    + "\n\nねむい。"
+                    ,
+                    Date = "2026-08-19T00:00:00Z"
+                };
+                AllModNews.Add(news);
+            }
             AnnouncementPopUp.UpdateState = AnnouncementPopUp.AnnounceState.NotStarted;
         }
     }
