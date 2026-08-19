@@ -273,11 +273,11 @@ namespace TownOfHost
         public static bool SecondBegin = false;
         public static bool Prefix(ExileController __instance, ExileController.InitProperties init)
         {
-            if (PlayerCatch.AllPlayersCount < 4)
+            /*if (PlayerCatch.AllPlayersCount < 4)
             {
                 __instance.completeString = Translator.GetString(StringNames.NoExileTie);
                 return true;
-            }
+            }*/
             var result = AntiBlackout.voteresult;
             var modinit = init;
 
@@ -310,7 +310,7 @@ namespace TownOfHost
             {
                 if (result.Value.Exiled is null)
                 {
-                    if (result.Value.IsTie)
+                    if (result.Value.IsTie && result.Value.OverrideExiled != byte.MaxValue)
                     {
                         __instance.completeString = Translator.GetString(StringNames.NoExileTie);
                     }
