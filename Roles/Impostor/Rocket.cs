@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
+using Epic.OnlineServices.Presence;
 using Epic.OnlineServices.RTC;
 using Hazel;
+using Il2CppSystem.Reflection;
 using MS.Internal.Xml.XPath;
 using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
@@ -100,10 +102,13 @@ public sealed class Rocket : RoleBase, IImpostor, IUsePhantomButton
     {
         var target = info.AttemptTarget;
         if (target == null) { info.DoKill = false; return; }
-        if (GrabbedPlayers.Contains(target)) { info.DoKill = false; return; }
+        if (GrabbedPlayerIds.Contains(target.PlayerId))
+        {
+            info.DoKill = false;
+            return;
+        }
 
         info.DoKill = false;
-
         if (AmongUsClient.Instance.AmHost)
         {
             GrabPlayer(target);
@@ -118,6 +123,10 @@ public sealed class Rocket : RoleBase, IImpostor, IUsePhantomButton
 
     void GrabPlayer(PlayerControl target)
     {
+        if (GrabbedPlayerIds.Contains(target.PlayerId))
+        {
+            return;
+        }
         GrabbedPlayers.Add(target);
         GrabbedPlayerIds.Add(target.PlayerId);
 
@@ -147,7 +156,6 @@ public sealed class Rocket : RoleBase, IImpostor, IUsePhantomButton
         writer.Write((ushort)fakeRole);
         writer.Write(true);
         AmongUsClient.Instance.FinishRpcImmediately(writer);
-        UtilsNotifyRoles.NotifyRoles(target);
     }
 
     void ReleasePlayer(PlayerControl target)
@@ -156,9 +164,6 @@ public sealed class Rocket : RoleBase, IImpostor, IUsePhantomButton
         GrabbedPlayerIds.Remove(target.PlayerId);
         PlayerState.GetByPlayerId(target.PlayerId).CanMove = true;
         target.MarkDirtySettings();
-        if (Player.AmOwner)
-            target.Data.IsDead = false;
-        else
             SetAppearsAsImpostorForRocket(target, false);
     }
 
@@ -168,9 +173,6 @@ public sealed class Rocket : RoleBase, IImpostor, IUsePhantomButton
         {
             PlayerState.GetByPlayerId(p.PlayerId).CanMove = true;
             p.MarkDirtySettings();
-            if (Player.AmOwner)
-                p.Data.IsDead = false;
-            else
                 SetAppearsAsImpostorForRocket(p, false);
         }
         GrabbedPlayers.Clear();
@@ -340,7 +342,6 @@ public sealed class Rocket : RoleBase, IImpostor, IUsePhantomButton
 
     public override void OnReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
     {
-        if (!AmongUsClient.Instance.AmHost) return;
         if (OptLaunchAtMeeting.GetBool()) return;
 
             if (GrabbedPlayers.Count > 0) launchPending = true;
@@ -354,7 +355,6 @@ public sealed class Rocket : RoleBase, IImpostor, IUsePhantomButton
         }
         SendSyncRpc();
     }
-
     public override void OnStartMeeting()
     {
         if (OptLaunchAtMeeting.GetBool()) return;
@@ -388,6 +388,9 @@ public sealed class Rocket : RoleBase, IImpostor, IUsePhantomButton
             }
 
         }
+        GrabbedPlayers.Clear();
+        GrabbedPlayerIds.Clear();
+
         if (launchPending && GrabbedPlayers.Count > 0)
         {
             var pos = Player.GetTruePosition();
