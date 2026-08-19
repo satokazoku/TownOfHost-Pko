@@ -27,6 +27,7 @@ namespace TownOfHost
         public static VoteResult? voteresult;
         //private static Dictionary<(byte, byte), RoleTypes> RoleTypeCache = new();
         private readonly static LogHandler logger = Logger.Handler("AntiBlackout");
+        public const int MustPlayerCount = 4;
 
         private static bool GetA()
         {
@@ -41,7 +42,7 @@ namespace TownOfHost
         ///</summary>
         public static bool OverrideExiledPlayer()
         {
-            if (1 <= PlayerCatch.AllPlayerControls.Count()) return false;
+            if (MustPlayerCount <= PlayerCatch.AllPlayerControls.Count()) return false;
             if (ModClientOnly is true) return false;
             return (Options.NoGameEnd.GetBool() || GetA()) && (Main.DebugAntiblackout || !DebugModeManager.EnableDebugMode.GetBool());
         }
@@ -64,7 +65,7 @@ namespace TownOfHost
             {
                 isDeadCache[info.PlayerId] = (info.IsDead, info.Disconnected);
                 //情報が無い　　　   4人以上正常者がいる場合は役職変えるので回線切断者を生存擬装する必要が多分ない。
-                if (info == null || ((info?.Disconnected == true) && 4 <= nowcount)) continue;
+                if (info == null || ((info?.Disconnected == true) && MustPlayerCount <= nowcount)) continue;
                 info.IsDead = false;
                 info.Disconnected = false;
             }
