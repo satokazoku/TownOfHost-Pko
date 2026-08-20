@@ -25,9 +25,13 @@ public sealed class Judge : RoleBase
     )
     {
         taskrequirement = OptionTaskRequirement.GetFloat();
+        IsUsed = false;
+        Isfall = false;
     }
+    bool IsUsed;
+    bool Isfall;
     static float taskrequirement;
-    private static OptionItem OptionTaskRequirement;
+    public static OptionItem OptionTaskRequirement;
     private static OptionItem OptionCanKillMadMate;
     private static OptionItem OptionCanKillNeutrals;
     private static OptionItem OptionCanKillLovers;
@@ -45,14 +49,21 @@ public sealed class Judge : RoleBase
     public override bool CallJudgeVote(PlayerControl voter, PlayerControl votefor, ref byte ExilePlayerid)
     {
         ExilePlayerid = byte.MaxValue;
+        if (IsUsed) return false;
         if (SelfVoteManager.Canuseability() is false) return false;
         if (votefor.IsAlive() is false) return false;
 
+        IsUsed = true;
         var AlienTairo = false;
         var targetroleclass = votefor.GetRoleClass();
         if ((targetroleclass as Alien)?.CheckSheriffKill(votefor) == true) AlienTairo = true;
         if ((targetroleclass as JackalAlien)?.CheckSheriffKill(votefor) == true) AlienTairo = true;
         if ((targetroleclass as AlienHijack)?.CheckSheriffKill(votefor) == true) AlienTairo = true;
+
+        if (AntiBlackout.OverrideExiledPlayer())
+        {
+            Utils.AllPlayerKillFlash();
+        }
 
         if ((CanBeKilledBy(votefor.GetCustomRole()) && !AlienTairo) || (votefor.IsLovers() && OptionCanKillLovers.GetBool()) || (votefor.Is(CustomRoles.Amanojaku) && OptionCanKillNeutrals.GetBool()))
         {//成功
@@ -61,10 +72,18 @@ public sealed class Judge : RoleBase
         }
         else
         {
+            Isfall = true;
             ExilePlayerid = voter.PlayerId;
-            MyState.DeathReason = CustomDeathReason.Misfire;
         }
         return true;
+    }
+    public override void OnExileWrapUp(NetworkedPlayerInfo exiled, ref bool DecidedWinner)
+    {
+        if (exiled == null) return;
+        if (exiled.PlayerId == Player.PlayerId && Isfall)
+        {
+            MyState.DeathReason = CustomDeathReason.Misfire;
+        }
     }
     bool CanBeKilledBy(CustomRoles role)
     {

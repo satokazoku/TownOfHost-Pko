@@ -601,7 +601,6 @@ public static class MeetingHudPatch
             if (result.Value.OverrideExiled != byte.MaxValue)
             {
                 bool anotherJudgeBeatYouToIt = false;
-                PlayerId playerId = result.Value.Exiled.PlayerId;
                 JudgeRole judgeRole = PlayerControl.LocalPlayer.Data.Role as JudgeRole;
                 if (judgeRole && judgeRole.HasAlreadyOverruledThisMeeting)
                 {
