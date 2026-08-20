@@ -253,8 +253,8 @@ public class MeetingVoteManager
                 else
                     sender.Write(result.Exiled.PlayerId);
                 sender.Write(result.IsTie);
-                sender.Write(false);//result.OverrideExiled is not byte.MaxValue);
-                sender.Write(0);//result.OverruleNonce);
+                sender.Write(result.OverrideExiled is not byte.MaxValue);
+                sender.Write(result.OverruleNonce);
                 sender.EndRpc();
                 sender.SendMessage();
             }//裁判官のばしーんができない...
@@ -492,6 +492,8 @@ public class MeetingVoteManager
 
         public VoteResult(Dictionary<byte, int> votedCounts, Dictionary<byte, int> Tievotecount, bool ClearAndExile = false, byte overrideexilid = byte.MaxValue, ushort nonce = ushort.MinValue)
         {
+            OverrideExiled = byte.MaxValue;
+            OverruleNonce = 0;
             this.votedCounts = votedCounts;
 
             // 票数順に整列された投票

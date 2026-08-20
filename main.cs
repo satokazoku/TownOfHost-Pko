@@ -44,7 +44,6 @@ namespace TownOfHost
         public static readonly string MatchmakingRelaySecret = "6rVp2N8xK5mQ9wA1zL4jS7tB3hG0eD9Y";
         public static string PresetShareApiUrl = "https://pikeo-ai.pikeo-ai.workers.dev";
         public static string PresetShareApiSecret = "(AmongUsTOHPkoPukupuku142satokoVERYCUTE)";
-        // ==========
         public const string OriginalForkId = "OriginalTOH"; // Don't Change The Value. / この値を変更しないでください。
         // == 認証設定 / Authentication Config ==
         // デバッグキーの認証インスタンス
