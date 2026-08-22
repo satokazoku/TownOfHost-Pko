@@ -663,9 +663,10 @@ namespace TownOfHost
                     {
                         var exileId = reader.ReadByte();
                         var Istie = reader.ReadBoolean();
-                        var result = new MeetingVoteManager.VoteResult(exileId, Istie);
-                        AntiBlackout.voteresult = result;
                         MeetingVoteManager.Voteresult = reader.ReadString();
+                        var overrideex = reader.ReadByte();
+                        var result = new MeetingVoteManager.VoteResult(exileId, Istie, overrideex);
+                        AntiBlackout.voteresult = result;
                     }
                     break;
                 case ModSystem.ShowIntro:
