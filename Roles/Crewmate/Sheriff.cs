@@ -22,7 +22,7 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
             CustomRoles.Sheriff,
             () => RequiresTasks ? RoleTypes.Crewmate : RoleTypes.Impostor,
             CustomRoleTypes.Crewmate,
-            35100,
+            335100,
             SetupOptionItem,
             "sh",
             "#f8cd46",
@@ -96,17 +96,17 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
     {
         KillCooldown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.KillCooldown, new(0f, 990f, 0.5f), 30f, false)
             .SetValueFormat(OptionFormat.Seconds);
-        OverrideKilldistance.Create(RoleInfo, 8);
-        MisfireKillsTarget = BooleanOptionItem.Create(RoleInfo, 11, OptionName.SheriffMisfireKillsTarget, false, false);
-        ShotLimitOpt = IntegerOptionItem.Create(RoleInfo, 12, OptionName.SheriffShotLimit, new(1, 15, 1), 15, false)
+        OverrideKilldistance.Create(RoleInfo, 15);
+        MisfireKillsTarget = BooleanOptionItem.Create(RoleInfo, 20, OptionName.SheriffMisfireKillsTarget, false, false);
+        ShotLimitOpt = IntegerOptionItem.Create(RoleInfo, 25, OptionName.SheriffShotLimit, new(1, 15, 1), 15, false)
             .SetValueFormat(OptionFormat.Times);
-        StartInTaskMode = BooleanOptionItem.Create(RoleInfo, 17, OptionName.SheriffStartInTaskMode, true, false);
-        OverrideTasksData.Create(RoleInfo, 22, parent: StartInTaskMode);
-        CanKillAllAlive = BooleanOptionItem.Create(RoleInfo, 15, OptionName.SheriffCanKillAllAlive, true, false);
-        CanKillMadmate = SetUpKillTargetOption(CustomRoles.Madmate, 13);
-        CanKillNeutrals = StringOptionItem.Create(RoleInfo, 14, OptionName.SheriffCanKillNeutrals, KillOption, 0, false);
-        SetUpNeutralOptions(30);
-        CanKillLovers = BooleanOptionItem.Create(RoleInfo, 16, OptionName.SheriffCanKillLovers, true, false);
+        StartInTaskMode = BooleanOptionItem.Create(RoleInfo, 30, OptionName.SheriffStartInTaskMode, true, false);
+        OverrideTasksData.Create(RoleInfo, 35, parent: StartInTaskMode);
+        CanKillAllAlive = BooleanOptionItem.Create(RoleInfo, 40, OptionName.SheriffCanKillAllAlive, true, false);
+        CanKillMadmate = SetUpKillTargetOption(CustomRoles.Madmate, 45);
+        CanKillNeutrals = StringOptionItem.Create(RoleInfo, 50, OptionName.SheriffCanKillNeutrals, KillOption, 0, false);
+        SetUpNeutralOptions(55);
+        CanKillLovers = BooleanOptionItem.Create(RoleInfo, 60, OptionName.SheriffCanKillLovers, true, false);
     }
 
     public static void SetUpNeutralOptions(int idOffset)

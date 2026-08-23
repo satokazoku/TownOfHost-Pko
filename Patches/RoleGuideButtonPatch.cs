@@ -1528,7 +1528,6 @@ public static class RoleGuideButtonPatch
             CountTypes.MilkyWay => GetString("MilkyWay"),
             CountTypes.Pavlov => GetString("Pavlov"),
             CountTypes.Eater => UtilsRoleText.GetRoleName(CustomRoles.Eater),
-            CountTypes.Monika => UtilsRoleText.GetRoleName(CustomRoles.Monika),
             CountTypes.StandMaster => UtilsRoleText.GetRoleName(CustomRoles.StandMaster),
             CountTypes.Villain => UtilsRoleText.GetRoleName(CustomRoles.Villain),
             _ => countType.ToString(),

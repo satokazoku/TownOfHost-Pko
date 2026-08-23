@@ -92,7 +92,7 @@ namespace TownOfHost
             {
                 Zombie.TryTakeOverCrewWin(ref reason);
                 Onmyoji.TryTakeOverCrewWin(ref reason);
-                BatGirl.TryTakeOverSoloWin(ref reason);
+                //BatGirl.TryTakeOverSoloWin(ref reason);
             }
 
             if (CustomWinnerHolder.WinnerTeam is not CustomWinner.Default)

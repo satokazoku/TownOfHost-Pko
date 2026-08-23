@@ -165,15 +165,15 @@ public sealed class BlackSanta : RoleBase, IKiller, IKillFlashSeeable, IDeathRea
         );
 
         OptNeedsTaskForKnowImpostors = BooleanOptionItem.Create(
-            RoleInfo, 34, OptionName.BlackSantaNeedsTaskForKnowImpostors, false, false, OptCanKnowImpostors
+            RoleInfo, 40, OptionName.BlackSantaNeedsTaskForKnowImpostors, false, false, OptCanKnowImpostors
         );
 
         OptNeededTaskCountForKnowImpostors = IntegerOptionItem.Create(
-            RoleInfo, 35, OptionName.BlackSantaNeededTaskCountForKnowImpostors,
+            RoleInfo, 50, OptionName.BlackSantaNeededTaskCountForKnowImpostors,
             new(1, 100, 1), 3, false, OptNeedsTaskForKnowImpostors
         ).SetValueFormat(OptionFormat.Pieces);
 
-        OverrideTasksData.Create(RoleInfo, 32);
+        OverrideTasksData.Create(RoleInfo, 60);
     }
 
     public override void Add()

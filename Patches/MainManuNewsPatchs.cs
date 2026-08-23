@@ -738,6 +738,19 @@ public class ModNewsHistory
                 };
                 AllModNews.Add(news);
             }
+            {
+                var news = new ModNews
+                {
+                    Number = 100102,
+                    Title = "アプデ遅くなってごめん",
+                    SubTitle = "<color=#FF9631>●TOH-Pko v5.34.21.96</color>",
+                    ShortTitle = "<color=#FF9631>●TOH-Pko v5.34.21.96</color>",
+                    Text = "・投票バグの修正\r\n・Kのアプデに対応\r\n・モニカの完全リストラ\r\n"
+                    ,
+                    Date = "2026-8-23"
+                };
+                AllModNews.Add(news);
+            }
             AnnouncementPopUp.UpdateState = AnnouncementPopUp.AnnounceState.NotStarted;
         }
     }

@@ -1,3 +1,4 @@
+/*
 using AmongUs.GameOptions;
 using Hazel;
 using TownOfHost.Modules;
@@ -201,3 +202,4 @@ public sealed class BoostLighter : RoleBase
         cooldownTimer = reader.ReadSingle();
     }
 }
+*/

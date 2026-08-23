@@ -626,6 +626,35 @@ public static class MeetingHudPatch
             }
         }
     }
+    [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.VotingComplete))]
+    class VotingCompletePatch
+    {
+        public static void Postfix(MeetingHud __instance)
+        {
+            if (AmongUsClient.Instance.AmHost is false) return;
+            var result = AntiBlackout.voteresult;
+            if (result.HasValue is false) return;
+
+            if (result.Value.OverrideExiled != byte.MaxValue)
+            {
+                bool anotherJudgeBeatYouToIt = false;
+                PlayerId playerId = result.Value.Exiled.PlayerId;
+                JudgeRole judgeRole = PlayerControl.LocalPlayer.Data.Role as JudgeRole;
+                if (judgeRole && judgeRole.HasAlreadyOverruledThisMeeting)
+                {
+                    if (judgeRole.OverruleNonce == result.Value.OverruleNonce)
+                    {
+                        judgeRole.ConsumeOverruleVotesUsage();
+                    }
+                    else
+                    {
+                        anotherJudgeBeatYouToIt = true;
+                    }
+                }
+                __instance.ShowJudgeOverrule(anotherJudgeBeatYouToIt);
+            }
+        }
+    }
     [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.OnDestroy))]
     class OnDestroyPatch
     {

@@ -21,7 +21,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
             CustomRoles.JackalHadouHo,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Neutral,
-            52300,
+            552300,
             SetUpOptionItem,
             "jhh",
             "#00b4eb",
@@ -176,10 +176,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
     public static bool GetTamaCountAsJackalKiller() => OptionTamaCountAsJackalKiller?.GetBool() ?? false;
     public static bool GetTamaCountAsKillerOnlyWhenPromotionEnabled() => OptionTamaCountAsKillerOnlyWhenPromotionEnabled?.GetBool() ?? false;
     public static bool GetSidekickPromotion() => OptionSidekickPromotion?.GetBool() ?? false;
-<<<<<<< HEAD
-    
-=======
->>>>>>> 3c2327e06686490640e57622ee2b054f62f7c5bf
+
     public static void HideRoleOptions(CustomRoles role)
     {
         if (Options.CustomRoleSpawnChances != null && Options.CustomRoleSpawnChances.TryGetValue(role, out var sp))
@@ -1028,7 +1025,7 @@ public sealed class Tama : RoleBase, IKiller
             CustomRoles.Tama,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Neutral,
-            54900,
+            554900,
             SetupOptionItem,
             "tm",
             "#00b4eb",

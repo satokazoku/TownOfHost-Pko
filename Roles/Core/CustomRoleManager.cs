@@ -1042,7 +1042,6 @@ public enum CustomRoles
     PavlovDogImprint,
     Moira,
     PoisonedBakery,
-    Monika,
     Suicider,
     PokerFace,
     Ogre,
