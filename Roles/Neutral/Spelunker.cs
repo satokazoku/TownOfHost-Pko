@@ -1,4 +1,5 @@
 using AmongUs.GameOptions;
+using HarmonyLib;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using UnityEngine;
@@ -41,7 +42,7 @@ public sealed class Spelunker : RoleBase, ISystemTypeUpdateHook
         SpelunkerCommsSabotageDeathTime,
     }
 
-    const float NearVentDistance = 0.2f;
+    const float NearVentDistance = 0.8f;
     const float DoorRollCooldown = 0.2f;
 
     int nearVentId;
@@ -117,13 +118,6 @@ public sealed class Spelunker : RoleBase, ISystemTypeUpdateHook
     {
         if (!TryGetActiveRole(player, out var spelunker)) return false;
         spelunker.TryLadderFallDeath();
-        return true;
-    }
-
-    public static bool OnZiplineUsed(PlayerControl player, bool fromTop)
-    {
-        if (!TryGetActiveRole(player, out var spelunker)) return false;
-        spelunker.TryZiplineFallDeath(fromTop);
         return true;
     }
 

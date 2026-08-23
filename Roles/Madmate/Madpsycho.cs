@@ -34,15 +34,42 @@ public sealed class Madpsycho : RoleBase
     public Madpsycho(PlayerControl player)
         : base(
             RoleInfo,
-            player
+            player,
+            () => HasTask.True
         )
     {
-        CanPsycho = false;
     }
+
     private static OptionItem OptionCanVent;
     public static OptionItem OptionDeathReason;
-    public static bool CanPsycho;
     public static OptionItem OptionTaskTrigger;
+
+    // 自分でタスク完了数をカウントする変数
+    public int CompletedTaskCount { get; private set; } = 0;
+
+    public static bool CanPsycho => Instance != null && Instance.CompletedTaskCount >= OptionTaskTrigger.GetInt();
+
+    public static bool CanPsychoFor(PlayerControl player)
+    {
+        return Instance != null && Instance.Player == player && Instance.CompletedTaskCount >= OptionTaskTrigger.GetInt();
+    }
+
+    public static Madpsycho Instance { get; private set; }
+
+    public override void Add()
+    {
+        Instance = this;
+        CompletedTaskCount = 0;
+    }
+
+    public override void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
+    }
+    enum OptionName
+    {
+        psychoDeathReason
+    }
     private static void SetupOptionItems()
     {
         var cRolesString = deathReasons.Select(x => x.ToString()).ToArray();
@@ -51,29 +78,24 @@ public sealed class Madpsycho : RoleBase
         OptionTaskTrigger = IntegerOptionItem.Create(RoleInfo, 11, GeneralOption.TaskTrigger, new(0, 99, 1), 1, false).SetValueFormat(OptionFormat.Pieces);
         OverrideTasksData.Create(RoleInfo, 20);
     }
+
     public static readonly CustomDeathReason[] deathReasons =
-{
-        CustomDeathReason.Kill,CustomDeathReason.Counter    };
-    private enum OptionName
     {
-        psychoDeathReason
-    }
+        CustomDeathReason.Kill, CustomDeathReason.Counter
+    };
+
     public override bool OnCompleteTask(uint taskid)
     {
-        if (MyTaskState.HasCompletedEnoughCountOfTasks(OptionTaskTrigger.GetInt()))
-        {
-            CanPsycho = true;
-        }
+        CompletedTaskCount++;
         return true;
     }
+
     public override bool OnCheckMurderAsTarget(MurderInfo info)
     {
         var killer = info.AttemptKiller;
         if (info.KillPower >= 2) return true;
-        /*if (killer.Is(CustomRoles.SheriffHadouHo) && SheriffHadouHo.Charging)
-        {
-            return true;
-        }*/
+        if (!CanPsycho) return true;
+
         if (killer.Is(CustomRoles.HadouHo) && HadouHo.Charging)
         {
             return true;
