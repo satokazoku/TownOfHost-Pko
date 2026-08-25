@@ -356,8 +356,10 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
         if (GameStates.CalledMeeting || GameStates.Intro) return;
         if (!player.IsAlive())
         {
-            if (EffectiveRequiresTasks && !Taskmode && !diedTaskModeApplied)
+            if (!diedTaskModeApplied)
+            {
                 ForceTaskModeOnDeath();
+            }
             return;
         }
 
