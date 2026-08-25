@@ -28,7 +28,6 @@ namespace TownOfHost.Roles.AddOns.Common
         AssignOptionItem NeutralAssignTarget;
         static readonly CustomRoles[] InvalidRoles =
         {
-            CustomRoles.Emptiness,
             CustomRoles.Phantom,
             CustomRoles.GuardianAngel,
             CustomRoles.SKMadmate,
@@ -37,6 +36,7 @@ namespace TownOfHost.Roles.AddOns.Common
             CustomRoles.HASTroll,
             CustomRoles.GM,
             CustomRoles.TaskPlayerB,
+            CustomRoles.Emptiness,
         };
         static readonly IEnumerable<CustomRoles> ValidRoles = CustomRolesHelper.AllRoles.Where(role => !InvalidRoles.Contains(role));
 

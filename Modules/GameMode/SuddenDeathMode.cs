@@ -649,7 +649,6 @@ namespace TownOfHost.Modules
         public static readonly CustomRoles[] InvalidRoles =
         {
             CustomRoles.Crewmate,
-            CustomRoles.Emptiness,
             CustomRoles.Phantom,
             CustomRoles.GuardianAngel,
             CustomRoles.SKMadmate,
@@ -657,6 +656,7 @@ namespace TownOfHost.Modules
             CustomRoles.HASTroll,
             CustomRoles.GM,
             CustomRoles.TaskPlayerB,
+            CustomRoles.Emptiness,
         };
         public static void SideKickChangeTeam(this PlayerControl target, PlayerControl Owner)
         {

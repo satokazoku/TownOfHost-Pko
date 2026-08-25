@@ -900,6 +900,7 @@ public enum CustomRoles
     BeginnerImpostor,
     PuppeteerHadouHo,
     SmokeMaker,
+    Whiteshark,
     //DEBUG only Impostor
     //Madmate
     MadGuardian,

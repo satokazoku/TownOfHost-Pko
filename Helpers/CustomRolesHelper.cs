@@ -367,7 +367,6 @@ namespace TownOfHost
             return role switch
             {
                 CustomRoles.GM => RoleTypes.GuardianAngel,
-                CustomRoles.Emptiness => RoleTypes.Crewmate,
                 CustomRoles.SKMadmate => Options.SkMadCanUseVent.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate,
 
                 _ => role.IsImpostor() ? RoleTypes.Impostor : RoleTypes.Crewmate,

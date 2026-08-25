@@ -3,6 +3,7 @@ using System.Linq;
 using AmongUs.GameOptions;
 using HarmonyLib;
 using Hazel;
+using Rewired.Utils.Classes.Data;
 using TownOfHost.Modules;
 using TownOfHost.Patches.ISystemType;
 using TownOfHost.Roles.AddOns.Common;
@@ -12,9 +13,8 @@ using TownOfHost.Roles.Crewmate;
 using TownOfHost.Roles.Ghost;
 using TownOfHost.Roles.Impostor;
 using TownOfHost.Roles.Madmate;
-using UnityEngine;
-
 using TownOfHost.Roles.Neutral;
+using UnityEngine;
 
 namespace TownOfHost
 
@@ -582,6 +582,7 @@ namespace TownOfHost
             CoEnterVentPatch.VentPlayers.Remove(__instance.myPlayer.PlayerId);
 
             var player = __instance.myPlayer;
+            Whiteshark.OnExitVent(__instance);
 
             if (CoEnterVentPatch.OldOnEnterVent.TryGetValue(player.PlayerId, out var canuse))
             {

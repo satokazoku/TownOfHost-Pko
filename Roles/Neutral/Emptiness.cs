@@ -14,12 +14,12 @@ public sealed class Emptiness : RoleBase
             CustomRoles.Emptiness,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Neutral,
-            15100, //モノクラーが復活したらID変えてください
+            552800,
             SetupOptionItem,
             "emp",
             "#221d26",
-            (6, 2),
-            true,
+            (99, 99),
+            countType: CountTypes.None,
             from: From.TownOfHost_K
         );
 
@@ -29,7 +29,7 @@ public sealed class Emptiness : RoleBase
     }
     static void SetupOptionItem()
     {
-        HideRoleOptions(CustomRoles.Emptiness);
+        //HideRoleOptions(CustomRoles.Emptiness);
     }
     internal static void HideRoleOptions(CustomRoles role)
     {

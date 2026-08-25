@@ -63,7 +63,6 @@ class AddondataInfo
                     {CustomRoles.SKMadmate, "#ff1919"},
                     //特殊クルー役職
                     //ニュートラル役職
-                    {CustomRoles.Emptiness ,"#221d26"},
                     //HideAndSeek
                     {CustomRoles.HASFox, "#e478ff"},
                     {CustomRoles.HASTroll, "#00ff00"},

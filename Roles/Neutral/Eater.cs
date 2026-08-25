@@ -165,12 +165,18 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
         }
 
         (this as IUsePhantomButton).Init(Player);
-        IUsePhantomButton.IPPlayerKillCooldown[Player.PlayerId] = 0f;
         Player.RpcResetAbilityCooldown();
-        RefreshKillCooldown();
+        RefreshKillCooldown(true);
 
-        if (AmongUsClient.Instance.AmHost && initialState)
+        if (AmongUsClient.Instance.AmHost)
         {
+            var initialCd = GetCurrentKillCooldownTimer();
+            if (initialCd <= 0f)
+            {
+                swallowCooldownTimer = GetBaseSwallowCooldown();
+                initialCd = GetCurrentKillCooldownTimer();
+            }
+
             Player.SetKillCooldown(GetCurrentKillCooldownTimer(), force: true, delay: true);
             SyncCooldownStateToClients();
         }
@@ -540,7 +546,7 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
     public bool CanUseKillButton() => Player.IsAlive();
     public bool CanKill => Player.IsAlive();
     public bool IsKiller => true;
-    public float CalculateKillCooldown() => Mathf.Max(GetCurrentKillCooldownTimer(), 0.01f);
+    public float CalculateKillCooldown() => GetCurrentKillCooldownTimer();
 
     public void OnCheckMurderAsKiller(MurderInfo info)
     {

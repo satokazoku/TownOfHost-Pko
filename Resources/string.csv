@@ -98,6 +98,7 @@
 "Spider","Spider","スパイダー"
 "PuppeteerHadouHo","PuppeteerHadouHo","波動砲パペッティア"
 "BeginnerImpostor","Beginner Impostor","ビギナーインポスター"
+"Whiteshark","Great White Shark","ホオジロザメ"
 "#ImpostorName"
 
 "# マッドメイト系役職"
@@ -501,6 +502,7 @@
 "MassMurderInfo","","君の死に場所はここだ!"
 "PuppeteerHadouHoInfo","","敵を操って直線上をなぎ倒せ"
 "BeginnerImpostorInfo","Train hard and grow stronger","鍛錬を積んで強くなろう"
+"WhitesharkInfo","Keep moving and hunt","常に動き、捕食しよう"
 "#ImpostorInfo"
 
 "# マッドメイト系役職"
@@ -611,6 +613,7 @@
 "MagicalGirlInfo","☆ Revolution ☆","へ〜んしんっ☆"
 "WalkureInfo","Reveal yourself and receive divine favor.","名乗りを上げ、加護を得よう"
 "BoostLighterInfo","Light up the dark, and see further than anyone else.","闇を照らし、誰よりも遠くを見通せ。"
+"JizoInfo","The One Who Sees the Way","道を視る者"
 "#CrewmateInfo"
 
 "# ニュートラル役職"
@@ -858,6 +861,7 @@
 "MassMurderInfoLong","","ファントムボタンでワンクリックした場所の部屋を死の床にできます\n部屋以外で撫でた場合は何も起こりません\n\n死の床でキルする事によりキルクールが減少します\n\n死の床以外でのキルで設定数キルクールが増加する"
 "PuppeteerHadouHoInfoLong","On phantom button click, the nearest alive player is selected. After the configured delay, that player fires a beam in the direction they face. If the target is in a vent, on a ladder, moving platform, or using a zipline, the request is cancelled. Options: cooldown, delay before firing, self-destruct on miss (puppeteer or target), enable super beam and chance.","ファントムボタンを押すと、最も近い生存プレイヤーに要請を行います。設定した時間経過後、そのプレイヤーの向きに波動砲を発射します。対象がベント・梯子・移動床・ジップライン使用中の場合は要請がキャンセルされます。オプション: ボタンのクールダウン、発射までの待ち時間、空振り時の自爆（パペッティアかターゲット）、超波動砲の有効化と確率。"
 "BeginnerImpostorInfoLong","Beginner Impostor trains by destroying visible dummies with the Phantom ability. Each dummy permanently shortens the kill cooldown. Dummies cannot be reported or targeted by other abilities.","ビギナーインポスターは、全員に見えるダミーをファントム能力で擬似キルして鍛錬するインポスター。ダミーをキルするたび、自身のキルクールが永続的に短縮される。ダミーは通報できず、他の能力の対象にもならない。"
+"WhitesharkInfoLong","If you stand still for a certain amount of time, you'll die.","一定時間止まると死んでしまう。"
 "#ImpostorInfoLong"
 
 "# マッドメイト系役職"
@@ -3105,12 +3109,12 @@
 "News_MeetingNews1","<size=90%>【Ship Report】</size>\n<size=70%>It has been revealed that {0} is alive on this ship.</size>","<size=90%>【船報】</size>\n<size=70%>本部の調査結果によると、ここで{0}が活動しているということが明らかになった。</size>"
 "News_MeetingNews2","<size=90%>【Ship Report】</size>\n<size=70%>It has been revealed that {0} is alive on this ship.</size>","<size=90%>【船報】</size>\n<size=70%>{0}がこの船に存在!?船に及ぼす影響とは!?</size>"
 "Fortune_Meg","Give for {0}.","{0}を受け取りました。\n貴方に幸運が訪れるようニ...!"
-"JizoKillText","*","{0}で凶行に及んだ人がいるようです..."
-"JizoKillerText","*",":誰かに暗殺を見られたようだ..."
-"JizoKillerText2","*","{0}に暗殺を見られたようだ..."
-"JizoVentText","*","{0}の通気口に動きがありました..."
-"JizoVenterText","*","誰かに通気口の動きを見られたようだ..."
-"JizoVenterText2","*","{0}に通気口の動きを見られたようだ..."
+"JizoKillText","It seems someone committed a heinous crime at {0}...","{0}で凶行に及んだ人がいるようです..."
+"JizoKillerText","It seems someone saw the assassination...",":誰かに暗殺を見られたようだ..."
+"JizoKillerText2","It looks like {0} saw me trying to assassinate someone...","{0}に暗殺を見られたようだ..."
+"JizoVentText","There was some movement in {0}'s vent...","{0}の通気口に動きがありました..."
+"JizoVenterText","It looks like someone saw the vent moving...","誰かに通気口の動きを見られたようだ..."
+"JizoVenterText2","It seems {0} noticed the vent moving...","{0}に通気口の動きを見られたようだ..."
 
 "## GuesserMeg"
 "GuessError1","I think I'm typing something wrong. /cmd /bt {id} {name of role} to shoot.","おっと。撃ち方を間違えているようだね。\n/cmd bt ID 役職名\nで撃つんだ。IDは各プレイヤーの左にある黄色い数字だ。"
