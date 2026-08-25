@@ -407,9 +407,10 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
             var proj = dir * dot;
             var perp = toTarget - proj;
             if (perp.magnitude > 1.3f) continue;
+            Jizo.Checkroom(Player.GetPlainShipRoom(), Player);
 
             CustomRoleManager.OnCheckMurder(Player, target, Player, target,
-                true, deathReason: CustomDeathReason.Hit);
+                true, deathReason: CustomDeathReason.Evaporation);
             HasHit = true;
         }
     }

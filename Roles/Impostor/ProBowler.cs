@@ -81,6 +81,11 @@ public sealed class ProBowler : RoleBase, IImpostor
             return true;
         }
         NowUseCount++;
+        if (NowUseCount > MaxUseCount)
+        {
+            shouldAnimate = false;
+            return false;
+        }
         Bowl = Player.transform.position;
         UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
         shouldAnimate = true;

@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
-using UnityEngine;
 using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Crewmate;
+using UnityEngine;
 
 namespace TownOfHost.Roles.Impostor;
 
@@ -84,13 +85,15 @@ public sealed class Samurai : RoleBase, IImpostor, IUsePhantomButton
         {
             AdjustKillCooldown = false;
             ResetCooldown = false;
-            CanUse = false;
 
             if (!AmongUsClient.Instance.AmHost) return;
             if (!Player.IsAlive()) return;
 
             var killedCount = KillTargetsInFront();
             if (killedCount <= 0) return;
+
+            Jizo.Checkroom(Player.GetPlainShipRoom(), Player);
+            CanUse = false;
 
             ResetCooldown = true;
             UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
@@ -182,6 +185,11 @@ public sealed class Samurai : RoleBase, IImpostor, IUsePhantomButton
     }
 
     public override string GetAbilityButtonText() => "必殺技";
+
+    public void OnCheckMurderAsKiller(MurderInfo info)
+    {
+        Jizo.Checkroom(Player.GetPlainShipRoom(), Player);
+    }
 
     public override bool OverrideAbilityButton(out string text)
     {

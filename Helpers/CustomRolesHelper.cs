@@ -389,7 +389,6 @@ namespace TownOfHost
         Pavlov,
         Eater,
         Victim,
-        Monika,
         StandMaster,
         Villain,
         Hunter

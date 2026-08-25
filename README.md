@@ -88,6 +88,13 @@ Modが使えなくなるよ!<br>
 　　[Youtube](https://youtube.com/channel/UCM1gs89uwjOJF3EcVc1ZEOA?si=a1ffdwsBjGbJKig6)<br>
 
 ※本家TownOfHost,TownOfHost_K様の開発者はここでは省略させていただきます
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+
+=======
+
+>>>>>>> 1acd8276a0b3069f63b707ebffbb89f0b0719a0a
 HostModなので部屋主のみModを導入すれば、<br>
 参加者はModを導入する必要もカスタムサーバー追加等の面倒な手間なしで<br>
 導入者が部屋を建て、その部屋に入ることでTownOfHost-Kを遊ぶことができます！<br>
@@ -145,6 +152,11 @@ HostModなので部屋主のみModを導入すれば、<br>
 　　[Twitter(X)](https://x.com/rixirixi0202)<br>
 
 ※本家TownOfHost様の開発者はここでは省略させていただきます
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1ab616f753bc77c2b89c95718052fa2cb5be6159
+>>>>>>> 1acd8276a0b3069f63b707ebffbb89f0b0719a0a
 #### クレジット
 [Town Of Host](https://github.com/tukasa0001/TownOfHost)<br>
 　Fork元の本家です。<br>TownOfHost様にある機能はTownOfHost-Pkoでも大体実装されています<br>

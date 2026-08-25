@@ -85,7 +85,7 @@ public static class CustomRoleManager
         {
             if (killer.IsKiller)
             {
-                if (killerRole is EarnestWolf earnestWolf)//最優先
+                if (killerRole is EarnestWolf earnestWolf)//最優先f
                 {
                     if (Amnesia.CheckAbility(attemptKiller))
                         if (earnestWolf.OnCheckMurderAsEarnestWolf(info))
@@ -227,6 +227,11 @@ public static class CustomRoleManager
         //キル可能だった場合のみMurderPlayerに進む
         if (info.CanKill && info.DoKill)//ノイメ対応
         {
+            //特別な処理の役職は部屋チェックから除外
+            if (!appearanceKiller.Is(CustomRoles.Bomber) && !appearanceKiller.Is(CustomRoles.Vampire) && !appearanceKiller.Is(CustomRoles.Samurai) && !appearanceKiller.Is(CustomRoles.SelfBomber) && !appearanceKiller.Is(CustomRoles.Limiter) && !appearanceKiller.Is(CustomRoles.HadouHo)&& !appearanceKiller.Is(CustomRoles.HadouHo) && !appearanceKiller.Is(CustomRoles.JackalHadouHo) && !appearanceKiller.Is(CustomRoles.SheriffHadouHo))
+            {
+                Jizo.Checkroom(appearanceKiller.GetPlainShipRoom(), appearanceKiller);
+            }
             if ((appearanceKiller.GetCustomRole() is CustomRoles.Viper || (appearanceKiller.GetRoleClass()?.HaveAddRole() is CustomRoles.Viper)) && !info.IsFakeSuicide && !info.IsSuicide)//DesyncImp役職だと死体が溶けないので一瞬だけViperにする。
             {
                 if (AmongUsClient.Instance.AmHost)
@@ -1011,6 +1016,7 @@ public enum CustomRoles
     NiceWorkaholic,
     Jailer,
     BoostLighter,
+    Jizo,
     //DEBUG only Crewmate
     Analyzer,
     //Neutral
@@ -1042,7 +1048,6 @@ public enum CustomRoles
     PavlovDogImprint,
     Moira,
     PoisonedBakery,
-    Monika,
     Suicider,
     PokerFace,
     Ogre,

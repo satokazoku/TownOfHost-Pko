@@ -2,14 +2,15 @@ using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
 using TownOfHost.Modules;
+using TownOfHost.Patches;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
-using TownOfHost.Patches;
+using TownOfHost.Roles.Crewmate;
+using TownOfHost.Roles.Madmate;
 using UnityEngine;
+using static TownOfHost.Modules.SelfVoteManager;
 using static TownOfHost.PlayerCatch;
 using static TownOfHost.Translator;
-using static TownOfHost.Modules.SelfVoteManager;
-using TownOfHost.Roles.Madmate;
 namespace TownOfHost.Roles.Neutral;
 
 public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISelfVoter
@@ -21,7 +22,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
             CustomRoles.JackalHadouHo,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Neutral,
-            52300,
+            552300,
             SetUpOptionItem,
             "jhh",
             "#00b4eb",
@@ -397,6 +398,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
             UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
             return;
         }
+        Jizo.Checkroom(Player.GetPlainShipRoom(), Player);
 
         nowcool = KillCooldown;
         LastCooltime = (int)nowcool;
@@ -716,6 +718,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
             float dot = Vector2.Dot(toTarget, dir);
             if (dot <= 0) continue;
             if ((toTarget - dir * dot).magnitude > 1.3f) continue;
+            Jizo.Checkroom(Player.GetPlainShipRoom(), Player);
             CustomRoleManager.OnCheckMurder(Player, target, target, target, true, deathReason: CustomDeathReason.Evaporation);
             HasHit = true;
             UtilsGameLog.AddGameLog("JackalHadouHo", $"<color=#00b4eb>【波動砲】</color> {UtilsName.GetPlayerColor(Player, true)} ═> {UtilsName.GetPlayerColor(target, true)}");
@@ -739,6 +742,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
             float dot = Vector2.Dot(toTarget, dir);
             if (dot <= 0) continue;
             if ((toTarget - dir * dot).magnitude > 4.0f) continue;
+            Jizo.Checkroom(Player.GetPlainShipRoom(), Player);
             CustomRoleManager.OnCheckMurder(Player, target, target, target, true, deathReason: CustomDeathReason.Evaporation);
             HasHit = true;
             UtilsGameLog.AddGameLog("JackalHadouHo", $"<color=#ff0000>【超波動砲】</color> {UtilsName.GetPlayerColor(Player, true)} ═> {UtilsName.GetPlayerColor(target, true)}");
@@ -1025,7 +1029,7 @@ public sealed class Tama : RoleBase, IKiller
             CustomRoles.Tama,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Neutral,
-            54900,
+            554900,
             SetupOptionItem,
             "tm",
             "#00b4eb",

@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Linq;
 using AmongUs.GameOptions;
-
+using Hazel;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
-using Hazel;
+using TownOfHost.Roles.Crewmate;
 using TownOfHost.Roles.Neutral;
-using System.Linq;
+using UnityEngine;
 
 namespace TownOfHost.Roles.Impostor
 {
@@ -106,6 +106,8 @@ namespace TownOfHost.Roles.Impostor
         public void OnCheckMurderAsKiller(MurderInfo info)
         {
             var Targets = new List<PlayerControl>(PlayerCatch.AllAlivePlayerControls);//.Where(pc => !Player)
+            Jizo.Checkroom(Player.GetPlainShipRoom(), Player);
+
             if (Limit)
             {
                 info.DoKill = false;

@@ -22,7 +22,7 @@ public sealed class MeetingSheriff : RoleBase, ISelfVoter
             CustomRoles.MeetingSheriff,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            32700,
+            432700,
             SetupOptionItem,
             "Ms",
             "#f8cd46",

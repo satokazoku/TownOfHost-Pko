@@ -70,8 +70,6 @@ public sealed class Swooper : RoleBase, IImpostor, IUsePhantomButton
         OptionVentNormallyOnCooldown = BooleanOptionItem.Create(RoleInfo, 12,
             OptionName.SwooperVentNormallyOnCooldown, true, false);
     }
-
-    public float CalculateKillCooldown() => 30f;
     public bool CanUseKillButton() => Player.IsAlive();
     public bool CanUseSabotageButton() => true;
     public bool CanUseImpostorVentButton() => true;

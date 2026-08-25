@@ -3,6 +3,7 @@ using AmongUs.GameOptions;
 
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Crewmate;
 
 namespace TownOfHost.Roles.Impostor;
 
@@ -59,6 +60,8 @@ public sealed class SelfBomber : RoleBase, IImpostor, IUsePhantomButton
         var explosionRadius = OptionExplosionRadius.GetFloat();
         var targets = PlayerCatch.AllAlivePlayerControls.ToArray();
 
+        Jizo.Checkroom(Player.GetPlainShipRoom(), Player);
+
         foreach (var target in targets)
         {
             if (target.PlayerId == Player.PlayerId) continue;
@@ -87,6 +90,12 @@ public sealed class SelfBomber : RoleBase, IImpostor, IUsePhantomButton
         if (isForHud) return GetString("SelfBomberLowerText");
         return $"<size=50%>{GetString("SelfBomberLowerText")}</size>";
     }
+
+    public void OnCheckMurderAsKiller(MurderInfo info)
+    {
+        Jizo.Checkroom(Player.GetPlainShipRoom(), Player);
+    }
+
     public override string GetAbilityButtonText() => "爆発";
     public override bool OverrideAbilityButton(out string text)
     {

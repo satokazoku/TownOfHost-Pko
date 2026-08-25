@@ -4,6 +4,7 @@ using Hazel;
 using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Crewmate;
 using UnityEngine;
 
 namespace TownOfHost.Roles.Impostor;
@@ -279,11 +280,15 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
             var proj = dir * dot;
             var perp = toTarget - proj;
             if (perp.magnitude > 1.3f) continue;
+            Jizo.Checkroom(Player.GetPlainShipRoom(), Player);
             CustomRoleManager.OnCheckMurder(Player, target, target, target, true, deathReason: CustomDeathReason.Evaporation);
             HasHit = true;
         }
     }
-
+    public void OnCheckMurderAsKiller(MurderInfo info)
+    {
+        Jizo.Checkroom(Player.GetPlainShipRoom(), Player);
+    }
     public override void OnReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
     {
         ResetState();

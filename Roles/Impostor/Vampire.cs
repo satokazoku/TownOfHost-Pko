@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 using AmongUs.GameOptions;
-
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Crewmate;
 using TownOfHost.Roles.Neutral;
+using UnityEngine;
 
 namespace TownOfHost.Roles.Impostor
 {
@@ -69,9 +69,11 @@ namespace TownOfHost.Roles.Impostor
             if (!info.CanKill) return; //キル出来ない相手には無効
             var (killer, target) = info.AttemptTuple;
 
-            if (target.Is(CustomRoles.Bait)) return;
-            if (target.Is(CustomRoles.InSender)) return;
-            if (info.IsFakeSuicide) return;
+            if (target.Is(CustomRoles.Bait) || target.Is(CustomRoles.InSender) || info.IsFakeSuicide)
+            {
+                Jizo.Checkroom(Player.GetPlainShipRoom(), Player);
+                return;
+            }
             if (info.CheckHasGuard())
             {
                 info.IsGuard = true;
@@ -81,6 +83,7 @@ namespace TownOfHost.Roles.Impostor
             //誰かに噛まれていなければ登録
             if (!BittenPlayers.ContainsKey(target.PlayerId))
             {
+                Jizo.Checkroom(Player.GetPlainShipRoom(), Player);
                 killer.SetKillCooldown();
                 BittenPlayers.Add(target.PlayerId, 0f);
             }
