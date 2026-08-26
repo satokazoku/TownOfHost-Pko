@@ -1,13 +1,14 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
-using UnityEngine;
-
-using TownOfHost.Roles.Core;
+using System.Linq;
+using HarmonyLib;
+using InnerNet;
 using TownOfHost.Roles.AddOns.Common;
 using TownOfHost.Roles.AddOns.Impostor;
 using TownOfHost.Roles.AddOns.Neutral;
-using HarmonyLib;
+using TownOfHost.Roles.Core;
+using TownOfHost.Roles.Neutral;
+using UnityEngine;
 
 namespace TownOfHost.Modules;
 
@@ -323,6 +324,18 @@ public class MeetingVoteManager
                 votes.TryAdd(vote.VotedFor, vote.NumVotes);
             }
 
+            if (voter.Is(CustomRoleTypes.Impostor) && !voter.Is(CustomRoles.HateKiller))
+            {
+                var VotedFor = PlayerCatch.GetPlayerById(vote.VotedFor);
+                if (VotedFor.Is(CustomRoles.HateKiller))
+                {
+                    HateKiller.AddImpVote();
+                }
+            }
+            if (vote.VotedFor == voter.PlayerId && voter.Is(CustomRoles.HateKiller))
+            {
+                HateKiller.AddSelfVote();
+            }
             if (vote.NumVotes is not 0)
             {
                 if (voter.Is(CustomRoles.Tiebreaker)

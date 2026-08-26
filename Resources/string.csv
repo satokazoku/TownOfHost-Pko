@@ -99,6 +99,7 @@
 "PuppeteerHadouHo","PuppeteerHadouHo","波動砲パペッティア"
 "BeginnerImpostor","Beginner Impostor","ビギナーインポスター"
 "Whiteshark","Great White Shark","ホオジロザメ"
+"HateKiller","Hate Killer","ヘイトキラー"
 "#ImpostorName"
 
 "# マッドメイト系役職"
@@ -503,6 +504,7 @@
 "PuppeteerHadouHoInfo","","敵を操って直線上をなぎ倒せ"
 "BeginnerImpostorInfo","Train hard and grow stronger","鍛錬を積んで強くなろう"
 "WhitesharkInfo","Keep moving and hunt","常に動き、捕食しよう"
+"HateKillerInfo","Suspicion Itself Is a Source of Strength","疑心こそが力となる"
 "#ImpostorInfo"
 
 "# マッドメイト系役職"
@@ -861,7 +863,8 @@
 "MassMurderInfoLong","","ファントムボタンでワンクリックした場所の部屋を死の床にできます\n部屋以外で撫でた場合は何も起こりません\n\n死の床でキルする事によりキルクールが減少します\n\n死の床以外でのキルで設定数キルクールが増加する"
 "PuppeteerHadouHoInfoLong","On phantom button click, the nearest alive player is selected. After the configured delay, that player fires a beam in the direction they face. If the target is in a vent, on a ladder, moving platform, or using a zipline, the request is cancelled. Options: cooldown, delay before firing, self-destruct on miss (puppeteer or target), enable super beam and chance.","ファントムボタンを押すと、最も近い生存プレイヤーに要請を行います。設定した時間経過後、そのプレイヤーの向きに波動砲を発射します。対象がベント・梯子・移動床・ジップライン使用中の場合は要請がキャンセルされます。オプション: ボタンのクールダウン、発射までの待ち時間、空振り時の自爆（パペッティアかターゲット）、超波動砲の有効化と確率。"
 "BeginnerImpostorInfoLong","Beginner Impostor trains by destroying visible dummies with the Phantom ability. Each dummy permanently shortens the kill cooldown. Dummies cannot be reported or targeted by other abilities.","ビギナーインポスターは、全員に見えるダミーをファントム能力で擬似キルして鍛錬するインポスター。ダミーをキルするたび、自身のキルクールが永続的に短縮される。ダミーは通報できず、他の能力の対象にもならない。"
-"WhitesharkInfoLong","If you stand still for a certain amount of time, you'll die.","一定時間止まると死んでしまう。"
+"WhitesharkInfoLong","If you stand still, the suicide timer builds up, and when the suicide timer runs out, you die. \nThe suicide timer does not advance while you are inside a vent. \nThe suicide timer is displayed during the Phantom Button's cooldown.","止まっていると自殺タイマーが溜まり、自殺タイマーがなくなると死んでしまう。\nベントに入っている間は自殺タイマーは進まない。\n自殺タイマーはファントムボタンのクールダウンでで表示。"
+"HateKillerInfoLong","For each vote cast for you during a meeting, Killcool decreases by the set amount for one turn.","会議で自身に投票された票数1票につき、1ターンだけキルクールが設定値だけ減少する。"
 "#ImpostorInfoLong"
 
 "# マッドメイト系役職"
@@ -1903,6 +1906,10 @@
 "EvolverEvolveCooldown","Evolve cooldown","進化のクールタイム"
 "EvolverEatTime","Eating time","捕食を行う時間"
 "EvolverMaxEvolveCount","Max evolve count","最終進化までの回数"
+"HateKillerDecreaseKillCool","A 1-vote reduction in the kill cooldown","1票で短くなるキルクール"
+"HateKillerMinimumKillCool","Minimum Kill cooldown","最低のキルクール"
+"HateKillerCountImpostorVotes","Should we count votes from teammates","仲間の投票も含めるか"
+"HateKillerCountSelfVotes","Should self-votes be counted","自投票を含むか"
 
 "## MadMate Role Setting"
 "MadmateOption","MadMate Options","マッドメイト系役職の設定"
