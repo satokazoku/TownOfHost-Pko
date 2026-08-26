@@ -105,6 +105,7 @@ namespace TownOfHost
         {
             if (!GameStates.IsInTask) return;
 
+            if (seer == null || seer.transform == null) return;
             var seerId = seer.PlayerId;
             var seerIsDead = !seer.IsAlive();
 
@@ -116,7 +117,7 @@ namespace TownOfHost
             {
                 var targetId = arrowInfo.To;
                 var target = PlayerCatch.GetPlayerById(targetId);
-                if (seerIsDead || !target.IsAlive())
+                if (seerIsDead || target == null || target.transform == null || !target.IsAlive())
                 {
                     TargetArrows.Remove(arrowInfo);
                     update = true;
@@ -252,6 +253,7 @@ namespace TownOfHost
         {
             if (!GameStates.IsInTask) return;
 
+            if (seer == null || seer.transform == null) return;
             var seerId = seer.PlayerId;
             var seerIsDead = !seer.IsAlive();
 

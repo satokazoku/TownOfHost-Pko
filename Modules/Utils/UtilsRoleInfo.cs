@@ -116,7 +116,6 @@ namespace TownOfHost
                 roleCommands.Add(CustomRoles.Ghostbuttoner, "Bbu");
                 roleCommands.Add(CustomRoles.GhostSaboteur, "Gsa");
                 roleCommands.Add(CustomRoles.GhostFloodlight, "Gfl");
-                roleCommands.Add(CustomRoles.GhostSaboteur, "Gsa");
                 roleCommands.Add(CustomRoles.GhostNoiseSender, "NiS");
                 roleCommands.Add(CustomRoles.GhostReseter, "Res");
                 roleCommands.Add(CustomRoles.GhostRumour, "Rum");
