@@ -1,4 +1,4 @@
-using AmongUs.GameOptions;
+/*using AmongUs.GameOptions;
 
 using TownOfHost.Roles.Core;
 
@@ -201,3 +201,4 @@ public sealed class SatsumatoImoM : RoleBase
         Player.RpcSetCustomRole(CustomRoles.SatsumatoImoC, log: null);
     }
 }
+*/
