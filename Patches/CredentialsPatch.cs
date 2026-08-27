@@ -215,7 +215,7 @@ namespace TownOfHost
                 fontSize: 2f,
                 alignment: TextAlignmentOptions.Right,
                 setActive: true);
-            credentials.transform.position = new Vector3(2.3419f, 2.29f, -5f);
+            credentials.transform.position = new Vector3(1.07f, 2.8f, -5f);
 #if DEBUG
             if (!GameStates.InGame) credentials.transform.position -= new Vector3(0f, 0.1218f, 0f);
 #endif

@@ -150,8 +150,8 @@ public sealed class Whiteshark : RoleBase, IImpostor, IUsePhantomButton
                     {
                         Last = cooldown;
                         Player.MarkDirtySettings();
+                        Player.RpcResetAbilityCooldown(log: false, Sync: true);
                     }
-                    Player.RpcResetAbilityCooldown(log: false);
                 }
                 return;
             }
@@ -168,16 +168,16 @@ public sealed class Whiteshark : RoleBase, IImpostor, IUsePhantomButton
         {
             stopTimer = 0f;
             isStopped = false;
-        }
-        if (0.25 < Cool)
-        {
-            var cooldown = Cool;
-            if (Last != cooldown)
+            if (0.25 < Cool)
             {
-                Last = cooldown;
-                Player.MarkDirtySettings();
+                var cooldown = Cool;
+                if (Last != cooldown)
+                {
+                    Last = cooldown;
+                    Player.MarkDirtySettings();
+                    Player.RpcResetAbilityCooldown(log: false, Sync: true);
+                }
             }
-            Player.RpcResetAbilityCooldown(log: false);
         }
     }
 

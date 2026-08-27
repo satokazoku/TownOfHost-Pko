@@ -390,6 +390,7 @@ namespace TownOfHost
         Victim,
         StandMaster,
         Villain,
-        Hunter
+        Hunter,
+        Dracula
     }
 }

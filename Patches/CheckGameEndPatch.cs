@@ -186,8 +186,18 @@ namespace TownOfHost
                                 }
                             }
                         }
-                        LastNeutral.CheckAddWin(pc, reason);
+                        bool IsDraculawin;
+                        if (CustomWinnerHolder.WinnerTeam is CustomWinner.Dracula)
+                        {
+                            IsDraculawin = true;
+                        }
+                        else
+                        {
+                            IsDraculawin = false;
+                        }
+                            LastNeutral.CheckAddWin(pc, reason);
                         Amanojaku.CheckWin(pc, reason);
+                        //kenzoku.CheckWin(pc, IsDraculawin);
                     }
                 }
                 if (!lockWinner && CustomWinnerHolder.WinnerTeam is not CustomWinner.Draw)

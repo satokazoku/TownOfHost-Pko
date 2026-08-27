@@ -97,7 +97,7 @@ public sealed class EvilStandMaster : RoleBase, IImpostor, IUsePhantomButton
     public void OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
     {
         AdjustKillCooldown = false;
-        ResetCooldown = false;
+        ResetCooldown = true;
         if (!Player.IsAlive()) return;
 
         var candidates = GetWarpCandidates();
@@ -114,7 +114,7 @@ public sealed class EvilStandMaster : RoleBase, IImpostor, IUsePhantomButton
         }
 
         var target = candidates[IRandom.Instance.Next(candidates.Count)];
-        var pos = Player.GetTruePosition();
+        var pos = Player.transform.position;
 
         target.RpcSnapToForced(pos);
         Logger.Info($"[EvilStandMaster] {target.Data?.GetLogPlayerName()} を {pos} にワープ", "EvilStandMaster");
