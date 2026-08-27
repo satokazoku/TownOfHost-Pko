@@ -952,9 +952,6 @@ public enum CustomRoles
     Sage,
     NiceTrapper,
     Moving,
-    SatsumatoImo,
-    SatsumatoImoC,
-    SatsumatoImoM,
     NiceTeleporter,
     NiceRedRidingHood,
     MagicalGirl,
@@ -1019,6 +1016,9 @@ public enum CustomRoles
     Jizo,
     //DEBUG only Crewmate
     Analyzer,
+    SatsumatoImo,
+    SatsumatoImoC,
+    SatsumatoImoM,
     //Neutral
     Arsonist,
     Egoist,
@@ -1100,6 +1100,7 @@ public enum CustomRoles
     UnHappyJester,
     Hunter,
     Dracula,
+    mermaid,
     //DEBUG only Neutral.
     //HideAndSeek
     HASFox,

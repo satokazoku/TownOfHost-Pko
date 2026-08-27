@@ -154,8 +154,8 @@ namespace TownOfHost
             return check || seer.GetCustomRole() switch
             {
                 // IKillFlashSeeable未適用役職はここに書く
-                _ => (SatsumatoImo.UsesMadmateCommonSettings(seer) && Options.MadmateCanSeeKillFlash.GetBool())
-                || (seer.Is(CustomRoles.Seeing) && (!IsActive(SystemTypes.Comms) || Seeing.OptionCanSeeActiveComms.GetBool()))
+                _ => 
+                ((seer.Is(CustomRoles.Seeing) && (!IsActive(SystemTypes.Comms) || Seeing.OptionCanSeeActiveComms.GetBool())))
             };
         }
         public static bool NowKillFlash = false;
@@ -940,17 +940,6 @@ namespace TownOfHost
                 {
                     if (roleClass is Balancer balancer) balancer.BalancerAfterMeetingTasks();
                 }
-
-                // さつまといもの処理だよ！
-                foreach (var pc in PlayerCatch.AllPlayerControls)
-                {
-                    var roleClass = pc.GetRoleClass();
-                    if (roleClass == null) continue;
-                    if (!pc.Is(CustomRoles.SatsumatoImoC) && !pc.Is(CustomRoles.SatsumatoImoM)) continue;
-                    roleClass.AfterMeetingTasks();
-                    roleClass.ChangeColor();
-                }
-
                 GameStates.ExiledAnimate = false;
             }
             else

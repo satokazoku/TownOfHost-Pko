@@ -30,7 +30,6 @@ public static class HudOverrideSystemTypeUpdateSystemPatch
         var tags = (HqHudSystemType.Tags)(amount & HqHudSystemType.TagMask);
         var playerRole = player.GetRoleClass();
         var isMadmate =
-            SatsumatoImo.UsesMadmateCommonSettings(player) ||
             // マッド属性化時に削除
             (playerRole is SchrodingerCat schrodingerCat && schrodingerCat.AmMadmate);
 

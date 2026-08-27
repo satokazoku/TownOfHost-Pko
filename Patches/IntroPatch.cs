@@ -485,17 +485,6 @@ namespace TownOfHost
                         NameColorManager.RemoveAll(pc.PlayerId);
                         PlayerCatch.AllPlayerControls.DoIf(pl => pl != pc, pl => NameColorManager.Add(pc.PlayerId, pl.PlayerId, Main.PlayerColors[pl.PlayerId].ColorCode()));
                     }
-                    //マッドメイトの最初からの内通
-                    if (SatsumatoImo.CanSeeImpostorNameColor(role))
-                    {
-                        if (PlayerCatch.AllPlayerFirstTypes.Where(x => x.Value is CustomRoleTypes.Impostor).Any())
-                            foreach (var imp in PlayerCatch.AllPlayerFirstTypes.Where(x => x.Value is CustomRoleTypes.Impostor))
-                            {
-                                var iste = PlayerState.GetByPlayerId(imp.Key);
-                                if (iste.TargetColorData.ContainsKey(pc.PlayerId)) NameColorManager.Remove(pc.PlayerId, imp.Key);
-                                NameColorManager.Add(pc.PlayerId, imp.Key, "ff1919");
-                            }
-                    }
                 }
 
                 // そのままだとホストのみDesyncImpostorの暗室内での視界がクルー仕様になってしまう

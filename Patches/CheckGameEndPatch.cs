@@ -88,6 +88,7 @@ namespace TownOfHost
             var lockDrawWinner = CustomWinnerHolder.WinnerTeam == CustomWinner.Draw;
             var lockWinner = lockSabotageWinner || lockDrawWinner;
 
+            mermaid.CheckCanwin(ref reason);
             if (!lockWinner)
             {
                 Zombie.TryTakeOverCrewWin(ref reason);

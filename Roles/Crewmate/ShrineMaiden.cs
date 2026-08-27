@@ -204,9 +204,6 @@ public sealed class ShrineMaiden : RoleBase, ISelfVoter
             }
         }
         var madmate = Options.MadTellOpt().GetCustomRoleTypes();
-        //マッドならimpにする
-        if (SatsumatoImo.UsesMadmateCommonSettings(role1) && t1 == CustomRoleTypes.Madmate) t1 = madmate is CustomRoleTypes.Madmate ? CustomRoleTypes.Impostor : madmate;
-        if (SatsumatoImo.UsesMadmateCommonSettings(role2) && t2 == CustomRoleTypes.Madmate) t2 = madmate is CustomRoleTypes.Madmate ? CustomRoleTypes.Impostor : madmate;
 
         if (t1 == t2)
         {

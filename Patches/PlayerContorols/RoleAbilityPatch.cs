@@ -514,8 +514,7 @@ namespace TownOfHost
                 if (OldOnEnterVent.TryAdd(__instance.myPlayer.PlayerId, true)) OldOnEnterVent[__instance.myPlayer.PlayerId] = true;
 
                 //マッドでベント移動できない設定なら矢印を消す
-                if ((!roleClass?.CanVentMoving(__instance, id) ?? false) ||
-                    (SatsumatoImo.UsesMadmateCommonSettings(user) && !Options.MadmateCanMovedByVent.GetBool()))
+                if ((!roleClass?.CanVentMoving(__instance, id) ?? false))
                 {
                     if (!MadBool && user.PlayerId == PlayerControl.LocalPlayer.PlayerId)
                         MadBool = true;

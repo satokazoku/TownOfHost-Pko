@@ -133,14 +133,6 @@ public sealed class Dracula : RoleBase, ILNKiller, IUsePhantomButton
 
         var target = info.AppearanceTarget;
 
-        SuicideTimer = OptionSuicideTimer.GetFloat();
-        Main.AllPlayerKillCooldown[Player.PlayerId] = OptionKillCooldown.GetFloat();
-
-        Player.MarkDirtySettings();
-        Player.RpcResetAbilityCooldown();
-        Player.SyncSettings();
-        Player.SetKillCooldown(delay: true);
-
         int diechance = Random.Range(0, 100);
         int kenzokuchance = Random.Range(0, 100);
         int bonus = targetDieChanceBonus.GetValueOrDefault(target.PlayerId, 0);
@@ -153,6 +145,13 @@ public sealed class Dracula : RoleBase, ILNKiller, IUsePhantomButton
                 return;
             }
         }
+        SuicideTimer = OptionSuicideTimer.GetFloat();
+        Main.AllPlayerKillCooldown[Player.PlayerId] = OptionKillCooldown.GetFloat();
+
+        Player.MarkDirtySettings();
+        Player.RpcResetAbilityCooldown();
+        Player.SyncSettings();
+        Player.SetKillCooldown(delay: true);
         if (diechance < OptionDieChance.GetInt() + bonus && Player.IsAlive())
         {
             kenzokuchance = 101;

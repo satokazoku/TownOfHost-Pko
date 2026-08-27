@@ -85,7 +85,7 @@ namespace TownOfHost
             if (text == roleText && !ch)//アドオンの上書きチェック
                 (roleColor, roleText) = GetTrueRoleNameData(seen.PlayerId, addon);
             // 一応ここでも君臨者をみることができなくする
-            if (seen.Is(CustomRoles.King) && (seer.Is(CustomRoles.SatsumatoImoC) || seer.Is(CustomRoles.SatsumatoImoM)))
+            if (seen.Is(CustomRoles.King) && seer.Is(CustomRoles.mermaid))
                 enabled = false;
 
             return enabled ? ColorString(roleColor, roleText) : "";

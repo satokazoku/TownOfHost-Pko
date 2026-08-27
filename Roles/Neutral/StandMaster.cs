@@ -360,9 +360,35 @@ public sealed class StandMaster : RoleBase, ILNKiller, IUsePhantomButton
     }
 
     bool skipSwapForThisMeeting;
+    internal static bool IsSpecialMeetingNoSwap()
+    {
+        if (Roles.Crewmate.Balancer.Id != byte.MaxValue
+            || (Roles.Crewmate.Balancer.target1 != byte.MaxValue
+                && Roles.Crewmate.Balancer.target2 != byte.MaxValue))
+        {
+            return true;
+        }
+
+        if (Roles.Crewmate.Nimrod.IsExecutionMeeting())
+        {
+            return true;
+        }
+
+        var assassinState = Roles.Impostor.Assassin.assassin?.NowState;
+        if (assassinState is Roles.Impostor.Assassin.AssassinMeeting.Guessing
+            or Roles.Impostor.Assassin.AssassinMeeting.Collected
+            or Roles.Impostor.Assassin.AssassinMeeting.DieWait)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     public override void OnStartMeeting()
     {
-        skipSwapForThisMeeting = SatsumatoImo.IsSpecialMeetingNoSwap();
+        //さつまリストラしたのでスタンドマスター側に直接用意
+        skipSwapForThisMeeting = IsSpecialMeetingNoSwap();
         if (!skipSwapForThisMeeting) standSummoned = false;
     }
 

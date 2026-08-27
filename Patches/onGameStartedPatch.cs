@@ -530,13 +530,6 @@ namespace TownOfHost
                 if (Amanojaku.AssingDay.GetInt() == 0) AmanojakuAssing.AssignAddOnsFromList();
                 Faction.AssingFaction();
 
-                // さつまといもの処理
-                foreach (var state in PlayerState.AllPlayerStates.Values)
-                {
-                    if (state.MainRole != CustomRoles.SatsumatoImo) continue;
-                    state.SetMainRole(rand.Next(0, 2) == 0 ? CustomRoles.SatsumatoImoC : CustomRoles.SatsumatoImoM);
-                }
-
                 foreach (var pair in PlayerState.AllPlayerStates)
                 {
                     ExtendedRpc.RpcSetCustomRole(pair.Key, pair.Value.MainRole);

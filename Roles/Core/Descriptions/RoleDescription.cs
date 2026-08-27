@@ -68,7 +68,7 @@ public abstract class RoleDescription
             else if (RoleInfo.RoleName is CustomRoles.Braid) UtilsShowOption.ShowChildrenSettings(Options.CustomRoleSpawnChances[CustomRoles.Driver], ref sb);
             else if (RoleInfo.RoleName is CustomRoles.Altair) UtilsShowOption.ShowChildrenSettings(Options.CustomRoleSpawnChances[CustomRoles.Vega], ref sb);
             else if (RoleInfo.RoleName is CustomRoles.Nue) UtilsShowOption.ShowChildrenSettings(Options.CustomRoleSpawnChances[CustomRoles.Nue], ref sb);
-            var showsMadmateCommonSettings = RoleInfo.RoleName is not CustomRoles.SatsumatoImoM;
+            var showsMadmateCommonSettings = true;
             if (RoleInfo.CustomRoleType == CustomRoleTypes.Madmate && showsMadmateCommonSettings)
             {
                 string rule = "┣ ";

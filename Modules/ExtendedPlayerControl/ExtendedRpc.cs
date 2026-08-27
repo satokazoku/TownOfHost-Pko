@@ -48,18 +48,6 @@ namespace TownOfHost
                 else if (log == null) UtilsGameLog.LastLogRole[player.PlayerId] = $"<size=40%>{UtilsGameLog.LastLogRole[player.PlayerId].RemoveSizeTags()}</size><b>=> " + Utils.ColorString(UtilsRoleText.GetRoleColor(role), GetString($"{role}")) + "</b>";
 
                 if (!SuddenDeathMode.NowSuddenDeathMode) NameColorManager.RemoveAll(player.PlayerId);
-
-                //マッドメイトの最初からの内通
-                if (SatsumatoImo.CanSeeImpostorNameColor(role))
-                {
-                    if (PlayerCatch.AllPlayerFirstTypes.Any(x => x.Value is CustomRoleTypes.Impostor))
-                        foreach (var imp in PlayerCatch.AllPlayerFirstTypes.Where(x => x.Value is CustomRoleTypes.Impostor))
-                        {
-                            var iste = PlayerState.GetByPlayerId(imp.Key);
-                            if (iste.TargetColorData.ContainsKey(player.PlayerId)) NameColorManager.Remove(player.PlayerId, imp.Key);
-                            NameColorManager.Add(player.PlayerId, imp.Key, "ff1919");
-                        }
-                }
             }
             else if (role >= CustomRoles.NotAssigned)   //500:NoSubRole 501~:SubRole
             {

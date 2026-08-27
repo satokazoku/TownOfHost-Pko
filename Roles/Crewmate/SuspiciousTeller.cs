@@ -36,7 +36,6 @@ public sealed class SuspiciousTeller : RoleBase, ISelfVoter
         CustomRoles.HASTroll,
         CustomRoles.MMArcher,
         CustomRoles.TaskPlayerB,
-        CustomRoles.SatsumatoImo,
         CustomRoles.Apprentice,
         CustomRoles.Walker,
         CustomRoles.Merlin,

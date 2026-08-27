@@ -1567,7 +1567,7 @@ public static class RoleGuideButtonPatch
         else if (role is CustomRoles.Altair && Options.CustomRoleSpawnChances.TryGetValue(CustomRoles.Vega, out option))
             UtilsShowOption.ShowChildrenSettings(option, ref builder);
 
-        if (info?.CustomRoleType == CustomRoleTypes.Madmate && role is not CustomRoles.SatsumatoImoM)
+        if (info?.CustomRoleType == CustomRoleTypes.Madmate)
         {
             builder.Append($"{Options.MadMateOption.GetName()}: {Options.MadMateOption.GetString()}\n");
             UtilsShowOption.ShowChildrenSettings(Options.MadMateOption, ref builder);
