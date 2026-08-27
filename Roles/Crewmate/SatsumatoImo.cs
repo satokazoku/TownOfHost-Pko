@@ -201,4 +201,8 @@ public sealed class SatsumatoImoM : RoleBase
         Player.RpcSetCustomRole(CustomRoles.SatsumatoImoC, log: null);
     }
 }
+<<<<<<< HEAD
 */
+=======
+*/
+>>>>>>> 0fe585ea4101333bdaf463e6c71c14b32af9dcc4
