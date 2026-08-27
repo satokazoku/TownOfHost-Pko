@@ -162,7 +162,7 @@ public sealed class Victim : RoleBase, IKiller, IAdditionalWinner
             .FirstOrDefault();
         if (target == null) return;
 
-        var range = NormalGameOptionsV10.KillDistances[Mathf.Clamp(Main.NormalOptions.KillDistance, 0, 2)];
+        var range = NormalGameOptionsV11.KillDistances[Mathf.Clamp(Main.NormalOptions.KillDistance, 0, 2)];
         if (Vector2.Distance(Player.GetTruePosition(), target.GetTruePosition()) > range) return;
 
         forcedKillArmed = false;

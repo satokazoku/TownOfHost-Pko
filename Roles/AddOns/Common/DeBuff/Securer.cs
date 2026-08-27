@@ -53,8 +53,7 @@ namespace TownOfHost.Roles.AddOns.Common
                 or CustomRoles.JackalMafia
                 or CustomRoles.JackalAlien
                 or CustomRoles.JackalHadouHo
-                or CustomRoles.JackalWolf
-                or CustomRoles.JackalSeer;
+                or CustomRoles.JackalWolf;
 
         public static bool CanBeAssigned(PlayerControl player)
         {
