@@ -1910,7 +1910,7 @@
 "EvolverMaxEvolveCount","Max evolve count","最終進化までの回数"
 "HateKillerDecreaseKillCool","A 1-vote reduction in the kill cooldown","1票で短くなるキルクール"
 "HateKillerMinimumKillCool","Minimum Kill cooldown","最低のキルクール"
-"HateKillerCountImpostorVotes","Should we count votes from teammates","仲間の投票も含めるか"
+"HateKillerCountImpostorVotes","Should we count votes from teammates","自分以外のインポスターの投票も含めるか"
 "HateKillerCountSelfVotes","Should self-votes be counted","自投票を含むか"
 
 "## MadMate Role Setting"
