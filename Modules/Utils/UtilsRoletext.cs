@@ -87,7 +87,9 @@ namespace TownOfHost
             // 一応ここでも君臨者をみることができなくする
             if (seen.Is(CustomRoles.King) && seer.Is(CustomRoles.mermaid))
                 enabled = false;
-
+            //独裁者も。
+            if (seen.Is(CustomRoles.Autocrat) && seer.Is(CustomRoles.mermaid))
+                enabled = false;
             return enabled ? ColorString(roleColor, roleText) : "";
         }
         /// <summary>
