@@ -35,7 +35,7 @@ public sealed class Madpsycho : RoleBase
         : base(
             RoleInfo,
             player,
-            () => HasTask.True
+            () => HasTask.ForRecompute
         )
     {
     }
