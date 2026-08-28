@@ -499,6 +499,7 @@ namespace TownOfHost
         public static OptionItem OptionCommandNumberDNumber;
         public static OptionItem OptionCommand8ball;
         public static OptionItem OptionCommandPko;
+        public static OptionItem OptionCommandPkoNotUseInGame;
         public static OptionItem OptionCommandRename;
         public static OptionItem OptionCommandRule;
         public static OptionItem OptionCommandLastresult;
@@ -1318,6 +1319,12 @@ namespace TownOfHost
                 .SetParent(OptionCommandSetting)
                 .SetColorcode("#00c1ff")
                 .SetOptionName(() => "/pko - ぴけおAIとチャットができます");
+
+            OptionCommandPkoNotUseInGame = BooleanOptionItem.Create(1_603_190, "DisableCommandPkoNotUseInGame", false, TabGroup.MainSettings, true)
+                .SetParent(OptionCommandPko, invertParentValueForDisplay: true)
+                .SetEnabled(() => !OptionCommandRename.GetBool())
+                .SetColorcode("#00c1ff")
+                .SetOptionName(() => "試合中のみ使用不可");
 
             OptionCommandRename = BooleanOptionItem.Create(1_601_200, "DisableCommandRename", false, TabGroup.MainSettings, true)
                 .SetParent(OptionCommandSetting)
