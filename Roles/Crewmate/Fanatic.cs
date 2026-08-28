@@ -447,4 +447,38 @@ public sealed class Fanatic : RoleBase, IKillFlashSeeable, IDeathReasonSeeable
 
         return result;
     }
+    public bool UpdateReactorSystem(ReactorSystemType reactorSystem, byte amount)
+    {
+        return false;
+    }
+
+    public bool UpdateHeliSabotageSystem(HeliSabotageSystem heliSabotageSystem, byte amount)
+    {
+        return false;
+    }
+
+    public bool UpdateLifeSuppSystem(LifeSuppSystemType lifeSuppSystem, byte amount)
+    {
+        return false;
+    }
+
+    public bool UpdateHudOverrideSystem(HudOverrideSystemType hudOverrideSystem, byte amount)
+    {
+        return false;
+    }
+
+    public bool UpdateHqHudSystem(HqHudSystemType hqHudSystemType, byte amount)
+    {
+        return false;
+    }
+
+    public bool UpdateSwitchSystem(SwitchSystem switchSystem, byte amount)
+    {
+        return true;
+    }
+
+    public bool UpdateDoorsSystem(DoorsSystemType doorsSystem, byte amount)
+    {
+        return true;
+    }
 }
