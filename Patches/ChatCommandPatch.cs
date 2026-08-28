@@ -2511,9 +2511,14 @@ namespace TownOfHost
                     break;
                 case "/pko":
                     canceled = true;
-                    if (Options.OptionCommandPko.GetBool())
+                    if (Options.OptionCommandPko.GetBool() )
                     {
                         TownOfHost.Utils.SendMessage("<color=#ff0000>現在このコマンドはホストによって無効化されています。</color>", player.PlayerId);
+                        break;
+                    }
+                    if (Options.OptionCommandPkoNotUseInGame.GetBool() && GameStates.IsInGame)
+                    {
+                        TownOfHost.Utils.SendMessage("<color=#ff0000>現在このコマンドはホストによって試合中の使用を無効化されています。</color>", player.PlayerId);
                         break;
                     }
                     string userMsg = string.Join(" ", args.Skip(1));
