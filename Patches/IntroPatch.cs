@@ -369,9 +369,13 @@ namespace TownOfHost
                         RoleManager.Instance.SetRole(pc, RoleTypes.Impostor);
                         yourTeam.Add(pc);
                     }
-                    if (pc.Is(CustomRoles.OneWolf))
+                    else if (pc.Is(CustomRoles.OneWolf))
                     {
                         yourTeam.Remove(pc);
+                    }
+                    else if (pc.Is(CustomRoleTypes.Impostor) && !yourTeam.Contains(pc))
+                    {
+                        yourTeam.Add(pc);
                     }
                 }
                 if (PlayerControl.LocalPlayer.Is(CustomRoles.OneWolf))

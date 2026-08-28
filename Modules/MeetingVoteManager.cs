@@ -258,7 +258,7 @@ public class MeetingVoteManager
                 sender.Write(result.OverruleNonce);
                 sender.EndRpc();
                 sender.SendMessage();
-            }//裁判官のばしーんができない...
+            }
             meetingHud.VotingComplete(states.ToArray(), null, true, false, 0);
         }
         if (result.Exiled != null)
@@ -271,6 +271,8 @@ public class MeetingVoteManager
             sender.Write((int)RPC.ModSystem.SyncVoteResult);
             sender.Write(result.Exiled?.PlayerId ?? byte.MaxValue);
             sender.Write(result.IsTie);
+            sender.Write(result.OverrideExiled);
+            sender.Write(result.OverruleNonce);
             sender.Write(resulttext);
             AmongUsClient.Instance.FinishRpcImmediately(sender);
         }
@@ -615,10 +617,13 @@ public class MeetingVoteManager
         /// </summary>
         /// <param name="exileId"></param>
         /// <param name="Istie"></param>
-        public VoteResult(byte exileId, bool Istie)
+        public VoteResult(byte exileId, bool Istie, byte overrideexilid, ushort overrulenonce)
         {
             this.Exiled = exileId is byte.MaxValue ? null : PlayerCatch.GetPlayerInfoById(exileId);
             this.IsTie = Istie;
+            this.OverrideExiled = overrideexilid;
+            this.OverruleNonce = overrulenonce;
+            Logger.Info($"{this.Exiled} - {this.IsTie} - {this.OverrideExiled}", "VoteResult");
         }
     }
 

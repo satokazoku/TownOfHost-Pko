@@ -120,6 +120,7 @@ public static class MeetingHudPatch
         public static ushort OverruleNonce;
         public static bool Prefix(MeetingHud __instance, [HarmonyArgument(0)] PlayerId judgePlayerId /* 投票した人 */ , [HarmonyArgument(1)] PlayerId targetPlayerId, [HarmonyArgument(2)] ushort overruleNonce)
         {
+            if (!AmongUsClient.Instance.AmHost) return true;
             Logger.Info($"{judgePlayerId} => {targetPlayerId} , {overruleNonce}", "SetJudge");
             var voter = PlayerCatch.GetPlayerById(judgePlayerId);
             var votefor = PlayerCatch.GetPlayerById(targetPlayerId);
@@ -631,14 +632,12 @@ public static class MeetingHudPatch
     {
         public static void Postfix(MeetingHud __instance)
         {
-            if (AmongUsClient.Instance.AmHost is false) return;
             var result = AntiBlackout.voteresult;
             if (result.HasValue is false) return;
 
             if (result.Value.OverrideExiled != byte.MaxValue)
             {
                 bool anotherJudgeBeatYouToIt = false;
-                PlayerId playerId = result.Value.Exiled.PlayerId;
                 JudgeRole judgeRole = PlayerControl.LocalPlayer.Data.Role as JudgeRole;
                 if (judgeRole && judgeRole.HasAlreadyOverruledThisMeeting)
                 {

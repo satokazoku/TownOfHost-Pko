@@ -2,6 +2,7 @@ using AmongUs.Data;
 using AmongUs.GameOptions;
 using HarmonyLib;
 using TownOfHost.Modules;
+using TownOfHost.Roles.AddOns.Common;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Impostor;
 using TownOfHost.Roles.Neutral;
@@ -287,6 +288,7 @@ namespace TownOfHost
                 {
                     if (SecondBegin)
                     {
+                        init.wasOverruled = result.Value.OverrideExiled != byte.MaxValue;
                         __instance.completeString = string.Format(Translator.GetString(StringNames.ExileTextNonConfirm), result.Value.Exiled.GetLogPlayerName());
                         SecondBegin = false;
                         return true;
@@ -300,6 +302,8 @@ namespace TownOfHost
                     return false;
                 }
             }
+            if (result.HasValue && result.Value.OverrideExiled == byte.MaxValue)
+                init.wasOverruled = false;
             return true;
         }
         public static void Postfix(ExileController __instance)
@@ -322,6 +326,10 @@ namespace TownOfHost
                 else if (result.Value.Exiled.Object?.GetRoleClass() is Assassin && Assassin.NowUse)
                 {
                     __instance.completeString = MeetingVoteManager.Voteresult + "<size=0>";
+                }
+                else if (result.Value.OverrideExiled == byte.MaxValue)
+                {
+                    __instance.completeString = string.Format(Translator.GetString(StringNames.ExileTextNonConfirm), result.Value.Exiled.GetLogPlayerName());
                 }
             }
             SecondBegin = false;
