@@ -42,7 +42,7 @@ public sealed class MadSnitch : RoleBase, IKillFlashSeeable, IDeathReasonSeeable
     private static OptionItem OptionCanVent;
     private static OptionItem OptionCanAlsoBeExposedToImpostor;
     /// <summary>能力発動タスク数</summary>
-    private static OptionItem OptionTaskTrigger;
+    public static OptionItem OptionTaskTrigger;
     private static OverrideTasksData Tasks;
     enum OptionName
     {
@@ -52,7 +52,7 @@ public sealed class MadSnitch : RoleBase, IKillFlashSeeable, IDeathReasonSeeable
     private static bool canSeeKillFlash;
     private static bool canSeeDeathReason;
     private static bool canAlsoBeExposedToImpostor;
-    private static int TaskTrigger;
+    public  static int TaskTrigger;
 
     public static void SetupOptionItem()
     {

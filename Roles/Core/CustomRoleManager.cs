@@ -1014,11 +1014,9 @@ public enum CustomRoles
     Jailer,
     BoostLighter,
     Jizo,
+    Fanatic,
     //DEBUG only Crewmate
     Analyzer,
-    SatsumatoImo,
-    SatsumatoImoC,
-    SatsumatoImoM,
     //Neutral
     Arsonist,
     Egoist,
