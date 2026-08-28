@@ -474,7 +474,7 @@ public sealed class Fanatic : RoleBase, IKillFlashSeeable, IDeathReasonSeeable
 
     public bool UpdateSwitchSystem(SwitchSystem switchSystem, byte amount)
     {
-        return true;
+        return false;
     }
 
     public bool UpdateDoorsSystem(DoorsSystemType doorsSystem, byte amount)
