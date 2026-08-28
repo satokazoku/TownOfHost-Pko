@@ -100,7 +100,8 @@ public sealed class Judge : RoleBase
             CustomRoleTypes.Crewmate => role is CustomRoles.WolfBoy,
             _ => false
         };
-    }/*死んだら誤爆にするか悩む。
+    }
+    /*死んだら誤爆にするか悩む。
     public override bool VotingResults(ref NetworkedPlayerInfo Exiled, ref bool IsTie, Dictionary<byte, int> vote, byte[] mostVotedPlayers, bool ClearAndExile)
     {
         if (Exiled is not null)
