@@ -391,6 +391,22 @@ namespace TownOfHost
             {
                 switch (args[0])
                 {
+                    case "/news":
+                        canceled = true;
+                        {
+                            if (ModNewsHistory.AllModNews.Count < 1) ModNewsHistory.Init();
+                            var latest = ModNewsHistory.AllModNews.OrderByDescending(n => DateTime.Parse(n.Date)).FirstOrDefault();
+                            if (latest == null)
+                            {
+                                SendMessage("ニュースがまだありません！", PlayerControl.LocalPlayer.PlayerId);
+                                break;
+                            }
+                            SendMessage(
+                                $"<size=90%>{latest.SubTitle}\n<b>{latest.Title}</b>\n\n{latest.Text}</size>",
+                                PlayerControl.LocalPlayer.PlayerId,
+                                "<color=#FF9631>📰 最新アップデート情報</color>");
+                        }
+                        break;
                     case "/kickprev":
                     case "/kp":
                         canceled = true;
@@ -2208,6 +2224,22 @@ namespace TownOfHost
             canceled = true;
             switch (args[0])
             {
+                case "/news":
+                    canceled = true;
+                    {
+                        if (ModNewsHistory.AllModNews.Count < 1) ModNewsHistory.Init();
+                        var latest = ModNewsHistory.AllModNews.OrderByDescending(n => DateTime.Parse(n.Date)).FirstOrDefault();
+                        if (latest == null)
+                        {
+                            SendMessage("ニュースがまだありません！", player.PlayerId);
+                            break;
+                        }
+                        SendMessage(
+                            $"<size=90%>{latest.SubTitle}\n<b>{latest.Title}</b>\n\n{latest.Text}</size>",
+                            player.PlayerId,
+                            "<color=#FF9631>📰 最新アップデート情報</color>");
+                    }
+                    break;
                 case "/revive":
                 case "/rev":
                     ExecuteReviveCommand(player, args);

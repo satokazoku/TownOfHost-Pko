@@ -3397,6 +3397,7 @@
 "Command.pko","You can chat with Pikeo AI.","ぴけおAIとチャットができます"
 "Command.8ball","8ball","8ball"
 "Command.rule","You can view the rules.","ルールを表示"
+"Command.news","Show the latest news","最新バージョンのニュースを表示"
 "Command.global","Global","グローバルチャットを送信"
 "Command.globalchat","globalchat","グローバルチャットを表示・非表示"
 "Command.globalconnect","globalconnect","グローバルチャットの接続ID表示/相手IDを入力して接続"

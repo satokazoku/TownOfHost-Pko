@@ -382,6 +382,7 @@ namespace TownOfHost
                 text += $"\n/cmd /rename(r) - {GetString("Command.rename")}";
             if (Show(Options.OptionCommandRule))
                 text += $"\n/cmd /rule(rl) - {GetString("Command.rule")}";
+                text += $"\n/cmd /news - {GetString("Command.news")}";
 
             //条件付きコマンド（制限対象外
             if (ShouldShowGuesserCommand())

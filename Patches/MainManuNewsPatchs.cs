@@ -751,6 +751,19 @@ public class ModNewsHistory
                 };
                 AllModNews.Add(news);
             }
+            {
+                var news = new ModNews
+                {
+                    Number = 100103,
+                    Title = "役職いっぱい追加されたらしい",
+                    SubTitle = "<color=#FF9631>●TOH-Pko v5.34.22.97</color>",
+                    ShortTitle = "<color=#FF9631>●TOH-Pko v5.34.22.97</color>",
+                    Text = "★バグ修正★\r\n・投票バグの修正\r\n・フリーターのアドオンが見えるバグの修正\r\n・スウーパーのキルクールが必ず30秒になるバグを修正\r\n・イビルスタンドマスターが壁の中に呼び出してしまうバグを修正\r\n・一部役職がサボタージュ終了時追加勝利できないバグを修正\r\n\r\n★追加要素★\r\n・新役職：地蔵を追加\r\n・新役職：ホオジロザメを追加\r\n・新役職：ヘイトキラーを追加\r\n・新役職：マーメイドを追加\r\n・新役職：盲信者を追加\r\n・禁止コマンドのpkoのところに試合中のみ禁止というオプションを追加\r\n\r\n★仕様変更★\r\n\r\n★その他★\r\n・スラッガー完全リストラ\r\n・ジャッカルシーア完全リストラ\r\n・一旦イビルスタンドマスターリストラ\r\n・さつまといもリストラ\r\n"
+                    ,
+                    Date = "2026-8-28"
+                };
+                AllModNews.Add(news);
+            }
             AnnouncementPopUp.UpdateState = AnnouncementPopUp.AnnounceState.NotStarted;
         }
     }
