@@ -13,13 +13,13 @@ using static UnityEngine.GraphicsBuffer;
 
 namespace TownOfHost.Roles.Neutral;
 
-public sealed class mermaid : RoleBase, ILNKiller, ISchrodingerCatOwner, IAdditionalWinner
+public sealed class Mermaid : RoleBase, ILNKiller, ISchrodingerCatOwner, IAdditionalWinner
 {
     public static readonly SimpleRoleInfo RoleInfo =
         SimpleRoleInfo.Create(
-            typeof(mermaid),
-            player => new mermaid(player),
-            CustomRoles.mermaid,
+            typeof(Mermaid),
+            player => new Mermaid(player),
+            CustomRoles.Mermaid,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Neutral,
             56600,
@@ -29,12 +29,12 @@ public sealed class mermaid : RoleBase, ILNKiller, ISchrodingerCatOwner, IAdditi
             (2, 0),
             true,
             countType: CountTypes.Crew,
-            assignInfo: new RoleAssignInfo(CustomRoles.mermaid, CustomRoleTypes.Neutral)
+            assignInfo: new RoleAssignInfo(CustomRoles.Mermaid, CustomRoleTypes.Neutral)
             {
                 AssignCountRule = new(1, 1, 1)
             }
         );
-    public mermaid(PlayerControl player)
+    public Mermaid(PlayerControl player)
     : base(
         RoleInfo,
         player
@@ -63,10 +63,10 @@ public sealed class mermaid : RoleBase, ILNKiller, ISchrodingerCatOwner, IAdditi
     enum OptionName
     {
         CountKillerAddWin,
-        mermaidChangingChats,
-        mermaidNotifyChange,
-        mermaidLockMode,
-        mermaidNotify
+        MermaidChangingChats,
+        MermaidNotifyChange,
+        MermaidLockMode,
+        MermaidNotify
     }
     private static float KillCooldown;
     private static void SetupOptionItem()
@@ -75,11 +75,11 @@ public sealed class mermaid : RoleBase, ILNKiller, ISchrodingerCatOwner, IAdditi
 
         OptionKillCooldown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.KillCooldown, new(0f, 180f, 0.5f), 40f, false)
             .SetValueFormat(OptionFormat.Seconds);
-        OptionChangingChats = IntegerOptionItem.Create(RoleInfo, 11, OptionName.mermaidChangingChats, new(1, 999, 1), 35, false)
+        OptionChangingChats = IntegerOptionItem.Create(RoleInfo, 11, OptionName.MermaidChangingChats, new(1, 999, 1), 35, false)
             .SetValueFormat(OptionFormat.Times);
-        OptionNotifyChange = BooleanOptionItem.Create(RoleInfo, 12, OptionName.mermaidNotifyChange, false, false);
-        OptionLockMode = BooleanOptionItem.Create(RoleInfo, 13, OptionName.mermaidLockMode, true, false);
-        OptionNotify = BooleanOptionItem.Create(RoleInfo, 14, OptionName.mermaidNotify, true, false);
+        OptionNotifyChange = BooleanOptionItem.Create(RoleInfo, 12, OptionName.MermaidNotifyChange, false, false);
+        OptionLockMode = BooleanOptionItem.Create(RoleInfo, 13, OptionName.MermaidLockMode, true, false);
+        OptionNotify = BooleanOptionItem.Create(RoleInfo, 14, OptionName.MermaidNotify, true, false);
         OptionAddWin = BooleanOptionItem.Create(RoleInfo, 15, OptionName.CountKillerAddWin, true, false);
 
         RoleAddAddons.Create(RoleInfo, 16);
@@ -167,10 +167,10 @@ public sealed class mermaid : RoleBase, ILNKiller, ISchrodingerCatOwner, IAdditi
             foreach (var pc in AllPlayerControls)
             {
                 if (pc == null || !pc.IsAlive()) continue;
-                if (pc.GetRoleClass() is not mermaid mermaid) continue;
-                if (!CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.mermaid, pc.PlayerId, true)) continue;
+                if (pc.GetRoleClass() is not Mermaid Mermaid) continue;
+                if (!CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Mermaid, pc.PlayerId, true)) continue;
 
-                CustomWinnerHolder.WinnerRoles.Add(CustomRoles.mermaid);
+                CustomWinnerHolder.WinnerRoles.Add(CustomRoles.Mermaid);
                 CustomWinnerHolder.NeutralWinnerIds.Add(pc.PlayerId);
                 CustomWinnerHolder.WinnerIds.Add(pc.PlayerId);
 
@@ -183,10 +183,10 @@ public sealed class mermaid : RoleBase, ILNKiller, ISchrodingerCatOwner, IAdditi
             foreach (var pc in AllPlayerControls)
             {
                 if (pc == null || !pc.IsAlive()) continue;
-                if (pc.GetRoleClass() is not mermaid mermaid) continue;
-                if (!CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.mermaid, pc.PlayerId, true)) continue;
+                if (pc.GetRoleClass() is not Mermaid Mermaid) continue;
+                if (!CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Mermaid, pc.PlayerId, true)) continue;
 
-                CustomWinnerHolder.WinnerRoles.Add(CustomRoles.mermaid);
+                CustomWinnerHolder.WinnerRoles.Add(CustomRoles.Mermaid);
                 CustomWinnerHolder.NeutralWinnerIds.Add(pc.PlayerId);
                 CustomWinnerHolder.WinnerIds.Add(pc.PlayerId);
 
@@ -217,7 +217,7 @@ public sealed class mermaid : RoleBase, ILNKiller, ISchrodingerCatOwner, IAdditi
         {
             foreach (var go in PlayerCatch.AllPlayerControls.Where(pc => pc != null))
             {
-                Utils.SendMessage(string.Format(GetString("MermaidNotify")), go.PlayerId);
+                Utils.SendMessage(string.Format(GetString("MermaidNotifyText")), go.PlayerId);
             }
         }
         if (OptionChangingChats.GetInt() - chatcount < 0)
@@ -237,22 +237,22 @@ public sealed class mermaid : RoleBase, ILNKiller, ISchrodingerCatOwner, IAdditi
 
         if (Currentmode == 1)
         {
-            Utils.SendMessage(string.Format(GetString("MermaidChangeNotifyFormermaidCrew")), Player.PlayerId);
+            Utils.SendMessage(string.Format(GetString("MermaidChangeNotifyForMermaidCrew")), Player.PlayerId);
         }
         if (Currentmode == 0)
         {
-            Utils.SendMessage(string.Format(GetString("MermaidChangeNotifyFormermaidImp")), Player.PlayerId);
+            Utils.SendMessage(string.Format(GetString("MermaidChangeNotifyForMermaidImp")), Player.PlayerId);
         }
     }
     [HarmonyPatch(typeof(ChatController), nameof(ChatController.AddChat))]
-    public static class mermaidChatPatch
+    public static class MermaidChatPatch
     {
         public static void Postfix(PlayerControl sourcePlayer, string chatText)
         {
             if (AmongUsClient.Instance == null || !AmongUsClient.Instance.AmHost) return;
             if (sourcePlayer == null || !sourcePlayer) return;
             if (!sourcePlayer.IsAlive()) return;
-            if (sourcePlayer.GetRoleClass() is not mermaid mermaid) return;
+            if (sourcePlayer.GetRoleClass() is not Mermaid Mermaid) return;
             if (IsKilledImpostor) //インポスターをキルしていて設定が有効な場合は何もしない
             {
                 Currentmode = 1;

@@ -1,4 +1,4 @@
-
+/*
 using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
@@ -521,3 +521,4 @@ public sealed class Rocket : RoleBase, IImpostor, IUsePhantomButton
         return true;
     }
 }
+*/

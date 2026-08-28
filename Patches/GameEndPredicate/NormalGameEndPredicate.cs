@@ -230,6 +230,7 @@ using System.Linq;
 
 using TownOfHost.Roles;
 using TownOfHost.Roles.Core;
+using TownOfHost.Roles.Ghost;
 using TownOfHost.Roles.Impostor;
 using TownOfHost.Roles.Neutral;
 // ===== ゲーム終了条件 =====
@@ -243,9 +244,16 @@ namespace TownOfHost
             reason = GameOverReason.ImpostorsByKill;
             if (CustomWinnerHolder.WinnerTeam != CustomWinner.Default) return false;
             if (CheckGameEndByLivingPlayers(out reason)) return true;
-            if (CheckGameEndByTask(out reason)) return true;
-            if (CheckGameEndBySabotage(out reason)) return true;
-
+            if (CheckGameEndByTask(out reason))
+            {
+                AsistingAngel.CheckTaskwin();
+                return true;
+            }
+            if (CheckGameEndBySabotage(out reason))
+            {
+                AsistingAngel.CheckSabowin();
+                return true;
+            }
             return false;
         }
 

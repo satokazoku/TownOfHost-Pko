@@ -106,7 +106,7 @@ public sealed class Autocrat : RoleBase, IAdditionalWinner
     public override void OverrideDisplayRoleNameAsSeen(PlayerControl seer, ref bool enabled, ref Color roleColor, ref string roleText, ref bool addon)
     {
         seer ??= Player;
-        if (seer == Player || !seer.Is(CustomRoleTypes.Neutral) || seer.Is(CustomRoles.mermaid)) return;
+        if (seer == Player || !seer.Is(CustomRoleTypes.Neutral) || seer.Is(CustomRoles.Mermaid)) return;
 
         enabled = true;
         roleColor = RoleInfo.RoleColor;

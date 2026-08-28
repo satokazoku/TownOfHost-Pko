@@ -17,6 +17,7 @@ using TownOfHost.Roles.Ghost;
 using TownOfHost.Roles.Impostor;
 using TownOfHost.Roles.Neutral;
 using UnityEngine;
+using static TownOfHost.Roles.Core.Interfaces.ISchrodingerCatOwner;
 
 namespace TownOfHost
 {
@@ -88,14 +89,38 @@ namespace TownOfHost
             var lockDrawWinner = CustomWinnerHolder.WinnerTeam == CustomWinner.Draw;
             var lockWinner = lockSabotageWinner || lockDrawWinner;
 
-            mermaid.CheckCanwin(ref reason);
+            Mermaid.CheckCanwin(ref reason);
             if (!lockWinner)
             {
                 Zombie.TryTakeOverCrewWin(ref reason);
                 Onmyoji.TryTakeOverCrewWin(ref reason);
                 //BatGirl.TryTakeOverSoloWin(ref reason);
             }
-
+            if (isSabotageEnd)
+            {
+                //サボ時に追加勝利させる
+                foreach (var p in PlayerCatch.AllPlayerControls)
+                {
+                    if (p.Is(CustomRoles.SchrodingerCat))
+                    {
+                        SchrodingerCat.CheckSaboWin(p);
+                    }
+                }
+                foreach (var p in PlayerCatch.AllPlayerControls)
+                {
+                    if (p.Is(CustomRoles.BakeCat))
+                    {
+                        BakeCat.CheckSaboWin(p);
+                    }
+                }
+                foreach (var p in PlayerCatch.AllPlayerControls)
+                {
+                    if (p.Is(CustomRoles.Freeter))
+                    {
+                        Freeter.CheckSaboWin(p);
+                    }
+                }
+            }
             if (CustomWinnerHolder.WinnerTeam is not CustomWinner.Default)
             {
                 PlayerCatch.AllPlayerControls.Do(pc => Camouflage.RpcSetSkin(pc, ForceRevert: true, RevertToDefault: true));
@@ -196,7 +221,7 @@ namespace TownOfHost
                         {
                             IsDraculawin = false;
                         }
-                            LastNeutral.CheckAddWin(pc, reason);
+                        LastNeutral.CheckAddWin(pc, reason);
                         Amanojaku.CheckWin(pc, reason);
                         //kenzoku.CheckWin(pc, IsDraculawin);
                     }
@@ -258,7 +283,6 @@ namespace TownOfHost
                     Triplets.CheckAddWin();
                     Faction.CheckWin();
                 }
-
                 if (lockDrawWinner)
                 {
                     CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Draw);

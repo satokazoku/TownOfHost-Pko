@@ -1,10 +1,11 @@
+using System.Collections.Generic;
+using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
-using System.Linq;
-using UnityEngine;
-
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Madmate;
+using UnityEngine;
 using static TownOfHost.PlayerCatch;
 using static TownOfHost.Utils;
 
@@ -50,6 +51,8 @@ public sealed class Freeter : RoleBase, IKiller, IAdditionalWinner
     CustomRoles initialBetTargetRole;
     bool hasBeenEmployed;
     int unemployedTurns;
+
+    static Dictionary<byte, byte> ImpFreeters = new(14);
 
     enum OptionName
     {
@@ -142,8 +145,16 @@ public sealed class Freeter : RoleBase, IKiller, IAdditionalWinner
 
         var closest = GetClosestPlayerInRange();
         closest ??= target;
-
+        if (target.Is(CustomRoleTypes.Impostor))
+        {
+            ImpFreeters.Add(freeter.PlayerId, freeter.PlayerId);
+        }
+        else if (ImpFreeters.ContainsKey(freeter.PlayerId))
+        {
+            ImpFreeters.Remove(freeter.PlayerId);
+        }
         BetTargetId = closest.PlayerId;
+
         lastBetTargetRole = closest.GetCustomRole();
         initialBetTargetRole = lastBetTargetRole;
         hasBeenEmployed = true;
@@ -348,5 +359,15 @@ public sealed class Freeter : RoleBase, IKiller, IAdditionalWinner
     {
         text = "Freeter_Kill";
         return true;
+    }
+    public static void CheckSaboWin(PlayerControl player)
+    {
+        //サボ時でも勝てるようにする
+        if (ImpFreeters.ContainsKey(player.PlayerId))
+        {
+            CustomWinnerHolder.CantWinPlayerIds.Remove(player.PlayerId);
+            CustomWinnerHolder.WinnerIds.Add(player.PlayerId);
+            CustomWinnerHolder.AdditionalWinnerRoles.Add(CustomRoles.Freeter);
+        }
     }
 }

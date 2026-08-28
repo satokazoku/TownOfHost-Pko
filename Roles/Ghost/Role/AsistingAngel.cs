@@ -51,6 +51,28 @@ namespace TownOfHost.Roles.Ghost
             AsistingAngelId = playerId;
         }
 
+        /// <summary>
+        /// アシスティングエンジェルがインポスターに就いているか判断する処理
+        /// </summary>
+        public static void CheckSabowin()
+        {
+            if (Asist.Is(CustomRoleTypes.Impostor))
+            {
+                CustomWinnerHolder.CantWinPlayerIds.Remove(AsistingAngelId);
+                CustomWinnerHolder.WinnerIds.Add(AsistingAngelId);
+                CustomWinnerHolder.AdditionalWinnerRoles.Add(CustomRoles.AsistingAngel);
+            }
+        }
+        public static void CheckTaskwin()
+        {
+            if (Asist.Is(CustomRoleTypes.Crewmate))
+            {
+                CustomWinnerHolder.CantWinPlayerIds.Remove(AsistingAngelId);
+                CustomWinnerHolder.WinnerIds.Add(AsistingAngelId);
+                CustomWinnerHolder.AdditionalWinnerRoles.Add(CustomRoles.AsistingAngel);
+            }
+        }
+
         public static bool CanSetAsistTarget()
         {
             //アシスト先が決まってるなら～

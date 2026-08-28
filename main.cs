@@ -509,7 +509,7 @@ namespace TownOfHost
         Dancer = CustomRoles.Dancer,
         Hunter = CustomRoles.Hunter,
         Dracula = CustomRoles.Dracula,
-        mermaid = CustomRoles.mermaid,
+        Mermaid = CustomRoles.Mermaid,
 
         HASTroll = CustomRoles.HASTroll,
         TaskPlayerB = CustomRoles.TaskPlayerB,

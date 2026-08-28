@@ -1100,7 +1100,7 @@ public enum CustomRoles
     UnHappyJester,
     Hunter,
     Dracula,
-    mermaid,
+    Mermaid,
     //DEBUG only Neutral.
     //HideAndSeek
     HASFox,
