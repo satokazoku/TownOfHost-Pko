@@ -1152,7 +1152,7 @@
 "WatchingInfoLong","Add-ons:\nYou can see everyone's votes even if anonymous voting is on.","(属性):\n全員の投票先を見ることができる。","(效果):\n会议时窥视者可以看到所有人的投票。","(附加效果):\n會議時觀察者可以看到所有人的投票。","(Атрибут):\nНаблюдатель может видеть все цвета голосов несмотря на анонимное голосование.","(Atributos):\nVocê consegue ver os votos de todos, mesmo que os votos anônimos estejam ligados.",""
 "SpeedingInfoLong","Add-ons:\nPlayer Speed becomes a set value","(属性):\n他のプレイヤーよりも速度が速くなる。"
 "MoonInfoLong","Add-ons:\nOnly Not Impostor.\nDisable power outages","(属性):\n停電の影響を無効化できる。\nインポスターには付与されない。"
-"GuesserInfoLong","Add-ons:\nOn Meeting Can Guess.","(属性):\n会議中に誰かの役職を推測でき、的中すると対象をキルすることができる。\nただし、推測が外れると自殺する。\n\nチャットに「/cmd bt (ID) (役職名)」と送信することで推測ができる。\nプレイヤー名の左側に表示されている数字が、そのプレイヤーのIDである。"
+"GuesserInfoLong","Add-ons:\nOn Meeting Can Guess.","(属性):\n会議中に誰かの役職を推測でき、的中すると対象をキルすることができる。\nただし、推測が外れると自殺する。\n\nチャットに「/cmd bt (ID) (役職名)」と送信することで推測ができる。\nプレイヤー名の左側に表示されている数字が、そのプレイヤーのIDである。\n神には付与されない。"
 "LightingInfoLong","Add-ons:\nOnly Not Impostor.\nHave Impostor vision.","(属性):\nインポスター視界になる。\nただし、停電の影響は受ける。"
 "ManagementInfoLong","Add-ons:\nShows overall task progress","(属性):\nプレイヤー全体でのタスク進捗が分かる。\nパーセント表示に設定で変更が可能。"
 "ConnectingInfoLong","Add-ons:\nOnly over 2players and Give Only Impostor , Madmate , WolfBoy\nThis Role player Mark Ψ.","(属性):\n2人以上でしか排出されない。\nインポスター、マッドメイト系役職、狼少年にのみ付与される属性。\nコネクティング同士でΨのマークがついており、お互いが同陣営であることを確認できる。\nただし、狼少年はコネクティングが付与されていることを自覚できず、他のコネクティングのプレイヤーから一方的に確認できる。"
