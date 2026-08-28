@@ -115,7 +115,7 @@ public sealed class Freeter : RoleBase, IKiller, IAdditionalWinner
         roleText = UtilsRoleText.GetRoleName(role);
         if (ColorUtility.TryParseHtmlString(UtilsRoleText.GetRoleColorCode(role), out var color))
             roleColor = color;
-        addon = true;
+        addon = false;
     }
 
     public override void OverrideDisplayRoleNameAsSeen(
