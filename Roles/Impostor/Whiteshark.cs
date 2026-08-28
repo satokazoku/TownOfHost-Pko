@@ -77,7 +77,7 @@ public sealed class Whiteshark : RoleBase, IImpostor, IUsePhantomButton
 
     public override void ApplyGameOptions(IGameOptions opt)
     {
-        AURoleOptions.PhantomCooldown = StopTime;
+        AURoleOptions.PhantomCooldown = StopTime - stopTimer;
     }
     bool IUsePhantomButton.IsPhantomRole => true;
 
@@ -143,15 +143,21 @@ public sealed class Whiteshark : RoleBase, IImpostor, IUsePhantomButton
             //ベント内だったら止まってる秒数増やさないので、クールだけ反映する
             if (IsVented)
             {
+                Cool = StopTime - stopTimer;
+
                 if (0.25 < Cool)
                 {
+                    AURoleOptions.PhantomCooldown = StopTime - stopTimer;
+
+                    Cool = 0;
                     var cooldown = Cool;
                     if (Last != cooldown)
                     {
                         Last = cooldown;
                         Player.MarkDirtySettings();
-                        Player.RpcResetAbilityCooldown(log: false, Sync: true);
                     }
+
+                    Player.RpcResetAbilityCooldown(log: false);
                 }
                 return;
             }
@@ -168,17 +174,23 @@ public sealed class Whiteshark : RoleBase, IImpostor, IUsePhantomButton
         {
             stopTimer = 0f;
             isStopped = false;
-            if (0.25 < Cool)
-            {
-                var cooldown = Cool;
-                if (Last != cooldown)
-                {
-                    Last = cooldown;
-                    Player.MarkDirtySettings();
-                    Player.RpcResetAbilityCooldown(log: false, Sync: true);
-                }
-            }
         }
+        Cool = StopTime - stopTimer;
+
+        if (0.25 < Cool)
+        {
+            AURoleOptions.PhantomCooldown = StopTime - stopTimer;
+
+            Cool = 0;
+            var cooldown = Cool;
+            if (Last != cooldown)
+            {
+                Last = cooldown;
+                Player.MarkDirtySettings();
+            }
+            Player.RpcResetAbilityCooldown(log: false);
+        }
+
     }
 
     public override void AfterMeetingTasks()
