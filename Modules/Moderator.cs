@@ -177,14 +177,13 @@ public static class Moderator
 
         if (args.Length < 2)
         {
-            SendMessage("使用方法: /cmd mod <名前|色|FC> | /cmd mod delete <名前|色|FC>", sender.PlayerId);
+            SendMessage("使用方法: /cmd mod <名前|色|FC>", sender.PlayerId);
             return;
         }
 
         var action = args[1].ToLowerInvariant();
-        var isDelete = action is "delete" or "del" or "remove";
         var explicitMode = action is "name" or "color" or "friendcode" ? action : "";
-        var keyStartIndex = explicitMode != "" ? 2 : (isDelete ? 2 : 1);
+        var keyStartIndex = explicitMode != "" ? 2 : 1;
         var key = args.Length > keyStartIndex ? string.Join(" ", args.Skip(keyStartIndex)).Trim() : "";
         if (string.IsNullOrWhiteSpace(key))
         {
@@ -192,16 +191,11 @@ public static class Moderator
             return;
         }
 
-        if (isDelete)
+        var target = explicitMode == "" ? FindTargetAuto(key) : FindTarget(explicitMode, key);
+
+        if (target == null || IsModerator(target))
         {
             HandleModDelete(sender, explicitMode, key);
-            return;
-        }
-
-        var target = explicitMode == "" ? FindTargetAuto(key) : FindTarget(explicitMode, key);
-        if (target == null)
-        {
-            SendMessage($"対象が見つかりません: {key}", sender.PlayerId);
             return;
         }
 
@@ -226,10 +220,6 @@ public static class Moderator
         {
             Save();
             SendMessage($"モデレーターに追加: {target.Data?.PlayerName} ({friendCode})", sender.PlayerId);
-        }
-        else
-        {
-            SendMessage($"既にモデレーターです: {target.Data?.PlayerName}", sender.PlayerId);
         }
 
         RefreshModeratorDisplayNames(force: true);
@@ -266,7 +256,7 @@ public static class Moderator
         }
         else
         {
-            SendMessage($"モデレーターが見つかりません: {key}", sender.PlayerId);
+            SendMessage($"対象が見つかりません: {key}", sender.PlayerId);
         }
     }
 

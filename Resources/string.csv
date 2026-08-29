@@ -3410,7 +3410,7 @@
 "Command.kick","Kick a player","プレイヤーを<color=red><b>追い出せます</color></b>。"
 "Command.ban","Ban a player","プレイヤーを<color=red><b>BAN</color></b>できます。"
 "ModeratorCommand","Moderator Command","モデレーター専用"
-"Command.modadd","The selected player will become a moderator.","選んだプレイヤーをモデレーターにします"
+"Command.modadd","The selected player will become a moderator.","選んだプレイヤーをモデレーターに追加・削除します"
 "Command.moddel","Remove the selected player from the moderators.","選んだプレイヤーをモデレーターから外します"
 "Command.exempt","Add/Remove a player to/from the rejoin kick exemption list.","再参加キックの免除リストにプレイヤーを追加/解除する"
 "Command.kp","Kick all detected rejoining players.","検知済みの再参加プレイヤーを一括キックする"
