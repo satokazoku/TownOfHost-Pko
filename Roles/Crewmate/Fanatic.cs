@@ -88,8 +88,8 @@ public sealed class Fanatic : RoleBase, IKillFlashSeeable, IDeathReasonSeeable
         OptionOmoikomiPick2 = StringOptionItem.Create(RoleInfo, 14, OptionName.FanaticOmoikomiPick2, PickRoleTypesString, 1, false, OptionOmoikomi);
         OptionOmoikomiPick3 = StringOptionItem.Create(RoleInfo, 15, OptionName.FanaticOmoikomiPick3, PickRoleTypesString, 1, false, OptionOmoikomi);
         OptionCantOmoikomiRoles = AssignOptionItem.Create(RoleInfo, 16, OptionName.FanaticCantOmoikomiroles, 0, false, OptionOmoikomi, imp: true, mad: true, crew: true, neu: true);
-        RoleAddAddons.Create(RoleInfo, 20);
-        OverrideTasksData.Create(RoleInfo, 21);
+        OverrideTasksData.Create(RoleInfo, 20);
+        RoleAddAddons.Create(RoleInfo, 30);
     }
     static CustomRoles[] InvalidRoles()
     {

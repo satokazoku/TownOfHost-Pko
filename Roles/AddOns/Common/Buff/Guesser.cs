@@ -40,7 +40,7 @@ public static class Guesser
     public static void SetupCustomOption()
     {
         SetupRoleOptions(Id, TabGroup.Addons, CustomRoles.Guesser, fromtext: "<color=#000000>From:</color><color=#ff0000>The Other Roles</color></size>");
-        var assign = CantAssignGodAddon.Create(Id + 10, CustomRoles.Guesser, true, true, true, true);
+        var assign = AddOnsAssignData.Create(Id + 10, CustomRoles.Guesser, true, true, true, true);
         impset = assign.ImpostorMaximum;
         Crewmateset = assign.CrewmateMaximum;
         Madset = assign.MadmateMaximum;

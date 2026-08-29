@@ -123,8 +123,8 @@ public sealed class JackalDoll : RoleBase
         VentCool = FloatOptionItem.Create(RoleInfo, 17, GeneralOption.Cooldown, new(0f, 180f, 0.5f), 0f, false, CanVent).SetValueFormat(OptionFormat.Seconds);
         VentIntime = FloatOptionItem.Create(RoleInfo, 18, GeneralOption.EngineerInVentCooldown, new(0f, 180f, 0.5f), 0f, false, CanVent).SetZeroNotation(OptionZeroNotation.Infinity).SetValueFormat(OptionFormat.Seconds);
         CanVentMove = BooleanOptionItem.Create(RoleInfo, 19, "MadmateCanMovedByVent", false, false, CanVent);
-        OptionOnlyWithJackal = BooleanOptionItem.Create(RoleInfo, 21, "JackaldollOnlyWithJackal", false, false);
-        RoleAddAddons.Create(RoleInfo, 20, MadMate: true);
+        OptionOnlyWithJackal = BooleanOptionItem.Create(RoleInfo, 20, "JackaldollOnlyWithJackal", false, false);
+        RoleAddAddons.Create(RoleInfo, 21, MadMate: true);
     }
     public static bool CountAsJackalKiller => OptionCountAsJackalKiller?.GetBool() == true;
     private static bool CountAsKillerOnlyWhenPromotionEnabled

@@ -85,6 +85,6 @@ public interface ISchrodingerCatOwner
         /// <summary>
         /// 鬼に所属する状態
         /// </summary>
-        Ogre,
+        //Ogre,
     }
 }

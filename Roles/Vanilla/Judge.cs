@@ -38,11 +38,11 @@ public sealed class Judge : RoleBase
     private static OptionItem OptionCount;
     public static void SetUpCustomOption()
     {
-        OptionTaskRequirement = FloatOptionItem.Create(RoleInfo, 25110, StringNames.JudgeTaskRequirement, new(0, 100, 2), 2, false);
-        OptionCount = IntegerOptionItem.Create(RoleInfo, 25111, GeneralOption.OptionCount, new(1, 15, 1), 1, false);
-        OptionCanKillMadMate = BooleanOptionItem.Create(RoleInfo, 25112, "MeetingSheriffCanKillMadMate", true, false);
-        OptionCanKillNeutrals = BooleanOptionItem.Create(RoleInfo, 25113, "MeetingSheriffCanKillNeutrals", true, false);
-        OptionCanKillLovers = BooleanOptionItem.Create(RoleInfo, 25114, "SheriffCanKillLovers", true, false);
+        OptionTaskRequirement = FloatOptionItem.Create(RoleInfo, 10, StringNames.JudgeTaskRequirement, new(0, 100, 2), 2, false);
+        OptionCount = IntegerOptionItem.Create(RoleInfo, 11, GeneralOption.OptionCount, new(1, 15, 1), 1, false);
+        OptionCanKillMadMate = BooleanOptionItem.Create(RoleInfo, 12, "MeetingSheriffCanKillMadMate", true, false);
+        OptionCanKillNeutrals = BooleanOptionItem.Create(RoleInfo, 13, "MeetingSheriffCanKillNeutrals", true, false);
+        OptionCanKillLovers = BooleanOptionItem.Create(RoleInfo, 14, "SheriffCanKillLovers", true, false);
     }
     public override void ApplyGameOptions(IGameOptions opt)
     {

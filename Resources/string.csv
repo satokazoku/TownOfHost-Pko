@@ -3151,6 +3151,7 @@
 "NotGuesserError","Sorry. \nThis /cmd /bt command is a gesser ability. \nYou don't have the gesser ability, so you can't use it.","ごめんね。\nこの/btコマンドはゲッサーの能力なんだ。\nゲッサー能力が君には無いだから使えないよ。\n君に渡したその銃は水鉄砲だよ(?)"
 "GuessErrorTuiho","Executed Can't Guess.:(","追放画面ではゲッサーの能力は発動できないよっ!!\nごめんね!!"
 "GuessErrorMadAvenger","I am in the middle of a revolution. Don't get in my way.","革命中だぞ。邪魔をするでない・・・"
+"GuessErrorGod","You know too much. I can't give you a gun.","ごめんね。\n君は知りすぎてるんだ。君に銃を渡すわけにはいかないよ。"
 "GuessErrorMadAvengerTitle","【===== You're too late =====】","【=== 何を今更...もう手遅れだぞ ===】"
 "GuessErrorTuihoTitle","【===== Can't Guess Now =====】","【=== 結果を見届けよ ===】"
 "GuessSnitchTitle","【===== Guess for Snitch=====】","【== スニッチは撃てないぞ? ==】"
@@ -3162,6 +3163,7 @@
 "NotGuesserErrortitle","【===I can't give it to you yet.===】","【==== 君にはまだ渡せないね。 ====】"
 "GuessercountErrorT","【===You better check your ammo count.===】","【=== 弾数確認はした方がいいぜ ===】"
 "GuesserMTGcountErrorT","【===That gun is disposable.===】","【=== その銃は使い捨てなんだ ===】"
+"GuessErrorGodTitle",【===== "You know too much =====】","【==== 君は知りすぎた ====】"
 
 "## Roletext"
 "StealthDarkened","Darkened: {0}","<size=50%>暗転中: {0}</size>","","","Затемнено: {0}","Escurecidos: {0}",""

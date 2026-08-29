@@ -218,8 +218,6 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         OptionTamaCanLoad = BooleanOptionItem.Create(RoleInfo, 26, "TamaCanLoad", true, false);
         OptionTamaLoadCooldown = FloatOptionItem.Create(RoleInfo, 27, "TamaLoadCooldown", new(0f, 60f, 0.5f), 10f, false, OptionTamaCanLoad)
             .SetValueFormat(OptionFormat.Seconds);
-        OptionTamaCountAsJackalKiller = BooleanOptionItem.Create(RoleInfo, 50, "TamaCountAsJackalKiller", false, false);
-        OptionTamaCountAsKillerOnlyWhenPromotionEnabled = BooleanOptionItem.Create(RoleInfo, 51, OptionName.TamaCountAsKillerOnlyWhenPromotionEnabled, false, false, OptionTamaCountAsJackalKiller);
         OptionTamaCanVent = BooleanOptionItem.Create(RoleInfo, 28, GeneralOption.CanVent, false, false);
         OptionTamaVentCooldown = FloatOptionItem.Create(RoleInfo, 29, GeneralOption.Cooldown, new(0f, 180f, 0.5f), 0f, false, OptionTamaCanVent)
             .SetValueFormat(OptionFormat.Seconds);
@@ -227,9 +225,11 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
             .SetZeroNotation(OptionZeroNotation.Infinity)
             .SetValueFormat(OptionFormat.Seconds);
         OptionTamaCanVentMove = BooleanOptionItem.Create(RoleInfo, 31, "MadmateCanMovedByVent", false, false, OptionTamaCanVent);
+        OptionTamaCountAsJackalKiller = BooleanOptionItem.Create(RoleInfo, 32, "TamaCountAsJackalKiller", false, false);
+        OptionTamaCountAsKillerOnlyWhenPromotionEnabled = BooleanOptionItem.Create(RoleInfo, 33, OptionName.TamaCountAsKillerOnlyWhenPromotionEnabled, false, false, OptionTamaCountAsJackalKiller);
 
-        ObjectOptionitem.Create(RoleInfo, 40, "AddonOption", true, null).SetOptionName(() => "Sidekick Setting");
-        RoleAddAddons.Create(RoleInfo, 32, NeutralKiller: true);
+        ObjectOptionitem.Create(RoleInfo, 36, "AddonOption", true, null).SetOptionName(() => "Sidekick Setting");
+        RoleAddAddons.Create(RoleInfo, 37, NeutralKiller: true);
 
         HideRoleOptions(CustomRoles.Tama);
     }

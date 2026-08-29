@@ -91,6 +91,12 @@ public static class GuessManager
                 Utils.SendMessage(GetString("GuessErrorMadAvenger"), pc.PlayerId, $"<#ff1919>{GetString("GuessErrorMadAvengerTitle")}</color>");
                 return true;
             }
+            if (pc.Is(CustomRoles.God))
+            {
+                Utils.SendMessage(GetString("GuessErrorGod"), pc.PlayerId, $"<#ffd700>{GetString("GuessErrorGodTitle")}</color>");
+                return true;
+            }
+
             if (!SelfVoteManager.Canuseability())
             {
                 return true;

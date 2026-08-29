@@ -288,6 +288,8 @@ public sealed class SchrodingerCat : RoleBase, IAdditionalWinner, IDeathReasonSe
             TeamType.MilkyWay => StringHelper.CodeColor(Vega.TeamColor),
             TeamType.Betrayer => UtilsRoleText.GetRoleColor(CustomRoles.MadBetrayer),
             TeamType.Pavlov => UtilsRoleText.GetRoleColor(CustomRoles.PavlovDog),
+            TeamType.Opportunist => UtilsRoleText.GetRoleColor(CustomRoles.Opportunist),
+            //TeamType.Ogre => UtilsRoleText.GetRoleColor(CustomRoles.Ogre),
             _ => null,
         };
         if (!color.HasValue)

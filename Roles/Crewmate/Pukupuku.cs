@@ -1,6 +1,8 @@
 using AmongUs.GameOptions;
+using TownOfHost.Roles.AddOns.Common;
 using TownOfHost.Roles.Core;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace TownOfHost.Roles.Crewmate
 {
@@ -32,6 +34,7 @@ namespace TownOfHost.Roles.Crewmate
         {
             PukupukuGuardCount,
             PukupukuPostDeathTurnLimit,
+            PukupukuNotifyOnGuard
         }
 
         private bool tasksCompleted = false;
@@ -64,13 +67,11 @@ namespace TownOfHost.Roles.Crewmate
 
             OptionGuardCount = IntegerOptionItem.Create(
                 RoleInfo, 11, OptionName.PukupukuGuardCount,
-                new(1, 10, 1), 1, false)
-                .SetParent(ModeOption);
+                new(1, 10, 1), 1, false);
 
             OptionNotifyOnGuard = BooleanOptionItem.Create(
-                RoleInfo, 12, "PukupukuNotifyOnGuard",
-                true, false)
-                .SetParent(ModeOption);
+                RoleInfo, 12, OptionName.PukupukuNotifyOnGuard,
+                true, false);
 
             OptionPostDeathRevengeEnabled = BooleanOptionItem.Create(
                 RoleInfo, 20, "PukupukuPostDeathRevenge",
@@ -79,7 +80,6 @@ namespace TownOfHost.Roles.Crewmate
             OptionPostDeathRevengeTurnLimit = IntegerOptionItem.Create(
                 RoleInfo, 21, OptionName.PukupukuPostDeathTurnLimit,
                 new(1, 10, 1), 1, false)
-                .SetParent(OptionPostDeathRevengeEnabled)
                 .SetValueFormat(OptionFormat.day);
         }
 
