@@ -1,4 +1,3 @@
-/*
 using AmongUs.GameOptions;
 using Hazel;
 using TownOfHost.Modules;
@@ -66,7 +65,7 @@ public sealed class BoostLighter : RoleBase
         OptionBoostDuration = FloatOptionItem.Create(RoleInfo, 11, OptionName.BoostLighterDuration,
             new(2.5f, 20f, 2.5f), 10f, false).SetValueFormat(OptionFormat.Seconds);
         OptionBoostVision = FloatOptionItem.Create(RoleInfo, 12, OptionName.BoostLighterVision,
-            new(0.0f, 5.0f, 0.05f), 1.5f, false).SetValueFormat(OptionFormat.Multiplier);
+            new(0.0f, 3.0f, 0.05f), 1.5f, false).SetValueFormat(OptionFormat.Multiplier);
         OptionAffectedByBlackout = BooleanOptionItem.Create(RoleInfo, 13, OptionName.BoostLighterAffectedByBlackout,
             true, false);
     }
@@ -90,20 +89,18 @@ public sealed class BoostLighter : RoleBase
 
         if (!isBoostActive) return;
 
-        if (!AffectedByBlackout)
-        {
-            opt.SetVision(true);
-            opt.SetFloat(FloatOptionNames.CrewLightMod, Main.NormalOptions.ImpostorLightMod);
-            return;
-        }
-
         bool blackoutActive = Utils.IsActive(SystemTypes.Electrical);
-        if (blackoutActive) return;
+        if (AffectedByBlackout && blackoutActive) return;
 
         opt.SetFloat(FloatOptionNames.CrewLightMod, BoostVision);
+
+        if (!AffectedByBlackout && blackoutActive)
+        {
+            opt.SetFloat(FloatOptionNames.CrewLightMod, BoostVision * AURoleOptions.ElectricalCrewVision);
+        }
     }
 
-    public override bool CanClickUseVentButton => true;
+    public override bool CanClickUseVentButton => false;
     public override bool OnEnterVent(PlayerPhysics physics, int ventId) => false;
 
     public void ActivateBoost()
@@ -182,9 +179,23 @@ public sealed class BoostLighter : RoleBase
         string color = RoleInfo.RoleColorCode;
 
         if (isBoostActive)
-            return $"{size}<color={color}>【視界ブースト中】</color>";
+        {
+            float remaining = Mathf.Max(0f, BoostDuration - boostTimer);
+            return $"{size}<color={color}>【視界ブースト中】{remaining:F1}s</color>";
+        }
 
         return $"{size}<color={color}>ペットなで → 視界ブースト発動</color>";
+    }
+
+    public override string GetProgressText(bool comms = false, bool GameLog = false)
+    {
+        if (!Player.IsAlive()) return "";
+        if (isBoostActive)
+        {
+            float remaining = Mathf.Max(0f, BoostDuration - boostTimer);
+            return $"<color={RoleInfo.RoleColorCode}>({remaining:F1}s)</color>";
+        }
+        return "";
     }
 
     void SendRpc()
@@ -202,4 +213,3 @@ public sealed class BoostLighter : RoleBase
         cooldownTimer = reader.ReadSingle();
     }
 }
-*/
