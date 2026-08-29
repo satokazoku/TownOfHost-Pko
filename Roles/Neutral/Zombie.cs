@@ -4,6 +4,7 @@ using AmongUs.GameOptions;
 using TownOfHost.Attributes;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Impostor;
 using static TownOfHost.PlayerCatch;
 
 namespace TownOfHost.Roles.Neutral;
@@ -62,6 +63,12 @@ public sealed class Zombie : RoleBase
 
         var killer = info.AttemptKiller;
         if (killer == null || killer.PlayerId == Player.PlayerId) return;
+
+        // 通常キル以外感染させない。
+        if (killer.GetRoleClass() is JackalHadouHo jhh && jhh.ShowBeamMark) return;
+        if (killer.GetRoleClass() is HadouHo hh && hh.ShowBeamMark) return;
+        if (killer.Is(CustomRoles.Freeter)) return;
+
         QueueOrApplyInfection(killer);
     }
 

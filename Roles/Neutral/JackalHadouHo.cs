@@ -711,7 +711,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         {
             if (!Player.IsAlive()) break;
             if (target.PlayerId == Player.PlayerId) continue;
-            if (!target.IsAlive()) continue;            if (!KillJackal && target.GetCustomRole() is CustomRoles.Jackal or CustomRoles.JackalMafia
+            if (!target.IsAlive()) continue; if (!KillJackal && target.GetCustomRole() is CustomRoles.Jackal or CustomRoles.JackalMafia
                 or CustomRoles.JackalAlien or CustomRoles.Jackaldoll or CustomRoles.JackalHadouHo
                 or CustomRoles.Tama && !SuddenDeathMode.NowSuddenDeathMode) continue;
             var toTarget = (Vector2)target.GetTruePosition() - myPos;

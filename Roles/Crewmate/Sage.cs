@@ -5,6 +5,8 @@ using TownOfHost.Modules;
 using TownOfHost.Patches;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Impostor;
+using TownOfHost.Roles.Neutral;
 using UnityEngine;
 
 namespace TownOfHost.Roles.Crewmate;
@@ -214,6 +216,14 @@ public sealed class Sage : RoleBase
 
         var killer = info.AttemptKiller;
         if (killer == null) return true;
+
+        // 波動砲のビームキルは反射しない。
+        if (killer.GetRoleClass() is JackalHadouHo jhh && jhh.ShowBeamMark) return true;
+        if (killer.GetRoleClass() is HadouHo hh && hh.ShowBeamMark) return true;
+
+        // フリーターのキルは反射しない。
+        if (killer.Is(CustomRoles.Freeter))
+            return true;
 
         info.DoKill = false;
 
