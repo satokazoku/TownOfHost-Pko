@@ -358,7 +358,8 @@ namespace TownOfHost
                 text += $"\n/cmd /now madmate(n md) - {GetString("Command.nowmadmate")}";
                 text += $"\n/cmd /now crewmate(n c) - {GetString("Command.nowcrewmate")}";
                 text += $"\n/cmd /now neutral(n n) - {GetString("Command.nowneutral")}";
-                text += $"\n/cmd /now ghost(n gh) - {GetString("Command.nowghost")}";
+                text += $"\n/cmd /now combinations(n co) - {GetString("Command.nowcombinations")}";
+            　　text += $"\n/cmd /now ghost(n gh) - {GetString("Command.nowghost")}";
                 text += $"\n/cmd /now addon(n a) - {GetString("Command.nowaddon")}";
             if (Show(Options.OptionCommandNowSet))
                 text += $"\n/cmd /now set(n s) - {GetString("Command.nowset")}";

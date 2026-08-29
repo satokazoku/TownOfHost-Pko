@@ -3371,6 +3371,7 @@
 "Command.nowmadmate","Show AllMadmate","マッドメイト役職一覧を表示"
 "Command.nowcrewmate","Show AllCrewmate","クルーメイト役職一覧を表示"
 "Command.nowneutral","Show AllNeutral","ニュートラル役職一覧を表示"
+"Command.nowcombinations","Show AllCombinations","コンビネーション役職一覧を表示"
 "Command.nowghost","Show AllGhost","幽霊役職一覧を表示"
 "Command.nowaddon","Show AllAddons","属性一覧を表示"
 "Command.nowset","Show AssingMode and Vanilla Options","アサインモード/バニラ設定を表示"
