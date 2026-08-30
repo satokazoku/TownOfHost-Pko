@@ -1036,7 +1036,6 @@ public enum CustomRoles
     Zombie,
     Shikigami,
     Cupid,
-    Oblivion,
     Eater,
     Autocrat,
     Spelunker,
