@@ -30,6 +30,10 @@ namespace TownOfHost
                 if (jackalHo.IsCharging || jackalHo.ShowBeamMark)
                     return false;
             }
+            if (__instance.GetRoleClass() is Roles.Neutral.Spelunker spelunk)
+            {
+                spelunk.TryZiplineFallDeath(__instance, fromTop);
+            }
             /*
             if (__instance.GetRoleClass() is Roles.Crewmate.SheriffHadouHo crewmateHo)
             {
@@ -124,6 +128,10 @@ namespace TownOfHost
             {
                 if (jackalHo.IsCharging || jackalHo.ShowBeamMark)
                     return false;
+            }
+            if (player.GetRoleClass() is Roles.Neutral.Spelunker spelunk)
+            {
+                spelunk.TryMovingPlatformFallDeath(player);
             }
             /*
             if (player.GetRoleClass() is Roles.Crewmate.SheriffHadouHo sheriffHo)

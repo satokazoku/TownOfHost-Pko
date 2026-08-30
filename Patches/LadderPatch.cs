@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using HarmonyLib;
+using TownOfHost.Roles.Core;
+using TownOfHost.Roles.Neutral;
 using UnityEngine;
 
 namespace TownOfHost
@@ -21,7 +23,10 @@ namespace TownOfHost
             // to ladder climbs independently of that option. Always attempt to notify Spelunker role.
             if (player?.myPlayer != null)
             {
-                try { Roles.Neutral.Spelunker.OnLadderClimbed(player.myPlayer); } catch { }
+                if (player.myPlayer.Is(CustomRoles.Spelunker))
+                {
+                    Spelunker.OnLadderClimbed(player.myPlayer);
+                }
             }
             if (!Options.LadderDeath.GetBool()) return;
             var sourcePos = source.transform.position;

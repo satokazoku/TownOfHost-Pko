@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using AmongUs.GameOptions;
 using HarmonyLib;
 using TownOfHost.Roles.Core;
@@ -30,6 +31,8 @@ public sealed class Spelunker : RoleBase, ISystemTypeUpdateHook
     static OptionItem OptDieBySabotage;
     static OptionItem OptLightSabotageDeathTime;
     static OptionItem OptCommsSabotageDeathTime;
+    static int LadderChance;
+    static int ZipChance;
 
     enum OptionName
     {
@@ -55,6 +58,8 @@ public sealed class Spelunker : RoleBase, ISystemTypeUpdateHook
         : base(RoleInfo, player, () => HasTask.False)
     {
         ResetRuntimeState();
+        LadderChance = OptLadderFallChance.GetInt();
+        ZipChance = OptLiftZiplineFallChance.GetInt();
     }
 
     static void SetupOptionItem()
@@ -116,15 +121,15 @@ public sealed class Spelunker : RoleBase, ISystemTypeUpdateHook
 
     public static bool OnLadderClimbed(PlayerControl player)
     {
-        if (!TryGetActiveRole(player, out var spelunker)) return false;
-        spelunker.TryLadderFallDeath();
+        if (TryGetActiveRole(player, out var spelunker))
+        spelunker.TryLadderFallDeath(player);
         return true;
     }
 
     public static bool OnMovingPlatformUsed(PlayerControl player)
     {
         if (!TryGetActiveRole(player, out var spelunker)) return false;
-        spelunker.TryMovingPlatformFallDeath();
+        spelunker.TryMovingPlatformFallDeath(player);
         return true;
     }
 
@@ -218,7 +223,7 @@ public sealed class Spelunker : RoleBase, ISystemTypeUpdateHook
         KillSelf(CustomDeathReason.Fall);
     }
 
-    void TryLadderFallDeath()
+    public void TryLadderFallDeath(PlayerControl player)
     {
         if (!RollChance(OptLadderFallChance.GetInt())) return;
 
@@ -229,7 +234,7 @@ public sealed class Spelunker : RoleBase, ISystemTypeUpdateHook
         }, 0.35f, "SpelunkerLadderFall", true);
     }
 
-    void TryZiplineFallDeath(bool fromTop)
+    public void TryZiplineFallDeath(PlayerControl Player, bool fromTop)
     {
         if (!RollChance(OptLiftZiplineFallChance.GetInt())) return;
 
@@ -250,13 +255,20 @@ public sealed class Spelunker : RoleBase, ISystemTypeUpdateHook
 
             if (!CanDieNow(checkMeeting: true)) return;
             KillSelf(CustomDeathReason.Fall);
-        }, fromTop ? 5f : 8f, "SpelunkerZiplineFall", true);
+        }, fromTop ? 4f : 7f, "SpelunkerZiplineFall", true);
     }
 
-    void TryMovingPlatformFallDeath()
+    public void TryMovingPlatformFallDeath(PlayerControl Player)
     {
         if (!RollChance(OptLiftZiplineFallChance.GetInt())) return;
-        KillSelf(CustomDeathReason.Fall);
+        if (!CanDieNow()) return;
+
+        var state = PlayerState.GetByPlayerId(Player.PlayerId);
+        if (state == null) return;
+
+        state.DeathReason = CustomDeathReason.Fall;
+        state.SetDead();
+        Player.RpcMurderPlayerV2(Player);
     }
 
     void KillSelf(CustomDeathReason reason)
