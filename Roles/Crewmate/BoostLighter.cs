@@ -115,6 +115,7 @@ public sealed class BoostLighter : RoleBase
         Player.MarkDirtySettings();
         if (AmongUsClient.Instance.AmHost)
             Player.SyncSettings();
+        Player.RpcResetAbilityCooldown(Sync: true);
 
         SendRpc();
         UtilsNotifyRoles.NotifyRoles(OnlyMeName: true);
@@ -131,6 +132,7 @@ public sealed class BoostLighter : RoleBase
         Player.MarkDirtySettings();
         if (AmongUsClient.Instance.AmHost)
             Player.SyncSettings();
+        Player.RpcResetAbilityCooldown(Sync: true);
 
         SendRpc();
         UtilsNotifyRoles.NotifyRoles(OnlyMeName: true);
@@ -185,17 +187,6 @@ public sealed class BoostLighter : RoleBase
         }
 
         return $"{size}<color={color}>ペットなで → 視界ブースト発動</color>";
-    }
-
-    public override string GetProgressText(bool comms = false, bool GameLog = false)
-    {
-        if (!Player.IsAlive()) return "";
-        if (isBoostActive)
-        {
-            float remaining = Mathf.Max(0f, BoostDuration - boostTimer);
-            return $"<color={RoleInfo.RoleColorCode}>({remaining:F1}s)</color>";
-        }
-        return "";
     }
 
     void SendRpc()
