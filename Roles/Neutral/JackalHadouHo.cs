@@ -665,8 +665,10 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
             ShowBeamMark = false; _prevBeamMark = false; IsSuperBeam = false;
             SetRoleTextHeight(false); IsFiring = false;
             Main.AllPlayerSpeed[Player.PlayerId] = PlayerSpeed;
+            Charging = false;
             UtilsNotifyRoles.NotifyRoles(); SendRpc(); return;
         }
+        Charging = false;
 
         ShowBeamMark = false; _prevBeamMark = false; IsSuperBeam = false;
         SetRoleTextHeight(false);

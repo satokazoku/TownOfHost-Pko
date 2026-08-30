@@ -34,14 +34,7 @@ namespace TownOfHost.Roles.AddOns.Common
                 {
                     if (pc.Is(addon) is false)
                     {
-                        if (pc.Is(CustomRoles.God) && addon == CustomRoles.Guesser)
-                        {
-                            return;
-                        }
-                        else
-                        {
-                            PlayerState.GetByPlayerId(playerId).SetSubRole(addon);
-                        }
+                        PlayerState.GetByPlayerId(playerId).SetSubRole(addon);
                     }
                 }
             }

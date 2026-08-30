@@ -22,6 +22,10 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
             SetUpOptionItem,
             "hh",
             OptionSort: (3, 12),
+            assignInfo: new RoleAssignInfo(CustomRoles.HadouHo, CustomRoleTypes.Impostor)
+            {
+                AssignCountRule = new(1, 1, 1),
+            },
             from: From.SuperNewRoles
         );
 
@@ -229,12 +233,15 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
         {
             if (IsDead || !Player.IsAlive())
             {
+                Charging = false;
                 ShowBeamMark = false; _prevBeamMark = false;
                 SetRoleTextHeight(false); IsFiring = false;
                 Main.AllPlayerSpeed[Player.PlayerId] = PlayerSpeed;
                 Player.MarkDirtySettings();
                 UtilsNotifyRoles.NotifyRoles(); SendRpc(); return;
             }
+            Charging = false;
+
             ShowBeamMark = false; _prevBeamMark = false;
             SetRoleTextHeight(false);
             UtilsNotifyRoles.NotifyRoles(ForceLoop: true); SendRpc();
