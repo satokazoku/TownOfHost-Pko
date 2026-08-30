@@ -21,7 +21,7 @@ public sealed class God : RoleBase, ISystemTypeUpdateHook, IDeathReasonSeeable
             SetupOptionItem,
             "god",
             "#ffd700",
-            (6, 1),
+            (6, 4),
             false,
             introSound: () => GetIntroSound(RoleTypes.Crewmate),
             from: From.SuperNewRoles

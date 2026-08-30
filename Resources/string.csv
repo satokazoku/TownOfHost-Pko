@@ -3388,7 +3388,7 @@
 "Command.tpo","Tp to out Lobby","ロビーの外へテレポート"
 "Command.tpi","Tp to in Lobby","ロビー内へテレポート"
 "Command.dis","<impostor/crewmate> GameEnd to Disconnected","<impostor/crewmate>切断として終了"
-"Command.sw","<roleName,None Set> winnerteam GameEnd","<imp/crew,none/Jackal/役職名>勝者を選んで終了"
+"Command.sw","<roleName,None Set> winnerteam GameEnd","<imp/crew,none/jackal/役職名>勝者を選んで終了"
 "Command.impchat","Impostor Teammate Send Hidden chat","仲間のインポスターに秘匿メッセージを送信"
 "Command.jacchat","Jackal Teammate Send Hidden chat","仲間のジャッカル,Jドール,Jマフィアに秘匿メッセージを送信"
 "Command.LoverChat","Lover Send Hidden chat","恋人に秘匿メッセージを送信"

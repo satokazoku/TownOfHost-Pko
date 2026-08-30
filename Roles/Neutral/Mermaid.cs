@@ -26,7 +26,7 @@ public sealed class Mermaid : RoleBase, ILNKiller, ISchrodingerCatOwner, IAdditi
             SetupOptionItem,
             "mer",
             "#1d7fad",
-            (2, 0),
+            (2, 2),
             true,
             countType: CountTypes.Crew,
             assignInfo: new RoleAssignInfo(CustomRoles.Mermaid, CustomRoleTypes.Neutral)

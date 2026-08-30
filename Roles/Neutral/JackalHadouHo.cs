@@ -26,7 +26,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
             SetUpOptionItem,
             "jhh",
             "#00b4eb",
-            (1, 4),
+            (1, 5),
             true,
             countType: CountTypes.Jackal,
             assignInfo: new RoleAssignInfo(CustomRoles.JackalHadouHo, CustomRoleTypes.Neutral)
@@ -1035,7 +1035,7 @@ public sealed class Tama : RoleBase, IKiller
             SetupOptionItem,
             "tm",
             "#00b4eb",
-            (1, 5),
+            (1, 6),
             from: From.SuperNewRoles,
             isDesyncImpostor: true,
             countType: CountTypes.Crew

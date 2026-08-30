@@ -21,7 +21,7 @@ public sealed class DoppelGanger : RoleBase, ILNKiller, ISchrodingerCatOwner, IA
             SetupOptionItem,
             "dg",
             "#47266e",
-            (2, 1),
+            (2, 3),
             true,
             from: From.TownOfHost_K,
             assignInfo: new RoleAssignInfo(CustomRoles.DoppelGanger, CustomRoleTypes.Neutral)
