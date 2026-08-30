@@ -28,7 +28,7 @@ public sealed class Scratcher : RoleBase, IAdditionalWinner
         );
 
     public Scratcher(PlayerControl player)
-    : base(RoleInfo, player, () => HasTask.ForRecompute)
+: base(RoleInfo, player, () => HasTask.ForRecompute)
     {
         Scratches = 0;
         Hits = 0;
@@ -46,6 +46,17 @@ public sealed class Scratcher : RoleBase, IAdditionalWinner
         CanWinAtDeath = OptionCanWinAtDeath.GetBool();
         AddWinToSoloWin = OptionAddWinToSoloWin.GetBool();
         SoloWinHitCount = OptionSoloWinHitCount.GetInt();
+
+        RedistributeTasksOnFinish = OptionRedistributeTasksOnFinish.GetBool();
+        RedistributeNormalTasks = OptionRedistributeNormalTasks.GetInt();
+        RedistributeShortTasks = OptionRedistributeShortTasks.GetInt();
+        RedistributeLongTasks = OptionRedistributeLongTasks.GetInt();
+        if (Main.NormalOptions.NumCommonTasks < RedistributeNormalTasks)
+            RedistributeNormalTasks = Main.NormalOptions.NumCommonTasks;
+        if (Main.NormalOptions.NumShortTasks < RedistributeShortTasks)
+            RedistributeShortTasks = Main.NormalOptions.NumShortTasks;
+        if (Main.NormalOptions.NumLongTasks < RedistributeLongTasks)
+            RedistributeLongTasks = Main.NormalOptions.NumLongTasks;
     }
 
     private int Scratches;
@@ -64,6 +75,10 @@ public sealed class Scratcher : RoleBase, IAdditionalWinner
     private static OptionItem OptionCanWinAtDeath; private static bool CanWinAtDeath;
     private static OptionItem OptionAddWinToSoloWin; private static bool AddWinToSoloWin;
     private static OptionItem OptionSoloWinHitCount; private static int SoloWinHitCount;
+    private static OptionItem OptionRedistributeTasksOnFinish; private static bool RedistributeTasksOnFinish;
+    private static OptionItem OptionRedistributeNormalTasks; private static int RedistributeNormalTasks;
+    private static OptionItem OptionRedistributeShortTasks; private static int RedistributeShortTasks;
+    private static OptionItem OptionRedistributeLongTasks; private static int RedistributeLongTasks;
 
     enum OptionName
     {
@@ -76,6 +91,10 @@ public sealed class Scratcher : RoleBase, IAdditionalWinner
         ScratcherCanWinAtDeath,
         ScratcherAddWinToSoloWin,
         ScratcherSoloWinHitCount,
+        ScratcherRedistributeTasksOnFinish,
+        ScratcherRedistributeNormalTasks,
+        ScratcherRedistributeShortTasks,
+        ScratcherRedistributeLongTasks,
     }
 
     private static void SetupOptionItem()
@@ -96,6 +115,13 @@ public sealed class Scratcher : RoleBase, IAdditionalWinner
         OptionAddWinToSoloWin = BooleanOptionItem.Create(RoleInfo, 17, OptionName.ScratcherAddWinToSoloWin, false, false, OptionIsAdditionalWin);
         OptionSoloWinHitCount = IntegerOptionItem.Create(RoleInfo, 18, OptionName.ScratcherSoloWinHitCount,
             new(1, 100, 1), 3, false, OptionAddWinToSoloWin).SetValueFormat(OptionFormat.Pieces);
+        OptionRedistributeTasksOnFinish = BooleanOptionItem.Create(RoleInfo, 19, OptionName.ScratcherRedistributeTasksOnFinish, false, false);
+        OptionRedistributeNormalTasks = IntegerOptionItem.Create(RoleInfo, 30, OptionName.ScratcherRedistributeNormalTasks,
+            new(0, 15, 1), 1, false, OptionRedistributeTasksOnFinish).SetValueFormat(OptionFormat.Pieces);
+        OptionRedistributeShortTasks = IntegerOptionItem.Create(RoleInfo, 35, OptionName.ScratcherRedistributeShortTasks,
+            new(0, 15, 1), 1, false, OptionRedistributeTasksOnFinish).SetValueFormat(OptionFormat.Pieces);
+        OptionRedistributeLongTasks = IntegerOptionItem.Create(RoleInfo, 40, OptionName.ScratcherRedistributeLongTasks,
+            new(0, 15, 1), 1, false, OptionRedistributeTasksOnFinish).SetValueFormat(OptionFormat.Pieces);
         OverrideTasksData.Create(RoleInfo, 20);
     }
 
@@ -113,6 +139,14 @@ public sealed class Scratcher : RoleBase, IAdditionalWinner
         UtilsGameLog.AddGameLog("Scratcher",
             string.Format(GetString("ScratcherGetScratchLog"), ScratchPerTask, Scratches, Player.Data.GetPlayerColor()));
         RPC.PlaySoundRPC(Player.PlayerId, Sounds.TaskComplete);
+
+        if (RedistributeTasksOnFinish && IsTaskFinished)
+        {
+            MyTaskState.AllTasksCount += RedistributeNormalTasks + RedistributeShortTasks + RedistributeLongTasks;
+            Player.Data.RpcSetTasks(Array.Empty<byte>());
+            Player.SyncSettings();
+        }
+
         SendRPC();
         UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: [Player]);
         return true;
