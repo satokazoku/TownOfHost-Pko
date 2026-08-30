@@ -29,6 +29,7 @@ namespace TownOfHost
         Neutral,
         Ghost,
         Addon,
+        Combination,
     }
     public static class UtilsShowOption
     {
@@ -333,7 +334,7 @@ namespace TownOfHost
             if (GameModeManager.IsStandardClass()) addons = CustomRolesHelper.AllAddOns;
             if (Options.CurrentGameMode == CustomGameMode.HideAndSeek) roles = CustomRolesHelper.AllHASRoles;
             var nowcount = 3;
-            if (roles != null && filter is RoleListFilter.All or RoleListFilter.Impostor or RoleListFilter.Madmate or RoleListFilter.Crewmate or RoleListFilter.Neutral)
+            if (roles != null && filter is RoleListFilter.All or RoleListFilter.Impostor or RoleListFilter.Madmate or RoleListFilter.Crewmate or RoleListFilter.Neutral or RoleListFilter.Combination)
             {
                 var roleType = CustomRoleTypes.Impostor;
                 var farst = true;
@@ -398,7 +399,7 @@ namespace TownOfHost
                     }
                 }
                 //コンビ
-                if (filter is RoleListFilter.All)
+                if (filter is RoleListFilter.All or RoleListFilter.Combination)
                 {
                     nowcount = 3;
                     foreach (CustomRoles role in roles.Where(role => role.IsCombinationRole() && role.IsEnable() && Event.CheckRole(role)))
@@ -424,12 +425,13 @@ namespace TownOfHost
                     }
                 }
             }
-            var showAddonsSection = filter is RoleListFilter.All or RoleListFilter.Ghost or RoleListFilter.Addon;
+            var showAddonsSection = filter is RoleListFilter.All or RoleListFilter.Ghost or RoleListFilter.Addon or RoleListFilter.Combination;
             if (showAddonsSection && addons != null && addons?.Length != 0)
             {
                 var filteredAddons = addons.Where(a => a.IsEnable() && Event.CheckRole(a));
                 if (filter is RoleListFilter.Ghost) filteredAddons = filteredAddons.Where(a => a.IsGhostRole());
                 else if (filter is RoleListFilter.Addon) filteredAddons = filteredAddons.Where(a => !a.IsGhostRole() && !a.IsLovers());
+                else if (filter is RoleListFilter.Combination) filteredAddons = filteredAddons.Where(a => a.IsLovers() || a is CustomRoles.Twins or CustomRoles.Triplets or CustomRoles.OneLove);
                 filteredAddons = filteredAddons.ToArray();
 
                 if (filteredAddons.Any())

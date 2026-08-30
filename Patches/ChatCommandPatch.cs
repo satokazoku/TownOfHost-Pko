@@ -956,6 +956,9 @@ namespace TownOfHost
                             case "n":
                                 ShowActiveRoles(filter: RoleListFilter.Neutral);
                                 break;
+                            case "co":
+                                ShowActiveRoles(filter: RoleListFilter.Combination);
+                                break;
                             case "gh":
                                 ShowActiveRoles(filter: RoleListFilter.Ghost);
                                 break;
@@ -2334,6 +2337,9 @@ namespace TownOfHost
                             break;
                         case "n":
                             ShowActiveRoles(player.PlayerId, filter: RoleListFilter.Neutral);
+                            break;
+                        case "co":
+                            ShowActiveRoles(player.PlayerId, filter: RoleListFilter.Combination);
                             break;
                         case "gh":
                             ShowActiveRoles(player.PlayerId, filter: RoleListFilter.Ghost);
