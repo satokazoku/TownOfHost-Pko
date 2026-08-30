@@ -491,7 +491,6 @@ namespace TownOfHost
         Eater = CustomRoles.Eater,
         Spelunker = CustomRoles.Spelunker,
         Pavlov = CustomRoles.PavlovDog,
-        Moira = CustomRoles.Moira,
         PoisonedBakery = CustomRoles.PoisonedBakery,
         Chatter = CustomRoles.Chatter,
         Suicider = CustomRoles.Suicider,

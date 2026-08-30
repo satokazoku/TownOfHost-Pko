@@ -1042,7 +1042,6 @@ public enum CustomRoles
     PavlovDog,
     PavlovOwner,
     PavlovDogImprint,
-    Moira,
     PoisonedBakery,
     Suicider,
     PokerFace,
