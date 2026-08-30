@@ -287,10 +287,10 @@ namespace TownOfHost
             var scaler = mainMenu.transform.Find(OnlineButtonScalerPath);
             if (scaler == null) return;
 
-            scaler.Find("Enter Code Button")?.gameObject.SetActive(false);
+            scaler.Find("Enter Code Button")?.gameObject.SetActive(true);
             scaler.Find("Find Game Button")?.gameObject.SetActive(false);
-            scaler.Find("Line")?.gameObject.SetActive(false);
-            scaler.Find("Create Lobby Button")?.gameObject.SetActive(false);
+            scaler.Find("Line")?.gameObject.SetActive(true);
+            scaler.Find("Create Lobby Button")?.gameObject.SetActive(true);
         }
 
         /// <summary>TOHロゴの子としてボタンを生成</summary>
@@ -326,21 +326,13 @@ namespace TownOfHost
             return !(VersionInfoManager.version == null || VersionInfoManager.allversion.DisableMM
             || (VersionInfoManager.allversion != null && VersionInfoManager.allversion.DisableMM));
         }
-        [HarmonyPatch(nameof(MainMenuManager.OpenEnterCodeMenu))]
+        /*[HarmonyPatch(nameof(MainMenuManager.OpenEnterCodeMenu))]
         [HarmonyPrefix]
         public static bool ClickOpenEnterCodeMenu()
         {
             return !(VersionInfoManager.version != null && VersionInfoManager.version.DisableRoomJoin == true
             && VersionInfoManager.allversion != null && VersionInfoManager.allversion.DisableRoomJoin == true);
-        }
-        [HarmonyPatch(nameof(MainMenuManager.OpenOnlineMenu))]
-        [HarmonyPostfix]
-        [HarmonyPriority(Priority.Last)]
-        public static void OpenOnlineMenuPostfix(MainMenuManager __instance)
-        {
-            _ = new LateTask(() => BeginAutoCreateGame(__instance), AutoCreateGamePollInterval, "Begin Auto Create Game", true);
-        }
-
+        }*/
         private static void RequestAutoCreateGame()
         {
             autoCreateGameRequested = true;

@@ -109,16 +109,16 @@ public sealed class Jailer : RoleBase, IUsePhantomButton, IKiller
         OptionImprisonType = StringOptionItem.Create(RoleInfo, 11, OptionName.JailerImprisonType,
             new string[] { "Turns", "Seconds" }, 0, false);
 
-        OptionImprisonTurns = IntegerOptionItem.Create(RoleInfo, 12, OptionName.JailerImprisonTurns,
-                new(1, 10, 1), 2, false)
-            .SetValueFormat(OptionFormat.Times);
-
-        OptionImprisonSeconds = FloatOptionItem.Create(RoleInfo, 13, OptionName.JailerImprisonSeconds,
-                new(2.5f, 180f, 2.5f), 30f, false)
+        OptionImprisonSeconds = FloatOptionItem.Create(RoleInfo, 12, OptionName.JailerImprisonSeconds,
+                new(2.5f, 180f, 2.5f), 30f, false, OptionImprisonType)
             .SetValueFormat(OptionFormat.Seconds);
 
-        OptionContinueAfterMeeting = BooleanOptionItem.Create(RoleInfo, 14,
-                OptionName.JailerContinueAfterMeeting, false, false);
+        OptionContinueAfterMeeting = BooleanOptionItem.Create(RoleInfo, 13,
+                OptionName.JailerContinueAfterMeeting, false, false, OptionImprisonSeconds);
+
+        OptionImprisonTurns = IntegerOptionItem.Create(RoleInfo, 14, OptionName.JailerImprisonTurns,
+                new(1, 10, 1), 2, false)
+            .SetValueFormat(OptionFormat.day);
 
         OptionAbilityTask = IntegerOptionItem.Create(RoleInfo, 15, OptionName.JailerAbilityTask,
                 new(0, 20, 1), 0, false)

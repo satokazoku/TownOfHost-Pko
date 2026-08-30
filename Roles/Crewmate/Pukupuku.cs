@@ -67,11 +67,11 @@ namespace TownOfHost.Roles.Crewmate
 
             OptionGuardCount = IntegerOptionItem.Create(
                 RoleInfo, 11, OptionName.PukupukuGuardCount,
-                new(1, 10, 1), 1, false);
+                new(1, 10, 1), 1, false, ModeOption);
 
             OptionNotifyOnGuard = BooleanOptionItem.Create(
                 RoleInfo, 12, OptionName.PukupukuNotifyOnGuard,
-                true, false);
+                true, false, ModeOption);
 
             OptionPostDeathRevengeEnabled = BooleanOptionItem.Create(
                 RoleInfo, 20, "PukupukuPostDeathRevenge",
@@ -79,7 +79,7 @@ namespace TownOfHost.Roles.Crewmate
 
             OptionPostDeathRevengeTurnLimit = IntegerOptionItem.Create(
                 RoleInfo, 21, OptionName.PukupukuPostDeathTurnLimit,
-                new(1, 10, 1), 1, false)
+                new(1, 10, 1), 1, false, OptionPostDeathRevengeEnabled)
                 .SetValueFormat(OptionFormat.day);
         }
 
