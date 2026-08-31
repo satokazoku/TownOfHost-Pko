@@ -22,10 +22,6 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
             SetUpOptionItem,
             "hh",
             OptionSort: (3, 12),
-            assignInfo: new RoleAssignInfo(CustomRoles.HadouHo, CustomRoleTypes.Impostor)
-            {
-                AssignCountRule = new(1, 1, 1),
-            },
             from: From.SuperNewRoles
         );
 
@@ -93,7 +89,6 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
         PlayerSpeed = Main.AllPlayerSpeed[Player.PlayerId];
         spawnCooldownStarted = false;
     }
-
     public override void OnDestroy()
     {
         CustomRoleManager.LowerOthers.Remove(GetLowerTextOthers);

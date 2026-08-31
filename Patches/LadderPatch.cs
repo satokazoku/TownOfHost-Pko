@@ -80,23 +80,6 @@ namespace TownOfHost
     [HarmonyPatch(typeof(PlayerPhysics), nameof(PlayerPhysics.ClimbLadder))]
     class LadderPatch
     {
-        public static bool Prefix(PlayerPhysics __instance, Ladder source, byte climbLadderSid)
-        {
-            var player = __instance.myPlayer;
-            if (player.Is(CustomRoles.HadouHo) && HadouHo.Charging)
-            {
-                return false;
-            }
-            if (player.Is(CustomRoles.JackalHadouHo) && JackalHadouHo.Charging)
-            {
-                return false;
-            }
-            /*if (player.Is(CustomRoles.SheriffHadouHo) && SheriffHadouHo.Charging)
-            {
-                return false;
-            }*/
-            return true;
-        }
         public static void Postfix(PlayerPhysics __instance, Ladder source, byte climbLadderSid)
         {
             FallFromLadder.OnClimbLadder(__instance, source);

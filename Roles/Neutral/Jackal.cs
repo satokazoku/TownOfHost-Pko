@@ -77,17 +77,16 @@ namespace TownOfHost.Roles.Neutral
             OptionCanVent = BooleanOptionItem.Create(RoleInfo, 11, GeneralOption.CanVent, true, false);
             OptionCanUseSabotage = BooleanOptionItem.Create(RoleInfo, 12, GeneralOption.CanUseSabotage, false, false);
             OptionHasImpostorVision = BooleanOptionItem.Create(RoleInfo, 13, GeneralOption.ImpostorVision, true, false);
+            RoleAddAddons.Create(RoleInfo, 14, NeutralKiller: true);
 
             ObjectOptionitem.Create(RoleInfo, 9, "SideKickOption", true, null).SetOptionName(() => "Sidekick Setting");
-            OptionCanMakeSidekick = BooleanOptionItem.Create(RoleInfo, 14, GeneralOption.CanCreateSideKick, true, false);
-            OptionImpostorCanSidekick = BooleanOptionItem.Create(RoleInfo, 15, OptionName.JackalImpostorCanSidekick, false, false, OptionCanMakeSidekick);
-            OptionSidekickCanSeeOldImpostorTeammates = BooleanOptionItem.Create(RoleInfo, 16, OptionName.JackalbeforeImpCanSeeImp, false, false, OptionImpostorCanSidekick);
-            OptionImpostorCanSeeNameColor = BooleanOptionItem.Create(RoleInfo, 17, OptionName.Jackaldollimpgaimpnimieru, false, false, OptionImpostorCanSidekick);
-            OptionCooldown = FloatOptionItem.Create(RoleInfo, 18, GeneralOption.Cooldown, new(0f, 180f, 0.5f), 30f, false, OptionCanMakeSidekick)
+            OptionCanMakeSidekick = BooleanOptionItem.Create(RoleInfo, 15, GeneralOption.CanCreateSideKick, true, false);
+            OptionImpostorCanSidekick = BooleanOptionItem.Create(RoleInfo, 16, OptionName.JackalImpostorCanSidekick, false, false, OptionCanMakeSidekick);
+            OptionSidekickCanSeeOldImpostorTeammates = BooleanOptionItem.Create(RoleInfo, 17, OptionName.JackalbeforeImpCanSeeImp, false, false, OptionImpostorCanSidekick);
+            OptionImpostorCanSeeNameColor = BooleanOptionItem.Create(RoleInfo, 18, OptionName.Jackaldollimpgaimpnimieru, false, false, OptionImpostorCanSidekick);
+            OptionCooldown = FloatOptionItem.Create(RoleInfo, 19, GeneralOption.Cooldown, new(0f, 180f, 0.5f), 30f, false, OptionCanMakeSidekick)
                 .SetValueFormat(OptionFormat.Seconds);
-            OptionSidekickPromotion = BooleanOptionItem.Create(RoleInfo, 19, OptionName.JackalSidekickPromotion, false, false, OptionCanMakeSidekick);
-            ObjectOptionitem.Create(RoleInfo, 8, "AddonOption", true, null).SetOptionName(() => "Sidekick Setting");
-            RoleAddAddons.Create(RoleInfo, 20, NeutralKiller: true);
+            OptionSidekickPromotion = BooleanOptionItem.Create(RoleInfo, 20, OptionName.JackalSidekickPromotion, false, false, OptionCanMakeSidekick);
         }
         public float CalculateKillCooldown() => KillCooldown;
         public bool CanUseSabotageButton() => CanUseSabotage;

@@ -244,7 +244,6 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         return CanVent;
     }
     public override bool CanVentMoving(PlayerPhysics physics, int ventId) => CanVent;
-
     public override void Add()
     {
         PlayerSpeed = Main.AllPlayerSpeed[Player.PlayerId];
