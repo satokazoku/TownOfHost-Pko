@@ -762,15 +762,15 @@ public static class Moderator
     {
         colorId = value.ToLowerInvariant() switch
         {
-            "red" or "赤" or "レッド" => 0,
-            "blue" or "青" or "ブルー" => 1,
-            "green" or "緑" or "グリーン" => 2,
+            "red" or "赤" or "赤色" or "レッド" => 0,
+            "blue" or "青" or "青色" or "ブルー" => 1,
+            "green" or "緑" or "緑色" or "グリーン" => 2,
             "pink" or "ピンク" => 3,
             "orange" or "オレンジ" => 4,
-            "yellow" or "黄" or "イエロー" => 5,
-            "black" or "黒" or "ブラック" => 6,
-            "white" or "白" or "ホワイト" => 7,
-            "purple" or "紫" or "パープル" => 8,
+            "yellow" or "黄" or "黄色" or "イエロー" => 5,
+            "black" or "黒" or "黒色" or "ブラック" => 6,
+            "white" or "白" or "白色" or "ホワイト" => 7,
+            "purple" or "紫" or "紫色" or "パープル" => 8,
             "brown" or "ブラウン" => 9,
             "cyan" or "シアン" => 10,
             "lime" or "ライム" => 11,

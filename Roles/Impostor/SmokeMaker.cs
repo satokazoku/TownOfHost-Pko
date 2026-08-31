@@ -33,9 +33,10 @@ public sealed class SmokeMaker : RoleBase, IImpostor, IUsePhantomButton
         SmokeDuration = OptionSmokeDuration.GetFloat();
         SmokeSize = OptionSmokeSize.GetInt() * 50;
         MaxDummies = OptionMaxDummies.GetInt();
+        SwapControls = OptionSwapControls.GetBool();
 
         placedDummies = new();
-        placeCDLeft = 0f;
+        petCDLeft = 0f;
     }
 
     static OptionItem OptionPlaceCooldown; static float PlaceCooldown;
@@ -43,6 +44,7 @@ public sealed class SmokeMaker : RoleBase, IImpostor, IUsePhantomButton
     static OptionItem OptionSmokeDuration; static float SmokeDuration;
     static OptionItem OptionSmokeSize; static int SmokeSize;
     static OptionItem OptionMaxDummies; static int MaxDummies;
+    static OptionItem OptionSwapControls; static bool SwapControls;
 
     enum OptionName
     {
@@ -51,10 +53,11 @@ public sealed class SmokeMaker : RoleBase, IImpostor, IUsePhantomButton
         SmokeMakerSmokeDuration,
         SmokeMakerSmokeSize,
         SmokeMakerMaxDummies,
+        SmokeMakerSwapControls,
     }
 
     readonly List<SmokeDummy> placedDummies;
-    float placeCDLeft;
+    float petCDLeft;
     int clientDummiesCount;
     int DummiesCount => AmongUsClient.Instance.AmHost ? placedDummies.Count : clientDummiesCount;
 
@@ -70,6 +73,7 @@ public sealed class SmokeMaker : RoleBase, IImpostor, IUsePhantomButton
             new(100, 650, 50), 150, false).SetValueFormat(OptionFormat.Percent);
         OptionMaxDummies = IntegerOptionItem.Create(RoleInfo, 14, OptionName.SmokeMakerMaxDummies,
             new(1, 20, 1), 5, false).SetValueFormat(OptionFormat.Pieces);
+        OptionSwapControls = BooleanOptionItem.Create(RoleInfo, 15, OptionName.SmokeMakerSwapControls, false, false);
     }
 
     public float CalculateKillCooldown() => 30f;
@@ -81,14 +85,14 @@ public sealed class SmokeMaker : RoleBase, IImpostor, IUsePhantomButton
 
     public override void Add()
     {
-        placeCDLeft = PlaceCooldown;
+        petCDLeft = SwapControls ? SmokeCooldown : PlaceCooldown;
         placedDummies.Clear();
         PetActionManager.Register(Player.PlayerId, OnPet);
     }
 
     public override void OnSpawn(bool initialState = false)
     {
-        placeCDLeft = PlaceCooldown + 1.5f;
+        petCDLeft = (SwapControls ? SmokeCooldown : PlaceCooldown) + 1.5f;
     }
 
     public override void OnDestroy()
@@ -99,26 +103,19 @@ public sealed class SmokeMaker : RoleBase, IImpostor, IUsePhantomButton
 
     public override void ApplyGameOptions(IGameOptions opt)
     {
-        AURoleOptions.PhantomCooldown = SmokeCooldown;
+        AURoleOptions.PhantomCooldown = SwapControls ? PlaceCooldown : SmokeCooldown;
     }
 
     void OnPet()
     {
         if (!AmongUsClient.Instance.AmHost) return;
         if (!Player.IsAlive()) return;
-        if (placeCDLeft > 0f) return;
-        if (placedDummies.Count >= MaxDummies) return;
+        if (petCDLeft > 0f) return;
 
-        var pos = Player.GetTruePosition();
-        var dummy = new SmokeDummy(pos, Player, SmokeSize);
-        placedDummies.Add(dummy);
+        bool success = SwapControls ? DoActivateSmoke() : DoPlaceDummy();
+        if (!success) return;
 
-        placeCDLeft = PlaceCooldown;
-        Player.MarkDirtySettings();
-
-        UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
-        SendSyncRpc();
-        Logger.Info($"{Player.Data.GetLogPlayerName()} がスモークダミーを設置: {pos}", "SmokeMaker");
+        petCDLeft = SwapControls ? SmokeCooldown : PlaceCooldown;
     }
 
     void IUsePhantomButton.OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
@@ -130,54 +127,76 @@ public sealed class SmokeMaker : RoleBase, IImpostor, IUsePhantomButton
 
         if (AmongUsClient.Instance.AmHost)
         {
-            ActivateSmoke();
+            DoPhantomButtonAction();
         }
         else
         {
-            if (DummiesCount > 0)
-            {
-                SendActivateRequestRpc();
-            }
+            SendPhantomActionRequestRpc();
         }
     }
 
-    void ActivateSmoke()
+    void DoPhantomButtonAction()
     {
         if (!Player.IsAlive()) return;
-        if (placedDummies.Count == 0) return;
+
+        bool success = SwapControls ? DoPlaceDummy() : DoActivateSmoke();
+        if (!success) return;
+
+        _ = new LateTask(() =>
+        {
+            if (!Player.IsAlive()) return;
+            AURoleOptions.PhantomCooldown = SwapControls ? PlaceCooldown : SmokeCooldown;
+            Player.RpcResetAbilityCooldown();
+        }, 0.1f, "SmokeMaker.ResetCD", true);
+    }
+
+    bool DoPlaceDummy()
+    {
+        if (!Player.IsAlive()) return false;
+        if (placedDummies.Count >= MaxDummies) return false;
+
+        var pos = Player.GetTruePosition();
+        var dummy = new SmokeDummy(pos, Player, SmokeSize);
+        placedDummies.Add(dummy);
+
+        Player.MarkDirtySettings();
+        UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
+        SendSyncRpc();
+        Logger.Info($"{Player.Data.GetLogPlayerName()} がスモークダミーを設置: {pos}", "SmokeMaker");
+        return true;
+    }
+
+    bool DoActivateSmoke()
+    {
+        if (!Player.IsAlive()) return false;
+        if (placedDummies.Count == 0) return false;
 
         foreach (var dummy in placedDummies.ToArray())
             dummy.Activate(SmokeDuration);
 
         placedDummies.Clear();
 
-        _ = new LateTask(() =>
-        {
-            if (!Player.IsAlive()) return;
-            AURoleOptions.PhantomCooldown = SmokeCooldown;
-            Player.RpcResetAbilityCooldown();
-        }, 0.1f, "SmokeMaker.ResetCD", true);
-
         UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
         SendSyncRpc();
+        return true;
     }
 
     public override void OnFixedUpdate(PlayerControl player)
     {
         if (!AmongUsClient.Instance.AmHost) return;
 
-        if (placeCDLeft > 0f)
+        if (petCDLeft > 0f)
         {
-            float prev = placeCDLeft;
-            placeCDLeft -= Time.fixedDeltaTime;
+            float prev = petCDLeft;
+            petCDLeft -= Time.fixedDeltaTime;
 
-            if (placeCDLeft <= 0f)
+            if (petCDLeft <= 0f)
             {
-                placeCDLeft = 0f;
+                petCDLeft = 0f;
                 UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
                 SendSyncRpc();
             }
-            else if (Mathf.CeilToInt(prev) != Mathf.CeilToInt(placeCDLeft))
+            else if (Mathf.CeilToInt(prev) != Mathf.CeilToInt(petCDLeft))
             {
                 UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
                 SendSyncRpc();
@@ -196,7 +215,7 @@ public sealed class SmokeMaker : RoleBase, IImpostor, IUsePhantomButton
     public override void AfterMeetingTasks()
     {
         if (!AmongUsClient.Instance.AmHost) return;
-        placeCDLeft = PlaceCooldown;
+        petCDLeft = SwapControls ? SmokeCooldown : PlaceCooldown;
         SendSyncRpc();
     }
 
@@ -211,8 +230,8 @@ public sealed class SmokeMaker : RoleBase, IImpostor, IUsePhantomButton
     public override string GetProgressText(bool comms = false, bool GameLog = false)
     {
         if (!Player.IsAlive()) return "";
-        if (placeCDLeft > 0f)
-            return $" <color=#888888>({Mathf.CeilToInt(placeCDLeft)}s)</color>";
+        if (petCDLeft > 0f)
+            return $" <color=#888888>({Mathf.CeilToInt(petCDLeft)}s)</color>";
         if (DummiesCount >= MaxDummies)
             return $" <color=#555555>({DummiesCount}/{MaxDummies})</color>";
         return $" <color=#aaaaaa>({DummiesCount}/{MaxDummies})</color>";
@@ -228,9 +247,13 @@ public sealed class SmokeMaker : RoleBase, IImpostor, IUsePhantomButton
         string size = isForHud ? "" : "<size=60%>";
         string color = RoleInfo.RoleColorCode;
 
+        string petLabel = SwapControls ? "起爆" : "スモーク設置";
+        string phantomLabel = SwapControls ? "スモーク設置" : "起爆";
+        string detonateInput = SwapControls ? "ペット" : "ファントム";
+
         if (DummiesCount == 0)
-            return $"{size}<color={color}>ペット → スモーク設置 | ファントム → 起爆</color>";
-        return $"{size}<color={color}>設置済: {DummiesCount} | ファントム → 全て起爆！</color>";
+            return $"{size}<color={color}>ペット → {petLabel} | ファントム → {phantomLabel}</color>";
+        return $"{size}<color={color}>設置済: {DummiesCount} | {detonateInput} → 全て起爆！</color>";
     }
 
     void SendSyncRpc()
@@ -238,11 +261,11 @@ public sealed class SmokeMaker : RoleBase, IImpostor, IUsePhantomButton
         if (!AmongUsClient.Instance.AmHost) return;
         using var sender = CreateSender();
         sender.Writer.Write((byte)1);
-        sender.Writer.Write(placeCDLeft);
+        sender.Writer.Write(petCDLeft);
         sender.Writer.Write(placedDummies.Count);
     }
 
-    void SendActivateRequestRpc()
+    void SendPhantomActionRequestRpc()
     {
         using var sender = CreateSender();
         sender.Writer.Write((byte)0);
@@ -255,17 +278,16 @@ public sealed class SmokeMaker : RoleBase, IImpostor, IUsePhantomButton
         {
             if (AmongUsClient.Instance.AmHost)
             {
-                ActivateSmoke();
+                DoPhantomButtonAction();
             }
         }
         else if (rpcType == 1)
         {
-            placeCDLeft = reader.ReadSingle();
+            petCDLeft = reader.ReadSingle();
             clientDummiesCount = reader.ReadInt32();
         }
     }
 }
-
 public class SmokeDummy : CustomNetObject
 {
     readonly PlayerControl _owner;
