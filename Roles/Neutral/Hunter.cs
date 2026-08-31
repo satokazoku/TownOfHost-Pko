@@ -29,7 +29,7 @@ namespace TownOfHost.Roles.Neutral
                     SetupOptionItem,
                     "hun",
                     "#cd853f",
-                    (1, 5),
+                    (2, 1),
                     true,
                     countType: CountTypes.Hunter,
                      assignInfo: new RoleAssignInfo(CustomRoles.Hunter, CustomRoleTypes.Neutral)

@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
+using HarmonyLib;
 using Hazel;
 using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
@@ -405,5 +407,55 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
     {
         text = "HadouHo_Ability";
         return true;
+    }
+
+    public void cancelbeam()
+    {
+        if (IsDead || !Player.IsAlive())
+        {
+            Charging = false;
+            ShowBeamMark = false; _prevBeamMark = false;
+            SetRoleTextHeight(false); IsFiring = false;
+            Main.AllPlayerSpeed[Player.PlayerId] = PlayerSpeed;
+            Player.MarkDirtySettings();
+            UtilsNotifyRoles.NotifyRoles(); SendRpc(); return;
+        }
+        Charging = false;
+        IsCharging = false;
+        _prevCharging = false;
+        _prevBeamMark = false;
+        ShowBeamMark = false; _prevBeamMark = false;
+        SetRoleTextHeight(false);
+        UtilsNotifyRoles.NotifyRoles(ForceLoop: true); SendRpc();
+        Main.AllPlayerSpeed[Player.PlayerId] = PlayerSpeed; Player.MarkDirtySettings();
+        var charge = OptionChargeTime.GetFloat() - chargeTimer;
+        var waittime = OptionBeamTime.GetFloat() + charge;
+        _ = new LateTask(() =>
+        {
+            IsFiring = false;
+        }, waittime);
+    }
+    [HarmonyPatch(typeof(PlayerPhysics), nameof(PlayerPhysics.ClimbLadder))]
+    class LadderPatch
+    {
+        public static Dictionary<byte, Vector2> Ladder = new();
+        public static void Postfix(PlayerPhysics __instance, Ladder source, byte climbLadderSid)
+        {
+            var sourcePos = source.transform.position;
+            var targetPos = source.Destination.transform.position;
+            if (sourcePos.y > targetPos.y)
+                Ladder[__instance.myPlayer.PlayerId] = targetPos;
+            else
+                Ladder[__instance.myPlayer.PlayerId] = sourcePos;
+
+            if (__instance.myPlayer.GetRoleClass() is HadouHo { ShowBeamMark: true } hadouho)
+            {
+                hadouho.cancelbeam();
+            }
+            else if (__instance.myPlayer.GetRoleClass() is HadouHo { IsCharging: true } hadouhou)
+            {
+                hadouhou.cancelbeam();
+            }
+        }
     }
 }

@@ -401,10 +401,11 @@ namespace TownOfHost
                                 SendMessage("ニュースがまだありません！", PlayerControl.LocalPlayer.PlayerId);
                                 break;
                             }
+
                             SendMessage(
                                 $"<size=90%>{latest.SubTitle}\n<b>{latest.Title}</b>\n\n{latest.Text}</size>",
-                                PlayerControl.LocalPlayer.PlayerId,
-                                "<color=#FF9631>📰 最新アップデート情報</color>");
+                                byte.MaxValue,
+                                "<color=#FF9631>最新アップデート情報</color>");
                         }
                         break;
                     case "/kickprev":
@@ -2240,7 +2241,7 @@ namespace TownOfHost
                         SendMessage(
                             $"<size=90%>{latest.SubTitle}\n<b>{latest.Title}</b>\n\n{latest.Text}</size>",
                             player.PlayerId,
-                            "<color=#FF9631>📰 最新アップデート情報</color>");
+                            "<color=#FF9631>最新アップデート情報</color>");
                     }
                     break;
                 case "/revive":

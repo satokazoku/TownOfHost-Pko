@@ -61,9 +61,9 @@ namespace TownOfHost
 
         public const string PluginGuid = "com.satokazoku.TownOfHost-Pko";
 
-        public const string BepInExPluginVersion = "5.34.22.97";
-        public const string PluginVersion = "5.34.22.97";//ほんとはx.y.z表記にしたかったけどx.y.z.km.ks表記だと警告だされる
-        public const string PluginShowVersion = "5.34.22.97";
+        public const string BepInExPluginVersion = "5.35.22.97";
+        public const string PluginVersion = "5.35.22.97";//ほんとはx.y.z表記にしたかったけどx.y.z.km.ks表記だと警告だされる
+        public const string PluginShowVersion = "5.35.22.97";
         public const string ModVersion = ".22.97";//リリースver用バージョン変更dc9b79
 
         /// 配布するデバッグ版なのであればtrue。リリース時にはfalseにすること。
@@ -491,7 +491,6 @@ namespace TownOfHost
         Eater = CustomRoles.Eater,
         Spelunker = CustomRoles.Spelunker,
         Pavlov = CustomRoles.PavlovDog,
-        Moira = CustomRoles.Moira,
         PoisonedBakery = CustomRoles.PoisonedBakery,
         Chatter = CustomRoles.Chatter,
         Suicider = CustomRoles.Suicider,

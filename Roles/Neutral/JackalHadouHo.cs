@@ -1,11 +1,14 @@
+using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
+using HarmonyLib;
 using Hazel;
 using TownOfHost.Modules;
 using TownOfHost.Patches;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Crewmate;
+using TownOfHost.Roles.Impostor;
 using TownOfHost.Roles.Madmate;
 using UnityEngine;
 using static TownOfHost.Modules.SelfVoteManager;
@@ -26,7 +29,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
             SetUpOptionItem,
             "jhh",
             "#00b4eb",
-            (1, 4),
+            (1, 5),
             true,
             countType: CountTypes.Jackal,
             assignInfo: new RoleAssignInfo(CustomRoles.JackalHadouHo, CustomRoleTypes.Neutral)
@@ -630,7 +633,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
 
     void FireSuperBeam()
     {
-        if (IsDead || !Player.IsAlive()) return;
+        if (IsDead || !Player.IsAlive() || !IsSuperCharging) return;
         BeamFacingLeft = Player.cosmetics.FlipX;
         SendBeamDirection(BeamFacingLeft);
         Utils.AllPlayerKillFlash();
@@ -1019,6 +1022,61 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         if (skMode && CanSideKick) { text = "JackalHadouHo_Kill"; return true; }
         text = ""; return false;
     }
+
+    void cancelbeam()
+    {
+        if (IsDead || !Player.IsAlive())
+        {
+            ShowBeamMark = false; _prevBeamMark = false; IsSuperBeam = false;
+            SetRoleTextHeight(false); IsFiring = false;
+            Main.AllPlayerSpeed[Player.PlayerId] = PlayerSpeed;
+            Charging = false;
+            UtilsNotifyRoles.NotifyRoles(); SendRpc(); return;
+        }
+        Charging = false;
+        IsCharging = false;
+
+        ShowBeamMark = false; _prevBeamMark = false; IsSuperBeam = false;
+        SetRoleTextHeight(false);
+        UtilsNotifyRoles.NotifyRoles(ForceLoop: true);
+        SendRpc();
+        Main.AllPlayerSpeed[Player.PlayerId] = PlayerSpeed;
+        Player.MarkDirtySettings();
+        var charge = OptionChargeTime.GetFloat() - chargeTimer;
+        var supercharge = OptionSuperChargeTime.GetFloat() - chargeTimer;
+        var waittime = OptionBeamTime.GetFloat() + charge;
+        if (IsLoaded)
+        {
+            waittime = OptionSuperBeamTime.GetFloat() + supercharge;
+        }
+        _ = new LateTask(() =>
+        {
+            IsFiring = false;
+        }, waittime);
+    }
+    [HarmonyPatch(typeof(PlayerPhysics), nameof(PlayerPhysics.ClimbLadder))]
+    class LadderPatch
+    {
+        public static Dictionary<byte, Vector2> Ladder = new();
+        public static void Postfix(PlayerPhysics __instance, Ladder source, byte climbLadderSid)
+        {
+            var sourcePos = source.transform.position;
+            var targetPos = source.Destination.transform.position;
+            if (sourcePos.y > targetPos.y)
+                Ladder[__instance.myPlayer.PlayerId] = targetPos;
+            else
+                Ladder[__instance.myPlayer.PlayerId] = sourcePos;
+
+            if (__instance.myPlayer.GetRoleClass() is JackalHadouHo { ShowBeamMark: true } hjk)
+            {
+                hjk.cancelbeam();
+            }
+            else if (__instance.myPlayer.GetRoleClass() is JackalHadouHo { IsCharging: true } jhadou)
+            {
+                jhadou.cancelbeam();
+            }
+        }
+    }
 }
 
 public sealed class Tama : RoleBase, IKiller
@@ -1034,7 +1092,7 @@ public sealed class Tama : RoleBase, IKiller
             SetupOptionItem,
             "tm",
             "#00b4eb",
-            (1, 5),
+            (1, 6),
             from: From.SuperNewRoles,
             isDesyncImpostor: true,
             countType: CountTypes.Crew
