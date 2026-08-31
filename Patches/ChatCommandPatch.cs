@@ -619,15 +619,15 @@ namespace TownOfHost
                         string col = args[1];
                         string hexColor = col.ToLower() switch
                         {
-                            "レッド" or "赤" or "red" => "#ff0000",
-                            "ブルー" or "青" or "blue" => "#0000ff",
-                            "グリーン" or "緑" or "green" => "#00ff00",
+                            "レッド" or "赤" or "赤色" or "red" => "#ff0000",
+                            "ブルー" or "青" or "青色" or "blue" => "#0000ff",
+                            "グリーン" or "緑" or "緑色" or "green" => "#00ff00",
                             "ピンク" or "pink" => "#ff69b4",
                             "オレンジ" or "orange" => "#ffa500",
-                            "イエロー" or "黄" or "yellow" => "#ffff00",
-                            "パープル" or "紫" or "purple" => "#800080",
-                            "ブラック" or "黒" or "black" => "#000000",
-                            "ホワイト" or "白" or "white" => "#ffffff",
+                            "イエロー" or "黄" or "黄色" or "yellow" => "#ffff00",
+                            "パープル" or "紫" or "紫色" or "purple" => "#800080",
+                            "ブラック" or "黒" or "黒色" or "black" => "#000000",
+                            "ホワイト" or "白" or "白色" or "white" => "#ffffff",
                             "シアン" or "cyan" => "#00ffff",
                             "ライム" or "lime" => "#00ff80",
                             "グレー" or "gray" => "#808080",

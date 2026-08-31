@@ -451,6 +451,8 @@ namespace TownOfHost
         Crewmate = CustomRoles.Crewmate,
         Jester = CustomRoles.Jester,
         HappyJester = CustomRoles.HappyJester,
+
+        UnHappyJester = CustomRoles.UnHappyJester,
         PlagueDoctor = CustomRoles.PlagueDoctor,
         Terrorist = CustomRoles.Terrorist,
         Lovers = CustomRoles.Lovers,

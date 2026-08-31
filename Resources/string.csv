@@ -1829,6 +1829,7 @@
 "SmokeMakerSmokeDuration","Smoke Duration","スモーク持続時間"
 "SmokeMakerSmokeSize","Smoke Size","スモークサイズ"
 "SmokeMakerMaxDummies","Max Dummies","最大設置数"
+"SmokeMakerSwapControls","Swap Phantom Button and Pet Abilities","ファントムボタンとペットの発動能力を反転"
 "EvilMovingTeleportCooldown","Teleport Cooldown","テレポートクールダウン",""
 "EvilLinkerPlaceCooldown","Place Cooldown","設置クールタイム"
 "EvilLinkerMaxPairs","Max Pairs","設置できる組の数"
@@ -2562,6 +2563,16 @@
 "VillainTaskWin","Additional Win by Task","覚醒前タスク勝利で追加勝利"
 "OpportunistHasKillButton","Has Kill Button","キルボタンを持つ"
 "HappyJesterRequireTask","Require Task Completion","タスク完了で勝利"
+"HappyJesterCanTransform","Chance to Transform into UnHappy Jester","一定確率でアンハッピージェスターに変化する"
+"HappyJesterTransformTiming","Transform Timing","変化するタイミング"
+"HappyJesterTransformChance","Transform Chance","変化する確率"
+"UnHappyJesterCanTransform","Chance to Transform into Happy Jester","一定確率でハッピージェスターに変化する"
+"UnHappyJesterTransformTiming","Transform Timing","変化するタイミング"
+"UnHappyJesterTransformChance","Transform Chance","変化する確率"
+"OnAssign","On Assignment","配役時"
+"OnKilled","When Killed","自身がキルされたとき"
+"AfterMeetingStart","After Meeting Starts","会議開始後"
+"OnTaskComplete","On Task Complete","タスク完了毎時"
 "OgreKillSuccessRate","Percentage Reduction in the Rate of Successful Kill(*)","キル成功確率が減少する割合(×)",
 "OgreKilledGuardRate","Killed Guard Rate","キルされる時にガードする確率",
 "PirateLimitTurn","Turn Required To Create Gang","一味を作成しないといけないターン数",
