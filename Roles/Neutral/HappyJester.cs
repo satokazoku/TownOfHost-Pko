@@ -1,3 +1,4 @@
+/*
 using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
@@ -403,3 +404,4 @@ public sealed class UnHappyJester : RoleBase, IKiller, IAdditionalWinner
         secretlyHappy = reader.ReadBoolean();
     }
 }
+*/
