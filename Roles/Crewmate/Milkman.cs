@@ -42,6 +42,7 @@ public sealed class Milkman : RoleBase, IKiller
         allDeliveredIds = new();
         rottenRecipients = new();
         diedThisRound = false;
+        deaded = false;
     }
 
     static OptionItem OptionDeliveryCooldown;
@@ -77,6 +78,7 @@ public sealed class Milkman : RoleBase, IKiller
     int milkCount;
     float nowcool;
     int LastCooltime;
+    bool deaded;
 
     readonly HashSet<byte> pendingNotify;
     readonly HashSet<byte> allDeliveredIds;
@@ -102,6 +104,7 @@ public sealed class Milkman : RoleBase, IKiller
         allDeliveredIds.Clear();
         rottenRecipients.Clear();
         diedThisRound = false;
+        deaded = false;
 
         PetActionManager.Register(Player.PlayerId, OnPetUsed);
 
@@ -309,18 +312,8 @@ public sealed class Milkman : RoleBase, IKiller
         diedThisRound = true;
 
         if (!deliveryMode) return;
-        if (!AmongUsClient.Instance.AmHost) return;
 
         deliveryMode = false;
-
-        SetRoleForMilkmanClient(Player, RoleTypes.Engineer, Player.GetClientId());
-
-        foreach (var pc in PlayerCatch.AllAlivePlayerControls)
-        {
-            var role = pc.GetCustomRole();
-            if (role.IsImpostor())
-                SetRoleForMilkmanClient(pc, role.GetRoleTypes(), Player.GetClientId());
-        }
 
         SendRpc();
 
@@ -333,7 +326,19 @@ public sealed class Milkman : RoleBase, IKiller
     {
         if (!AmongUsClient.Instance.AmHost) return;
         if (GameStates.CalledMeeting || GameStates.Intro) return;
-        if (!player.IsAlive()) return;
+        if (!player.IsAlive() && !deaded)
+        {
+            deaded = true;
+
+            SetRoleForMilkmanClient(Player, RoleTypes.Engineer, Player.GetClientId());
+
+            foreach (var pc in PlayerCatch.AllAlivePlayerControls)
+            {
+                var role = pc.GetCustomRole();
+                if (role.IsImpostor())
+                    SetRoleForMilkmanClient(pc, role.GetRoleTypes(), Player.GetClientId());
+            }
+        }
 
         if (nowcool > 0) nowcool -= Time.fixedDeltaTime;
         else nowcool = 0;

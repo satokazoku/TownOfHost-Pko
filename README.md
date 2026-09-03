@@ -124,7 +124,7 @@ Modが使えなくなるよ!<br>
 [TheOtherRole GM](https://github.com/yukinogatari/TheOtherRoles-GM)<br>
 　一部役職を参考/移植させていただきました<br>
 
-TOR_GM_Haoming_Edition<br>
+[TOR_GM_Haoming_Edition](https://github.com/haoming37/GMH)<br>
 　イビルトラッカー、シュレディンガーの猫等を参考/移植させていただきました<br>
 
 [Nebula On The Ship](https://github.com/Dolly1016/Nebula/)<br>

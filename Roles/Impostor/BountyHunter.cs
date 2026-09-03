@@ -282,6 +282,13 @@ public sealed class BountyHunter : RoleBase, IImpostor
             ResetTarget();
         }
     }
+    public void OnCratKill(Autocrat autocrat)
+    {
+        if (GetTarget() == autocrat.Player)
+        {
+            ResetTarget();
+        }
+    }
     int count; int spcount;
     public static Dictionary<int, Achievement> achievements = new();
     [Attributes.PluginModuleInitializer]
