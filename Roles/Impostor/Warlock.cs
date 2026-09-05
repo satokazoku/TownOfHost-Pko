@@ -1,24 +1,24 @@
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
-
 using AmongUs.GameOptions;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+using UnityEngine;
+using static Sentry.MeasurementUnit;
 
 namespace TownOfHost.Roles.Impostor;
 
-public sealed class Warlock : RoleBase, IImpostor
+public sealed class Warlock : RoleBase, IImpostor, IUsePhantomButton
 {
     public static readonly SimpleRoleInfo RoleInfo =
         SimpleRoleInfo.Create(
             typeof(Warlock),
             player => new Warlock(player),
             CustomRoles.Warlock,
-            () => RoleTypes.Shapeshifter,
+            () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
             8100,
-            null,
+            SetUpOptionItem,
             "wa",
             OptionSort: (4, 4),
             from: From.TheOtherRoles
@@ -36,62 +36,73 @@ public sealed class Warlock : RoleBase, IImpostor
     }
 
     PlayerControl CursedPlayer;
+    public static OptionItem Optiondouki;
+    public static OptionItem OptionAbilityCoolDown;
+    public static OptionItem OptionCantMovetime;
+    public static OptionItem OptionCantmove;
     bool IsCursed;
-    bool Shapeshifting;
+    bool IsCantMove;
+    Vector2 pos;
+    enum OptionName
+    {
+        WarlockDouki,
+        WarlockCantMovetime,
+        WarlockKoutyoku,
+    }
+
+
+    private static void SetUpOptionItem()
+    {
+        OptionAbilityCoolDown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.Cooldown, OptionBaseCoolTime, 20f, false)
+            .SetValueFormat(OptionFormat.Seconds);
+        OptionCantmove = BooleanOptionItem.Create(RoleInfo, 11, OptionName.WarlockKoutyoku, true, false)
+            .SetValueFormat(OptionFormat.Seconds);
+        OptionCantMovetime = FloatOptionItem.Create(RoleInfo, 12, OptionName.WarlockCantMovetime, OptionBaseCoolTime, 5f, false, OptionCantmove)
+            .SetValueFormat(OptionFormat.Seconds);
+        Optiondouki = BooleanOptionItem.Create(RoleInfo, 13, OptionName.WarlockDouki, true, false)
+            .SetValueFormat(OptionFormat.Seconds);
+    }
+
     public override void Add()
     {
         CursedPlayer = null;
         IsCursed = false;
-        Shapeshifting = false;
+        IsCantMove = false;
     }
-    public bool OverrideKillButtonText(out string text)
+
+    public override void OnFixedUpdate(PlayerControl player)
     {
-        if (!Shapeshifting)
+        if (IsCantMove && OptionCantmove.GetBool())
         {
-            text = GetString("WarlockCurseButtonText");
-            return true;
-        }
-        else
-        {
-            text = default;
-            return false;
+            Player.RpcSnapToForced(pos);
         }
     }
+
+    public override string GetAbilityButtonText() => GetString("WarlockCurseButtonText");
+
     public override void ApplyGameOptions(IGameOptions opt)
     {
-        AURoleOptions.ShapeshifterCooldown = IsCursed ? 1f : Options.DefaultKillCooldown;
+        AURoleOptions.PhantomCooldown = IsCursed ? 0.1f : OptionAbilityCoolDown.GetFloat();
+        AURoleOptions.PhantomDuration = 0.1f;
     }
-    public void OnCheckMurderAsKiller(MurderInfo info)
-    {
-        //自殺なら関係ない
-        if (info.IsSuicide) return;
 
-        var (killer, target) = info.AttemptTuple;
-        if (!Shapeshifting)
-        {//変身してない
-            if (!IsCursed)
-            {//まだ呪っていない
-                IsCursed = true;
-                CursedPlayer = target;
-                //呪える相手は一人だけなのでキルボタン無効化
-                killer.SetKillCooldown(255f);
-                _ = new LateTask(() => killer.RpcResetAbilityCooldown(), 0.5f, "WarlockAbility", true);
-            }
-            //どちらにしてもキルは無効
-            info.DoKill = false;
-        }
-        //変身中は通常キル
+    public override void AfterMeetingTasks()
+    {
+        IsCantMove = false;
     }
-    public override void OnShapeshift(PlayerControl target)
+
+
+    bool IUsePhantomButton.IsresetAfterKill => Optiondouki.GetBool();
+    bool IUsePhantomButton.IsPhantomRole => true;
+
+    void IUsePhantomButton.OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
     {
-        Shapeshifting = !Is(target);
+        AdjustKillCooldown = Optiondouki.GetBool();
 
-        if (!AmongUsClient.Instance.AmHost) return;
-
-        if (Shapeshifting)
-        {///変身時
-            if (CursedPlayer != null && CursedPlayer.IsAlive())
-            {//呪っていて対象がまだ生きていたら
+        if (IsCursed)
+        {
+            if (CursedPlayer != null && CursedPlayer.IsAlive() && AmongUsClient.Instance.AmHost)
+            {
                 Vector2 cpPos = CursedPlayer.transform.position;
                 Dictionary<PlayerControl, float> candidateList = new();
                 float distance;
@@ -109,22 +120,32 @@ public sealed class Warlock : RoleBase, IImpostor
                 if (CustomRoleManager.OnCheckMurder(Player, killTarget, CursedPlayer, killTarget, true, false, 2))
                 {
                     Logger.Info($"{killTarget.GetNameWithRole().RemoveHtmlTags()}was killed", "Warlock");
+                    RPC.PlaySoundRPC(Player.PlayerId, Sounds.KillSound);
                 }
-                Player.SetKillCooldown();
                 CursedPlayer = null;
                 Achievements.RpcCompleteAchievement(Player.PlayerId, 1, achievements[0]);
                 if (killTarget.IsTeammate(Player))
+                {
                     Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[1]);
+                }
+                IsCantMove = true;
+                pos = Player.transform.position;
             }
+            IsCursed = false;
+            ResetCooldown = true;
+            _ = new LateTask(() =>
+            {
+                IsCantMove = false;
+            }, OptionCantMovetime.GetFloat(), "Warlock_koutyoku", true);
         }
         else
         {
-            if (IsCursed)
+            ResetCooldown = false;
+
+            CursedPlayer = Player.GetKillTarget(true);
+            if (CursedPlayer != null)
             {
-                //ShapeshifterCooldownを通常に戻す
-                IsCursed = false;
-                Player.SyncSettings();
-                Player.RpcResetAbilityCooldown();
+                IsCursed = true;
             }
         }
     }
@@ -132,7 +153,6 @@ public sealed class Warlock : RoleBase, IImpostor
     {
         CursedPlayer = null;
         IsCursed = false;
-        Shapeshifting = false;
     }
     public override bool OverrideAbilityButton(out string text)
     {

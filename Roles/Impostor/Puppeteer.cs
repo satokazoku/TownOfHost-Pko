@@ -1,29 +1,31 @@
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
-using Hazel;
 using AmongUs.GameOptions;
-
+using Epic.OnlineServices.Presence;
+using Hazel;
+using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
-using TownOfHost.Modules;
+using UnityEngine;
+using static ShipStatus;
 using static TownOfHost.OverrideKilldistance;
 
 namespace TownOfHost.Roles.Impostor;
 
-public sealed class Puppeteer : RoleBase, IImpostor
+public sealed class Puppeteer : RoleBase, IImpostor, IUsePhantomButton
 {
     public static readonly SimpleRoleInfo RoleInfo =
         SimpleRoleInfo.Create(
             typeof(Puppeteer),
             player => new Puppeteer(player),
             CustomRoles.Puppeteer,
-            () => RoleTypes.Impostor,
+            () => CanKill.GetBool() ? RoleTypes.Phantom : RoleTypes.Impostor,
             CustomRoleTypes.Impostor,
             6300,
             SetUpOption,
             "pup",
             OptionSort: (4, 3),
+            Desc: () => string.Format(GetString("PuppeteerDesc"), CanKill.GetBool() ? GetString("PuppeteerDescCankill") : GetString("PuppeteerDescCantkill")),
             from: From.TownOfHost
         );
     public Puppeteer(PlayerControl player)
@@ -34,17 +36,21 @@ public sealed class Puppeteer : RoleBase, IImpostor
     {
         PuppetCooltime.Clear();
         CustomRoleManager.OnFixedUpdateOthers.Add(OnFixedUpdateOthers);
+        IsPuppetMode = true;
     }
     static OptionItem PuppetCool;
     static OptionItem KillCooldown;
     static OptionItem PuppetKillDis;
-    enum Op { PuppeteerPuppetCool }
+    static OptionItem CanKill;
+    bool IsPuppetMode;
+    enum Op { PuppeteerPuppetCool, PuppeteerCanKill }
     public static void SetUpOption()
     {
         KillCooldown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.KillCooldown, new(0, 180, 0.5f), 25f, false).SetValueFormat(OptionFormat.Seconds);
         PuppetCool = FloatOptionItem.Create(RoleInfo, 11, Op.PuppeteerPuppetCool, new(0, 100, 0.5f), 5f, false).SetValueFormat(OptionFormat.Seconds);
-        Create(RoleInfo, 12);
-        PuppetKillDis = StringOptionItem.Create(RoleInfo, 13, "Killdistance", EnumHelper.GetAllNames<KillDistance>(), 0, false);
+        CanKill = BooleanOptionItem.Create(RoleInfo, 12, Op.PuppeteerCanKill, false, false);
+        Create(RoleInfo, 13);
+        PuppetKillDis = StringOptionItem.Create(RoleInfo, 14, "Killdistance", EnumHelper.GetAllNames<KillDistance>(), 0, false);
         PuppetKillDis.ReplacementDictionary = new() { { "%role%", GetString("Puppet") } };
     }
     public override bool NotifyRolesCheckOtherName => true;
@@ -66,6 +72,20 @@ public sealed class Puppeteer : RoleBase, IImpostor
         sender.Writer.Write(typeId);
         sender.Writer.Write(targetId);
     }
+
+    bool IUsePhantomButton.IsPhantomRole => CanKill.GetBool();
+    bool IUsePhantomButton.IsresetAfterKill => false;
+    bool IUsePhantomButton.SyncAbilityCooldownWithKillCooldown => false;
+
+    public override void ApplyGameOptions(IGameOptions opt) => AURoleOptions.PhantomCooldown = 0.1f;
+
+    public void OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
+    {
+        AdjustKillCooldown = false;
+        ResetCooldown = false;
+        IsPuppetMode = !IsPuppetMode;
+    }
+
     public override void ReceiveRPC(MessageReader reader)
     {
         var typeId = reader.ReadByte();
@@ -87,16 +107,43 @@ public sealed class Puppeteer : RoleBase, IImpostor
                 break;
         }
     }
+
+    public override string GetLowerText(PlayerControl seer, PlayerControl seen = null,
+        bool isForMeeting = false, bool isForHud = false)
+    {
+        seen ??= seer;
+        if (!CanKill.GetBool())
+        {
+            return "";
+        }
+        var text = GetString("PuppeteerPuppet");
+        if (!IsPuppetMode)
+        {
+            text = GetString("PuppeteerKill");
+        }
+        text = $"<color=#ff1919>現在のモード：{text}</color>";
+        return text;
+    }
+
+
     public void OnCheckMurderAsKiller(MurderInfo info)
     {
-        var (puppeteer, target) = info.AttemptTuple;
+        if (IsPuppetMode || !CanKill.GetBool())
+        {
+            var (puppeteer, target) = info.AttemptTuple;
 
-        Puppets[target.PlayerId] = this;
-        PuppetCooltime[target.PlayerId] = 0;
-        SendRPC(target.PlayerId, 1);
-        puppeteer.SetKillCooldown();
-        UtilsNotifyRoles.NotifyRoles(SpecifySeer: puppeteer);
-        info.DoKill = false;
+            Puppets[target.PlayerId] = this;
+            PuppetCooltime[target.PlayerId] = 0;
+            SendRPC(target.PlayerId, 1);
+            puppeteer.SetKillCooldown();
+            UtilsNotifyRoles.NotifyRoles(SpecifySeer: puppeteer);
+            info.DoKill = false;
+        }
+        else
+        {
+            info.DoKill = true;
+            return;
+        }
     }
     public override void OnReportDeadBody(PlayerControl _, NetworkedPlayerInfo __)
     {
@@ -180,7 +227,14 @@ public sealed class Puppeteer : RoleBase, IImpostor
     }
     public bool OverrideKillButtonText(out string text)
     {
-        text = GetString("PuppeteerOperateButtonText");
+        if (IsPuppetMode || !CanKill.GetBool())
+        {
+            text = GetString("PuppeteerOperateButtonText");
+        }
+        else
+        {
+            text = GetString("KillButtonText");
+        }
         return true;
     }
     public bool OverrideKillButton(out string text)
@@ -188,6 +242,15 @@ public sealed class Puppeteer : RoleBase, IImpostor
         text = "Puppeteer_Kill";
         return true;
     }
+
+    public override string GetAbilityButtonText() => GetString("Modechenge");
+
+    public override bool OverrideAbilityButton(out string text)
+    {
+        text = "Puppeteer_Mode";
+        return true;
+    }
+
     public override void CheckWinner(GameOverReason reason)
     {
         if (2 <= MyState.GetKillCount()) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);
