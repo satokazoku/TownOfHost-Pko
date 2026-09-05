@@ -19,6 +19,11 @@ AmongUsバージョン : **18.0.0**~<br>
 **最新版は[こちら](https://github.com/satokazoku/TownOfHost-Pko/releases/latest)**<br>
 過去バージョンは[こちら](https://github.com/satokazoku/TownOfHost-Pko/releases)<br>
 
+## フォークについて
+- TOHPのresourceをすべて無断で利用しているフォークが確認されました。
+- フォークを作成する場合、画像を利用する場合、役職を移植する場合などは、「[画像の利用について](https://github.com/satokazoku/TownOfHost-Pko/wiki/%E7%94%BB%E5%83%8F%E3%81%AE%E5%88%A9%E7%94%A8%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6)」、「[Forkについて](https://github.com/satokazoku/TownOfHost-Pko/wiki/Fork%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6)」、「[役職移植ガイドライン](https://github.com/satokazoku/TownOfHost-Pko/wiki/%E5%BD%B9%E8%81%B7%E7%A7%BB%E6%A4%8D%E3%82%AC%E3%82%A4%E3%83%89%E3%83%A9%E3%82%A4%E3%83%B3)」やコード内のForkguideline.mdをお読みください
+
+
 ## 公開ルームについて
 > [!Note]
 > 現在のバージョンではAmongUs公式よりバニラサーバーで公開ルームを開くことができません。
