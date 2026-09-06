@@ -82,7 +82,7 @@ public sealed class Warlock : RoleBase, IImpostor, IUsePhantomButton
 
     public override void ApplyGameOptions(IGameOptions opt)
     {
-        AURoleOptions.PhantomCooldown = IsCursed ? 0.1f : OptionAbilityCoolDown.GetFloat();
+        AURoleOptions.PhantomCooldown = OptionAbilityCoolDown.GetFloat();
         AURoleOptions.PhantomDuration = 0.1f;
     }
 
@@ -97,7 +97,7 @@ public sealed class Warlock : RoleBase, IImpostor, IUsePhantomButton
 
     void IUsePhantomButton.OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
     {
-        AdjustKillCooldown = Optiondouki.GetBool();
+        AdjustKillCooldown = false;
 
         if (IsCursed)
         {
@@ -127,6 +127,10 @@ public sealed class Warlock : RoleBase, IImpostor, IUsePhantomButton
                 if (killTarget.IsTeammate(Player))
                 {
                     Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[1]);
+                }
+                if (Optiondouki.GetBool())
+                {
+                    Player.SetKillCooldown();
                 }
                 IsCantMove = true;
                 pos = Player.transform.position;
