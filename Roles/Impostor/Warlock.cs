@@ -21,6 +21,7 @@ public sealed class Warlock : RoleBase, IImpostor, IUsePhantomButton
             SetUpOptionItem,
             "wa",
             OptionSort: (4, 4),
+            Desc: () => string.Format(!OptionCantmove.GetBool() ? GetString("WarlockDesc") : GetString("WarlockDescKoutyoku"), OptionCantMovetime.GetFloat()),
             from: From.TheOtherRoles
         );
     public Warlock(PlayerControl player)

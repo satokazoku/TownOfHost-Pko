@@ -423,7 +423,7 @@ public sealed class Evolver : RoleBase, IImpostor, IUsePhantomButton
         EvolveCount = reader.ReadInt32();
     }
 
-    public override string GetAbilityButtonText() => GetString("進化");
+    public override string GetAbilityButtonText() => "進化";
 
     public override bool OverrideAbilityButton(out string text)
     {

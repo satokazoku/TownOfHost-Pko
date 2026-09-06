@@ -1,13 +1,18 @@
-// 俺の約1日さようなら
-/*using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 using AmongUs.GameOptions;
+using HarmonyLib;
 using Hazel;
-
+using InnerNet;
+using TMPro;
 using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Madmate;
+using TownOfHost.Roles.Vanilla;
+using UnityEngine;
+using static TownOfHost.Roles.Crewmate.AllArounder;
 using static TownOfHost.Translator;
 
 namespace TownOfHost.Roles.Neutral;
@@ -31,23 +36,16 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
             from: From.ExtremeRoles
         );
 
-    static OptionItem OptionVisionEnable;
-    static OptionItem OptionVisionRange;
-    static OptionItem OptionDisableBlackout;
     static OptionItem OptionCanUseVent;
-    static OptionItem OptionLinkCooldowns;
-    static OptionItem OptionSharedCooldown;
     static OptionItem OptionSwallowCooldown;
     static OptionItem OptionEatCooldown;
     static OptionItem OptionWinCount;
     static OptionItem OptionSwallowTime;
     static OptionItem OptionSwallowRange;
-    static OptionItem OptionEatIncreaseRate;
-    static OptionItem OptionSwallowCooldownIncreaseRate;
-    static OptionItem OptionMeetingReduceRate;
-    static OptionItem OptionResetCooldownOnMeeting;
     static OptionItem OptionShowArrow;
-    public static bool IsCustomVisionEnabled => OptionVisionEnable?.GetBool() ?? false;
+    static OptionItem OptionHasImpostorVision;
+
+    float EatCooldown => OptionEatCooldown.GetFloat();
 
     enum OptionName
     {
@@ -59,6 +57,7 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
         EaterWinCount,
         EaterSwallowTime,
         EaterEatIncreaseRate,
+        EaterSwallowRange,
         EaterSwallowCooldownIncreaseRate,
         EaterMeetingReduceRate
     }
@@ -81,15 +80,9 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
 
     int eatOrSwallowCount;
     bool eatMode;
-    float extraSwallowTime;
-    float extraCooldownRate;
     float eatCooldownTimer;
-    float swallowCooldownTimer;
-    bool pendingDisplayActive;
-    float pendingDisplayTimer;
-    bool usedAbilityThisRound;
-    PendingSwallowInfo pendingSwallow;
 
+    PendingSwallowInfo pendingSwallow;
     public Eater(PlayerControl player)
     : base(
         RoleInfo,
@@ -99,661 +92,315 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
     {
         eatOrSwallowCount = 0;
         eatMode = true;
-        extraSwallowTime = 0f;
-        extraCooldownRate = 0f;
         eatCooldownTimer = 0f;
-        swallowCooldownTimer = 0f;
-        pendingDisplayActive = false;
-        pendingDisplayTimer = 0f;
-        usedAbilityThisRound = false;
         pendingSwallow = null;
+        EatenBodies.Clear();
+        Viperkilledplayers = new();
     }
 
     [Attributes.GameModuleInitializer]
-    public static void Init()
-    {
-        EatenBodies.Clear();
-    }
-
     private static void SetupOptionItem()
     {
-        SoloWinOption.Create(RoleInfo, 8, defo: 1);
+        SoloWinOption.Create(RoleInfo, 10, defo: 1);
 
-        OptionVisionEnable = BooleanOptionItem.Create(RoleInfo, 9, "EaterVisionEnable", false, false);
-        OptionVisionRange = FloatOptionItem.Create(RoleInfo, 10, OptionName.EaterVisionRange, new(0.5f, 3f, 0.1f), 1f, false, OptionVisionEnable)
-            .SetValueFormat(OptionFormat.Multiplier);
-        OptionDisableBlackout = BooleanOptionItem.Create(RoleInfo, 11, "EaterDisableBlackout", false, false, OptionVisionEnable);
+        OptionHasImpostorVision = BooleanOptionItem.Create(RoleInfo, 11, GeneralOption.ImpostorVision, true, false);
         OptionCanUseVent = BooleanOptionItem.Create(RoleInfo, 12, GeneralOption.CanVent, false, false);
-
-        OptionLinkCooldowns = BooleanOptionItem.Create(RoleInfo, 13, OptionName.EaterLinkCooldowns, true, false);
-        OptionSharedCooldown = FloatOptionItem.Create(RoleInfo, 14, OptionName.EaterSharedCooldown, new(0f, 60f, 1f), 20f, false)
-            .SetValueFormat(OptionFormat.Seconds)
-            .SetEnabled(() => !OptionLinkCooldowns.GetBool());
         OptionSwallowCooldown = FloatOptionItem.Create(RoleInfo, 15, OptionName.EaterSwallowCooldown, new(0f, 60f, 1f), 20f, false)
-            .SetValueFormat(OptionFormat.Seconds)
-            .SetEnabled(() => OptionLinkCooldowns.GetBool());
+            .SetValueFormat(OptionFormat.Seconds);
         OptionEatCooldown = FloatOptionItem.Create(RoleInfo, 16, OptionName.EaterEatCooldown, new(0f, 60f, 1f), 10f, false)
-            .SetValueFormat(OptionFormat.Seconds)
-            .SetEnabled(() => OptionLinkCooldowns.GetBool());
-
+            .SetValueFormat(OptionFormat.Seconds);
         OptionWinCount = IntegerOptionItem.Create(RoleInfo, 17, OptionName.EaterWinCount, new(1, 10, 1), 3, false);
         OptionSwallowTime = FloatOptionItem.Create(RoleInfo, 18, OptionName.EaterSwallowTime, new(0.5f, 60f, 0.5f), 5f, false).SetValueFormat(OptionFormat.Seconds);
-        OptionSwallowRange = StringOptionItem.Create(RoleInfo, 19, "EaterSwallowRange", new string[] { "Short", "Middle", "Long" }, 1, false);
-        OptionEatIncreaseRate = FloatOptionItem.Create(RoleInfo, 20, OptionName.EaterEatIncreaseRate, new(0f, 25f, 0.5f), 5f, false).SetValueFormat(OptionFormat.Percent);
-        OptionSwallowCooldownIncreaseRate = FloatOptionItem.Create(RoleInfo, 21, OptionName.EaterSwallowCooldownIncreaseRate, new(0f, 25f, 0.5f), 5f, false).SetValueFormat(OptionFormat.Percent);
-        OptionMeetingReduceRate = FloatOptionItem.Create(RoleInfo, 22, OptionName.EaterMeetingReduceRate, new(0f, 50f, 0.5f), 10f, false).SetValueFormat(OptionFormat.Percent);
-        OptionResetCooldownOnMeeting = BooleanOptionItem.Create(RoleInfo, 23, "EaterResetCooldownOnMeeting", false, false);
+        OptionSwallowRange = FloatOptionItem.Create(RoleInfo, 19, OptionName.EaterSwallowRange, new(1.25f, 5f, 0.25f), 1.75f, false)
+        .SetValueFormat(OptionFormat.Multiplier);
         OptionShowArrow = BooleanOptionItem.Create(RoleInfo, 24, "EaterShowArrow", true, false);
-    }
-
-    public override void OnSpawn(bool initialState = false)
-    {
-        if (initialState)
-        {
-            eatOrSwallowCount = 0;
-            eatMode = true;
-            extraSwallowTime = 0f;
-            extraCooldownRate = 0f;
-            eatCooldownTimer = GetBaseEatCooldown();
-            swallowCooldownTimer = GetBaseSwallowCooldown();
-            pendingDisplayActive = false;
-            pendingDisplayTimer = 0f;
-            usedAbilityThisRound = false;
-            pendingSwallow = null;
-            deadBodyPositions.Clear();
-            EatenBodies.Clear();
-        }
-
-        (this as IUsePhantomButton).Init(Player);
-        Player.RpcResetAbilityCooldown();
-        RefreshKillCooldown(true);
-
-        if (AmongUsClient.Instance.AmHost)
-        {
-            var initialCd = GetCurrentKillCooldownTimer();
-            if (initialCd <= 0f)
-            {
-                swallowCooldownTimer = GetBaseSwallowCooldown();
-                initialCd = GetCurrentKillCooldownTimer();
-            }
-
-            Player.SetKillCooldown(GetCurrentKillCooldownTimer(), force: true, delay: true);
-            SyncCooldownStateToClients();
-        }
-    }
-
-    public override void OnDestroy()
-    {
-        ClearAllBodyArrows();
     }
 
     public override void ApplyGameOptions(IGameOptions opt)
     {
-        var useCustomVision = OptionVisionEnable.GetBool();
-        var ignoreBlackout = useCustomVision && OptionDisableBlackout.GetBool();
-        var vision = Mathf.Clamp(useCustomVision ? OptionVisionRange.GetFloat() : Main.DefaultCrewmateVision, 0f, 5f);
-
-
-        opt.SetFloat(FloatOptionNames.CrewLightMod, vision);
-        opt.SetFloat(FloatOptionNames.ImpostorLightMod, vision);
-
-
-        if (!ignoreBlackout && Utils.IsActive(SystemTypes.Electrical))
-        {
-            opt.SetFloat(FloatOptionNames.ImpostorLightMod, vision / 5f);
-        }
+        opt.SetVision(OptionHasImpostorVision.GetBool());
         AURoleOptions.PhantomCooldown = 0.1f;
     }
 
-    bool IsCooldownLinked() => OptionLinkCooldowns.GetBool();
-    bool CanStartSwallowNow() => Player.IsAlive() && pendingSwallow == null && GetSwallowCooldownRemaining() <= 0f;
-
-    float GetBaseSwallowCooldown() => IsCooldownLinked() ? OptionSwallowCooldown.GetFloat() : OptionSharedCooldown.GetFloat();
-    float GetBaseEatCooldown() => IsCooldownLinked() ? OptionEatCooldown.GetFloat() : OptionSharedCooldown.GetFloat();
-
-    float GetCurrentSwallowCooldownValue() => GetBaseSwallowCooldown() * (1f + extraCooldownRate);
-    float GetCurrentEatCooldownValue() => GetBaseEatCooldown() * (1f + extraCooldownRate);
-    float GetCurrentSwallowCastTime() => Mathf.Max(0.5f, OptionSwallowTime.GetFloat() + extraSwallowTime);
-
-    float GetEatCooldownRemaining() => Mathf.Max(0f, eatCooldownTimer);
-    float GetSwallowCooldownRemaining() => Mathf.Max(0f, swallowCooldownTimer);
-    float GetPendingRemaining()
-    {
-        if (AmongUsClient.Instance.AmHost)
-            return pendingSwallow == null ? 0f : Mathf.Max(0f, pendingSwallow.Required - pendingSwallow.Elapsed);
-
-        return pendingDisplayActive ? Mathf.Max(0f, pendingDisplayTimer) : 0f;
-    }
-    float GetCurrentKillCooldownTimer() => GetPendingRemaining() > 0f ? GetPendingRemaining() : GetSwallowCooldownRemaining();
-    void ApplyLocalPlayerCooldownOverride()
-    {
-        if (PlayerControl.LocalPlayer == null || Player.PlayerId != PlayerControl.LocalPlayer.PlayerId) return;
-        if (!Player.IsAlive()) return;
-
-        var timer = GetCurrentKillCooldownTimer();
-        if (timer > 0f)
-            Player.SetKillTimer(Mathf.Max(timer, 0.01f));
-    }
-
-    float GetConfiguredSwallowRange()
-    {
-        var rangeIndex = Mathf.Clamp(OptionSwallowRange.GetValue(), 0, NormalGameOptionsV11.KillDistances.Length - 1);
-        return NormalGameOptionsV11.KillDistances[rangeIndex];
-    }
-
-    void TickCooldown(float dt)
-    {
-        if (eatCooldownTimer > 0f) eatCooldownTimer = Mathf.Max(0f, eatCooldownTimer - dt);
-        if (swallowCooldownTimer > 0f) swallowCooldownTimer = Mathf.Max(0f, swallowCooldownTimer - dt);
-        if (pendingDisplayActive && pendingDisplayTimer > 0f)
-        {
-            pendingDisplayTimer = Mathf.Max(0f, pendingDisplayTimer - dt);
-            if (pendingDisplayTimer <= 0f) pendingDisplayActive = false;
-        }
-    }
-
-    void RefreshKillCooldown(bool sync = true)
-    {
-        Player.ResetKillCooldown();
-        if (sync) Player.SyncSettings();
-    }
-
-    void StartEatCooldown()
-    {
-        var cooldown = GetCurrentEatCooldownValue();
-        eatCooldownTimer = cooldown;
-        if (!IsCooldownLinked())
-        {
-            swallowCooldownTimer = cooldown;
-            Player.SetKillCooldown(cooldown, force: true, delay: true);
-        }
-        SyncCooldownStateToClients();
-    }
-
-    void StartSwallowCooldown()
-    {
-        var cooldown = GetCurrentSwallowCooldownValue();
-        swallowCooldownTimer = cooldown;
-        if (!IsCooldownLinked())
-        {
-            eatCooldownTimer = cooldown;
-        }
-        Player.SetKillCooldown(cooldown, force: true, delay: true);
-        SyncCooldownStateToClients();
-    }
-
-    void AddEatPenalty()
-    {
-        extraSwallowTime += OptionSwallowTime.GetFloat() * (OptionEatIncreaseRate.GetFloat() / 100f);
-    }
-
-    void AddSwallowPenalty()
-    {
-        extraCooldownRate += OptionSwallowCooldownIncreaseRate.GetFloat() / 100f;
-    }
-
-    void ReduceSwallowTimeAfterMeeting()
-    {
-        var reduce = OptionSwallowTime.GetFloat() * (OptionMeetingReduceRate.GetFloat() / 100f);
-        extraSwallowTime = Mathf.Max(0f, extraSwallowTime - reduce);
-    }
-
-    void AddDeadBodyArrow(byte playerId, Vector2 pos)
-        => AddDeadBodyArrow(playerId, pos, sync: true);
-
-    void AddDeadBodyArrow(byte playerId, Vector2 pos, bool sync)
-    {
-        if (!OptionShowArrow.GetBool()) return;
-
-        if (deadBodyPositions.TryGetValue(playerId, out var oldPos))
-        {
-            GetArrow.Remove(Player.PlayerId, oldPos);
-        }
-
-        var position = new Vector3(pos.x, pos.y, 0f);
-        deadBodyPositions[playerId] = position;
-        GetArrow.Add(Player.PlayerId, position);
-
-        if (sync) RpcAddDeadBodyArrow(playerId, pos);
-        UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
-    }
-
-    void RemoveDeadBodyArrow(byte playerId)
-        => RemoveDeadBodyArrow(playerId, sync: true);
-
-    void RemoveDeadBodyArrow(byte playerId, bool sync)
-    {
-        if (!deadBodyPositions.TryGetValue(playerId, out var pos)) return;
-        GetArrow.Remove(Player.PlayerId, pos);
-        deadBodyPositions.Remove(playerId);
-
-        if (sync) RpcRemoveDeadBodyArrow(playerId);
-        UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
-    }
-
-    void ClearAllBodyArrows()
-        => ClearAllBodyArrows(sync: true);
-
-    void ClearAllBodyArrows(bool sync)
-    {
-        foreach (var pos in deadBodyPositions.Values)
-        {
-            GetArrow.Remove(Player.PlayerId, pos);
-        }
-        deadBodyPositions.Clear();
-
-        if (sync) RpcClearAllBodyArrows();
-        UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
-    }
-
-    void RpcAddDeadBodyArrow(byte playerId, Vector2 pos)
-    {
-        if (!AmongUsClient.Instance.AmHost) return;
-        using var sender = CreateSender();
-        sender.Writer.WritePacked((int)RPCType.AddDeadBodyArrow);
-        sender.Writer.Write(playerId);
-        NetHelpers.WriteVector2(pos, sender.Writer);
-    }
-
-    void RpcRemoveDeadBodyArrow(byte playerId)
-    {
-        if (!AmongUsClient.Instance.AmHost) return;
-        using var sender = CreateSender();
-        sender.Writer.WritePacked((int)RPCType.RemoveDeadBodyArrow);
-        sender.Writer.Write(playerId);
-    }
-
-    void RpcClearAllBodyArrows()
-    {
-        if (!AmongUsClient.Instance.AmHost) return;
-        using var sender = CreateSender();
-        sender.Writer.WritePacked((int)RPCType.ClearDeadBodyArrows);
-    }
-
-    void SyncCooldownStateToClients()
-    {
-        if (!AmongUsClient.Instance.AmHost) return;
-        using var sender = CreateSender();
-        sender.Writer.WritePacked((int)RPCType.SyncCooldownState);
-        sender.Writer.Write(eatCooldownTimer);
-        sender.Writer.Write(swallowCooldownTimer);
-        var pendingRemaining = pendingSwallow == null ? 0f : Mathf.Max(0f, pendingSwallow.Required - pendingSwallow.Elapsed);
-        sender.Writer.Write(pendingRemaining);
-    }
-
-    public override void ReceiveRPC(MessageReader reader)
-    {
-        switch ((RPCType)reader.ReadPackedInt32())
-        {
-            case RPCType.AddDeadBodyArrow:
-                var playerId = reader.ReadByte();
-                var pos = NetHelpers.ReadVector2(reader);
-                AddDeadBodyArrow(playerId, pos, sync: false);
-                break;
-            case RPCType.RemoveDeadBodyArrow:
-                RemoveDeadBodyArrow(reader.ReadByte(), sync: false);
-                break;
-            case RPCType.ClearDeadBodyArrows:
-                ClearAllBodyArrows(sync: false);
-                break;
-            case RPCType.SyncCooldownState:
-                eatCooldownTimer = reader.ReadSingle();
-                swallowCooldownTimer = reader.ReadSingle();
-                pendingDisplayTimer = reader.ReadSingle();
-                pendingDisplayActive = pendingDisplayTimer > 0f;
-                break;
-        }
-    }
-
-    enum RPCType
-    {
-        AddDeadBodyArrow,
-        RemoveDeadBodyArrow,
-        ClearDeadBodyArrows,
-        SyncCooldownState
-    }
-
-    void BeginSwallow(PlayerControl target)
-    {
-        var required = GetCurrentSwallowCastTime();
-        pendingSwallow = new PendingSwallowInfo(target.PlayerId, required);
-        Player.SetKillCooldown(required, target: target, force: true, delay: true);
-        SyncCooldownStateToClients();
-        UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
-    }
-
-    bool IsWithinSwallowRange(PlayerControl target)
-    {
-        if (target == null) return false;
-        var distance = Vector2.Distance(Player.GetTruePosition(), target.GetTruePosition());
-        return distance <= GetConfiguredSwallowRange();
-    }
-
-    void CancelPendingSwallow()
-    {
-        if (pendingSwallow == null) return;
-        pendingSwallow = null;
-        RefreshKillCooldown();
-        SyncCooldownStateToClients();
-        UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
-    }
-
-    void CancelPendingSwallowByDistance()
-    {
-        if (pendingSwallow == null) return;
-        pendingSwallow = null;
-        Player.SetKillCooldown(0.1f, force: true, delay: true);
-        SyncCooldownStateToClients();
-        UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
-    }
-
-    PlayerControl GetNearestPlayerTo(Vector2 origin)
-        => PlayerCatch.AllAlivePlayerControls
-            .Where(pc => pc.PlayerId != Player.PlayerId)
-            .OrderBy(pc => Vector2.Distance(pc.GetTruePosition(), origin))
-            .FirstOrDefault();
-
-    void CompleteSwallow()
-    {
-        var target = PlayerCatch.GetPlayerById(pendingSwallow.TargetId);
-        var origin = target != null ? target.GetTruePosition() : Player.GetTruePosition();
-        var exileTarget = GetNearestPlayerTo(origin);
-
-        if (exileTarget != null)
-        {
-            var state = PlayerState.GetByPlayerId(exileTarget.PlayerId);
-            if (state != null) state.DeathReason = CustomDeathReason.Swallowed;
-            exileTarget.SetRealKiller(Player);
-            exileTarget.RpcExileV3();
-            UtilsGameLog.AddGameLog("Eater", $"{UtilsName.GetPlayerColor(Player)} swallowed {UtilsName.GetPlayerColor(exileTarget)}");
-            RemoveDeadBodyArrow(exileTarget.PlayerId);
-        }
-
-        eatOrSwallowCount++;
-        usedAbilityThisRound = true;
-        AddSwallowPenalty();
-        pendingSwallow = null;
-        StartSwallowCooldown();
-        TryWinByCount();
-
-        Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);
-        UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
-    }
-
-    void EatBody(NetworkedPlayerInfo target)
-    {
-        EatenBodies.Add(target.PlayerId);
-        RemoveDeadBodyArrow(target.PlayerId);
-
-        eatOrSwallowCount++;
-        usedAbilityThisRound = true;
-        AddEatPenalty();
-        StartEatCooldown();
-        TryWinByCount();
-
-        UtilsGameLog.AddGameLog("Eater", $"{UtilsName.GetPlayerColor(Player)} ate {UtilsName.GetPlayerColor(target)}");
-        Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);
-        UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
-    }
-
-    void TryWinByCount()
-    {
-        if (!Player.IsAlive()) return;
-        if (eatOrSwallowCount < OptionWinCount.GetInt()) return;
-
-        if (CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Eater, Player.PlayerId, true))
-        {
-            CustomWinnerHolder.NeutralWinnerIds.Add(Player.PlayerId);
-            CustomWinnerHolder.WinnerIds.Add(Player.PlayerId);
-        }
-    }
-
-    bool CanWinByLastSurvivorRule()
-    {
-        var alivePlayers = PlayerCatch.AllAlivePlayerControls.ToList();
-        if (alivePlayers.Count != 2) return false;
-
-        var other = alivePlayers.FirstOrDefault(pc => pc.PlayerId != Player.PlayerId);
-        if (other == null) return false;
-
-        return IsValidLastOpponent(other);
-    }
-
-    public bool TryWinByLastSurvivorRule()
-    {
-        if (!CanWinByLastSurvivorRule()) return false;
-        if (!CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Eater, Player.PlayerId, true)) return false;
-
-        CustomWinnerHolder.NeutralWinnerIds.Add(Player.PlayerId);
-        CustomWinnerHolder.WinnerIds.Add(Player.PlayerId);
-        return true;
-    }
-
-    bool IsValidLastOpponent(PlayerControl other)
-    {
-        if (other.Is(CustomRoleTypes.Crewmate)) return true;
-        if (!other.Is(CustomRoleTypes.Neutral)) return false;
-
-        if (other.GetRoleClass() is IKiller killer)
-            return !killer.CanUseKillButton();
-
-        return true;
-    }
-
-    public bool CanUseSabotageButton() => false;
-    public bool CanUseImpostorVentButton() => OptionCanUseVent.GetBool();
-
     public bool CanUseKillButton() => Player.IsAlive();
-    public bool CanKill => Player.IsAlive();
-    public bool IsKiller => true;
-    public float CalculateKillCooldown() => GetCurrentKillCooldownTimer();
-
-    public void OnCheckMurderAsKiller(MurderInfo info)
-    {
-        if (!Is(info.AttemptKiller)) return;
-        info.DoKill = false;
-
-        if (!CanStartSwallowNow()) return;
-
-        var target = info.AttemptTarget;
-        if (target == null || !target.IsAlive() || target.PlayerId == Player.PlayerId) return;
-        if (!IsWithinSwallowRange(target)) return;
-
-        BeginSwallow(target);
-    }
-
-    public override bool CancelReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target, ref DontReportreson reason)
-    {
-        if (target == null) return false;
-
-        if (EatenBodies.Contains(target.PlayerId))
-        {
-            reason = DontReportreson.Eat;
-            return true;
-        }
-
-        if (reporter.PlayerId != Player.PlayerId) return false;
-        if (!Player.IsAlive()) return false;
-        if (!eatMode) return false;
-
-        if (GetEatCooldownRemaining() > 0f)
-        {
-            reason = DontReportreson.Other;
-            return true;
-        }
-
-        EatBody(target);
-        reason = DontReportreson.Eat;
-        return true;
-    }
-
-    public override void OnReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
-    {
-        CancelPendingSwallow();
-        ClearAllBodyArrows();
-    }
-
-    public override void OnStartMeeting()
-    {
-        CancelPendingSwallow();
-        ClearAllBodyArrows();
-        if (OptionResetCooldownOnMeeting.GetBool())
-        {
-            eatCooldownTimer = 0f;
-            swallowCooldownTimer = 0f;
-            RefreshKillCooldown();
-            SyncCooldownStateToClients();
-        }
-    }
-
-    public override void AfterMeetingTasks()
-    {
-        if (!usedAbilityThisRound)
-        {
-            ReduceSwallowTimeAfterMeeting();
-        }
-
-        usedAbilityThisRound = false;
-        pendingSwallow = null;
-        EatenBodies.Clear();
-        ClearAllBodyArrows();
-
-        if (OptionResetCooldownOnMeeting.GetBool())
-        {
-            eatCooldownTimer = 0f;
-            swallowCooldownTimer = 0f;
-            RefreshKillCooldown();
-            SyncCooldownStateToClients();
-        }
-    }
-
-    public override void OnLeftPlayer(PlayerControl player)
-    {
-        if (pendingSwallow != null && pendingSwallow.TargetId == player.PlayerId)
-        {
-            CancelPendingSwallow();
-        }
-        RemoveDeadBodyArrow(player.PlayerId);
-        EatenBodies.Remove(player.PlayerId);
-    }
-
-    public override void OnFixedUpdate(PlayerControl player)
-    {
-        if (!AmongUsClient.Instance.AmHost)
-        {
-            TickCooldown(Time.fixedDeltaTime);
-            ApplyLocalPlayerCooldownOverride();
-            return;
-        }
-        if (!Player.IsAlive())
-        {
-            pendingSwallow = null;
-            ApplyLocalPlayerCooldownOverride();
-            return;
-        }
-
-        TickCooldown(Time.fixedDeltaTime);
-
-        if (pendingSwallow == null)
-        {
-            ApplyLocalPlayerCooldownOverride();
-            return;
-        }
-
-        var target = PlayerCatch.GetPlayerById(pendingSwallow.TargetId);
-        if (target == null || !target.IsAlive())
-        {
-            CancelPendingSwallow();
-            ApplyLocalPlayerCooldownOverride();
-            return;
-        }
-        if (!IsWithinSwallowRange(target))
-        {
-            CancelPendingSwallowByDistance();
-            ApplyLocalPlayerCooldownOverride();
-            return;
-        }
-
-        pendingSwallow.Elapsed += Time.fixedDeltaTime;
-        if (pendingSwallow.Elapsed >= pendingSwallow.Required)
-        {
-            CompleteSwallow();
-            ApplyLocalPlayerCooldownOverride();
-            return;
-        }
-
-        ApplyLocalPlayerCooldownOverride();
-    }
-
-    bool? IKillFlashSeeable.CheckKillFlash(MurderInfo info)
-    {
-        if (!OptionShowArrow.GetBool()) return false;
-        if (!Player.IsAlive()) return false;
-
-        var dead = info.AppearanceTarget;
-        if (dead == null) return false;
-
-        AddDeadBodyArrow(dead.PlayerId, dead.GetTruePosition());
-        return false;
-    }
-
-    public override string GetMark(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
-    {
-        seen ??= seer;
-        if (isForMeeting) return "";
-        if (!OptionShowArrow.GetBool()) return "";
-        if (!Player.IsAlive()) return "";
-        if (!Is(seer) || !Is(seen)) return "";
-        if (deadBodyPositions.Count == 0) return "";
-
-        var arrows = "";
-        foreach (var pos in deadBodyPositions.Values)
-        {
-            arrows += GetArrow.GetArrows(seer, pos);
-        }
-        return arrows == "" ? "" : $"<color={RoleInfo.RoleColorCode}>{arrows}</color>";
-    }
-
-    public override string GetProgressText(bool comms = false, bool gameLog = false)
-        => $" <color={RoleInfo.RoleColorCode}>({eatOrSwallowCount}/{OptionWinCount.GetInt()})</color>";
-
-    public override string GetLowerText(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
-    {
-        seen ??= seer;
-        if (isForMeeting) return "";
-        if (!Is(seer) || !Is(seen) || !Player.IsAlive()) return "";
-
-        var modeText = eatMode ? "食らう" : "レポート";
-        var eatCd = Mathf.CeilToInt(GetEatCooldownRemaining());
-        var swCd = Mathf.CeilToInt(GetCurrentKillCooldownTimer());
-
-        if (isForHud) return $"[{modeText}]";
-        return $"<size=60%>[{modeText}] E:{eatCd}s S:{swCd}s</size>";
-    }
+    public bool CanUseImpostorVentButton() => OptionCanUseVent.GetBool();
+    public bool CanUseSabotageButton() => false;
+    public float CalculateKillCooldown() => OptionSwallowCooldown.GetFloat();
+    Dictionary<byte, float> Viperkilledplayers = new();
 
     void IUsePhantomButton.OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
     {
         AdjustKillCooldown = false;
-        ResetCooldown = true;
+        ResetCooldown = false;
 
         if (!Player.IsAlive()) return;
         if (pendingSwallow != null) return;
-
         eatMode = !eatMode;
-        Player.RpcResetAbilityCooldown();
-        UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
     }
 
     public bool UseOneclickButton => true;
     public bool IsPhantomRole => true;
     public bool IsresetAfterKill => false;
 
-    public override void CheckWinner(GameOverReason reason)
+    public void OnCheckMurderAsKiller(MurderInfo info)
     {
-        if (!Player.IsAlive()) return;
-        if (CustomWinnerHolder.WinnerTeam is CustomWinner.Eater) return;
-        if (CustomWinnerHolder.WinnerTeam is not (CustomWinner.Crewmate or CustomWinner.Remotekiller or CustomWinner.None)) return;
-        TryWinByLastSurvivorRule();
+        var (killer, target) = info.AttemptTuple;
+        info.DoKill = false;
+
+        if (target.Is(CustomRoles.Madpsycho))
+        {
+            if (Madpsycho.CanPsycho)
+            {
+                PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = Madpsycho.deathReasons[Madpsycho.OptionDeathReason.GetValue()];
+                target.RpcMurderPlayer(Player);
+                return;
+            }
+        }
+        killer.SetKillCooldown(OptionSwallowTime.GetFloat());
+        if (target.IsAlive() && pendingSwallow == null)
+        {
+            pendingSwallow = new(target.PlayerId, 0f);
+            UtilsNotifyRoles.NotifyRoles(SpecifySeer: killer);
+        }
+    }
+    public override void OnReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
+    {
+        pendingSwallow = null;
+        var send = string.Format(GetString("EaterMInfo"), eatOrSwallowCount);
+        Utils.SendMessage(send, Player.PlayerId);
+        Achievements.RpcCompleteAchievement(Player.PlayerId, 1, achievements[0]);
+        eatOrSwallowCount++;
+        deadBodyPositions.Do(oniku => GetArrow.Remove(Player.PlayerId, oniku.Value));
+        deadBodyPositions.Clear();
+
+        eatCooldownTimer = 0f;
+        RpcClearDiePlayerPos();
+    }
+
+    public bool? CheckKillFlash(MurderInfo info)
+    {
+        var pos = info.AppearanceTarget.GetTruePosition();
+        deadBodyPositions.Add(info.AppearanceTarget.PlayerId, pos);
+        GetArrow.Add(Player.PlayerId, pos);
+        if (info.AppearanceKiller.GetCustomRole() is CustomRoles.Viper) Viperkilledplayers.Add(info.AppearanceTarget.PlayerId, Viper.ViperDissolveTime);
+        RpcAddDiePlayerPos(info.AppearanceTarget.PlayerId, pos);
+
+        return OptionShowArrow.GetBool();
+    }
+
+    public void RpcAddDiePlayerPos(byte targetId, Vector2 pos)
+    {
+        if (!AmongUsClient.Instance.AmHost) return;
+        using var sender = CreateSender();
+        sender.Writer.WritePacked((int)RPC_Types.AdddeadBodyPositions);
+        sender.Writer.Write(targetId);
+        NetHelpers.WriteVector2(pos, sender.Writer);
+    }
+    public void RpcClearDiePlayerPos()
+    {
+        if (!AmongUsClient.Instance.AmHost) return;
+        using var sender = CreateSender();
+        sender.Writer.WritePacked((int)RPC_Types.CleardeadBodyPositions);
+    }
+
+    public override void OnFixedUpdate(PlayerControl player)
+    {
+        eatCooldownTimer += Time.fixedDeltaTime;
+        if (eatCooldownTimer >= EatCooldown)
+        {
+            eatCooldownTimer = EatCooldown;
+        }
+        if (eatCooldownTimer < 0f)
+        {
+            eatCooldownTimer = 0f;
+        }
+        if (!AmongUsClient.Instance.AmHost) return;
+        if (GameStates.IsInTask && pendingSwallow != null)
+        {
+            if (!Player.IsAlive())
+            {
+                pendingSwallow = null;
+                UtilsNotifyRoles.NotifyRoles(SpecifySeer: Player);
+            }
+            else
+            {
+                var ar_target = PlayerCatch.GetPlayerById(pendingSwallow.TargetId);
+                var ar_time = pendingSwallow.Elapsed;
+                if (!ar_target.IsAlive())
+                {
+                    pendingSwallow = null;
+                }
+                else if (ar_time >= OptionSwallowTime.GetFloat())
+                {
+                    Player.SetKillCooldown();
+                    var target = PlayerCatch.GetPlayerById(pendingSwallow.TargetId);
+                    ++eatOrSwallowCount;
+                    target.RpcExileV3();
+                    if (eatOrSwallowCount >= OptionWinCount.GetInt())
+                    {
+                        Win();
+                    }
+                    pendingSwallow = null;
+                }
+                else
+                {
+                    float dis;
+                    dis = Vector2.Distance(Player.transform.position, ar_target.transform.position);
+                    if (dis <= OptionSwallowRange.GetFloat())
+                    {
+                        pendingSwallow.Elapsed += Time.fixedDeltaTime;
+                    }
+                    else
+                    {
+                        pendingSwallow = null;
+                        UtilsNotifyRoles.NotifyRoles(SpecifySeer: Player);
+                        Player.SetKillCooldown(0.1f, force: true);
+
+                        Logger.Info($"Canceled: {Player.GetNameWithRole().RemoveHtmlTags()}", "Arsonist");
+                    }
+                }
+            }
+        }
+    }
+
+    public override bool CancelReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target, ref DontReportreson reason)
+    {
+        if (!eatMode || pendingSwallow != null)
+        {
+            return false;
+        }
+        if (eatCooldownTimer < EatCooldown)
+        {
+            return false;
+        }
+        if (reporter.PlayerId == Player.PlayerId && target != null && !EatenBodies.Contains(target?.PlayerId ?? (byte)250))
+        {
+            reason = DontReportreson.Eat;
+            EatenBodies.Add(target.PlayerId);
+            deadBodyPositions.Where(poss => poss.Key == target.PlayerId).Do(poss => GetArrow.Remove(Player.PlayerId, poss.Value));
+            RpcEatPlayer(target.PlayerId);
+            Achievements.RpcCompleteAchievement(Player.PlayerId, 1, achievements[0]);
+            eatOrSwallowCount++;
+            if (eatOrSwallowCount >= OptionWinCount.GetInt())
+            {
+                Win();
+            }
+            eatCooldownTimer = 0f;
+            return true;
+        }
+        if (reporter?.PlayerId != target?.PlayerId && target != null && EatenBodies.Contains(target?.PlayerId ?? (byte)250))
+        {
+            reason = DontReportreson.Eat;
+            Logger.Info($"{target?.PlayerName ?? "???"}は食事済みだからキャンセル", "Vulture");
+            return true;
+        }
+        return false;
+    }
+    public void Win()
+    {
+        ForceSoloWin();
+    }
+    private void ForceSoloWin()
+    {
+        if (CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Eater, Player.PlayerId))
+        {
+            CustomWinnerHolder.NeutralWinnerIds.Add(Player.PlayerId);
+        }
+    }
+
+
+    public void RpcEatPlayer(byte targetId)
+    {
+        if (!AmongUsClient.Instance.AmHost) return;
+        using var sender = CreateSender();
+        sender.Writer.WritePacked((int)RPC_Types.EatPlayer);
+        sender.Writer.Write(targetId);
+    }
+    enum RPC_Types
+    {
+        EatPlayer,
+        AdddeadBodyPositions,
+        CleardeadBodyPositions
+    }
+
+    public override void ReceiveRPC(MessageReader reader)
+    {
+        switch ((RPC_Types)reader.ReadPackedInt32())
+        {
+            case RPC_Types.EatPlayer:
+                var targetId = reader.ReadByte();
+                EatenBodies.Add(targetId);
+                deadBodyPositions.Where(poss => poss.Key == targetId).Do(poss => GetArrow.Remove(Player.PlayerId, poss.Value));
+                break;
+            case RPC_Types.AdddeadBodyPositions:
+                var playerPos = NetHelpers.ReadVector2(reader);
+                deadBodyPositions.Add(reader.ReadByte(), playerPos);
+                GetArrow.Add(Player.PlayerId, playerPos);
+                break;
+            case RPC_Types.CleardeadBodyPositions:
+                deadBodyPositions.Do(oniku => GetArrow.Remove(Player.PlayerId, oniku.Value));
+                deadBodyPositions.Clear();
+                break;
+        }
+    }
+
+    public override string GetLowerText(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
+    {
+        if (isForMeeting) return "";
+        seen ??= seer;
+        var text = "食らう";
+        if (!eatMode || pendingSwallow != null)
+        {
+            text = "死体通報";
+        }
+        return $"<color=#662B2C>現在のモード：{text}モード</color>";
+    }
+
+    public override string GetProgressText(bool comms = false, bool GameLog = false)
+    {
+        var CoolDownLeft = Math.Ceiling(EatCooldown - eatCooldownTimer);
+        var text = Utils.ColorString(Color.yellow, $"{CoolDownLeft}");
+        return $"({text})";
+    }
+
+    public bool OverrideKillButton(out string text)
+    {
+        text = "Eater_eat";
+        return true;
+    }
+    public override string GetAbilityButtonText() => GetString("Modechenge");
+
+    public bool OverrideKillButtonText(out string text)
+    {
+        text = GetString("Swallowed");
+        return true;
+    }
+
+    public override bool OverrideAbilityButton(out string text)
+    {
+        text = "Mode_change";
+        return true;
+    }
+
+    public override string GetMark(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
+    {
+        seen ??= seer;
+        //死亡済み or 会議中 or 他人にマークの場合は空
+        if (!Player.IsAlive() || seer.PlayerId != seen.PlayerId) return "";
+
+        var text = "";
+        if (OptionShowArrow.GetBool() && !isForMeeting)
+        {
+            var str = $" <color={RoleInfo.RoleColorCode}>";
+
+            //事前に保存しておいた奴を出す
+            foreach (var arrow in deadBodyPositions)
+            {
+                str += GetArrow.GetArrows(seer, arrow.Value);
+            }
+            text = $"{str}</color>";
+        }
+        return text;
     }
 
     public static Dictionary<int, Achievement> achievements = new();
@@ -764,4 +411,3 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
         achievements.Add(0, n1);
     }
 }
-*/
