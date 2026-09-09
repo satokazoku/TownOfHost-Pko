@@ -99,7 +99,7 @@ public sealed class SelfBomber : RoleBase, IImpostor, IUsePhantomButton
     public override string GetAbilityButtonText() => "爆発";
     public override bool OverrideAbilityButton(out string text)
     {
-        text = "Bomber_Ability";
+        text = "Limiter_Kill";
         return true;
     }
 }

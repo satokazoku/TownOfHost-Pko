@@ -383,7 +383,7 @@ public sealed class EvilLinker : RoleBase, IImpostor, IUsePhantomButton
         }
     }
 
-    public override string GetAbilityButtonText() => GetString("ポータル設置");
+    public override string GetAbilityButtonText() => "ポータル設置";
 
     public override bool OverrideAbilityButton(out string text)
     {

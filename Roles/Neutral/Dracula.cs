@@ -94,6 +94,21 @@ public sealed class Dracula : RoleBase, ILNKiller, IUsePhantomButton
         OptionKenzokucount = IntegerOptionItem.Create(RoleInfo, 18, OptionName.DraculaKenzokucount, new(0, 14, 1), 1, false)
             .SetValueFormat(OptionFormat.Players);
         RoleAddAddons.Create(RoleInfo, 20);
+        HideRoleOptions(CustomRoles.Dracula);
+    }
+    internal static void HideRoleOptions(CustomRoles role)
+    {
+        if (Options.CustomRoleSpawnChances != null &&
+            Options.CustomRoleSpawnChances.TryGetValue(role, out var spawnOption))
+        {
+            spawnOption.SetHidden(true);
+        }
+
+        if (Options.CustomRoleCounts != null &&
+            Options.CustomRoleCounts.TryGetValue(role, out var countOption))
+        {
+            countOption.SetHidden(true);
+        }
     }
     public float CalculateKillCooldown() => OptionKillCooldown.GetFloat();
     public bool CanUseSabotageButton() => false;
