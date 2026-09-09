@@ -9,12 +9,13 @@ namespace TownOfHost
     [HarmonyPatch(typeof(LobbyBehaviour), nameof(LobbyBehaviour.Start))]
     class LobbyStartPatch
     {
-        public static string LobbyLogoPath = "TownOfHost.Resources.TOHP.LobbyLogo.png";
+        public const string LobbyLogoPath = "TownOfHost.Resources.TOHP.LobbyLogo.png";
 
         static Sprite lobbyLogoSprite;
         static GameObject lobbyPaintObject;
         static GameObject lobbyTitleObject;
         static bool firstLoad = true;
+        static bool IsActive;
 
         public static void Prefix()
         {
@@ -40,10 +41,6 @@ namespace TownOfHost
                 Logger.Warn($"ロビー画像が見つかりません: {LobbyLogoPath}", "LobbyStartPatch");
                 return;
             }
-            if (Options.HidePko.GetBool())
-            {
-                return;
-            }
 
             var leftBox = GameObject.Find("Leftbox");
             if (leftBox == null) return;
@@ -61,6 +58,16 @@ namespace TownOfHost
             var renderer = lobbyPaintObject.GetComponent<SpriteRenderer>();
             if (renderer != null)
                 renderer.sprite = lobbyLogoSprite;
+        }
+
+        public static void SetPkoVisibility()
+        {
+            IsActive = !IsActive;
+
+            if (lobbyPaintObject != null)
+            {
+                lobbyPaintObject.SetActive(IsActive);
+            }
         }
 
         static void SpawnTitle(LobbyBehaviour lobby)

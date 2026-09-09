@@ -28,10 +28,6 @@ public sealed class Lawyer : RoleBase, IAdditionalWinner
             "#daa520",
             (4, 7),
             introSound: () => GetIntroSound(RoleTypes.Impostor),
-            assignInfo: new RoleAssignInfo(CustomRoles.Lawyer, CustomRoleTypes.Neutral)
-            {
-                AssignCountRule = new(1, 1, 1)
-            },
             from: From.TheOtherRoles
         );
 
@@ -117,18 +113,6 @@ public sealed class Lawyer : RoleBase, IAdditionalWinner
 
     public override void ApplyGameOptions(IGameOptions opt) => opt.SetVision(HasImpostorVision);
 
-    public override bool VotingResults(ref NetworkedPlayerInfo Exiled, ref bool IsTie,
-        Dictionary<byte, int> vote, byte[] mostVotedPlayers, bool ClearAndExile)
-    {
-        if (!changedToPursuer && targetPlayerId != byte.MaxValue
-            && Exiled != null && Exiled.PlayerId == targetPlayerId && Player.IsAlive())
-        {
-            changedToPursuer = true;
-            _ = new LateTask(ChangeRole, 0.5f, "Lawyer.ChangeByExile", true);
-        }
-        return false;
-    }
-
     public override void OnFixedUpdate(PlayerControl player)
     {
         if (!AmongUsClient.Instance.AmHost) return;
@@ -162,6 +146,7 @@ public sealed class Lawyer : RoleBase, IAdditionalWinner
     {
         foreach (var lawyer in Lawyers.ToArray())
         {
+            if (lawyer.Player.Is(CustomRoles.Amanojaku)) continue;
             if (lawyer.targetPlayerId == byte.MaxValue) continue;
             var target = GetPlayerById(lawyer.targetPlayerId);
             if (target == null) continue;
@@ -173,7 +158,11 @@ public sealed class Lawyer : RoleBase, IAdditionalWinner
             if (lawyer.Player.IsAlive())
             {
                 if (CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Lawyer, lawyer.Player.PlayerId, true))
+                {
                     CustomWinnerHolder.WinnerIds.Add(lawyer.Player.PlayerId);
+                    CustomWinnerHolder.WinnerIds.Remove(target.PlayerId);
+                    CustomWinnerHolder.CantWinPlayerIds.Add(target.PlayerId);
+                }
             }
             else
             {

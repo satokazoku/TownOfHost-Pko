@@ -100,6 +100,7 @@ namespace TownOfHost
         public static ConfigEntry<bool> PreloadMapAssets { get; private set; }
         public static ConfigEntry<float> MapTheme { get; private set; }
         public static ConfigEntry<bool> ViewPingDetails { get; private set; }
+        public static ConfigEntry<bool> HidePko { get; private set; }
         public static ConfigEntry<bool> DebugChatopen { get; private set; }
         public static ConfigEntry<bool> DebugSendAmout { get; private set; }
         public static ConfigEntry<bool> DebugTours { get; private set; }
@@ -264,6 +265,7 @@ namespace TownOfHost
             PreloadMapAssets = Config.Bind("Client Options", "Preload Map Assets", false);
             MapTheme = Config.Bind("Client Options", "MapTheme", AmongUs.Data.Settings.AudioSettingsData.DEFAULT_MUSIC_VOLUME);
             ViewPingDetails = Config.Bind("Client Options", "View Ping Details", false);
+            HidePko = Config.Bind("Client Options", "HidePko", false);
             DebugChatopen = Config.Bind("Client Options", "Debug Chat open", false);
             DebugSendAmout = Config.Bind("Client Options", "Debug Send Amout", false);
             DebugTours = Config.Bind("Client Options", "DebugTours", false);

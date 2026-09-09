@@ -20,6 +20,7 @@ namespace TownOfHost
         private static ClientActionItem CustomName;
         private static ClientActionItem CustomSprite;
         private static ClientActionItem HideSomeFriendCodes;
+        private static ClientActionItem HidePko;
         private static ToggleButtonBehaviour soundSettingsButton;
         public static ToggleButtonBehaviour StreamHopeButton;
         private static ClientActionItem ViewPingDetails;
@@ -98,6 +99,10 @@ namespace TownOfHost
             if ((PreloadMapAssets == null || PreloadMapAssets.ToggleButton == null) && !Main.IsAndroid())
             {
                 PreloadMapAssets = ClientOptionItem.Create("PreloadMapAssets", Main.PreloadMapAssets, __instance, showTooltip: true);
+            }
+            if (HidePko == null || HidePko.ToggleButton == null)
+            {
+                HidePko = ClientOptionItem.Create("HidePko", HidePkoProcess, __instance);
             }
 #if DEBUG
             if (ViewPingDetails == null || ViewPingDetails.ToggleButton == null)
@@ -196,6 +201,10 @@ namespace TownOfHost
             if (!GameStates.IsInGame) return;
             CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Draw);
             GameManager.Instance.LogicFlow.CheckEndCriteria();
+        }
+        private static void HidePkoProcess()
+        {
+            LobbyStartPatch.SetPkoVisibility();
         }
     }
 
