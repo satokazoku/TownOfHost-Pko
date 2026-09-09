@@ -234,6 +234,7 @@ public sealed class SchrodingerCat : RoleBase, IAdditionalWinner, IDeathReasonSe
             TeamType.MilkyWay => CustomWinnerHolder.winners.Contains(CustomWinner.MilkyWay),
             TeamType.Betrayer => CustomWinnerHolder.winners.Contains(CustomWinner.MadBetrayer),
             TeamType.Pavlov => CustomWinnerHolder.winners.Contains(CustomWinner.Pavlov),
+            TeamType.Vanity => CustomWinnerHolder.winners.Contains(CustomWinner.Vanity),
             _ => null,
         };
         if (!won.HasValue)
@@ -289,6 +290,7 @@ public sealed class SchrodingerCat : RoleBase, IAdditionalWinner, IDeathReasonSe
             TeamType.Betrayer => UtilsRoleText.GetRoleColor(CustomRoles.MadBetrayer),
             TeamType.Pavlov => UtilsRoleText.GetRoleColor(CustomRoles.PavlovDog),
             TeamType.Opportunist => UtilsRoleText.GetRoleColor(CustomRoles.Opportunist),
+            TeamType.Vanity => UtilsRoleText.GetRoleColor(CustomRoles.Vanity),
             //TeamType.Ogre => UtilsRoleText.GetRoleColor(CustomRoles.Ogre),
             _ => null,
         };

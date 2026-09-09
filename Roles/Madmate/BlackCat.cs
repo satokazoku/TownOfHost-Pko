@@ -1,4 +1,4 @@
-using AmongUs.GameOptions;
+/*using AmongUs.GameOptions;
 
 using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
@@ -95,3 +95,4 @@ public sealed class BlackCat : RoleBase, INekomata
         };
     }
 }
+*/

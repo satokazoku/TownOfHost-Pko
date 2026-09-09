@@ -86,5 +86,9 @@ public interface ISchrodingerCatOwner
         /// 鬼に所属する状態
         /// </summary>
         //Ogre,
+        /// <summary>
+        /// ヴァニティに所属する状態
+        /// </summary>
+        Vanity
     }
 }

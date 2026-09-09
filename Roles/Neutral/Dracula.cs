@@ -1,7 +1,8 @@
-/*using System.Collections.Generic;
+using System.Collections.Generic;
 using AmongUs.GameOptions;
 using Hazel;
 using MS.Internal.Xml.XPath;
+using TMPro;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using UnityEngine;
@@ -37,8 +38,8 @@ public sealed class Dracula : RoleBase, ILNKiller, IUsePhantomButton
     )
     {
         CanVent = OptionCanVent.GetBool();
-        SuicideTimer = OptionSuicideTimer.GetFloat();
-        kenzokucount = 0;
+        SuicideTimer = -9f;
+        Kenzokucount = 0;
         atooi = false;
     }
 
@@ -47,14 +48,14 @@ public sealed class Dracula : RoleBase, ILNKiller, IUsePhantomButton
     public static OptionItem OptionSuicideTimer;
     public static OptionItem OptionHasImpostorVision;
     public static OptionItem OptionKenzokucount;
-    public static OptionItem OptionkenzokuChance;
+    public static OptionItem OptionKenzokuChance;
     public static OptionItem OptionDieChance;
     public static OptionItem OptionDieChanceBonus;
 
     public override void ApplyGameOptions(IGameOptions opt)
     {
         opt.SetVision(OptionHasImpostorVision.GetBool());
-        AURoleOptions.PhantomCooldown = SuicideTimer;
+        AURoleOptions.PhantomCooldown = OptionSuicideTimer.GetFloat();
     }
 
     enum OptionName
@@ -68,10 +69,10 @@ public sealed class Dracula : RoleBase, ILNKiller, IUsePhantomButton
 
     public static bool CanVent;
     float SuicideTimer;
-    int kenzokucount;
+    int Kenzokucount;
     bool atooi;
 
-    Dictionary<byte, string> kenzokus = new(14);
+    List<byte> Kenzokus = new(14);
     Dictionary<byte, int> targetDieChanceBonus = new(14);
 
     private static void SetupOptionItem()
@@ -88,7 +89,7 @@ public sealed class Dracula : RoleBase, ILNKiller, IUsePhantomButton
             .SetValueFormat(OptionFormat.Percent);
         OptionDieChanceBonus = IntegerOptionItem.Create(RoleInfo, 16, OptionName.DraculaDieChanceBonus, new(0, 100, 1), 5, false)
             .SetValueFormat(OptionFormat.Percent);
-        OptionkenzokuChance = IntegerOptionItem.Create(RoleInfo, 17, OptionName.DraculaKenzokuChance, new(0, 100, 1), 5, false)
+        OptionKenzokuChance = IntegerOptionItem.Create(RoleInfo, 17, OptionName.DraculaKenzokuChance, new(0, 100, 1), 5, false)
             .SetValueFormat(OptionFormat.Percent);
         OptionKenzokucount = IntegerOptionItem.Create(RoleInfo, 18, OptionName.DraculaKenzokucount, new(0, 14, 1), 1, false)
             .SetValueFormat(OptionFormat.Players);
@@ -104,26 +105,26 @@ public sealed class Dracula : RoleBase, ILNKiller, IUsePhantomButton
     {
         if (!Player.IsAlive() && !atooi)
         {
-            foreach (var targetId in kenzokus.Keys)
+            foreach (var targetId in Kenzokus)
             {
                 var target = PlayerCatch.GetPlayerById(targetId);
                 CustomRoleManager.OnCheckMurder(target, target, target, target, true, true, Killpower: 10, deathReason: CustomDeathReason.FollowingSuicide);
             }
-            kenzokus.Clear();
+            Kenzokus.Clear();
 
             atooi = true;
         }
 
         if (AmongUsClient.Instance.AmHost && !ExileController.Instance && Player.IsAlive())
         {
-            if (SuicideTimer <= 0f)
+            if (SuicideTimer >= OptionSuicideTimer.GetFloat())
             {
                 MyState.DeathReason = CustomDeathReason.Suicide;
                 Player.RpcMurderPlayer(Player);
             }
             else
             {
-                SuicideTimer -= Time.fixedDeltaTime;
+                SuicideTimer += Time.fixedDeltaTime;
             }
         }
     }
@@ -134,56 +135,67 @@ public sealed class Dracula : RoleBase, ILNKiller, IUsePhantomButton
         var target = info.AppearanceTarget;
 
         int diechance = Random.Range(0, 100);
-        int kenzokuchance = Random.Range(0, 100);
+        int Kenzokuchance = Random.Range(0, 100);
         int bonus = targetDieChanceBonus.GetValueOrDefault(target.PlayerId, 0);
-        foreach (var targetId in kenzokus.Keys)
-        {
-            var kenzoku = PlayerCatch.GetPlayerById(targetId);
-            if (kenzoku.PlayerId == target.PlayerId)
-            {
-                Logger.Info($"{target}は眷属です", "Dracula");
-                return;
-            }
-        }
-        SuicideTimer = OptionSuicideTimer.GetFloat();
-        Main.AllPlayerKillCooldown[Player.PlayerId] = OptionKillCooldown.GetFloat();
 
+        if (Kenzokus.Contains(target.PlayerId))
+        {
+            Logger.Info($"{target}は眷属です", "Dracula");
+            return;
+        }
         Player.MarkDirtySettings();
+        SuicideTimer = 0f;
         Player.RpcResetAbilityCooldown();
         Player.SyncSettings();
+        Main.AllPlayerKillCooldown[Player.PlayerId] = OptionKillCooldown.GetFloat();
         Player.SetKillCooldown(delay: true);
+
         if (diechance < OptionDieChance.GetInt() + bonus && Player.IsAlive())
         {
-            kenzokuchance = 101;
-            RPC.PlaySoundRPC(Player.PlayerId, Sounds.KillSound);
-            CustomRoleManager.OnCheckMurder(Player, target, target, target, true, true, Killpower: 1, deathReason: CustomDeathReason.Bite);
+            Kenzokuchance = 101;
             targetDieChanceBonus.Remove(target.PlayerId);
-
-            return; //キルできた時は眷属作成処理に移行しない
+            CustomRoleManager.OnCheckMurder(target, target, Player, target, true, true, Killpower: 1, deathReason: CustomDeathReason.Bloodloss);
+            Main.AllPlayerKillCooldown[Player.PlayerId] = OptionKillCooldown.GetFloat();
+            Player.SetKillCooldown(delay: true);
+            return;
         }
+
         targetDieChanceBonus[target.PlayerId] = Mathf.Min(bonus + OptionDieChanceBonus.GetInt(), 100);
 
-        if (kenzokuchance < OptionkenzokuChance.GetInt() && kenzokucount < OptionKenzokucount.GetInt() && kenzokuchance != 101)
+        if (Kenzokuchance < OptionKenzokuChance.GetInt() && Kenzokucount < OptionKenzokucount.GetInt() && Kenzokuchance != 101)
         {
-            ++kenzokucount;
-            kenzokus.Add(target.PlayerId, "");
+            ++Kenzokucount;
+            Kenzokus.Add(target.PlayerId);
             Logger.Info($"プレイヤーId :{target.PlayerId}を眷属にしました！", "Dracula");
-            target.RpcSetCustomRole(CustomRoles.kenzoku);
+            target.RpcSetCustomRole(CustomRoles.Kenzoku);
             return;
         }
     }
 
     public override void AfterMeetingTasks()
     {
+        targetDieChanceBonus.Clear();
         if (Player.IsAlive())
         {
             SuicideTimer = 0f;
         }
     }
+    public override string GetMark(PlayerControl seer, PlayerControl seen, bool isForMeeting = false)
+    {
+        seen ??= seer;
 
+        if (Kenzokus.Contains(seen.PlayerId))
+            return Utils.ColorString(RoleInfo.RoleColor, "▲");
+
+        return "";
+    }
+    public override void OnSpawn(bool initialState = false)
+    {
+        SuicideTimer = 0f;
+    }
     void IUsePhantomButton.OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
     {
-        AdjustKillCooldown = true;
-        ResetCooldown = true;
+        AdjustKillCooldown = false;
+        ResetCooldown = false;
     }
-}*/
+}

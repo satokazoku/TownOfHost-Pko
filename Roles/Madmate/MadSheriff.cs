@@ -1,4 +1,4 @@
-using AmongUs.GameOptions;
+/*using AmongUs.GameOptions;
 
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
@@ -114,3 +114,4 @@ public sealed class MadSheriff : RoleBase, IKiller, IKillFlashSeeable, IDeathRea
         return true;
     }
 }
+*/

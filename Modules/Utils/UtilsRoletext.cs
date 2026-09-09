@@ -298,10 +298,15 @@ namespace TownOfHost
                 {
                     (color, text) = GetRoleNameData(missrole, Subrole, state.GhostRole, showSubRoleMarks);
                 }
-                if (state.MainRole is CustomRoles.Amnesiac)
+                /*if (state.MainRole is CustomRoles.Amnesiac)
                 {
                     if (roleClass is Amnesiac amnesiac && !amnesiac.Realized)
                         (color, text) = GetRoleNameData(Amnesiac.IsWolf ? CustomRoles.WolfBoy : CustomRoles.Sheriff, Subrole, state.GhostRole, showSubRoleMarks);
+                }*/
+                if (state.MainRole is CustomRoles.Vanity)
+                {
+                    if (roleClass is Vanity vanity && !vanity.Realized)
+                        (color, text) = GetRoleNameData(CustomRoles.Sheriff, Subrole, state.GhostRole, showSubRoleMarks);
                 }
             }
             return (color, text);
@@ -324,14 +329,14 @@ namespace TownOfHost
         {
             if (role.IsMadmate() && MadmateOrange) return ModColors.MadMateOrenge;
             if (!Main.roleColors.TryGetValue(role, out var hexColor)) hexColor = role.GetRoleInfo()?.RoleColorCode ?? "#cccccc";
-            if (role is CustomRoles.Amnesiac && Amnesiac.IsWolf) hexColor = CustomRoles.WolfBoy.GetRoleInfo()?.RoleColorCode ?? "#727171";
+            //if (role is CustomRoles.Amnesiac && Amnesiac.IsWolf) hexColor = CustomRoles.WolfBoy.GetRoleInfo()?.RoleColorCode ?? "#727171";
             _ = ColorUtility.TryParseHtmlString(hexColor, out Color c);
             return c;
         }
         public static string GetRoleColorCode(CustomRoles role, bool Madcolor = false)
         {
             if (!Main.roleColors.TryGetValue(role, out var hexColor)) hexColor = role.GetRoleInfo()?.RoleColorCode;
-            if (role is CustomRoles.Amnesiac && Amnesiac.IsWolf) hexColor = CustomRoles.WolfBoy.GetRoleInfo()?.RoleColorCode ?? "#727171";
+            //if (role is CustomRoles.Amnesiac && Amnesiac.IsWolf) hexColor = CustomRoles.WolfBoy.GetRoleInfo()?.RoleColorCode ?? "#727171";
             if (role.IsMadmate() && Madcolor) hexColor = "#ff7f50";
             return hexColor;
         }
@@ -362,8 +367,23 @@ namespace TownOfHost
             if (State == null || player == null) return "";
             var role = State.MainRole;
             var roleClass = CustomRoleManager.GetByPlayerId(playerId);
-            ProgressText.Append(GetTaskProgressText(playerId, comms, ShowManegementText, hide));
-            if (!hide && roleClass != null && !player.Is(CustomRoles.Amnesia) && (!player.GetMisidentify(out var missrole) || missrole is CustomRoles.FortuneTeller))
+            //単独キラー陣営のヴァニティはタスクを出さない
+            if (!player.Is(CustomRoles.Vanity))
+            {
+                ProgressText.Append(GetTaskProgressText(playerId, comms, ShowManegementText, hide));
+            }
+            else if (player.GetRoleClass() is Vanity vanity)
+            {
+                if (!vanity.Realized || !Vanity.OptionSoloKiller.GetBool())
+                {
+                    ProgressText.Append(GetTaskProgressText(playerId, comms, ShowManegementText, hide));
+                }
+            }
+            if (!hide && roleClass != null && !player.Is(CustomRoles.Amnesia) && (!player.GetMisidentify(out var missrole) || missrole is CustomRoles.FortuneTeller) && !player.Is(CustomRoles.Vanity))
+            {
+                ProgressText.Append(roleClass.GetProgressText(comms, gamelog));
+            }
+            if (player.Is(CustomRoles.Vanity))
             {
                 ProgressText.Append(roleClass.GetProgressText(comms, gamelog));
             }
@@ -702,6 +722,7 @@ namespace TownOfHost
                             CountTypes.Hunter => GetRoleColorAndtext(CustomRoles.Hunter),
                             CountTypes.Dracula => GetRoleColorAndtext(CustomRoles.Dracula),
                             CountTypes.Fox => GetRoleColorAndtext(CustomRoles.Fox),
+                            CountTypes.Vanity => GetRoleColorAndtext(CustomRoles.Vanity),
                             CountTypes.MilkyWay => Roles.Neutral.Vega.TeamText,
                             _ => "...?",
                         };

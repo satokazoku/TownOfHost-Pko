@@ -439,6 +439,7 @@ namespace TownOfHost
         Retaliation,
         RuleViolation,
         Sacrifice,
+        Bloodloss,
         etc = -1
     }
     //WinData
@@ -511,7 +512,7 @@ namespace TownOfHost
         Hunter = CustomRoles.Hunter,
         Dracula = CustomRoles.Dracula,
         Mermaid = CustomRoles.Mermaid,
-
+        Vanity = CustomRoles.Vanity,
         HASTroll = CustomRoles.HASTroll,
         TaskPlayerB = CustomRoles.TaskPlayerB,
         SuddenDeathRed = 1000, SuddenDeathBlue = 1001, SuddenDeathYellow = 1002, SuddenDeathGreen = 1003, SuddenDeathPurple = 1004

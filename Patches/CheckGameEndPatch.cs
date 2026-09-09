@@ -177,7 +177,6 @@ namespace TownOfHost
                     abuser.EnforceWinRequirement();
                 foreach (var victim in CustomRoleManager.AllActiveRoles.Values.OfType<Victim>())
                     victim.EnforceFactionWin();
-
                 if (!lockWinner && SuddenDeathMode.NowSuddenDeathTemeMode && !(CustomWinnerHolder.WinnerTeam is CustomWinner.SuddenDeathRed or CustomWinner.SuddenDeathBlue or CustomWinner.SuddenDeathGreen or CustomWinner.SuddenDeathYellow or CustomWinner.PurpleLovers))
                 {
                     SuddenDeathMode.TeamAllWin();
@@ -212,18 +211,9 @@ namespace TownOfHost
                                 }
                             }
                         }
-                        bool IsDraculawin;
-                        if (CustomWinnerHolder.WinnerTeam is CustomWinner.Dracula)
-                        {
-                            IsDraculawin = true;
-                        }
-                        else
-                        {
-                            IsDraculawin = false;
-                        }
                         LastNeutral.CheckAddWin(pc, reason);
                         Amanojaku.CheckWin(pc, reason);
-                        //kenzoku.CheckWin(pc, IsDraculawin);
+                        //Kenzoku.CheckWin(pc, reason, CustomWinnerHolder.WinnerTeam);
                     }
                 }
                 if (!lockWinner && CustomWinnerHolder.WinnerTeam is not CustomWinner.Draw)

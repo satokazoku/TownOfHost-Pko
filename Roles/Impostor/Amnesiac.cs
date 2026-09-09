@@ -1,7 +1,7 @@
 using AmongUs.GameOptions;
 using UnityEngine;
 
-using TownOfHost.Roles.Core;
+/*using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Crewmate;
 using Hazel;
@@ -209,5 +209,4 @@ public sealed class Amnesiac : RoleBase, IImpostor
         Realized = reader.ReadBoolean();
     }
 
-}
-
+}*/

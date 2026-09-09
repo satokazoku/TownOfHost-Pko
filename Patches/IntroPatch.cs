@@ -1,15 +1,16 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using AmongUs.GameOptions;
 using HarmonyLib;
-using UnityEngine;
-
 using TownOfHost.Modules;
+using TownOfHost.Roles.AddOns.Common;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Impostor;
 using TownOfHost.Roles.Madmate;
+using TownOfHost.Roles.Neutral;
+using UnityEngine;
 using static TownOfHost.Translator;
 
 namespace TownOfHost
@@ -47,15 +48,21 @@ namespace TownOfHost
                     __instance.RoleBlurbText.color = UtilsRoleText.GetRoleColor(role);
 
                     __instance.RoleBlurbText.text = PlayerControl.LocalPlayer.GetRoleDesc();
-
+                    if (role == CustomRoles.Vanity)
+                    {
+                        __instance.RoleText.text =  UtilsRoleText.GetRoleName(CustomRoles.Sheriff);
+                        __instance.YouAreText.color = UtilsRoleText.GetRoleColor(role);
+                        __instance.RoleText.color = UtilsRoleText.GetRoleColor(role);
+                        __instance.RoleBlurbText.color = UtilsRoleText.GetRoleColor(role);
+                    }
                     //Amnesiacだった場合シェリフと表示させる
-                    if (role == CustomRoles.Amnesiac)
+                    /*if (role == CustomRoles.Amnesiac)
                     {
                         __instance.RoleText.text = Amnesiac.IsWolf ? UtilsRoleText.GetRoleName(CustomRoles.WolfBoy) : UtilsRoleText.GetRoleName(CustomRoles.Sheriff);
                         __instance.YouAreText.color = UtilsRoleText.GetRoleColor(role);
                         __instance.RoleText.color = UtilsRoleText.GetRoleColor(role);
                         __instance.RoleBlurbText.color = UtilsRoleText.GetRoleColor(role);
-                    }
+                    }*/
                 }
                 else
                     if (role.IsVanilla())
@@ -199,7 +206,7 @@ namespace TownOfHost
     {
         public static void Prefix(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> teamToDisplay)
         {
-            if (PlayerControl.LocalPlayer.Is(CustomRoleTypes.Neutral) && !PlayerControl.LocalPlayer.Is(CustomRoles.BakeCat) && !PlayerControl.LocalPlayer.Is(CustomRoles.Amnesia))
+            if (PlayerControl.LocalPlayer.Is(CustomRoleTypes.Neutral) && !PlayerControl.LocalPlayer.Is(CustomRoles.BakeCat) && !PlayerControl.LocalPlayer.Is(CustomRoles.Vanity) && !PlayerControl.LocalPlayer.Is(CustomRoles.Amnesia))
             {
                 //ぼっち役職
                 var soloTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
@@ -214,6 +221,7 @@ namespace TownOfHost
             var pc = PlayerControl.LocalPlayer;
             var IsMisidentify = pc.GetMisidentify(out var missrole);
             if (IsMisidentify) role = missrole;
+            if (role is CustomRoles.Vanity) role = CustomRoles.Sheriff;
 
             if (role.GetRoleInfo()?.IntroSound is AudioClip introSound)
             {
@@ -224,7 +232,7 @@ namespace TownOfHost
 
             switch (role.GetCustomRoleTypes())
             {
-                case CustomRoleTypes.Neutral:
+                case CustomRoleTypes.Neutral when role != CustomRoles.Vanity:
                     __instance.TeamTitle.text = GetString("Neutral");
                     __instance.TeamTitle.color = Palette.DisabledGrey;
                     __instance.ImpostorText.gameObject.SetActive(true);
@@ -242,7 +250,7 @@ namespace TownOfHost
                     else __instance.BackgroundBar.material.color = Palette.DisabledGrey;
                     break;
             }
-            if (role is CustomRoles.Amnesiac) role = Amnesiac.IsWolf ? CustomRoles.WolfBoy : CustomRoles.Sheriff;
+            //if (role is CustomRoles.Amnesiac) role = Amnesiac.IsWolf ? CustomRoles.WolfBoy : CustomRoles.Sheriff;
             switch (role)
             {
                 case CustomRoles.Sheriff:
@@ -344,7 +352,7 @@ namespace TownOfHost
         public static bool Prefix(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> yourTeam)
         {
             if (PlayerControl.LocalPlayer.GetCustomRole() is CustomRoles.Sheriff or CustomRoles.WolfBoy or CustomRoles.BakeCat or CustomRoles.NiceLogger
-            || PlayerControl.LocalPlayer.Is(CustomRoles.Amnesiac) || (PlayerControl.LocalPlayer.GetCustomRole().GetRoleInfo()?.IsDesyncImpostor == true) && PlayerControl.LocalPlayer.Is(CustomRoles.Amnesia))
+            || PlayerControl.LocalPlayer.Is(CustomRoles.Amnesiac) || PlayerControl.LocalPlayer.Is(CustomRoles.Vanity) || (PlayerControl.LocalPlayer.GetCustomRole().GetRoleInfo()?.IsDesyncImpostor == true) && PlayerControl.LocalPlayer.Is(CustomRoles.Amnesia))
             {
                 //シェリフの場合はキャンセルしてBeginCrewmateに繋ぐ
                 yourTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
@@ -494,7 +502,7 @@ namespace TownOfHost
                 // そのままだとホストのみDesyncImpostorの暗室内での視界がクルー仕様になってしまう
                 var roleInfo = PlayerControl.LocalPlayer.GetCustomRole().GetRoleInfo();
                 var amDesyncImpostor = roleInfo?.IsDesyncImpostor == true;
-                if (amDesyncImpostor && PlayerControl.LocalPlayer.GetCustomRole() is not CustomRoles.BakeCat)
+                if (amDesyncImpostor && PlayerControl.LocalPlayer.GetCustomRole() is not CustomRoles.BakeCat && PlayerControl.LocalPlayer.GetCustomRole() is not CustomRoles.Vanity)
                 {
                     PlayerControl.LocalPlayer.Data.Role.AffectedByLightAffectors = false;
                 }
@@ -606,7 +614,7 @@ namespace TownOfHost
             {
                 var roleInfo = PlayerControl.LocalPlayer.GetCustomRole().GetRoleInfo();
                 var amDesyncImpostor = roleInfo?.IsDesyncImpostor == true;
-                if (amDesyncImpostor && PlayerControl.LocalPlayer.GetCustomRole() is not CustomRoles.BakeCat)
+                if (amDesyncImpostor && PlayerControl.LocalPlayer.GetCustomRole() is not CustomRoles.BakeCat && PlayerControl.LocalPlayer.GetCustomRole() is not CustomRoles.Vanity)
                 {
                     PlayerControl.LocalPlayer.Data.Role.AffectedByLightAffectors = false;
                 }

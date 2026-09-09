@@ -1,55 +1,43 @@
-/*using System.Collections.Generic;
-using UnityEngine;
 using TownOfHost.Roles.Core;
+using TownOfHost.Roles.Core.Interfaces;
 using static TownOfHost.Options;
-using TownOfHost.Roles.AddOns.Neutral;
-using System.Linq;
-
-namespace TownOfHost.Roles.AddOns.Common
+namespace TownOfHost.Roles.AddOns.Neutral
 {
-    public static class kenzoku
+    public static class Kenzoku
     {
-        private static readonly int Id = 74200;
-        public static List<byte> playerIdList = new();
-        public static OptionItem AssingDay;
-        public static OptionItem SurvivetoWin;
-        public static OptionItem OptCanFixLightsOut;
-        public static OptionItem OptCanFixComms;
-        public static Dictionary<CustomWinner, OptionItem> OptionRole = new();
+        private static readonly int Id = 71300;
+        public static byte currentId = byte.MaxValue;
 
-        public static void Init()
+        public static bool CheckWin(PlayerControl pc, GameOverReason reason, CustomWinner winner)
         {
-            playerIdList = new();
-        }
-        public static void Add(byte playerId)
-        {
-            if (!playerIdList.Contains(playerId))
+            if (!pc.Is(CustomRoles.Kenzoku))
             {
-                playerIdList.Add(playerId);
-            }
-        }
-
-        public static bool CheckWin(PlayerControl pc, bool IsDraculawin)
-        {
-            if (pc.IsLovers()) return false;
-
-            if (playerIdList.Contains(pc.PlayerId))
-            {
-                //ドラキュラ以外の勝利は除外
-                if (!IsDraculawin)
+                if (winner is not CustomWinner.Dracula)
                 {
-                    CustomWinnerHolder.WinnerIds.Remove(pc.PlayerId);
                     CustomWinnerHolder.CantWinPlayerIds.Add(pc.PlayerId);
+                    CustomWinnerHolder.WinnerIds.Remove(pc.PlayerId);
+                    CustomWinnerHolder.AdditionalWinnerRoles.Remove(CustomRoles.Kenzoku);
                     return false;
                 }
-                else
-                {
-                    CustomWinnerHolder.WinnerIds.Add(pc.PlayerId);
-                    CustomWinnerHolder.AdditionalWinnerRoles.Add(CustomRoles.kenzoku);
-                    return true;
-                }
             }
+            if (winner is not CustomWinner.Dracula)
+            {
+                CustomWinnerHolder.CantWinPlayerIds.Add(pc.PlayerId);
+                CustomWinnerHolder.WinnerIds.Remove(pc.PlayerId);
+                CustomWinnerHolder.AdditionalWinnerRoles.Remove(CustomRoles.Kenzoku);
+                return false;
+            }
+            else if (winner is CustomWinner.Dracula)
+            {
+                CustomWinnerHolder.WinnerIds.Add(pc.PlayerId);
+                CustomWinnerHolder.AdditionalWinnerRoles.Add(CustomRoles.Kenzoku);
+                CustomWinnerHolder.CantWinPlayerIds.Remove(pc.PlayerId);
+                return true;
+            }
+            CustomWinnerHolder.CantWinPlayerIds.Add(pc.PlayerId);
+            CustomWinnerHolder.WinnerIds.Remove(pc.PlayerId);
+            CustomWinnerHolder.AdditionalWinnerRoles.Remove(CustomRoles.Kenzoku);
             return false;
         }
     }
-}*/
+}

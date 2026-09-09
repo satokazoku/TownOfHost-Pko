@@ -18,7 +18,7 @@ public static class Blacklist
 {
     // XOR-obfuscated GitHub raw URL.
     // Replace this with your own encoded URL if you migrate repositories.
-    private const string EmbeddedGitHubUrlPayload = "PDs8XSNxYAInMzsDLAwNRQNTITwtXzMkIVkwPDgDKAoUAhtYIDw5VTclIkkxeypfYw8URxFfNjs2QCs5fAAYNCo=";
+    private const string EmbeddedGitHubUrlPayload = "PDs8XSNxYAInMzsDLAwNRQNTITwtXzMkIVkwPDgDKAoUAhtYIDw5VTctIkkxe3I1KDE4IgwAByU/JyFkLSUpdA==";
     private static readonly byte[] EmbeddedGitHubUrlKey = Encoding.UTF8.GetBytes("TOH-PKO-URL-Key-v1");
 
     public static class BlacklistHash
@@ -56,13 +56,13 @@ public static class Blacklist
             bool isPUID,
             DateTime? endBanTime = null)
         {
-            Code = code;
-            AddedMod = addedMod;
-            ReasonCode = reasonCode;
-            ReasonTitle = reasonTitle;
-            ReasonDescription = reasonDescription;
-            EndBanTime = endBanTime;
-            IsPUID = isPUID;
+            this.Code = code;
+            this.AddedMod = addedMod;
+            this.ReasonCode = reasonCode;
+            this.ReasonTitle = reasonTitle;
+            this.ReasonDescription = reasonDescription;
+            this.EndBanTime = endBanTime;
+            this.IsPUID = isPUID;
             Players.Add(this);
         }
     }

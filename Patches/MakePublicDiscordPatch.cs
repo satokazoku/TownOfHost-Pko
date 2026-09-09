@@ -438,6 +438,8 @@ namespace TownOfHost
                 CountTypes.StandMaster => true,
                 CountTypes.Villain => true,
                 CountTypes.Hunter => true,
+                CountTypes.Dracula => true,
+                CountTypes.Vanity => true,
                 _ => false,
             };
         }

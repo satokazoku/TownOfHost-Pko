@@ -56,6 +56,10 @@ namespace TownOfHost.Roles.Ghost
         /// </summary>
         public static void CheckSabowin()
         {
+            if (AsistingAngelId == byte.MaxValue)
+            {
+                return;
+            }
             if (Asist.Is(CustomRoleTypes.Impostor))
             {
                 CustomWinnerHolder.CantWinPlayerIds.Remove(AsistingAngelId);
@@ -65,6 +69,10 @@ namespace TownOfHost.Roles.Ghost
         }
         public static void CheckTaskwin()
         {
+            if (AsistingAngelId == byte.MaxValue)
+            {
+                return;
+            }
             if (Asist.Is(CustomRoleTypes.Crewmate))
             {
                 CustomWinnerHolder.CantWinPlayerIds.Remove(AsistingAngelId);

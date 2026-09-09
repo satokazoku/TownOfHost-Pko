@@ -626,6 +626,11 @@ namespace TownOfHost
                 {
                     selfRole = RoleTypes.Crewmate;
                 }
+
+                if (role is CustomRoles.Vanity)
+                {
+                    selfRole = RoleTypes.Crewmate;
+                }
                 //Desync役職視点
                 foreach (var target in PlayerCatch.AllPlayerControls)
                 {

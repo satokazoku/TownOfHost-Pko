@@ -668,14 +668,20 @@ namespace TownOfHost
             var role = player.GetCustomRole();
             if (player.Is(CustomRoles.Amnesia)) role = player.Is(CustomRoleTypes.Crewmate) ? CustomRoles.Crewmate : CustomRoles.Impostor;
             if (player.GetMisidentify(out var missrole))
+            {
                 role = missrole;
+            }
 
-            if (role is CustomRoles.Amnesiac)
+            /*if (role is CustomRoles.Amnesiac)
             {
                 if (roleclas is Amnesiac amnesiac && !amnesiac.Realized)
                     role = Amnesiac.IsWolf ? CustomRoles.WolfBoy : CustomRoles.Sheriff;
+            }*/
+            if (role is CustomRoles.Vanity)
+            {
+                if (roleclas is Vanity vanity && !vanity.Realized)
+                    role = CustomRoles.Sheriff;
             }
-
             if (role is CustomRoles.Crewmate or CustomRoles.Impostor)
             {
                 var RoleTextData = GetRoleColorCode(role);

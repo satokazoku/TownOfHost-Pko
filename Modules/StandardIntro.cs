@@ -8,6 +8,7 @@ using TownOfHost.Roles.Core;
 using TownOfHost.Roles.AddOns.Common;
 using static TownOfHost.SelectRolesPatch;
 using TownOfHost.Patches;
+using TownOfHost.Roles.Neutral;
 
 namespace TownOfHost.Modules;
 
@@ -203,13 +204,14 @@ class StandardIntro
                 if (role.GetRoleInfo()?.IsDesyncImpostor == true || role is CustomRoles.Amnesiac || role.IsMadmate() || (role.IsNeutral() && role is not CustomRoles.Egoist) || SuddenDeathMode.NowSuddenDeathMode)
                 {
                     roleType = role.IsCrewmate() ? RoleTypes.Crewmate : (role.IsMadmate() ? RoleTypes.Crewmate : ((role.IsNeutral() && role is not CustomRoles.Egoist) ? RoleTypes.Impostor : roleType));
-                    if (role is CustomRoles.Amnesiac) roleType = RoleTypes.Crewmate;
+                    if (role is CustomRoles.Amnesiac || role is CustomRoles.Vanity) roleType = RoleTypes.Crewmate;
                 }
                 if (role is CustomRoles.BakeCat) roleType = RoleTypes.Crewmate;
                 if (pc.Is(CustomRoles.Amnesia) && Amnesia.dontcanUseability)
                 {
                     roleType = role.IsImpostor() && !pc.Is(CustomRoles.Amnesiac) ? RoleTypes.Impostor : RoleTypes.Crewmate;
                 }
+                if (role is CustomRoles.Vanity) roleType = RoleTypes.Crewmate;
 
                 pc.RpcSetRoleDesync(roleType, pc.GetClientId(), SendOption.None);
 
@@ -257,6 +259,7 @@ class StandardIntro
                     }
 
                     if (role is CustomRoles.BakeCat) roleType = RoleTypes.Crewmate;
+                    if (role is CustomRoles.Vanity) roleType = RoleTypes.Crewmate;
 
                     if (pc.Is(CustomRoles.Amnesia) && Amnesia.dontcanUseability)
                     {
@@ -313,7 +316,7 @@ class StandardIntro
                                     killer.RpcSetRoleDesync(RoleTypes.Scientist, clientId);
                                 }
                             }
-                            if (pc.Is(CustomRoles.Amnesiac) && !SuddenDeathMode.NowSuddenDeathMode)
+                            /*if (pc.Is(CustomRoles.Amnesiac) && !SuddenDeathMode.NowSuddenDeathMode)
                             {
                                 foreach (var killer in PlayerCatch.AllPlayerControls)
                                 {
@@ -324,7 +327,7 @@ class StandardIntro
                                     //他者視点Amnesiacをインポスターにする
                                     pc.RpcSetRoleDesync(RoleTypes.Impostor, clientId);
                                 }
-                            }
+                            }*/
                             if (pc.Is(CustomRoles.OneWolf))
                             {
                                 foreach (var seer in PlayerCatch.AllPlayerControls)

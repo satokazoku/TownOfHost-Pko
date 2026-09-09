@@ -45,6 +45,8 @@ public abstract class RoleDescription
                 case CountTypes.Remotekiller: overrideRoleText = CustomRoles.Remotekiller; break;
                 case CountTypes.Hunter: overrideRoleText = CustomRoles.Hunter; break;
                 case CountTypes.StandMaster: overrideRoleText = CustomRoles.StandMaster; break;
+                case CountTypes.Vanity: overrideRoleText = CustomRoles.Vanity; break;
+                case CountTypes.Dracula: overrideRoleText = CustomRoles.Dracula; break;
                 case CountTypes.MilkyWay: countText = Neutral.Vega.TeamText; break;
                 default: overrideRoleText = CustomRoles.Crewmate; break;
             }

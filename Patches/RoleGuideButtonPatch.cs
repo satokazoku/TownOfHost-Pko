@@ -6,6 +6,7 @@ using HarmonyLib;
 using TMPro;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Impostor;
+using TownOfHost.Roles.Neutral;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
@@ -640,8 +641,8 @@ public static class RoleGuideButtonPatch
         if (localPc.Is(CustomRoles.Amnesia))
             role = localPc.Is(CustomRoleTypes.Crewmate) ? CustomRoles.Crewmate : CustomRoles.Impostor;
         if (localPc.GetMisidentify(out var missrole)) role = missrole;
-        if (role is CustomRoles.Amnesiac && roleClass is Amnesiac amnesiac && !amnesiac.Realized)
-            role = Amnesiac.IsWolf ? CustomRoles.WolfBoy : CustomRoles.Sheriff;
+        if (role is CustomRoles.Vanity && roleClass is Vanity vanity && !vanity.Realized)
+            role = CustomRoles.Sheriff;
 
         BuildPaperRoleDetail(role, localPc.GetRoleDesc(true));
     }
@@ -1530,6 +1531,8 @@ public static class RoleGuideButtonPatch
             CountTypes.Eater => UtilsRoleText.GetRoleName(CustomRoles.Eater),
             CountTypes.StandMaster => UtilsRoleText.GetRoleName(CustomRoles.StandMaster),
             CountTypes.Villain => UtilsRoleText.GetRoleName(CustomRoles.Villain),
+            CountTypes.Vanity => UtilsRoleText.GetRoleName(CustomRoles.Vanity),
+            CountTypes.Dracula => UtilsRoleText.GetRoleName(CustomRoles.Dracula),
             _ => countType.ToString(),
         };
         return displayName.RemoveHtmlTags().RemoveColorTags();

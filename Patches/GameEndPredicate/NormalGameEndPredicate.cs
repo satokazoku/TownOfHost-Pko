@@ -277,6 +277,7 @@ namespace TownOfHost
             int PavlovOwnerAlive = 0;
             int PavlovOwnerRemaining = 0;
             int Dracula = 0;
+            int Vanity = 0;
 
             foreach (var pc in PlayerCatch.AllAlivePlayerControls)
             {
@@ -294,7 +295,20 @@ namespace TownOfHost
                     }
                     else
                     {
-                        Crew++;
+                        Crew++; FoxAndCrew++;
+                    }
+                    continue;
+                }
+                if (pc.Is(CustomRoles.Vanity))
+                {
+                    if (pc.GetRoleClass() is Vanity vanity && vanity.KilledCrewmate && Roles.Neutral.Vanity.OptionSoloKiller.GetBool())
+                    {
+                        Logger.Info($"Vanity is SoloKiller and has killed a crewmate, counting as Vanity.", "NormalGameEndPredicate");
+                        Vanity++;
+                    }
+                    else
+                    {
+                        Crew++; FoxAndCrew++;
                     }
                     continue;
                 }
@@ -357,12 +371,13 @@ namespace TownOfHost
                     return true;
                 }
             }
+
             if (PlayerCatch.AllAlivePlayerControls.Any(pc => pc.GetRoleClass() is Victim victim && victim.IsAwakened))
                 return false;
 
             if (Imp == 0 && FoxAndCrew == 0 && Jackal == 0 && Remotekiller == 0
                 && MilkyWay == 0 && MadBetrayer == 0 && Pavlov == 0 && StandMasterCount == 0
-                && EaterCount == 0 && Hunter == 0 && Dracula == 0)//全滅
+                && EaterCount == 0 && Hunter == 0 && Dracula == 0 && Vanity == 0)//全滅
             {
                 reason = GameOverReason.ImpostorsByKill;
                 CustomWinnerHolder.ResetAndSetWinner(CustomWinner.None);
@@ -371,7 +386,7 @@ namespace TownOfHost
             {
                 reason = GameOverReason.ImpostorsByKill;
             }
-            else if (Imp == 1 && Crew == 0 && GrimReaper == 1 && EaterCount == 0)//死神勝利(1)
+            else if (Imp == 1 && Crew == 0 && GrimReaper == 1)//死神勝利(1)
             {
                 reason = GameOverReason.ImpostorsByKill;
                 CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.GrimReaper, byte.MaxValue);
@@ -380,13 +395,13 @@ namespace TownOfHost
                     .FirstOrDefault(pc => pc.GetCustomRole() is CustomRoles.GrimReaper)?.PlayerId ?? byte.MaxValue);
             }
             else if (Jackal == 0 && Remotekiller == 0 && MilkyWay == 0 && MadBetrayer == 0
-                && Pavlov == 0 && StandMasterCount == 0 && EaterCount == 0 && Hunter == 0 && Dracula == 0 && FoxAndCrew <= Imp) //インポスター勝利
+                && Pavlov == 0 && StandMasterCount == 0 && EaterCount == 0 && Hunter == 0 && Dracula == 0 && Vanity == 0 && FoxAndCrew <= Imp) //インポスター勝利
             {
                 reason = GameOverReason.ImpostorsByKill;
                 CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Impostor, byte.MaxValue);
             }
             else if (Imp == 0 && Remotekiller == 0 && MilkyWay == 0 && MadBetrayer == 0
-                && Pavlov == 0 && StandMasterCount == 0 && EaterCount == 0 && Hunter == 0 && Dracula == 0 && FoxAndCrew <= Jackal) //ジャッカル勝利
+                && Pavlov == 0 && StandMasterCount == 0 && EaterCount == 0 && Hunter == 0 && Dracula == 0 && Vanity == 0 && FoxAndCrew <= Jackal) //ジャッカル勝利
             {
                 reason = GameOverReason.ImpostorsByKill;
                 CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Jackal, byte.MaxValue);
@@ -399,7 +414,7 @@ namespace TownOfHost
                 CustomWinnerHolder.WinnerRoles.Add(CustomRoles.JackalWolf);
             }
             else if (Imp == 0 && Jackal == 0 && MilkyWay == 0 && MadBetrayer == 0
-                && Pavlov == 0 && StandMasterCount == 0 && EaterCount == 0 && Hunter == 0 && Dracula == 0 && FoxAndCrew <= Remotekiller)
+                && Pavlov == 0 && StandMasterCount == 0 && EaterCount == 0 && Hunter == 0 && Dracula == 0 && Vanity == 0 && FoxAndCrew <= Remotekiller)
             {
                 reason = GameOverReason.ImpostorsByKill;
                 CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Remotekiller, byte.MaxValue);
@@ -409,7 +424,7 @@ namespace TownOfHost
             }
             else if (Jackal == 0 && Imp == 0 && GrimReaper == 1 && Remotekiller == 0
                 && MilkyWay == 0 && MadBetrayer == 0 && Pavlov == 0 && Hunter == 0 && StandMasterCount == 0
-                && Dracula == 0 && EaterCount == 0)//死神勝利(2)
+                && Dracula == 0 && Vanity == 0 && EaterCount == 0)//死神勝利(2)
             {
                 reason = GameOverReason.ImpostorsByKill;
                 CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.GrimReaper, byte.MaxValue);
@@ -418,7 +433,7 @@ namespace TownOfHost
                     .FirstOrDefault(pc => pc.GetCustomRole() is CustomRoles.GrimReaper)?.PlayerId ?? byte.MaxValue);
             }
             else if (Imp == 0 && Jackal == 0 && Remotekiller == 0 && MadBetrayer == 0
-                && Pavlov == 0 && StandMasterCount == 0 && EaterCount == 0 && Hunter == 0 && Dracula == 0 && FoxAndCrew <= MilkyWay)
+                && Pavlov == 0 && StandMasterCount == 0 && EaterCount == 0 && Hunter == 0 && Dracula == 0 && Vanity == 0 && FoxAndCrew <= MilkyWay)
             {
                 reason = GameOverReason.ImpostorsByKill;
                 CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.MilkyWay, byte.MaxValue);
@@ -426,7 +441,7 @@ namespace TownOfHost
                 CustomWinnerHolder.WinnerRoles.Add(CustomRoles.Altair);
             }
             else if (Imp == 0 && Jackal == 0 && Remotekiller == 0 && MilkyWay == 0
-                && Pavlov == 0 && StandMasterCount == 0 && EaterCount == 0 && Hunter == 0 && Dracula == 0 && FoxAndCrew <= MadBetrayer)
+                && Pavlov == 0 && StandMasterCount == 0 && EaterCount == 0 && Hunter == 0 && Dracula == 0 && Vanity == 0 && FoxAndCrew <= MadBetrayer)
             {
                 reason = GameOverReason.ImpostorsByKill;
                 CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.MadBetrayer, byte.MaxValue);
@@ -434,7 +449,7 @@ namespace TownOfHost
             }
             else if (Imp == 0 && Jackal == 0 && Remotekiller == 0 && GrimReaper == 0
                 && MilkyWay == 0 && MadBetrayer == 0 && StandMasterCount == 0 && EaterCount == 0
-                && Hunter == 0 && Dracula == 0 && FoxAndCrew <= Pavlov && PavlovDog.HasAliveDog())
+                && Hunter == 0 && Dracula == 0 && Vanity == 0 && FoxAndCrew <= Pavlov && PavlovDog.HasAliveDog())
             {
                 reason = GameOverReason.ImpostorsByKill;
                 CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Pavlov, byte.MaxValue);
@@ -445,7 +460,7 @@ namespace TownOfHost
             else if (standMasterAlive
                 && Imp == 0 && Jackal == 0 && Remotekiller == 0 && GrimReaper == 0
                 && MilkyWay == 0 && MadBetrayer == 0 && Pavlov == 0 && EaterCount == 0
-                && Hunter == 0 && Dracula == 0 && FoxAndCrew <= StandMasterCount)
+                && Hunter == 0 && Dracula == 0 && Vanity == 0 && FoxAndCrew <= StandMasterCount)
             {
                 reason = GameOverReason.ImpostorsByKill;
                 CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.StandMaster, byte.MaxValue);
@@ -458,7 +473,7 @@ namespace TownOfHost
             }
             else if (Imp == 0 && Jackal == 0 && Remotekiller == 0 && GrimReaper == 0
                 && MilkyWay == 0 && MadBetrayer == 0 && StandMasterCount == 0 && EaterCount == 0
-                && Pavlov == 0 && Dracula == 0 && FoxAndCrew <= Hunter)
+                && Pavlov == 0 && Dracula == 0 && Vanity == 0 && FoxAndCrew <= Hunter)
             {
                 reason = GameOverReason.ImpostorsByKill;
                 CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Hunter, byte.MaxValue);
@@ -466,15 +481,33 @@ namespace TownOfHost
             }
             else if (Imp == 0 && Jackal == 0 && Remotekiller == 0 && GrimReaper == 0
                 && MilkyWay == 0 && MadBetrayer == 0 && StandMasterCount == 0 && EaterCount == 0
-                && Pavlov == 0 && Hunter == 0 && FoxAndCrew <= Dracula) 
+                && Pavlov == 0 && Hunter == 0 && Vanity == 0 && FoxAndCrew <= Dracula)
             {
                 reason = GameOverReason.ImpostorsByKill;
                 CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Dracula, byte.MaxValue);
                 CustomWinnerHolder.WinnerRoles.Add(CustomRoles.Dracula);
             }
+            else if (Imp == 0 && Jackal == 0 && Remotekiller == 0 && GrimReaper == 0
+                && MilkyWay == 0 && MadBetrayer == 0 && StandMasterCount == 0 && EaterCount == 0
+                && Pavlov == 0 && Hunter == 0 && Dracula == 0 && FoxAndCrew <= Vanity)
+            {
+                reason = GameOverReason.ImpostorsByKill;
+                CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Vanity, byte.MaxValue);
+
+                //単独キラーのヴァニティだけ入れる
+                foreach (var pc in PlayerCatch.AllAlivePlayerControls)
+                {
+                    if (pc.GetRoleClass() is Vanity vanity && vanity.KilledCrewmate && Roles.Neutral.Vanity.OptionSoloKiller.GetBool())
+                    {
+                        CustomWinnerHolder.WinnerIds.Add(pc.PlayerId);
+                        CustomWinnerHolder.NeutralWinnerIds.Add(pc.PlayerId);
+                    }
+                }
+                return true;
+            }
             else if (Jackal == 0 && Remotekiller == 0 && MadBetrayer == 0
                 && MilkyWay == 0 && Pavlov == 0 && StandMasterCount == 0 && Imp == 0
-                && Hunter == 0 && EaterCount == 0 && Dracula == 0) //クルー勝利
+                && Hunter == 0 && EaterCount == 0 && Dracula == 0 && Vanity == 0) //クルー勝利
             {
                 reason = GameOverReason.CrewmatesByVote;
                 CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Crewmate, byte.MaxValue);

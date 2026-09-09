@@ -298,6 +298,7 @@ class RoleInfoShower
                                         case CountTypes.MilkyWay: countText = Roles.Neutral.Vega.TeamText; break;
                                         case CountTypes.Hunter: overrideRoleText = CustomRoles.Hunter; break;
                                         case CountTypes.Dracula: overrideRoleText = CustomRoles.Dracula; break;
+                                        case CountTypes.Vanity: overrideRoleText = CustomRoles.Vanity; break;
                                         default: overrideRoleText = CustomRoles.Crewmate; break;
                                     }
 

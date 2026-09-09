@@ -391,6 +391,7 @@ namespace TownOfHost
         StandMaster,
         Villain,
         Hunter,
-        Dracula
+        Dracula,
+        Vanity,
     }
 }

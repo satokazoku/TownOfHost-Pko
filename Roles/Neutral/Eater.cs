@@ -92,7 +92,6 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
     {
         eatOrSwallowCount = 0;
         eatMode = true;
-        eatCooldownTimer = 0f;
         pendingSwallow = null;
         EatenBodies.Clear();
         Viperkilledplayers = new();
@@ -141,6 +140,11 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
     public bool UseOneclickButton => true;
     public bool IsPhantomRole => true;
     public bool IsresetAfterKill => false;
+
+    public override void Add()
+    {
+        eatCooldownTimer = -9f;
+    }
 
     public void OnCheckMurderAsKiller(MurderInfo info)
     {
@@ -210,10 +214,6 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
         {
             eatCooldownTimer = EatCooldown;
         }
-        if (eatCooldownTimer < 0f)
-        {
-            eatCooldownTimer = 0f;
-        }
         if (!AmongUsClient.Instance.AmHost) return;
         if (GameStates.IsInTask && pendingSwallow != null)
         {
@@ -235,6 +235,7 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
                     Player.SetKillCooldown();
                     var target = PlayerCatch.GetPlayerById(pendingSwallow.TargetId);
                     ++eatOrSwallowCount;
+                    PlayerState.GetByPlayerId(target.PlayerId).DeathReason = CustomDeathReason.Swallowed;
                     target.RpcExileV3();
                     if (eatOrSwallowCount >= OptionWinCount.GetInt())
                     {
@@ -359,8 +360,8 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
     public override string GetProgressText(bool comms = false, bool GameLog = false)
     {
         var CoolDownLeft = Math.Ceiling(EatCooldown - eatCooldownTimer);
-        var text = Utils.ColorString(Color.yellow, $"{CoolDownLeft}");
-        return $"({text})";
+        var text = Utils.ColorString(Color.yellow, $"({CoolDownLeft})");
+        return $"{text}";
     }
 
     public bool OverrideKillButton(out string text)

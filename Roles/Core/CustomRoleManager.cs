@@ -1097,6 +1097,7 @@ public enum CustomRoles
     Hunter,
     Dracula,
     Mermaid,
+    Vanity,
     //DEBUG only Neutral.
     //HideAndSeek
     HASFox,
@@ -1126,7 +1127,7 @@ public enum CustomRoles
     Chain,
     //第三属性
     Lovers, RedLovers, YellowLovers, BlueLovers, GreenLovers, WhiteLovers, PurpleLovers,
-    MadonnaLovers, CupidLovers, OneLove, Amanojaku, Faction, kenzoku,
+    MadonnaLovers, CupidLovers, OneLove, Amanojaku, Faction, Kenzoku,
     //AddMadmate,
     //バフ
     Guesser,
