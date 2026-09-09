@@ -9,7 +9,7 @@ namespace TownOfHost
     [HarmonyPatch(typeof(LobbyBehaviour), nameof(LobbyBehaviour.Start))]
     class LobbyStartPatch
     {
-        public const string LobbyLogoPath = "TownOfHost.Resources.TOHP.LobbyLogo.png";
+        public static string LobbyLogoPath = "TownOfHost.Resources.TOHP.LobbyLogo.png";
 
         static Sprite lobbyLogoSprite;
         static GameObject lobbyPaintObject;
@@ -38,6 +38,10 @@ namespace TownOfHost
             if (lobbyLogoSprite == null)
             {
                 Logger.Warn($"ロビー画像が見つかりません: {LobbyLogoPath}", "LobbyStartPatch");
+                return;
+            }
+            if (Options.HidePko.GetBool())
+            {
                 return;
             }
 

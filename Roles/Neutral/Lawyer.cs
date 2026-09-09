@@ -2,16 +2,18 @@ using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
-using UnityEngine;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Impostor;
+using UnityEngine;
 using static TownOfHost.PlayerCatch;
-using static TownOfHost.Utils;
 using static TownOfHost.Translator;
+using static TownOfHost.Utils;
+using static UnityEngine.GraphicsBuffer;
 
 namespace TownOfHost.Roles.Neutral;
 
-public sealed class Lawyer : RoleBase
+public sealed class Lawyer : RoleBase, IAdditionalWinner
 {
     public static readonly SimpleRoleInfo RoleInfo =
         SimpleRoleInfo.Create(
@@ -26,6 +28,10 @@ public sealed class Lawyer : RoleBase
             "#daa520",
             (4, 7),
             introSound: () => GetIntroSound(RoleTypes.Impostor),
+            assignInfo: new RoleAssignInfo(CustomRoles.Lawyer, CustomRoleTypes.Neutral)
+            {
+                AssignCountRule = new(1, 1, 1)
+            },
             from: From.TheOtherRoles
         );
 
@@ -152,7 +158,7 @@ public sealed class Lawyer : RoleBase
         UtilsNotifyRoles.NotifyRoles();
     }
 
-    public static void EndGameCheck()
+    public override void CheckWinner(GameOverReason reason)
     {
         foreach (var lawyer in Lawyers.ToArray())
         {
@@ -230,6 +236,22 @@ public sealed class Lawyer : RoleBase
     public override void ReceiveRPC(MessageReader reader)
     {
         targetPlayerId = reader.ReadByte();
+    }
+    public bool CheckWin(ref CustomRoles winnerRole)
+    {
+        if (CustomWinnerHolder.WinnerIds.Contains(Player.PlayerId))
+        {
+            return false;
+        }
+        if (Player.GetRoleClass() is Lawyer lawyer)
+        {
+            var target = GetPlayerById(lawyer.targetPlayerId);
+
+            bool targetWins = CustomWinnerHolder.WinnerIds.Contains(target.PlayerId)
+                               || CustomWinnerHolder.WinnerRoles.Contains(target.GetCustomRole());
+            return targetWins;
+        }
+        return false;
     }
 }
 

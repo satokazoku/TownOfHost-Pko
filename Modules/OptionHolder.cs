@@ -588,6 +588,8 @@ namespace TownOfHost
         public static OptionItem KiclHotNotFriend;
         public static OptionItem KickInitialName;
         public static OptionItem BANKickjoinplayer;
+        public static OptionItem HidePko;
+
 
         public static readonly string[] suffixModes =
         {
@@ -633,6 +635,7 @@ namespace TownOfHost
         }
         public static void Load()
         {
+            Color ModColor = new(1.0f, 0.0f, 0.0f);
             if (IsLoaded) return;
             OptionSaver.Initialize();
             // プリセット
@@ -656,6 +659,9 @@ namespace TownOfHost
                 .SetColor(UtilsRoleText.GetRoleColor(CustomRoles.GM))
                 .SetHeader(true)
                 .SetTooltip(() => Translator.GetString($"GM_Info"));
+            HidePko = BooleanOptionItem.Create(101, "HidePko", false, TabGroup.MainSettings, false)
+                .SetColor(new Color32(255, 150, 49, 255))
+                .SetHeader(true);
 
             RoleAssignManager.SetupOptionItem();
             WinOption.SetupCustomOption();
