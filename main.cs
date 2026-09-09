@@ -511,7 +511,7 @@ namespace TownOfHost
         Amateras = CustomRoles.Amateras,
         Ruler = CustomRoles.Ruler,
         Dancer = CustomRoles.Dancer,
-        Hunter = CustomRoles.Hunter,
+        Huntman = CustomRoles.Huntman,
         Dracula = CustomRoles.Dracula,
         Mermaid = CustomRoles.Mermaid,
         Vanity = CustomRoles.Vanity,

@@ -1015,6 +1015,7 @@ public enum CustomRoles
     BoostLighter,
     Jizo,
     Fanatic,
+    Hunter,
     //DEBUG only Crewmate
     Analyzer,
     //Neutral
@@ -1094,7 +1095,7 @@ public enum CustomRoles
     Scratcher,
     HappyJester,
     UnHappyJester,
-    Hunter,
+    Huntman,
     Dracula,
     Mermaid,
     Vanity,

@@ -43,7 +43,7 @@ public abstract class RoleDescription
                 case CountTypes.Fox: overrideRoleText = CustomRoles.Fox; break;
                 case CountTypes.GrimReaper: overrideRoleText = CustomRoles.GrimReaper; break;
                 case CountTypes.Remotekiller: overrideRoleText = CustomRoles.Remotekiller; break;
-                case CountTypes.Hunter: overrideRoleText = CustomRoles.Hunter; break;
+                case CountTypes.Huntman: overrideRoleText = CustomRoles.Huntman; break;
                 case CountTypes.StandMaster: overrideRoleText = CustomRoles.StandMaster; break;
                 case CountTypes.Vanity: overrideRoleText = CustomRoles.Vanity; break;
                 case CountTypes.Dracula: overrideRoleText = CustomRoles.Dracula; break;

@@ -15,14 +15,14 @@ using static UnityEngine.GraphicsBuffer;
 
 namespace TownOfHost.Roles.Neutral
     {
-        public sealed class Hunter : RoleBase, ILNKiller
+        public sealed class Huntman : RoleBase, ILNKiller
         {
         bool IKiller.CanKill => false;
         public static readonly SimpleRoleInfo RoleInfo =
                 SimpleRoleInfo.Create(
-                    typeof(Hunter),
-                    player => new Hunter(player),
-                    CustomRoles.Hunter,
+                    typeof(Huntman),
+                    player => new Huntman(player),
+                    CustomRoles.Huntman,
                     () => RoleTypes.Shapeshifter,
                     CustomRoleTypes.Neutral,
                     56400,
@@ -31,13 +31,13 @@ namespace TownOfHost.Roles.Neutral
                     "#cd853f",
                     (2, 1),
                     true,
-                    countType: CountTypes.Hunter,
-                     assignInfo: new RoleAssignInfo(CustomRoles.Hunter, CustomRoleTypes.Neutral)
+                    countType: CountTypes.Huntman,
+                     assignInfo: new RoleAssignInfo(CustomRoles.Huntman, CustomRoleTypes.Neutral)
                     {
                         AssignCountRule = new(1, 1, 1)
                     }
                 );
-        public Hunter(PlayerControl player)
+        public Huntman(PlayerControl player)
         : base(
             RoleInfo,
             player,
@@ -85,11 +85,11 @@ namespace TownOfHost.Roles.Neutral
 
         enum OptionName
         {
-            HunterchangeColorTime,
-            HunterSpeedBoostTime,
-            HunterSpeedBoost,
+            HuntmanchangeColorTime,
+            HuntmanSpeedBoostTime,
+            HuntmanSpeedBoost,
             StealthDarkenDuration,
-            HunterDarkenRange
+            HuntmanDarkenRange
         }
 
         private static void SetupOptionItem()
@@ -98,15 +98,15 @@ namespace TownOfHost.Roles.Neutral
             OptionCooldown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.Cooldown, new(0f, 180f, 0.5f), 40f, false).SetValueFormat(OptionFormat.Seconds);
             OptionCanVent = BooleanOptionItem.Create(RoleInfo, 11, GeneralOption.CanVent, true, false);
             OptionHasImpostorVision = BooleanOptionItem.Create(RoleInfo, 12, GeneralOption.ImpostorVision, true, false);
-            OptionchangeColorTime = FloatOptionItem.Create(RoleInfo, 13, OptionName.HunterchangeColorTime,
+            OptionchangeColorTime = FloatOptionItem.Create(RoleInfo, 13, OptionName.HuntmanchangeColorTime,
                 new(0f, 180f, 0.5f), 7.5f, false).SetValueFormat(OptionFormat.Seconds);
-            OptionSpeedBoostTime = FloatOptionItem.Create(RoleInfo, 14, OptionName.HunterSpeedBoostTime,
+            OptionSpeedBoostTime = FloatOptionItem.Create(RoleInfo, 14, OptionName.HuntmanSpeedBoostTime,
                 new(0f, 180f, 0.5f), 7.5f, false).SetValueFormat(OptionFormat.Seconds);
-            OptionSpeedBoost = FloatOptionItem.Create(RoleInfo, 15, OptionName.HunterSpeedBoost,
+            OptionSpeedBoost = FloatOptionItem.Create(RoleInfo, 15, OptionName.HuntmanSpeedBoost,
                 new(1f, 10f, 0.25f), 1.75f, false).SetValueFormat(OptionFormat.Multiplier);
             optionDarkenDuration = FloatOptionItem.Create(RoleInfo, 16, OptionName.StealthDarkenDuration, new(0.5f, 30f, 0.5f), 1f, false);
             optionDarkenDuration.SetValueFormat(OptionFormat.Seconds);
-            OptionDarkenRange = FloatOptionItem.Create(RoleInfo, 17, OptionName.HunterDarkenRange, new(0f, 10f, 0.5f), 2.5f, false)
+            OptionDarkenRange = FloatOptionItem.Create(RoleInfo, 17, OptionName.HuntmanDarkenRange, new(0f, 10f, 0.5f), 2.5f, false)
                 .SetValueFormat(OptionFormat.Multiplier);
             RoleAddAddons.Create(RoleInfo, 20, NeutralKiller: true);
         }
@@ -117,7 +117,7 @@ namespace TownOfHost.Roles.Neutral
 
         readonly Dictionary<byte, float> savedSpeeds = new();
 
-        private Vector2 HunterPos;
+        private Vector2 HuntmanPos;
         private Vector2 targetPos;
 
         byte targetId;
@@ -133,7 +133,7 @@ namespace TownOfHost.Roles.Neutral
         public override void CheckWinner(GameOverReason reason)
         {
             if (3 <= MyState.GetKillCount()) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);
-            if (Player.IsWinner(CustomWinner.Hunter) && !Player.IsLovers())
+            if (Player.IsWinner(CustomWinner.Huntman) && !Player.IsLovers())
                 Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[2]);
         }
 
@@ -160,10 +160,10 @@ namespace TownOfHost.Roles.Neutral
             // TOHYありがとう!!!!!!!!
             if (targeted && KillWaitPlayer)
             {
-                HunterPos = Player.transform.position;
+                HuntmanPos = Player.transform.position;
                 targetPos = PlayerCatch.GetPlayerControl(targetId).GetTruePosition();
             }
-            Vector2 difference = targetPos - HunterPos;
+            Vector2 difference = targetPos - HuntmanPos;
             // 距離の2乗を取得
             float sqrDistance = difference.sqrMagnitude;
             float checkRadius = 5f;
@@ -202,7 +202,7 @@ namespace TownOfHost.Roles.Neutral
 
                 var DarkenRange = OptionDarkenRange.GetFloat();
                 var playersToDarken = PlayerCatch.AllAlivePlayerControls
-                    .Where(targetdark => !targetdark.Is(CustomRoles.Hunter))
+                    .Where(targetdark => !targetdark.Is(CustomRoles.Huntman))
                     .Where(targetdark => targetdark.PlayerId != Player.PlayerId)
                     .Where(targetdark => Ballooner.IsInExplosionRange(Player, targetdark, DarkenRange))
                     .ToArray();
@@ -268,7 +268,7 @@ namespace TownOfHost.Roles.Neutral
         }
         public static bool KnowTargetRoleColor(PlayerControl target, bool isMeeting)
         {
-            if (!isMeeting && target.Is(CustomRoles.Hunter))
+            if (!isMeeting && target.Is(CustomRoles.Huntman))
             {
                 if (PublicRoleColor)
                 {

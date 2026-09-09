@@ -437,7 +437,7 @@ namespace TownOfHost
                 CountTypes.Pavlov => true,
                 CountTypes.StandMaster => true,
                 CountTypes.Villain => true,
-                CountTypes.Hunter => true,
+                CountTypes.Huntman => true,
                 CountTypes.Dracula => true,
                 CountTypes.Vanity => true,
                 _ => false,

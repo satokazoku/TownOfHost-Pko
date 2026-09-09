@@ -127,7 +127,7 @@ public abstract class GameEndPredicate
                 CountTypes.Pavlov => CustomWinner.Pavlov,
                 CountTypes.Eater => CustomWinner.Eater,
                 CountTypes.StandMaster => CustomWinner.StandMaster,
-                CountTypes.Hunter => CustomWinner.Hunter,
+                CountTypes.Huntman => CustomWinner.Huntman,
                 CountTypes.Dracula => CustomWinner.Dracula,
                 CountTypes.Villain => CustomWinner.Villain,
                 _ => (CustomWinner)role,

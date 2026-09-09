@@ -1524,7 +1524,7 @@ public static class RoleGuideButtonPatch
             CountTypes.Remotekiller => UtilsRoleText.GetRoleName(CustomRoles.Remotekiller),
             CountTypes.TaskPlayer => UtilsRoleText.GetRoleName(CustomRoles.TaskPlayerB),
             CountTypes.GrimReaper => UtilsRoleText.GetRoleName(CustomRoles.GrimReaper),
-            CountTypes.Hunter => UtilsRoleText.GetRoleName(CustomRoles.Hunter),
+            CountTypes.Huntman => UtilsRoleText.GetRoleName(CustomRoles.Huntman),
             CountTypes.Fox => UtilsRoleText.GetRoleName(CustomRoles.Fox),
             CountTypes.MilkyWay => GetString("MilkyWay"),
             CountTypes.Pavlov => GetString("Pavlov"),
