@@ -1,11 +1,13 @@
-/*
+using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
+using HarmonyLib;
 using Hazel;
 using TownOfHost.Modules;
 using TownOfHost.Patches;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Impostor;
 using UnityEngine;
 
 namespace TownOfHost.Roles.Crewmate;
@@ -119,7 +121,7 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
 
     public override void Add()
     {
-        CustomRoleManager.LowerOthers.Add(GetLowerTextOthers);
+        //CustomRoleManager.LowerOthers.Add(GetLowerTextOthers);
         PlayerSpeed = Main.AllPlayerSpeed[Player.PlayerId];
         BeamColorModeValue = OptionBeamColorMode.GetValue();
         BeamUnlockTaskCount = OptionBeamUnlockTask.GetInt();
@@ -134,7 +136,7 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
     public override void OnDestroy()
     {
         PetActionManager.Unregister(Player.PlayerId);
-        CustomRoleManager.LowerOthers.Remove(GetLowerTextOthers);
+        //CustomRoleManager.LowerOthers.Remove(GetLowerTextOthers);
     }
 
     public override void ApplyGameOptions(IGameOptions opt)
@@ -391,11 +393,9 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
     void ApplyBeamHit()
     {
         if (!AmongUsClient.Instance.AmHost || !Player.IsAlive()) return;
-
         bool facingLeft = BeamFacingLeft;
         var myPos = Player.GetTruePosition();
         Vector2 dir = facingLeft ? Vector2.left : Vector2.right;
-
         foreach (var target in PlayerCatch.AllAlivePlayerControls.ToArray())
         {
             if (!Player.IsAlive()) break;
@@ -408,9 +408,7 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
             var perp = toTarget - proj;
             if (perp.magnitude > 1.3f) continue;
             Jizo.Checkroom(Player.GetPlainShipRoom(), Player);
-
-            CustomRoleManager.OnCheckMurder(Player, target, Player, target,
-                true, deathReason: CustomDeathReason.Evaporation);
+            CustomRoleManager.OnCheckMurder(Player, target, target, target, true, deathReason: CustomDeathReason.Evaporation);
             HasHit = true;
         }
     }
@@ -538,7 +536,7 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
         return $"{size}<color=#ff0000>ファントムボタン → チャージ発射{ready}</color>";
     }
 
-    public string GetLowerTextOthers(PlayerControl seer, PlayerControl seen = null,
+    /*public string GetLowerTextOthers(PlayerControl seer, PlayerControl seen = null,
         bool isForMeeting = false, bool isForHud = false)
     {
         seen ??= seer;
@@ -548,7 +546,7 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
         if (ShowBeamMark && seer.PlayerId != Player.PlayerId)
             return "\n<size=100%><color=#ff0000>ビーム中</color></size>";
         return "";
-    }
+    }*/
 
     public override string GetProgressText(bool comms = false, bool GameLog = false)
     {
@@ -599,5 +597,53 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
         text = "HadouHo_Ability";
         return true;
     }
+    public void cancelbeam()
+    {
+        if (!Player.IsAlive())
+        {
+            Charging = false;
+            ShowBeamMark = false; _prevBeamMark = false;
+            SetRoleTextHeight(false); IsFiring = false;
+            Main.AllPlayerSpeed[Player.PlayerId] = PlayerSpeed;
+            Player.MarkDirtySettings();
+            UtilsNotifyRoles.NotifyRoles(); SendRpc(); return;
+        }
+        Charging = false;
+        IsCharging = false;
+        _prevCharging = false;
+        _prevBeamMark = false;
+        ShowBeamMark = false; _prevBeamMark = false;
+        SetRoleTextHeight(false);
+        UtilsNotifyRoles.NotifyRoles(ForceLoop: true); SendRpc();
+        Main.AllPlayerSpeed[Player.PlayerId] = PlayerSpeed; Player.MarkDirtySettings();
+        var charge = OptionChargeTime.GetFloat() - chargeTimer;
+        var waittime = OptionBeamTime.GetFloat() + charge;
+        _ = new LateTask(() =>
+        {
+            IsFiring = false;
+        }, waittime);
+    }
+    [HarmonyPatch(typeof(PlayerPhysics), nameof(PlayerPhysics.ClimbLadder))]
+    class LadderPatch
+    {
+        public static Dictionary<byte, Vector2> Ladder = new();
+        public static void Postfix(PlayerPhysics __instance, Ladder source, byte climbLadderSid)
+        {
+            var sourcePos = source.transform.position;
+            var targetPos = source.Destination.transform.position;
+            if (sourcePos.y > targetPos.y)
+                Ladder[__instance.myPlayer.PlayerId] = targetPos;
+            else
+                Ladder[__instance.myPlayer.PlayerId] = sourcePos;
+
+            if (__instance.myPlayer.GetRoleClass() is SheriffHadouHo { ShowBeamMark: true } hadouho)
+            {
+                hadouho.cancelbeam();
+            }
+            else if (__instance.myPlayer.GetRoleClass() is SheriffHadouHo { IsCharging: true } hadouhou)
+            {
+                hadouhou.cancelbeam();
+            }
+        }
+    }
 }
-*/

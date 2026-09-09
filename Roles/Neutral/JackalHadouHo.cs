@@ -79,7 +79,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         skCooldownTimer = 0f;
         skSpawnWaitTimer = -1f;
 
-        CustomRoleManager.LowerOthers.Add(GetLowerTextOthers);
+        //CustomRoleManager.LowerOthers.Add(GetLowerTextOthers);
     }
 
     public bool IsCharging;
@@ -268,7 +268,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
     public override void OnDestroy()
     {
         PetActionManager.Unregister(Player.PlayerId);
-        CustomRoleManager.LowerOthers.Remove(GetLowerTextOthers);
+        //CustomRoleManager.LowerOthers.Remove(GetLowerTextOthers);
 
         if (IsCharging || IsSuperCharging || ShowBeamMark || IsFiring)
         {
@@ -983,7 +983,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         return $"{(isForHud ? "" : "<size=100%>")}<color=#ff0000>チャージ中... {rem:F1}s</color>";
     }
 
-    public string GetLowerTextOthers(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
+    /*public string GetLowerTextOthers(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
     {
         seen ??= seer;
         if (seen != seer || isForMeeting || !Player.IsAlive()) return "";
@@ -994,7 +994,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         if (ShowBeamMark && seer.PlayerId != Player.PlayerId)
             return "\n<size=100%><color=#ff0000>ビーム中</color></size>";
         return "";
-    }
+    }*/
 
     public override string GetProgressText(bool comms = false, bool gamelog = false)
     {

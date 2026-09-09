@@ -46,7 +46,7 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
         _prevCharging = false;
         _prevBeamMark = false;
         Charging = false;
-        CustomRoleManager.LowerOthers.Add(GetLowerTextOthers);
+        //CustomRoleManager.LowerOthers.Add(GetLowerTextOthers);
     }
 
     public bool IsCharging;
@@ -93,7 +93,7 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
     }
     public override void OnDestroy()
     {
-        CustomRoleManager.LowerOthers.Remove(GetLowerTextOthers);
+        //CustomRoleManager.LowerOthers.Remove(GetLowerTextOthers);
 
         if (IsCharging || ShowBeamMark || IsFiring)
         {
@@ -393,14 +393,14 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
         return $"{(isForHud ? "" : "<size=100%>")}<color=#ff0000>チャージ中... {(ChargeTime - chargeTimer):F1}s</color>";
     }
 
-    public string GetLowerTextOthers(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
+    /*public string GetLowerTextOthers(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
     {
         seen ??= seer;
         if (seen != seer || isForMeeting || !Player.IsAlive()) return "";
         if (IsCharging && seer.PlayerId != Player.PlayerId) return $"\n<size=100%><color=#ff0000>チャージ中... {(int)(ChargeTime - chargeTimer)}s</color></size>";
         if (ShowBeamMark && seer.PlayerId != Player.PlayerId) return "\n<size=100%><color=#ff0000>ビーム中</color></size>";
         return "";
-    }
+    }*/
 
     public override string GetAbilityButtonText() => "発射";
     public override bool OverrideAbilityButton(out string text)

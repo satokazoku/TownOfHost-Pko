@@ -198,7 +198,7 @@ public sealed class EvilMoving : RoleBase, IImpostor, IUsePhantomButton
             }
         }
     }
-    public override string GetAbilityButtonText() => GetString("テレポート");
+    public override string GetAbilityButtonText() => "テレポート";
 
     public override bool OverrideAbilityButton(out string text)
     {
