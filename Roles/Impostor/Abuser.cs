@@ -72,7 +72,7 @@ public sealed class Abuser : RoleBase, IImpostor, IUsePhantomButton
     {
         VictimWinPriority = SoloWinOption.Create(RoleInfo, 10, CustomRoles.Victim, defo: 1).OptionWin;
         AbilityUseCount = IntegerOptionItem.Create(RoleInfo, 11, OptionName.AbuserAbilityUseCount, new(0, 99, 1), 2, false)
-            .SetValueFormat(OptionFormat.Times);
+            .SetValueFormat(OptionFormat.Votes);
         VictimCanVentBeforeAwakening = BooleanOptionItem.Create(RoleInfo, 12, OptionName.VictimCanVentBeforeAwakening, false, false);
         VictimKillCooldown = FloatOptionItem.Create(RoleInfo, 13, OptionName.VictimKillCooldown, new(0f, 180f, 0.5f), 30f, false)
             .SetValueFormat(OptionFormat.Seconds);

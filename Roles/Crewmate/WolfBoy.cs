@@ -80,7 +80,7 @@ public sealed class WolfBoy : RoleBase, IKiller, ISchrodingerCatOwner
         KillCooldown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.KillCooldown, new(0f, 180f, 0.5f), 30f, false)
             .SetValueFormat(OptionFormat.Seconds);
         OverrideKilldistance.Create(RoleInfo, 8);
-        optcanwinkillcount = IntegerOptionItem.Create(RoleInfo, 15, OptionName.Wolfboycanwinkillcount, new(0, 14, 1), 2, false).SetZeroNotation(OptionZeroNotation.Off).SetValueFormat(OptionFormat.Players);
+        optcanwinkillcount = IntegerOptionItem.Create(RoleInfo, 15, OptionName.Wolfboycanwinkillcount, new(0, 14, 1), 0, false).SetZeroNotation(OptionZeroNotation.Off).SetValueFormat(OptionFormat.Players);
         optcountcrew = BooleanOptionItem.Create(RoleInfo, 16, OptionName.WolfBoyCountteam, true, false, optcanwinkillcount);
         optcountimpstor = BooleanOptionItem.Create(RoleInfo, 17, OptionName.WolfBoyCountteam, false, false, optcanwinkillcount);
         optcountmadmate = BooleanOptionItem.Create(RoleInfo, 18, OptionName.WolfBoyCountteam, false, false, optcanwinkillcount);

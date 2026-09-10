@@ -181,7 +181,7 @@ namespace TownOfHost.Roles.Neutral
                 if (!targetCankill)
                 {
                     if (CustomRoleManager.OnCheckMurder(Player, Player, Player, Player, true, false, 2, CustomDeathReason.Suicide))
-                    {
+                    {                    
                         Player.SetRealKiller(Player);
                         UtilsNotifyRoles.NotifyRoles(SpecifySeer: Player);
                     }
@@ -190,6 +190,7 @@ namespace TownOfHost.Roles.Neutral
                 {
                     if (CustomRoleManager.OnCheckMurder(Player, target, target, target, true, false, 2, CustomDeathReason.Kill))
                     {
+                        RPC.PlaySoundRPC(Player.PlayerId, Sounds.KillSound);
                         target.SetRealKiller(Player);
                         UtilsNotifyRoles.NotifyRoles(SpecifySeer: Player);
                     }
@@ -347,7 +348,12 @@ namespace TownOfHost.Roles.Neutral
             targeted = false;
             KillWaitPlayer = null;
         }
-
+        public override string GetAbilityButtonText() => "選択";
+        public override bool OverrideAbilityButton(out string text)
+        {
+            text = "Hunter_Ability";
+            return true;
+        }
         public static System.Collections.Generic.Dictionary<int, Achievement> achievements = new();
         [Attributes.PluginModuleInitializer]
         public static void Load()

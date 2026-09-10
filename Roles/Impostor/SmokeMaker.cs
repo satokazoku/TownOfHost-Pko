@@ -287,6 +287,12 @@ public sealed class SmokeMaker : RoleBase, IImpostor, IUsePhantomButton
             clientDummiesCount = reader.ReadInt32();
         }
     }
+    public override string GetAbilityButtonText() => "起爆";
+    public override bool OverrideAbilityButton(out string text)
+    {
+        text = "SmokeMaker_Ability";
+        return true;
+    }
 }
 public class SmokeDummy : CustomNetObject
 {

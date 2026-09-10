@@ -355,7 +355,12 @@ public sealed class Jizo : RoleBase
     public override string GetLowerText(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
     {
         seen ??= seer;
-        return $"{$"{UsedRoom}で注視使用中"}</size>";
+
+        if (!IsUsed)
+        {
+            return "";
+        }
+        return $"{UsedRoom.Value}で注視使用中</size>";
     }
     public static bool OnEnterVentOthers(PlayerPhysics physics, int ventId)
     {
@@ -620,7 +625,7 @@ public sealed class Jizo : RoleBase
             if (UsedRoom == SystemTypes.MainHall)
             {
                 if (ventId == 5 || ventId == 6)
-                vented = true;
+                    vented = true;
                 VentUser = user;
                 Detectioned = true;
                 VentedRoom = UsedRoom;
@@ -715,6 +720,12 @@ public sealed class Jizo : RoleBase
             }
             return true;
         }
+        return true;
+    }
+    public override string GetAbilityButtonText() => "注視";
+    public override bool OverrideAbilityButton(out string text)
+    {
+        text = "Jizo_Ability";
         return true;
     }
 }

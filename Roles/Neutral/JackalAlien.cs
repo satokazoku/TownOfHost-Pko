@@ -878,6 +878,7 @@ public sealed class JackalAlien : RoleBase, IMeetingTimeAlterable, ILNKiller, IS
         target.RpcSetCustomRole(CustomRoles.Jackaldoll, log: null);
         JackalDoll.Sidekick(target, Player);
         if (!Utils.RoleSendList.Contains(target.PlayerId)) Utils.RoleSendList.Add(target.PlayerId);
+
         UtilsOption.MarkEveryoneDirtySettings();
     }
     public override void CheckWinner(GameOverReason reason)

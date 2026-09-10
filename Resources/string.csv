@@ -1242,7 +1242,7 @@
 "Basis","Basis","判定"
 
 "# Mein Options"
-"HidePko","Hide the PKO image in the lobby","ロビーのPko画像を非表示にする"
+"HidePko","Hide the PKO image in the lobby","ロビーのPko画像を非表示/表示"
 "KillFlashDuration","""Kill Flash"" Duration","キルフラッシュの長さ","击杀闪烁持续时间","殺人閃光持續時間","Длительность ""Вспышки Убийства""","Duração do ""Clarão de Abate""",""
 "RoleOptions","Role Options","役職設定","职业设置","職業設定","Настройка Ролей","Opções de Classe",""
 "ModeOptions","Mode Options","モード設定","模组设置","模式設定","Настройка режима","Opções de Modos",""

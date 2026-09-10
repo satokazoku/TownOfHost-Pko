@@ -1,20 +1,21 @@
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection; 
+using AmongUs.GameOptions;
+using HarmonyLib;
 using Hazel;
 using InnerNet;
-using HarmonyLib;
-using UnityEngine;
-using AmongUs.GameOptions;
-
+using Rewired;
 using TownOfHost.Modules;
 using TownOfHost.Roles.AddOns.Common;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Crewmate;
 using TownOfHost.Roles.Madmate;
+using UnityEngine;
 using static TownOfHost.ExtendedPlayerControl;
-
 using static TownOfHost.Translator;
-using Rewired;
+using static UnityEngine.GraphicsBuffer;
 
 namespace TownOfHost
 {

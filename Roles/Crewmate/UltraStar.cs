@@ -3,8 +3,11 @@ using UnityEngine;
 
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+using System.Reflection;
 
 namespace TownOfHost.Roles.Crewmate;
+//Note
+//治らなかったらいったんリストラ
 
 public sealed class UltraStar : RoleBase, IKiller, ISchrodingerCatOwner
 {
@@ -54,6 +57,20 @@ public sealed class UltraStar : RoleBase, IKiller, ISchrodingerCatOwner
     private static float Speed;
     private static bool cankill;
     float KillCool;
+
+    public override void OnDestroy()
+    {
+        _ = new LateTask(() =>
+        {
+            var field = typeof(UltraStar).GetField("CanseeAllplayer", BindingFlags.NonPublic | BindingFlags.Static);
+            field?.SetValue(null, true);
+
+            Player.RpcSetColor((byte)Player.Data.DefaultOutfit.ColorId);
+            Main.AllPlayerSpeed[Player.PlayerId] = Main.NormalOptions.PlayerSpeedMod;
+            UtilsOption.MarkEveryoneDirtySettings();
+            Player.SyncSettings();
+        }, Main.LagTime + 0.1f, "UltraStar_Reset");
+    }
 
     private static void SetupOptionItem()
     {
@@ -176,7 +193,7 @@ public sealed class UltraStar : RoleBase, IKiller, ISchrodingerCatOwner
         }
         else
         {
-            Main.AllPlayerSpeed[Player.PlayerId] = Main.AllPlayerSpeed[Player.PlayerId];
+            Main.AllPlayerSpeed[Player.PlayerId] = Main.NormalOptions.PlayerSpeedMod;
         }
     }
     public override string GetAbilityButtonText() => GetString(StringNames.KillLabel);
