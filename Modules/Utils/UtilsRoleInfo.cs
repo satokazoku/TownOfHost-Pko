@@ -305,7 +305,6 @@ namespace TownOfHost
                 "GM" or "gm" or "ゲームマスター" => GetString("GM"),
 
                 //インポスター
-                "ボマー" or "爆弾魔" => GetString("Bomber"),
                 "大狼" or "たいろう" or "大老" => GetString("Tairou"),
                 "吸血鬼" or "ヴァンパイア" => GetString("Vampire"),
                 "魔女" or "ウィッチ" => GetString("Witch"),

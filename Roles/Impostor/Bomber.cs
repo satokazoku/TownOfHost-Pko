@@ -23,8 +23,8 @@ namespace TownOfHost.Roles.Impostor
                 SetupOptionItem,
                 "bb",
                 OptionSort: (3, 1),
-                Desc: () => string.Format(GetString("BomberDesc"), OptionBomberExplosion.GetInt(), OptionKillDelay.GetFloat()),
-                from: From.TownOfHost_K
+                Desc: () => string.Format(GetString("BomberDesc"), OptionBomberExplosion.GetInt(), OptionMinKillDelay.GetFloat(), OptionMaxKillDelay.GetFloat(), OptionKillChance.GetFloat()),
+                from: From.ExtremeRoles
             );
         public Bomber(PlayerControl player)
         : base(
@@ -32,44 +32,58 @@ namespace TownOfHost.Roles.Impostor
             player
         )
         {
-            KillDelay = OptionKillDelay.GetFloat();
             Blastrange = OptionBlastrange.GetFloat();
             BomberExplosionPlayers.Clear();
             BomberExplosion = OptionBomberExplosion.GetInt();
             Cooldown = OptionCooldown.GetFloat();
             maxbomb = 0;
             IsDetectioned = false;
-            Bombed = false;
+            Bombtime = 0f;
+            IsInstallation = false;
         }
 
-        static OptionItem OptionKillDelay;
+        static OptionItem OptionMinKillDelay;
         static OptionItem OptionBlastrange;
         static OptionItem OptionBomberExplosion;
         static OptionItem OptionCooldown;
+        static OptionItem OptionKillChance;
+        static OptionItem OptionInstallationTime;
+        static OptionItem OptionMaxKillDelay;
         enum OptionName
         {
             BomberKillDelay,
             blastrange,
-            BomberExplosion
+            BomberKillChace,
+            BomberInstallationTime,
+            BomberMaxKillDelay
         }
 
-        static float KillDelay;
         static float Blastrange;
         static float Cooldown;
         int BomberExplosion;
-        bool Bombed;
-
+        float KillDelay;
         public static bool IsDetectioned;
         public bool CanBeLastImpostor { get; } = false;
         Dictionary<byte, float> BomberExplosionPlayers = new(14);
+        PlayerControl Bombtarget;
+        float Bombtime;
+        bool IsInstallation;
 
         private static void SetupOptionItem()
         {
-            OptionKillDelay = FloatOptionItem.Create(RoleInfo, 10, OptionName.BomberKillDelay, new(1f, 1000f, 1f), 10f, false)
+            OptionCooldown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.Cooldown, new(0.5f, 180f, 0.5f), 45f, false)
                 .SetValueFormat(OptionFormat.Seconds);
-            OptionBlastrange = FloatOptionItem.Create(RoleInfo, 11, OptionName.blastrange, new(0.5f, 30f, 0.5f), 1f, false).SetValueFormat(OptionFormat.Multiplier);
-            OptionBomberExplosion = IntegerOptionItem.Create(RoleInfo, 12, OptionName.BomberExplosion, new(1, 99, 1), 2, false);
-            OptionCooldown = FloatOptionItem.Create(RoleInfo, 13, GeneralOption.Cooldown, new(0f, 999f, 0.5f), 45f, false).SetValueFormat(OptionFormat.Seconds);
+            OptionInstallationTime = FloatOptionItem.Create(RoleInfo, 11, OptionName.BomberInstallationTime, new(0.5f, 30f, 0.5f), 2.5f, false)
+                .SetValueFormat(OptionFormat.Seconds);
+            OptionBomberExplosion = IntegerOptionItem.Create(RoleInfo, 12, GeneralOption.OptionCount, new(1, 99, 1), 2, false)
+                .SetValueFormat (OptionFormat.Times);
+            OptionBlastrange = FloatOptionItem.Create(RoleInfo, 13, OptionName.blastrange, new(0.5f, 30f, 0.5f), 1f, false).SetValueFormat(OptionFormat.Multiplier);
+            OptionKillChance = FloatOptionItem.Create(RoleInfo, 14, OptionName.BomberKillChace, new(0f, 100f, 2.5f), 50f, false).SetValueFormat(OptionFormat.Percent);
+            OptionMinKillDelay = FloatOptionItem.Create(RoleInfo, 15, OptionName.BomberKillDelay, new(0f, 180f, 1f), 10f, false)
+                .SetValueFormat(OptionFormat.Seconds);
+            OptionMaxKillDelay = FloatOptionItem.Create(RoleInfo, 16, OptionName.BomberMaxKillDelay, new(0f, 180f, 1f), 20f, false)
+                .SetValueFormat(OptionFormat.Seconds);
+
         }
 
         private void SendRPC()
@@ -83,28 +97,46 @@ namespace TownOfHost.Roles.Impostor
         }
         public void OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
         {
+            AdjustKillCooldown = false;
+            ResetCooldown = false;
+
             if (BomberExplosion <= 0) return;
-            ResetCooldown = true;
-            var target = Player.GetKillTarget(true);
-            Logger.Info($"{Player?.Data?.GetLogPlayerName() ?? "???"} => {target?.Data?.GetLogPlayerName() ?? "失敗"}", "Bomber");
-            if (target == null || BomberExplosionPlayers.ContainsKey(target?.PlayerId ?? byte.MaxValue)) return;
-            if (target.Is(CustomRoles.Madpsycho))
+
+            Bombtarget = Player.GetKillTarget(true);
+            if (Bombtarget == null) return;
+            if (BomberExplosionPlayers.ContainsKey(Bombtarget.PlayerId))
+            Bombtime = 0f;
+            IsInstallation = true;
+        }
+        public void InstallationBomb()
+        {
+            Logger.Info($"{Player?.Data?.GetLogPlayerName() ?? "???"} => {Bombtarget?.Data?.GetLogPlayerName() ?? "失敗"}", "Bomber");
+            if (Bombtarget == null || BomberExplosionPlayers.ContainsKey(Bombtarget?.PlayerId ?? byte.MaxValue)) return;
+            if (Bombtarget.Is(CustomRoles.Madpsycho))
             {
                 if (Madpsycho.CanPsycho)
                 {
                     PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = Madpsycho.deathReasons[Madpsycho.OptionDeathReason.GetValue()];
-                    target.RpcMurderPlayer(Player);
+                    Bombtarget.RpcMurderPlayer(Player);
                     return;
                 }
             }
+            if (!BomberExplosionPlayers.TryAdd(Bombtarget.PlayerId, 0f)) return;
             Jizo.BomCheckroom(Player.GetPlainShipRoom(), Player);
-            AdjustKillCooldown = false;
-            if (!BomberExplosionPlayers.TryAdd(target.PlayerId, 0f)) return;
+            IsInstallation = false;
             BomberExplosion--;
             SendRPC();
-            Player.RpcResetAbilityCooldown(Sync: true);
-            Player.SetKillCooldown(target: target);
+            ResetCooldown();
+            Player.SetKillCooldown(target: Bombtarget);
             UtilsNotifyRoles.NotifyRoles(SpecifySeer: Player);
+            KillDelay = Random.Range(OptionMinKillDelay.GetFloat(), OptionMaxKillDelay.GetFloat());
+        }
+        public void ResetCooldown()
+        {
+            AURoleOptions.PhantomCooldown = BomberExplosion <= 0 ? 200f : Cooldown;
+            Player.MarkDirtySettings();
+            Player.RpcResetAbilityCooldown(log: false);
+            Player.SyncSettings();
         }
         bool IUsePhantomButton.IsPhantomRole => BomberExplosion > 0;
         public override string GetProgressText(bool comms = false, bool gamelog = false) => Utils.ColorString(0 < BomberExplosion ? Color.red : Color.gray, $"({BomberExplosion})");
@@ -116,25 +148,29 @@ namespace TownOfHost.Roles.Impostor
             {
                 if (KillDelay <= timer)
                 {
-                    if (IsDetectioned)
-                    {
-                        Jizo.BomKilled = true;
-                    }
-                    Bombed = true;
                     var target = PlayerCatch.GetPlayerById(targetId);
                     if (target.IsAlive())
                     {
+                        if (IsDetectioned)
+                        {
+                            Jizo.BomKilled = true;
+                        }
                         var pos = target.transform.position;
                         var count = 0;
                         foreach (var target2 in PlayerCatch.AllAlivePlayerControls)
                         {
+                            System.Random rand = new();
                             var dis = Vector2.Distance(pos, target2.transform.position);
                             if (dis > Blastrange) continue;
-                            if (CustomRoleManager.OnCheckMurder(Player, target2, target2, target2, true, true, 1, deathReason: CustomDeathReason.Bombed))
+                            if (target2.Is(CustomRoleTypes.Impostor) && target2.PlayerId != Player.PlayerId) continue;
+                            if (rand.Next(100) < OptionKillChance.GetFloat())
                             {
-                                count++;
-                                RPC.PlaySoundRPC(Player.PlayerId, Sounds.KillSound);
-                                Logger.Info($"{target2.name}を爆発させました。", "bomber");
+                                if (CustomRoleManager.OnCheckMurder(Player, target2, target2, target2, true, true, 1, deathReason: CustomDeathReason.Bombed))
+                                {
+                                    count++;
+                                    RPC.PlaySoundRPC(Player.PlayerId, Sounds.KillSound);
+                                    Logger.Info($"{target2.name}を爆発させました。", "bomber");
+                                }
                             }
                             if (maxbomb <= count) maxbomb = count;
                         }
@@ -147,17 +183,55 @@ namespace TownOfHost.Roles.Impostor
                     BomberExplosionPlayers[targetId] += Time.fixedDeltaTime;
                 }
             }
-        }
-
-        public override void OnReportDeadBody(PlayerControl _, NetworkedPlayerInfo __)
-        {
-            if (!Bombed)
+            if (IsInstallation)
             {
-                Jizo.BomClear();
+                if (!Bombtarget.IsAlive())
+                {
+                    IsInstallation = false;
+                }
+                if (OptionInstallationTime.GetFloat() - Bombtime <= 0f)
+                {
+                    InstallationBomb();
+                }
+                else
+                {
+                    float dis;
+                    dis = Vector2.Distance(Player.transform.position, Bombtarget.transform.position);
+                    var Distance = 0f;
+                    switch (AURoleOptions.KillDistance)
+                    {
+                        case 0:
+                            Distance = 1f;
+                            break;
+                        case 1:
+                            Distance = 1.75f;
+                            break;
+                        case 2:
+                            Distance = 2.5f;
+                            break;
+                    }
+                    if (dis <= Distance)
+                    {
+                        Bombtime += Time.fixedDeltaTime;
+                        AURoleOptions.PhantomCooldown = OptionInstallationTime.GetFloat() - Bombtime;
+                        Player.MarkDirtySettings();
+                        Player.RpcResetAbilityCooldown(log: false);
+                        if (OptionInstallationTime.GetFloat() - Bombtime <= 0f)
+                        {
+                            InstallationBomb();
+                        }
+                    }
+                    else
+                    {
+                        IsInstallation = false;
+                        AURoleOptions.PhantomCooldown = 0.1f;
+                        Player.MarkDirtySettings();
+                        Player.RpcResetAbilityCooldown(log: false);
+                        UtilsNotifyRoles.NotifyRoles(SpecifySeer: Player);
+                        Player.SyncSettings();
+                    }
+                }
             }
-            Bombed = false;
-
-            BomberExplosionPlayers.Clear();
         }
         public override bool OverrideAbilityButton(out string text)
         {
@@ -174,7 +248,6 @@ namespace TownOfHost.Roles.Impostor
         public override void AfterMeetingTasks()
         {
             IsDetectioned = false;
-            Bombed = false;
         }
 
         public override string GetLowerText(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)

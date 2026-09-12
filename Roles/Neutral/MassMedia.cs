@@ -1,4 +1,4 @@
-/*using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
@@ -370,4 +370,3 @@ public sealed class MassMedia : RoleBase, IKiller, IKillFlashSeeable
         achievements.Add(2, sp1);
     }
 }
-*/
