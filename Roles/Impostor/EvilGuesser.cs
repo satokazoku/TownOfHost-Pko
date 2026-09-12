@@ -53,9 +53,9 @@ public sealed class EvilGuesser : RoleBase, IImpostor
 
     private static void SetupOptionItem()
     {
-        CanGuessTime = IntegerOptionItem.Create(RoleInfo, 10, OptionName.CanGuessTime, new(1, 15, 1), 3, false)
+        CanGuessTime = IntegerOptionItem.Create(RoleInfo, 10, OptionName.CanGuessTime, new(1, 15, 1), 15, false)
             .SetValueFormat(OptionFormat.Times);
-        OwnCanGuessTime = IntegerOptionItem.Create(RoleInfo, 11, OptionName.OwnCanGuessTime, new(1, 15, 1), 1, false)
+        OwnCanGuessTime = IntegerOptionItem.Create(RoleInfo, 11, OptionName.OwnCanGuessTime, new(1, 15, 1), 15, false)
             .SetValueFormat(OptionFormat.Times);
         CanGuessVanilla = BooleanOptionItem.Create(RoleInfo, 12, OptionName.CanGuessVanilla, true, false);
         CanGuessNakama = BooleanOptionItem.Create(RoleInfo, 13, OptionName.CanGuessNakama, true, false);

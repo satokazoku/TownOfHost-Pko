@@ -54,7 +54,7 @@ namespace TownOfHost.Roles.Impostor
 
         private static void SetupOptionItem()
         {
-            OptionKillCool = FloatOptionItem.Create(RoleInfo, 9, GeneralOption.KillCooldown, new(0f, 180f, 0.5f), 30f, false)
+            OptionKillCool = FloatOptionItem.Create(RoleInfo, 9, GeneralOption.KillCooldown, new(0f, 180f, 0.5f), 40f, false)
                 .SetValueFormat(OptionFormat.Seconds);
             OptionKillDelay = FloatOptionItem.Create(RoleInfo, 10, OptionName.VampireKillDelay, new(1f, 1000f, 0.1f), 10f, false)
                 .SetValueFormat(OptionFormat.Seconds);

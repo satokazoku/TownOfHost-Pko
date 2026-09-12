@@ -62,7 +62,7 @@ public sealed class EvilBlender : RoleBase, IImpostor, IUsePhantomButton
 
     static void SetupOptionItem()
     {
-        OptionKillCoolDown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.KillCooldown, OptionBaseCoolTime, 20f, false)
+        OptionKillCoolDown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.KillCooldown, OptionBaseCoolTime, 30f, false)
             .SetValueFormat(OptionFormat.Seconds);
         OptionSabotageCoolDown = FloatOptionItem.Create(RoleInfo, 11, GeneralOption.Cooldown, OptionBaseCoolTime, 30, false)
             .SetValueFormat(OptionFormat.Seconds);

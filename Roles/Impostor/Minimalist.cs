@@ -44,7 +44,7 @@ public sealed class Minimalist : RoleBase, IImpostor
     static void SetupOptionItem()
     {
         OptionKillCooldown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.KillCooldown,
-            new(0f, 60f, 0.5f), 10f, false).SetValueFormat(OptionFormat.Seconds);
+            new(0f, 60f, 0.5f), 15f, false).SetValueFormat(OptionFormat.Seconds);
         OptionCanVent = BooleanOptionItem.Create(RoleInfo, 11, OptionName.MinimalistCanVent, false, false);
         OptionCanSabotage = BooleanOptionItem.Create(RoleInfo, 12, OptionName.MinimalistCanSabotage, false, false);
     }

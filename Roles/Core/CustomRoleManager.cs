@@ -276,7 +276,10 @@ public static class CustomRoleManager
             }
 
             if (info.DontRoleAbility is false)
+            {
+                Gatekeeper.CanAbility(appearanceTarget, appearanceTarget.GetPlainShipRoom());
                 Psychic.CanAbility(appearanceTarget);
+            }
 
             //MurderPlayer用にinfoを保存
             CheckMurderInfos[appearanceKiller.PlayerId] = info;
@@ -958,6 +961,7 @@ public enum CustomRoles
     Walkure,
     SuspiciousTeller,
     NiceNekomata,
+    Gatekeeper,
     //TOH-K
     Gasp,
     VentMaster,

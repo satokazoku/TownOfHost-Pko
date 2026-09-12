@@ -59,7 +59,7 @@ class Penguin : RoleBase, IImpostor
     {
         OptionAbductTimerLimit = FloatOptionItem.Create(RoleInfo, 11, OptionName.PenguinAbductTimerLimit, new(5f, 100f, 1f), 10f, false)
             .SetValueFormat(OptionFormat.Seconds);
-        OptionMeetingKill = BooleanOptionItem.Create(RoleInfo, 12, OptionName.PenguinMeetingKill, false, false);
+        OptionMeetingKill = BooleanOptionItem.Create(RoleInfo, 12, OptionName.PenguinMeetingKill, true, false);
     }
     public override void Add()
     {

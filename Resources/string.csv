@@ -210,6 +210,7 @@
 "StepDancer","Step Dancer","ステップダンサー"
 "Fanatic","Fanatic","盲信者"
 "Hunter","Hunter","ハンター","猎人"
+"Gatekeeper","Gatekeeper","ゲートキーパー","守门人","守門人","Страж Врат","Guardião do Portão","Guardião do Portão"
 "#CrewmateName"
 
 "# ニュートラル役職"
@@ -1058,6 +1059,7 @@
 
 "# ImpostorDescInfos"
 "QuickKillerDesc","If you perform a kill while <b>{0}</b> or more players are alive,\nyou enter Quick Mode for <b>{1}</b> seconds.\nDuring Quick Mode, the kill cooldown is 0 seconds.\nAfter Quick Mode ends, the kill cooldown returns to normal.","<b>{0}</b>人以上生存している状態でキルをすると、\n<b>{1}</b>秒間の間、クイックモードになる\nクイックモード中はキルクールが0sになる。\nクイックモード終了時、キルクールが戻る。"
+"QuickKillerDescOneClick","<b>{0}</b>If you press the one-click button while there are more than {0}</b> players alive and a kill target is present, you will kill the kill target and\nenter Quick Mode for <b>{1}</b> seconds.\nWhile in Quick Mode, the kill cooldown is 0 seconds.\nWhen Quick Mode ends, the kill cooldown returns to normal.","<b>{0}</b>人以上生存しているかつキルターゲットがいる状態でワンクリックボタンを押すと、キルターゲットをキルし、\n<b>{1}</b>秒間の間、クイックモードになる。\nクイックモード中はキルクールが0sになる。\nクイックモード終了時、キルクールが戻る。"
 "BorderKillerDesc","<b>{0}</b> or more players must be killed by you, otherwise you cannot win even if the Impostors win.","<b>{0}</b>人以上自身がキルを行わないと、インポスターが勝利しても自身は勝利できない。"
 "AntiReporterDesc","By using the one-click button while the Kill button is lit, you can disable the emergency meeting button and report button of the nearest player (excluding Impostors) for <b>{0}s</b> (up to <b>{1}</b> times).","キルボタンが光っている状態でワンクリックボタンを使用すると、\n1番近くにいるプレイヤー(インポスターを除く)の\n緊急会議ボタン・死体通報の使用を<b>{0}</b>無効化できる。(最大<b>{1}</b>回まで)"
 "BalloonerDesc","When the blast radius is greater than 0,\nusing the one-click button will pop the balloon and explode nearby players.\n\nAdditionally, during a task turn, walking <b>{0}m</b> will inflate the balloon, increasing the blast radius by <b>{1}</b>x (up to <b>{2}x</b>).\nHowever, after a meeting, air will escape from the balloon, reducing the blast radius by <b>{3}x</b>. {4}","爆破範囲が0より大きい状態で\nワンクリックボタンを使用することで風船が破裂し周囲のプレイヤーを爆破できる。\n\nまた、タスクターン中に<b>{0}</b>歩くことで\n風船が膨らみ爆破範囲が<b>{1}</b>x広がる。(最大<b>{2}x</b>まで)。\nただし、会議後に風船から空気が抜け<b>{3}x</b>爆発範囲が狭まる。{4}"
@@ -1931,6 +1933,11 @@
 "WarlockDouki","Synchronize normal kills with cooldowns","通常キルとクールタイムを同期するか"
 "WarlockKoutyoku","Should the character be unable to move after a curse kill","呪いキル後硬直するか"
 "WarlockCantMovetime","Stiffening time","硬直時間"
+"RocketLaunchAtMeeting","Should we throw the person I was holding onto at the end of the meeting into the air?","会議終了時掴んでいた人を打ち上げるか"
+"QuickKillerCanKill","Set Quick Mode to a One-Click Button","クイックモードをワンクリックボタンにする"
+"QuickKillerpenaltyKillCool","Kill cooldown increase when using Quick Kill","能力キル使用時、増加するキルクール"
+"QuickKillerpenaltyCool","Quick Kill cooldown increase when using Quick Kill","能力キル使用時、増加する能力クール"
+"QuickKillerChangeNameColor","In Quick Mode, display names in red","クイックモード中、名前を赤くする"
 
 "## MadMate Role Setting"
 "MadmateOption","MadMate Options","マッドメイト系役職の設定"
@@ -1995,6 +2002,7 @@
 "BlackSantaCanKnowImpostors","Can Know Impostors","インポスターがわかる"
 "BlackSantaNeedsTaskForKnowImpostors","Needs Task For Know Impostors","インポスターを把握するのにタスクが必要"
 "BlackSantaNeededTaskCountForKnowImpostors","Needed Task Count For Know Impostors","必要なタスク数"
+"psychoDeathReason","Cause of Death When a Kill Is Reflected","キル反射時の死因"
 
 "## CrewMate RoleSetting"
 "BaitReportDelay","report delay","通報までの遅延"
@@ -3934,5 +3942,3 @@
 "DummyHunterTopText","Top","トップ"
 "DummyHunterPlayer","DummyHunter","ダミーハンター","傀儡猎人","傀儡獵人","ОхотникЗаКуклами","ChasseurDeMannequins",""
 "DummyHunterPlayerInfo","Use the Phantom button to hunt dummies.","ファントムボタンでダミーを狩れ。"
-"psychoDeathReason","","キル反射時の死因"
-"RocketLaunchAtMeeting","","会議終了時掴んでいた人を打ち上げるか"

@@ -38,9 +38,9 @@ public sealed class EvilMaker : RoleBase, IImpostor, IUsePhantomButton
     bool Used;
     private static void SetupOptionItem()
     {
-        OptionKillCoolDown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.KillCooldown, OptionBaseCoolTime, 20f, false)
+        OptionKillCoolDown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.KillCooldown, OptionBaseCoolTime, 30f, false)
                 .SetValueFormat(OptionFormat.Seconds);
-        OptionAbilityCoolDown = FloatOptionItem.Create(RoleInfo, 11, GeneralOption.Cooldown, OptionBaseCoolTime, 20f, false)
+        OptionAbilityCoolDown = FloatOptionItem.Create(RoleInfo, 11, GeneralOption.Cooldown, OptionBaseCoolTime, 30f, false)
                 .SetValueFormat(OptionFormat.Seconds);
     }
     public float CalculateKillCooldown() => KillCooldown;

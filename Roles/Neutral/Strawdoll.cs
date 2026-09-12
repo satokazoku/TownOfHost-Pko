@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+/*using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
@@ -322,3 +322,4 @@ public sealed class Strawdoll : RoleBase, IKiller, IUsePhantomButton
         achievements.Add(2, l1);
     }
 }
+*/

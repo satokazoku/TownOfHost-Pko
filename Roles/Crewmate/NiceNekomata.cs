@@ -54,7 +54,7 @@ public sealed class NiceNekomata : RoleBase, INekomata
                 RoleInfo,
                 10,
                 OptionName.NiceNekomataImpostorsGetRevenged,
-                false,
+                true,
                 false
             );
 
@@ -63,7 +63,7 @@ public sealed class NiceNekomata : RoleBase, INekomata
                 RoleInfo,
                 20,
                 OptionName.NiceNekomataMadmatesGetRevenged,
-                false,
+                true,
                 false
             );
 
@@ -72,7 +72,7 @@ public sealed class NiceNekomata : RoleBase, INekomata
                 RoleInfo,
                 30,
                 OptionName.NiceNekomataNeutralsGetRevenged,
-                false,
+                true,
                 false
             );
     }

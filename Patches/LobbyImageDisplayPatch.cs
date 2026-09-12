@@ -15,7 +15,7 @@ namespace TownOfHost
         static GameObject lobbyPaintObject;
         static GameObject lobbyTitleObject;
         static bool firstLoad = true;
-        static bool IsActive;
+        static bool IsActive = false;
 
         public static void Prefix()
         {
@@ -58,6 +58,10 @@ namespace TownOfHost
             var renderer = lobbyPaintObject.GetComponent<SpriteRenderer>();
             if (renderer != null)
                 renderer.sprite = lobbyLogoSprite;
+            if (lobbyPaintObject != null)
+            {
+                lobbyPaintObject.SetActive(IsActive);
+            }
         }
 
         public static void SetPkoVisibility()

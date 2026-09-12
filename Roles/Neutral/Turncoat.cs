@@ -53,15 +53,15 @@ public sealed class Turncoat : RoleBase, IKiller
 
     private static void SetupOptionItem()
     {
-        OptionCanShapeShift = BooleanOptionItem.Create(RoleInfo, 13, "JesterCanUseShapeshift", false, false);
-        OptionCooldown = FloatOptionItem.Create(RoleInfo, 14, GeneralOption.Cooldown, new(0f, 180f, 0.5f), 30f, false, OptionCanShapeShift)
+        OptionCanShapeShift = BooleanOptionItem.Create(RoleInfo, 13, "JesterCanUseShapeshift", true, false);
+        OptionCooldown = FloatOptionItem.Create(RoleInfo, 14, GeneralOption.Cooldown, new(0f, 180f, 0.5f), 0f, false, OptionCanShapeShift)
                 .SetValueFormat(OptionFormat.Seconds);
-        OptionDuration = FloatOptionItem.Create(RoleInfo, 15, GeneralOption.Duration, new(0f, 180f, 0.5f), 5f, false, OptionCanShapeShift)
+        OptionDuration = FloatOptionItem.Create(RoleInfo, 15, GeneralOption.Duration, new(0f, 180f, 0.5f), 0f, false, OptionCanShapeShift)
                 .SetZeroNotation(OptionZeroNotation.Infinity)
                 .SetValueFormat(OptionFormat.Seconds);
-        OptionCanTargetImpostor = BooleanOptionItem.Create(RoleInfo, 10, OptionName.TurncoatCanTargetImpostor, false, false);
-        OptionCanTargetMadmate = BooleanOptionItem.Create(RoleInfo, 11, OptionName.TurncoatCanTargetMadmate, false, false);
-        OptionCanTargetNeutral = BooleanOptionItem.Create(RoleInfo, 12, OptionName.TurncoatCanTargetNeutral, false, false);
+        OptionCanTargetImpostor = BooleanOptionItem.Create(RoleInfo, 10, OptionName.TurncoatCanTargetImpostor, true, false);
+        OptionCanTargetMadmate = BooleanOptionItem.Create(RoleInfo, 11, OptionName.TurncoatCanTargetMadmate, true, false);
+        OptionCanTargetNeutral = BooleanOptionItem.Create(RoleInfo, 12, OptionName.TurncoatCanTargetNeutral, true, false);
 
         RoleAddAddons.Create(RoleInfo, 20);
     }
