@@ -69,7 +69,7 @@ namespace TownOfHost.Roles.Impostor
                 .SetValueFormat(OptionFormat.Seconds);
             OptionBlastrange = FloatOptionItem.Create(RoleInfo, 11, OptionName.blastrange, new(0.5f, 30f, 0.5f), 1f, false).SetValueFormat(OptionFormat.Multiplier);
             OptionBomberExplosion = IntegerOptionItem.Create(RoleInfo, 12, OptionName.BomberExplosion, new(1, 99, 1), 2, false);
-            OptionCooldown = FloatOptionItem.Create(RoleInfo, 13, GeneralOption.Cooldown, new(0f, 999f, 0.5f), 15f, false).SetValueFormat(OptionFormat.Seconds);
+            OptionCooldown = FloatOptionItem.Create(RoleInfo, 13, GeneralOption.Cooldown, new(0f, 999f, 0.5f), 45f, false).SetValueFormat(OptionFormat.Seconds);
         }
 
         private void SendRPC()
