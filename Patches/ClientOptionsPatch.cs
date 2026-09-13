@@ -69,6 +69,10 @@ namespace TownOfHost
             {
                 ForceEnd = ClientActionItem.Create("ForceEnd", ForceEndProcess, __instance);
             }
+            if (HidePko == null || HidePko.ToggleButton == null)
+            {
+                HidePko = ClientOptionItem.Create("HidePko", HidePkoProcess, __instance);
+            }
             if (UseWebHook == null || UseWebHook.ToggleButton == null)
             {
                 if (Main.IsAndroid() is false)
@@ -99,10 +103,6 @@ namespace TownOfHost
             if ((PreloadMapAssets == null || PreloadMapAssets.ToggleButton == null) && !Main.IsAndroid())
             {
                 PreloadMapAssets = ClientOptionItem.Create("PreloadMapAssets", Main.PreloadMapAssets, __instance, showTooltip: true);
-            }
-            if (HidePko == null || HidePko.ToggleButton == null)
-            {
-                HidePko = ClientOptionItem.Create("HidePko", HidePkoProcess, __instance);
             }
 #if DEBUG
             if (ViewPingDetails == null || ViewPingDetails.ToggleButton == null)

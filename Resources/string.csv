@@ -1094,7 +1094,7 @@
 "WarlockDesc","Click the button to cast a curse on the target. \nAfter casting the curse, click the button again to teleport the cursed person to the nearest person and kill them.","ワンクリックボタンを使用するとキルターゲットに呪いをかける。\n呪った後ワンクリック再度押すと呪った人が一番近い人の元にテレポートしキルする。"
 "WarlockDescKoutyoku","Click the button once to cast a curse on the target. \nAfter casting the curse, click the button again to teleport the cursed player to the nearest person and kill them. \n<b>After a curse kill, the player is immobilized for {0} seconds. </b>","ワンクリックボタンを使用するとキルターゲットに呪いをかける。\n呪った後ワンクリック再度押すと呪った人が一番近い人の元にテレポートしキルする。\n<b>呪いキル後、{0}秒間動けなくなる。</b>"
 "EvilGuesserDesc","On Meeting Can Guess.","会議中に誰かの役職を推測でき、的中すると対象をキルすることができる。\nただし、推測が外れると自殺する。\n\n<u>チャットに「/cmd bt (ID) (役職名)」と送信することで推測ができる。</u>\nプレイヤー名の左側に表示されている数字が、そのプレイヤーのIDである。"
-"EvilGuesserDescSelfVote","On Meeting Can Guess.","会議中に誰かの役職を推測でき、的中すると対象をキルすることができる。\nただし、推測が外れると自殺する。\n\n<u>自投票後投票でターゲットを選択した後、\nチャットに「/cmd bt (役職名)」と送信することで推測ができる。"
+"EvilGuesserDescSelfVote","On Meeting Can Guess.","会議中に誰かの役職を推測でき、的中すると対象をキルすることができる。\nただし、推測が外れると自殺する。\n\n<u>自投票後投票でターゲットを選択した後、\nチャットに「/cmd bt (役職名)」と送信することで推測ができる。</u>"
 
 "# MadmateDescInfos"
 
@@ -1137,6 +1137,7 @@
 "VanityDesc","He believes himself to be the Sheriff, but he won’t accidentally shoot anyone. \nIf he hasn’t killed any Crew members, he can earn an additional victory with the Crew. \nIf he kills a Crew member, <b>{0}</b>","自身をシェリフと思い込んでいるが、誤爆はしない。\nクルー陣営を一度もキルしていない場合クルー陣営と追加勝利できる。\nクルー陣営をキルした場合、<b>{0}</b>"
 "VanityDescKiller","The count changes to Vanity, and the victory condition changes to\n“Vanity wins if there are no other Killers remaining, and the number of Vanity members who have killed surviving Crew members is equal to or greater than the number of surviving Crew members.”","カウントがヴァニティに変化し、勝利条件が\n「他のキル陣営が残っておらず、生き残っているクルーをキルしたヴァニティの人数がクルーと同じかそれ以上」に変化する。"
 "VanityDescAdd","You earn an additional victory when your crew is defeated.","クルーが敗北した時追加勝利する。"
+"BakeCatDesc","If you are killed, you survive the attack and join the killer’s team instead.\nAfter joining a team, you gain the ability to kill.\nYou have no tasks.","キルされると、キルを防いでキルしてきた陣営に所属する。\n所属後、キルが可能になる。\nタスクはない。"
 
 "# HideAndSeek"
 "HASFoxInfoLong","(HideAndSeek):\nThey win the game with other Roles (except Troll) only if they are alive at the game end.","(かくれんぼ):\nトロールを除くいずれかの陣営が勝利したときに生き残っていれば、勝利した陣営に追加で勝利することができる。","（躲猫猫）:\n狐狸活到最后便与获胜阵营一同获胜。","(躲貓貓):\n除了其他的中立陣營以外,只要狐妖活下來即可獲勝\n他們將跟著遊戲結束的獲勝陣營一起獲勝。","(Прятки):\nЕсли какая-либо роль, кроме Тролля побеждает и выживает, то победившая роль может одержать дополнительную победу.","(Esconde-Esconde): \nEles ganham adicionalmente com qualquer classe (exceto Troll), se estiverem vivos no final.",""
@@ -2464,6 +2465,7 @@
 "BakeCatCountChenge","Count is Killer","カウントをキラーのカウントにする"
 "BakeCatShowRoleNameToKiller","Show BakeCat above name to killer","キルしたキラーにバケネコ表示"
 "BakeCatShowRoleNameToKillerTeam","Also show to killer's faction","キラーの陣営全員にも表示"
+"BakeCatMisidentify","Or do you just assume they're a crewmate","クルーメイトと思い込むか"
 "PhantomThiefFarstCoolDown","Set Target Cooldown","ターゲット指定クールダウン"
 "PhantomThiefCantSetCount","Set Target Min player count","ターゲット指定に必要な最低人数"
 "PhantomThiefSoloWin","Solo Win","陣営の勝利も乗っ取る"

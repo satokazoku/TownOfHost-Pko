@@ -73,9 +73,9 @@ namespace TownOfHost.Roles.Impostor
         {
             OptionCooldown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.Cooldown, new(0.5f, 180f, 0.5f), 45f, false)
                 .SetValueFormat(OptionFormat.Seconds);
-            OptionInstallationTime = FloatOptionItem.Create(RoleInfo, 11, OptionName.BomberInstallationTime, new(0.5f, 30f, 0.5f), 2.5f, false)
+            OptionInstallationTime = FloatOptionItem.Create(RoleInfo, 11, OptionName.BomberInstallationTime, new(0f, 30f, 0.5f), 2.5f, false)
                 .SetValueFormat(OptionFormat.Seconds);
-            OptionBomberExplosion = IntegerOptionItem.Create(RoleInfo, 12, GeneralOption.OptionCount, new(1, 99, 1), 2, false)
+            OptionBomberExplosion = IntegerOptionItem.Create(RoleInfo, 12, GeneralOption.OptionCount, new(1, 14, 1), 2, false)
                 .SetValueFormat (OptionFormat.Times);
             OptionBlastrange = FloatOptionItem.Create(RoleInfo, 13, OptionName.blastrange, new(0.5f, 30f, 0.5f), 1f, false).SetValueFormat(OptionFormat.Multiplier);
             OptionKillChance = FloatOptionItem.Create(RoleInfo, 14, OptionName.BomberKillChace, new(0f, 100f, 2.5f), 50f, false).SetValueFormat(OptionFormat.Percent);

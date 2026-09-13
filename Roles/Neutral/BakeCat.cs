@@ -28,13 +28,21 @@ namespace TownOfHost.Roles.Neutral
                 (7, 3),
                 true,
                 countType: CountTypes.Crew,
+                Desc: () =>
+                {
+                    if (OptionMisidentify.GetBool())
+                    {
+                        return GetString("BakeCatInfoLong");
+                    }
+                    return GetString("BakeCatDesc");
+                },
                 from: From.TownOfHost_K
             );
         public BakeCat(PlayerControl player)
         : base(
             RoleInfo,
             player,
-            () => HasTask.ForRecompute
+            () => OptionMisidentify.GetBool() ? HasTask.ForRecompute : HasTask.False
         )
         {
             CanKill = false;
@@ -50,7 +58,8 @@ namespace TownOfHost.Roles.Neutral
         static OptionItem OptionShowRoleNameToKiller;
         static OptionItem OptionShowRoleNameToKillerTeam;
         static OptionItem OptionCountChenge;
-        static OptionItem OptionCanSeeKillableTeammate;        
+        static OptionItem OptionCanSeeKillableTeammate;
+        static OptionItem OptionMisidentify;
         PlayerControl Killer;
         byte KillerId = byte.MaxValue;
         readonly HashSet<byte> RoleNameSeerIds = [];
@@ -85,7 +94,8 @@ namespace TownOfHost.Roles.Neutral
             BakeCatShowRoleNameToKiller,
             BakeCatShowRoleNameToKillerTeam,
             BakeCatCountChenge,
-            SchrodingerCatCanSeeKillableTeammate
+            SchrodingerCatCanSeeKillableTeammate,
+            BakeCatMisidentify
         }
         public static void SetupOptionItem()
         {
@@ -100,6 +110,7 @@ namespace TownOfHost.Roles.Neutral
             OptionCanSeeKillableTeammate = BooleanOptionItem.Create(RoleInfo, 17, Op.SchrodingerCatCanSeeKillableTeammate, false, false);
             OptionShowRoleNameToKiller = BooleanOptionItem.Create(RoleInfo, 18, Op.BakeCatShowRoleNameToKiller, true, false);
             OptionShowRoleNameToKillerTeam = BooleanOptionItem.Create(RoleInfo, 19, Op.BakeCatShowRoleNameToKillerTeam, false, false, OptionShowRoleNameToKiller);
+            OptionMisidentify = BooleanOptionItem.Create(RoleInfo, 20, Op.BakeCatMisidentify, true, false);
         }
         public override void ApplyGameOptions(IGameOptions opt)
         {
@@ -302,8 +313,8 @@ namespace TownOfHost.Roles.Neutral
             UtilsGameLog.AddGameLog($"BakeNeko", UtilsName.GetPlayerColor(Player) + ":  " + string.Format(GetString("SchrodingerCat.Ch"), UtilsName.GetPlayerColor(killer, true) + $"(<b>{UtilsRoleText.GetTrueRoleName(killer.PlayerId, false)}</b>)"));
             UtilsGameLog.LastLogRole[Player.PlayerId] = UtilsGameLog.LastLogRole[Player.PlayerId].RemoveColorTags().Color(DisplayRoleColor);
         }
-        public override CustomRoles Misidentify() => Team == TeamType.None ? CustomRoles.Crewmate : CustomRoles.NotAssigned;
-        public override CustomRoles TellResults(PlayerControl player) => Team == TeamType.None ? CustomRoles.Crewmate : CustomRoles.NotAssigned;
+        public override CustomRoles Misidentify() => Team == TeamType.None && OptionMisidentify.GetBool() ? CustomRoles.Crewmate : CustomRoles.NotAssigned;
+        public override CustomRoles TellResults(PlayerControl player) => Team == TeamType.None && OptionMisidentify.GetBool() ? CustomRoles.Crewmate : CustomRoles.NotAssigned;
         public override void OverrideTrueRoleName(ref Color roleColor, ref string roleText)
         {
             // 陣営変化前なら上書き不要
@@ -333,7 +344,6 @@ namespace TownOfHost.Roles.Neutral
         {
             bool? won = Team switch
             {
-                TeamType.None => CustomWinnerHolder.winners.Contains(CustomWinner.Crewmate),
                 TeamType.Mad => CustomWinnerHolder.winners.Contains(CustomWinner.Impostor),
                 TeamType.Crew => CustomWinnerHolder.winners.Contains(CustomWinner.Crewmate),
                 TeamType.Jackal => CustomWinnerHolder.winners.Contains(CustomWinner.Jackal),
@@ -348,6 +358,10 @@ namespace TownOfHost.Roles.Neutral
 
                 _ => null,
             };
+            if (Team == TeamType.None && OptionMisidentify.GetBool())
+            {
+                won = CustomWinnerHolder.winners.Contains(CustomWinner.Crewmate);
+            }
             if (!won.HasValue)
             {
                 logger.Warn($"不明な猫の勝利チェック: {Team}");
@@ -417,7 +431,7 @@ namespace TownOfHost.Roles.Neutral
             Color? color = catType switch
             {
                 TeamType.None => RoleInfo.RoleColor,
-                TeamType.Mad => UtilsRoleText.GetRoleColor(CustomRoles.Madmate),
+                TeamType.Mad => UtilsRoleText.GetRoleColor(CustomRoles.Impostor),
                 TeamType.Crew => UtilsRoleText.GetRoleColor(CustomRoles.Crewmate),
                 TeamType.Jackal => UtilsRoleText.GetRoleColor(CustomRoles.Jackal),
                 TeamType.Egoist => UtilsRoleText.GetRoleColor(CustomRoles.Egoist),

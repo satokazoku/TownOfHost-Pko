@@ -835,6 +835,7 @@ namespace TownOfHost
                 CustomRoles.Sealer => AddonInfo(role, "ＳＥ"),
                 CustomRoles.News => AddonInfo(role, "Ｎ"),
                 CustomRoles.Sunglasses => AddonInfo(role, "Ｓ", From.TheOtherRoles),
+                CustomRoles.SilverBuzzer => AddonInfo(role, "Sb"),
                 //第三属性
                 CustomRoles.Amanojaku => AddonInfo(role),
                 CustomRoles.Lovers or CustomRoles.RedLovers or CustomRoles.BlueLovers or CustomRoles.YellowLovers or CustomRoles.GreenLovers
