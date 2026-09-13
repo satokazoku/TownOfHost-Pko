@@ -156,6 +156,7 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
 
     bool IUsePhantomButton.SyncAbilityCooldownWithKillCooldown => false;
     public override bool CanClickUseVentButton => !beamMode;
+    public bool CanUseImpostorVentButton() => false;
 
     public bool CanUseKillButton() => false;
     public bool CanUseSabotageButton() => false;
@@ -365,13 +366,14 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
 
             if (!HasHit && SelfDestructOnMiss)
             {
-                Main.AllPlayerSpeed[Player.PlayerId] = PlayerSpeed;
+                Main.AllPlayerSpeed[Player.PlayerId] = Main.NormalOptions.PlayerSpeedMod;
                 Player.MarkDirtySettings();
                 PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = CustomDeathReason.Suicide;
                 Player.RpcMurderPlayerV2(Player);
                 IsFiring = false;
                 UtilsGameLog.AddGameLog("SheriffHadouHo",
                     $"{UtilsName.GetPlayerColor(Player)} はビームで誰も倒せず自爆した");
+
                 return;
             }
 
@@ -409,7 +411,10 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
             if (perp.magnitude > 1.3f) continue;
             Jizo.Checkroom(Player.GetPlainShipRoom(), Player);
             CustomRoleManager.OnCheckMurder(Player, target, target, target, true, deathReason: CustomDeathReason.Evaporation);
-            HasHit = true;
+            if (!target.Is(CustomRoleTypes.Crewmate))
+            {
+                HasHit = true;
+            }
         }
     }
 
