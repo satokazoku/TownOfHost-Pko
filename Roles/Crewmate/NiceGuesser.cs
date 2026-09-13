@@ -185,7 +185,11 @@ public sealed class NiceGuesser : RoleBase
                 __result = true;
                 return false;
             }
-
+            if (!GameStates.IsMeeting)
+            {
+                __result = true;
+                return false;
+            }
             __result = false;
             return false;
         }

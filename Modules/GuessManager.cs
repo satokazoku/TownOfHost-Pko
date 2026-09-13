@@ -81,6 +81,10 @@ public static class GuessManager
                 Utils.SendMessage(GetString("NotGuesserError"), pc.PlayerId, Utils.ColorString(Palette.AcceptedGreen, GetString("NotGuesserErrortitle")));
                 return true;
             }
+            if (!GameStates.IsMeeting)
+            {
+                return true;
+            }
             if (!MsgToPlayerAndRole(msg, out byte targetId, out CustomRoles role, out string error))
             {
                 Utils.SendMessage(error, pc.PlayerId, "<#e6b422>" + GetString("GuessErrortitle") + "</color>");
@@ -555,22 +559,22 @@ public static class GuessManager
 
         //1会議
         var OneMeetingShotLimit = 0;
-        if (pc.Is(CustomRoles.Guesser)) OneMeetingShotLimit = Guesser.CanGuessTime.GetInt();
+        if (pc.Is(CustomRoles.Guesser)) OneMeetingShotLimit = Guesser.OwnCanGuessTime.GetInt();
         if (roleaddon && data.GiveGuesser.GetBool()) if (data.GiveGuesser.GetBool()) OneMeetingShotLimit = data.OwnCanGuessTime.GetInt();
-        if (pc.Is(CustomRoles.LastImpostor) && LastImpostor.giveguesser) OneMeetingShotLimit = LastImpostor.CanGuessTime.GetInt();
+        if (pc.Is(CustomRoles.LastImpostor) && LastImpostor.giveguesser) OneMeetingShotLimit = LastImpostor.OwnCanGuessTime.GetInt();
 
         if (GuesserGuessed[pc.PlayerId] >= ShotLimit)
         {
             Utils.SendMessage(GetString("GuessercountError"), pc.PlayerId, Utils.ColorString(Palette.AcceptedGreen, GetString("GuessercountErrorT")));
             return true;
         }
-        else
-            if (OneMeetingGuessed[pc.PlayerId] >= OneMeetingShotLimit)
-            {
-                Utils.SendMessage(GetString("GuesserMTGcountError"), pc.PlayerId, Utils.ColorString(Palette.AcceptedGreen, GetString("GuesserMTGcountErrorT")));
-                return true;
-            }
-            else return false;
+        if (OneMeetingGuessed[pc.PlayerId] >= OneMeetingShotLimit)
+        {
+            Utils.SendMessage(GetString("GuesserMTGcountError"), pc.PlayerId, Utils.ColorString(Palette.AcceptedGreen, GetString("GuesserMTGcountErrorT")));
+            return true;
+        }
+
+        return false;
     }
     public static bool GuessCountNeu(PlayerControl pc)
     {
