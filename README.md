@@ -91,6 +91,8 @@ Modが使えなくなるよ!<br>
 **TownOfHost-Pkoの開発者**<br>
 　しぇとこch<br>
 　　[Youtube](https://youtube.com/channel/UCM1gs89uwjOJF3EcVc1ZEOA?si=a1ffdwsBjGbJKig6)<br>
+　あけぼの<br>
+　　[GitHub](https://github.com/akebono-1382)
 
 ※本家TownOfHost,TownOfHost_K様の開発者はここでは省略させていただきます
 
