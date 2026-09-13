@@ -1122,7 +1122,7 @@ public enum CustomRoles
     Ruler,
     Abuser,
     Victim,
-    // Sub-roll after 500
+    // Sub-role after 500
     NotAssigned = 500,
     LastImpostor,
     LastNeutral,

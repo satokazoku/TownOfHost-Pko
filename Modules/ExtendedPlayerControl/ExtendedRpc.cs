@@ -34,6 +34,21 @@ namespace TownOfHost
             if (player.GetCustomRole() == role) return;
             var roleClass = player.GetRoleClass();
             var roleInfo = role.GetRoleInfo();
+            var beforeRole = player.GetCustomRole();
+            bool resetExpressSpeed = beforeRole == CustomRoles.Express && role != CustomRoles.Express;
+            if (beforeRole == CustomRoles.UltraStar && role != CustomRoles.UltraStar)
+            {
+                resetExpressSpeed = true;
+            }
+            if (role == CustomRoles.UltraStar || role == CustomRoles.Express)
+            {
+                resetExpressSpeed = false;
+            }
+            if (resetExpressSpeed)
+                Main.AllPlayerSpeed[player.PlayerId] = Main.NormalOptions.PlayerSpeedMod;
+
+            if (resetExpressSpeed)
+                UtilsOption.MarkEveryoneDirtySettings();
             if (role < CustomRoles.NotAssigned)
             {
                 if (player.PlayerId == PlayerControl.LocalPlayer.PlayerId && GameStates.AfterIntro) Main.showkillbutton = false;

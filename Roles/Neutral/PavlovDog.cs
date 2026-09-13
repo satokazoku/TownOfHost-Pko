@@ -1,9 +1,11 @@
+using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
-using UnityEngine;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Crewmate;
+using UnityEngine;
 using static TownOfHost.PlayerCatch;
 
 namespace TownOfHost.Roles.Neutral;
@@ -112,7 +114,6 @@ public sealed class PavlovDog : PavlovDogBase
             pc != null &&
             pc.IsAlive() &&
             (pc.Is(CustomRoles.PavlovDog) || pc.Is(CustomRoles.PavlovDogImprint)));
-
     public static bool IsOwnerDogAndOneNonKillerAlive()
     {
         var alivePlayers = PlayerCatch.AllAlivePlayerControls
@@ -196,7 +197,6 @@ public sealed class PavlovOwner : RoleBase, IKiller, IAdditionalWinner, ISchrodi
 
     int RemainingImprintCount;
     bool LastCanImprintState;
-
     public ISchrodingerCatOwner.TeamType SchrodingerCatChangeTo => ISchrodingerCatOwner.TeamType.Pavlov;
     public bool HasRemainingImprintCount() => RemainingImprintCount > 0;
 

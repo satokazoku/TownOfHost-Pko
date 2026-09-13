@@ -7,3 +7,4 @@ FodyWeavers.xsd
 .tmp_ehr_ref/
 .TownOfHost.proj/
 memo.md
+.wrangler/
