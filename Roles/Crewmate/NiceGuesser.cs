@@ -6,12 +6,14 @@ using HarmonyLib;
 
 using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
+using TownOfHost.Roles.Core.Interfaces;
 
 using static TownOfHost.Translator;
+using static TownOfHost.Modules.SelfVoteManager;
 
 namespace TownOfHost.Roles.Crewmate;
 
-public sealed class NiceGuesser : RoleBase
+public sealed class NiceGuesser : RoleBase, ISelfVoter
 {
     public static readonly SimpleRoleInfo RoleInfo =
         SimpleRoleInfo.Create(
@@ -24,7 +26,11 @@ public sealed class NiceGuesser : RoleBase
             SetupOptionItem,
             "ng",
             "#dcf500",
-            (1, 6)
+            (1, 6),
+            Desc: () => string.Format
+            (
+                TargetingMode.GetInt() == 0 ? GetString("EvilGuesserDesc") : GetString("EvilGuesserDescSelfVote")
+            )
         );
 
     public NiceGuesser(PlayerControl player)
@@ -35,11 +41,22 @@ public sealed class NiceGuesser : RoleBase
     {
     }
 
+    // 会議中に自投票→対象投票で選ばれたターゲット。/bt実行後や会議開始時にリセットされる
+    private byte? targetId;
+
     private static OptionItem CanGuessTime;
     private static OptionItem OwnCanGuessTime;
     private static OptionItem CanGuessVanilla;
     private static OptionItem CanGuessNakama;
     private static OptionItem CanGuessWhiteCrew;
+    private static OptionItem TargetingMode;
+
+    // ターゲット指定方式。文字列選択肢としてオプション画面に表示される
+    public enum TargetingModeOption
+    {
+        ManualId,   // 従来:「/cmd /bt id 役職」を直接打つ
+        CmdAndSelfVote    // 新方式:自投票→対象投票→「/cmd /bt 役職」
+    }
 
     private enum OptionName
     {
@@ -47,7 +64,8 @@ public sealed class NiceGuesser : RoleBase
         OwnCanGuessTime,
         CanGuessVanilla,
         CanGuessNakama,
-        CanWhiteCrew
+        CanWhiteCrew,
+        TargetingMode
     }
 
     private static void SetupOptionItem()
@@ -59,7 +77,12 @@ public sealed class NiceGuesser : RoleBase
         CanGuessVanilla = BooleanOptionItem.Create(RoleInfo, 12, OptionName.CanGuessVanilla, true, false);
         CanGuessNakama = BooleanOptionItem.Create(RoleInfo, 13, OptionName.CanGuessNakama, true, false);
         CanGuessWhiteCrew = BooleanOptionItem.Create(RoleInfo, 14, OptionName.CanWhiteCrew, false, false);
+
+        var targetingModeNames = Enum.GetNames(typeof(TargetingModeOption));
+        TargetingMode = StringOptionItem.Create(RoleInfo, 15, OptionName.TargetingMode, targetingModeNames, 1, false);
     }
+
+    private static bool IsSelfVoteMode => TargetingMode.GetValue() == (int)TargetingModeOption.CmdAndSelfVote;
 
     private static bool IsBtCommand(string msg)
     {
@@ -73,6 +96,53 @@ public sealed class NiceGuesser : RoleBase
         return cmd.Equals("/bt", StringComparison.OrdinalIgnoreCase);
     }
 
+    // ===== 自投票によるターゲット選択(TargetingMode = SelfVoteの時のみ有効) =====
+
+    bool ISelfVoter.CanUseVoted() =>
+        IsSelfVoteMode && GameStates.IsMeeting && Player.IsAlive() && targetId == null;
+
+    public override string GetLowerText(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
+    {
+        seen ??= seer;
+        if (IsSelfVoteMode && isForMeeting && Player.IsAlive() && seer.PlayerId == seen.PlayerId && targetId == null)
+        {
+            var mes = $"<color={RoleInfo.RoleColorCode}>{GetString("EvilGuesserSelfVoteInfo")}</color>";
+            return isForHud ? mes : $"<size=40%>{mes}</size>";
+        }
+        return "";
+    }
+
+    public override bool CheckVoteAsVoter(byte votedForId, PlayerControl voter)
+    {
+        if (!IsSelfVoteMode) return true;
+        if (!Is(voter)) return true;
+        if (targetId != null) return true; // 既に対象確定済みなら通常投票として扱う
+
+        if (CheckSelfVoteMode(Player, votedForId, out var status))
+        {
+            if (status is VoteStatus.Self)
+                Utils.SendMessage(string.Format(GetString("SkillMode"), GetString("Mode.EvilGuesser"), GetString("Vote.EvilGuesser")) + GetString("VoteSkillMode"), Player.PlayerId);
+            if (status is VoteStatus.Skip)
+                Utils.SendMessage(GetString("VoteSkillFin"), Player.PlayerId);
+            if (status is VoteStatus.Vote)
+            {
+                targetId = votedForId;
+                var target = PlayerCatch.GetPlayerById(votedForId);
+                Utils.SendMessage(string.Format(GetString("EvilGuesserTargetSelected"), UtilsName.GetPlayerColor(target, true)), Player.PlayerId);
+            }
+            SetMode(Player, status is VoteStatus.Self);
+            return false;
+        }
+        return true;
+    }
+
+    public override void OnStartMeeting()
+    {
+        targetId = null;
+    }
+
+    // ===== ここまで自投票によるターゲット選択 =====
+
     [HarmonyPatch(typeof(GuessManager), nameof(GuessManager.GuesserMsg))]
     private static class GuessManagerGuesserMsgPatch
     {
@@ -82,12 +152,31 @@ public sealed class NiceGuesser : RoleBase
         private static readonly System.Reflection.MethodInfo IsGuesserLikeMethod =
             AccessTools.Method(typeof(GuessManagerGuesserMsgPatch), nameof(IsGuesserLike));
 
-        private static void Prefix(PlayerControl pc, string msg)
+        // TargetingMode = ManualId: 従来通り "/cmd /bt <id> <役職>" をそのまま通す
+        // TargetingMode = SelfVote : "/cmd /bt <役職>" を受け取り、選択済みターゲットIDを差し込んで
+        //                            "/cmd /bt <id> <役職>" に書き換える
+        private static bool Prefix(PlayerControl pc, ref string msg)
         {
-            if (pc == null || !pc.Is(CustomRoles.NiceGuesser) || !IsBtCommand(msg)) return;
+            if (pc == null || !pc.Is(CustomRoles.NiceGuesser) || !IsBtCommand(msg)) return true;
 
             var state = PlayerState.GetByPlayerId(pc.PlayerId);
             state?.SetSubRole(CustomRoles.Guesser);
+
+            if (!IsSelfVoteMode) return true; // ManualId方式: idはmsgに既に含まれている前提
+
+            if (pc.GetRoleClass() is not NiceGuesser role || role.targetId is not byte selectedTargetId)
+            {
+                Utils.SendMessage(GetString("EvilGuesserNoTargetSelected"), pc.PlayerId,
+                    Utils.ColorString(Palette.CrewmateBlue, GetString("DefaultSystemMessageTitle")));
+                return false; // ターゲット未選択のため元処理は呼ばない
+            }
+
+            var tokens = new List<string>(msg.Split(' ', StringSplitOptions.RemoveEmptyEntries));
+            // tokens: ["/cmd", "/bt" or "bt", "<役職>", ...]
+            tokens.Insert(2, selectedTargetId.ToString());
+            msg = string.Join(' ', tokens);
+
+            return true;
         }
 
         // Guesser role check should treat NiceGuesser as Guesser only during /cmd bt handling.
@@ -118,6 +207,8 @@ public sealed class NiceGuesser : RoleBase
         private static void Postfix(PlayerControl pc, string msg, ref bool __result)
         {
             if (pc == null || !pc.Is(CustomRoles.NiceGuesser) || !IsBtCommand(msg)) return;
+
+            if (IsSelfVoteMode && pc.GetRoleClass() is NiceGuesser role) role.targetId = null; // 1回使ったら選び直し
 
             // Mark command as handled so the raw /cmd bt line is not exposed in public chat.
             __result = true;

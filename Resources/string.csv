@@ -1093,6 +1093,8 @@
 "PuppeteerPuppet","Puppet Creation Mode","パペット作成モード"
 "WarlockDesc","Click the button to cast a curse on the target. \nAfter casting the curse, click the button again to teleport the cursed person to the nearest person and kill them.","ワンクリックボタンを使用するとキルターゲットに呪いをかける。\n呪った後ワンクリック再度押すと呪った人が一番近い人の元にテレポートしキルする。"
 "WarlockDescKoutyoku","Click the button once to cast a curse on the target. \nAfter casting the curse, click the button again to teleport the cursed player to the nearest person and kill them. \n<b>After a curse kill, the player is immobilized for {0} seconds. </b>","ワンクリックボタンを使用するとキルターゲットに呪いをかける。\n呪った後ワンクリック再度押すと呪った人が一番近い人の元にテレポートしキルする。\n<b>呪いキル後、{0}秒間動けなくなる。</b>"
+"EvilGuesserDesc","On Meeting Can Guess.","会議中に誰かの役職を推測でき、的中すると対象をキルすることができる。\nただし、推測が外れると自殺する。\n\n<u>チャットに「/cmd bt (ID) (役職名)」と送信することで推測ができる。</u>\nプレイヤー名の左側に表示されている数字が、そのプレイヤーのIDである。"
+"EvilGuesserDescSelfVote","On Meeting Can Guess.","会議中に誰かの役職を推測でき、的中すると対象をキルすることができる。\nただし、推測が外れると自殺する。\n\n<u>自投票後投票でターゲットを選択した後、\nチャットに「/cmd bt (役職名)」と送信することで推測ができる。"
 
 "# MadmateDescInfos"
 
@@ -1941,6 +1943,10 @@
 "BomberInstallationTime","Time Required to Plant a Bomb","爆弾設置にかかる時間"
 "BomberMaxKillDelay","Maximum time until explosion","爆発するまでの時間の最大時間"
 "VampireNotify","At the start of the meeting, notify those who have been bitten.","会議開始時、噛まれた人を通知する"
+"ManualId","command","コマンド"
+"CmdAndSelfVote","command and selfvote","自投票 + コマンド"
+"TargetingMode","Estimation Methods","推測方法"
+"EvilGuesserSelfVoteInfo","Self-vote → Specify target /bt Position Name → Guess","自投票→ターゲット指定　/bt 役職名→推測"
 
 "## MadMate Role Setting"
 "MadmateOption","MadMate Options","マッドメイト系役職の設定"
@@ -2960,7 +2966,7 @@
 "Mode.AlienUetuke"," Mode","<#ff1919>植え付け</color>モード"
 "Mode.Dictator","Dictator","<#df9b00>独裁</color>モード"
 "Mode.Guess","Guess Mode","<#be7c35>推測</color>モード"
-
+"Mode.EvilGuesser","<#999900>Guesser</color> Mode","<#999900>ゲッサー</color>モード"
 "Mode.CrewSatellite","Search Mode","<#00e1ff>探知</color>モード","","","","",""
 
 "Vote.Divied","Vote→Divination ability to activate","誰かに投票→占い能力発動"
@@ -2973,6 +2979,7 @@
 "Vote.Dictator","Vote → DictatorAbility","誰かに投票 → その人を追放"
 "Vote.AlienUetuke","Vote(for Impostor) → Precision","仲間のインポスターに投票 → その人に能力を植え付け"
 "Vote.Nue","Vote → Guess Fool.\n\nif guessed fool , you get kill and suicide ability.","投票 → 愚か者を推測\n\n愚か者を推測すると、\n誰か一人をキルした後に自殺する能力が解放されます。"
+"Vote.EvilGuesser","Vote → Specify Suspected Target","投票→推測ターゲット指定"
 
 "Vote.CrewSatellite","Vote→","投票 → 対象がいた部屋を1つ表示","","","","",""
 
@@ -3049,6 +3056,8 @@
 "MermaidChangeNotifyForMermaidImp","On the next turn, it will take on a <color=#ff1919>original form</color>...","次のターンに<color=#ff1919>人魚の姿</color>になります..."
 "MermaidNotifyText","<color=#1d7fad>Mermaid</color> seems to have wandered onto the ship...","<color=#1d7fad>マーメイド</color>が船に迷い込んだようだ..."
 "EaterMInfo","Number of times eaten: {0}","食べた回数：{0}回"
+"EvilGuesserTargetSelected","we target to {0}.","{0}をターゲットに指定しました"
+"EvilGuesserNoTargetSelected","The target has been deselected.","ターゲット選択を解除しました"
 
 "OnePlayer","the first person","一人目"
 "TowPlayer","second person","二人目"

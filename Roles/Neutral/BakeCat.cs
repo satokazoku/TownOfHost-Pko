@@ -50,7 +50,7 @@ namespace TownOfHost.Roles.Neutral
         static OptionItem OptionShowRoleNameToKiller;
         static OptionItem OptionShowRoleNameToKillerTeam;
         static OptionItem OptionCountChenge;
-        static OptionItem OptionCanSeeKillableTeammate;
+        static OptionItem OptionCanSeeKillableTeammate;        
         PlayerControl Killer;
         byte KillerId = byte.MaxValue;
         readonly HashSet<byte> RoleNameSeerIds = [];
