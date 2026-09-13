@@ -108,23 +108,6 @@ public sealed class Chatter : RoleBase
 
         UtilsGameLog.AddGameLog("Chatter", $"{UtilsName.GetPlayerColor(Player)} 沈黙に耐えられず死んじゃった！");
     }
-
-    public static bool CheckWin(ref GameOverReason reason)
-    {
-        foreach (var pc in PlayerCatch.AllPlayerControls)
-        {
-            if (pc.GetRoleClass() is not Chatter) continue;
-            if (!pc.IsAlive()) continue;
-
-            if (CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Chatter, pc.PlayerId))
-            {
-                CustomWinnerHolder.NeutralWinnerIds.Add(pc.PlayerId);
-                reason = GameOverReason.ImpostorsByKill;
-                return true;
-            }
-        }
-        return false;
-    }
 }
 
 [HarmonyPatch(typeof(ChatController), nameof(ChatController.AddChat))]

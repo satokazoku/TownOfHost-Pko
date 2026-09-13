@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using AmongUs.GameOptions;
 using HarmonyLib;
 using TownOfHost.Roles.Core;
@@ -100,23 +101,6 @@ public sealed class Spelunker : RoleBase, ISystemTypeUpdateHook
 
         CheckVentProximityDeath();
         CheckSabotageDeath();
-    }
-
-    public static bool CheckWin(ref GameOverReason reason)
-    {
-        foreach (var pc in PlayerCatch.AllPlayerControls)
-        {
-            if (!pc.IsAlive()) continue;
-            if (pc.GetRoleClass() is not Spelunker) continue;
-
-            if (CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Spelunker, pc.PlayerId, AddWin: false))
-            {
-                CustomWinnerHolder.NeutralWinnerIds.Add(pc.PlayerId);
-                reason = GameOverReason.ImpostorsByKill;
-                return true;
-            }
-        }
-        return false;
     }
 
     public static bool OnLadderClimbed(PlayerControl player)

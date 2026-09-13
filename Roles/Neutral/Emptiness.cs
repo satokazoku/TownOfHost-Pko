@@ -15,7 +15,7 @@ public sealed class Emptiness : RoleBase
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Neutral,
             552800,
-            SetupOptionItem,
+            null,
             "emp",
             "#221d26",
             (99, 99),
@@ -26,27 +26,5 @@ public sealed class Emptiness : RoleBase
     public Emptiness(PlayerControl player)
         : base(RoleInfo, player)
     {
-    }
-    static void SetupOptionItem()
-    {
-        //HideRoleOptions(CustomRoles.Emptiness);
-    }
-    internal static void HideRoleOptions(CustomRoles role)
-    {
-        if (Options.CustomRoleSpawnChances != null &&
-            Options.CustomRoleSpawnChances.TryGetValue(role, out var spawnOption))
-        {
-            spawnOption.SetHidden(true);
-        }
-
-        if (Options.CustomRoleCounts != null &&
-            Options.CustomRoleCounts.TryGetValue(role, out var countOption))
-        {
-            countOption.SetHidden(true);
-        }
-    }
-    public bool CheckWin(ref CustomRoles winnerRole)
-    {
-        return false;
     }
 }
