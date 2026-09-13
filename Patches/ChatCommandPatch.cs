@@ -274,6 +274,10 @@ namespace TownOfHost
             {
                 return false;
             }
+            if (!GameStates.IsMeeting && !Options.OptionGameChatSetting.GetBool() && GameStates.IsInGame)
+            {
+                return false;
+            }
             if (UrlFinder.TryFindUrl(__instance.freeChatField.textArea.text.ToCharArray(), out int _, out int _))
             {
                 __instance.AddChatWarning(DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.FreeChatLinkWarning));

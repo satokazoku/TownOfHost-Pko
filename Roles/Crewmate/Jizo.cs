@@ -290,6 +290,7 @@ public sealed class Jizo : RoleBase
 
     public override void OnReportDeadBody(PlayerControl _, NetworkedPlayerInfo __)
     {
+        Utils.SendMessage(string.Format(GetString("JizoKillerText2"), UtilsName.GetPlayerColor(Player, true), Player), /*Killer.PlayerId*/Player.PlayerId);
         if (!Detectioned && !BomDetectioned)
         {
             return;

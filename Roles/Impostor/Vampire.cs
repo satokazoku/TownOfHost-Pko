@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using AmongUs.GameOptions;
 using TownOfHost.Roles.Core;
@@ -41,9 +42,10 @@ namespace TownOfHost.Roles.Impostor
         static OptionItem OptionKillDelay;
         static OptionItem SpeedDown;
         static OptionItem SpeedDownCount;
+        static OptionItem OptionNotify;
         enum OptionName
         {
-            VampireKillDelay, VampireSpeedDown, VampireSpeedDownCount
+            VampireKillDelay, VampireSpeedDown, VampireSpeedDownCount, VampireNotify
         }
 
         static float KillDelay;
@@ -51,6 +53,7 @@ namespace TownOfHost.Roles.Impostor
         static float tmpSpeed;
         public bool CanBeLastImpostor { get; } = false;
         Dictionary<byte, float> BittenPlayers = new(14);
+        static List<byte> NotifyBitten = new(14);
 
         private static void SetupOptionItem()
         {
@@ -61,8 +64,8 @@ namespace TownOfHost.Roles.Impostor
             SpeedDown = BooleanOptionItem.Create(RoleInfo, 11, OptionName.VampireSpeedDown, true, false);
             SpeedDownCount = FloatOptionItem.Create(RoleInfo, 12, OptionName.VampireSpeedDownCount, new(0f, 1000f, 1f), 10f, false, SpeedDown)
             .SetValueFormat(OptionFormat.Seconds);
+            OptionNotify = BooleanOptionItem.Create(RoleInfo, 13, OptionName.VampireNotify, true, false);
         }
-
         public float CalculateKillCooldown() => OptionKillCool.GetFloat();
         public void OnCheckMurderAsKiller(MurderInfo info)
         {
@@ -86,6 +89,7 @@ namespace TownOfHost.Roles.Impostor
                 Jizo.Checkroom(Player.GetPlainShipRoom(), Player);
                 killer.SetKillCooldown();
                 BittenPlayers.Add(target.PlayerId, 0f);
+                NotifyBitten.Add(target.PlayerId);
             }
             info.DoKill = false;
         }
@@ -126,6 +130,40 @@ namespace TownOfHost.Roles.Impostor
                 }
             }
         }
+        public static string SendMessage()
+        {
+            if (NotifyBitten.Count == 0 || !OptionNotify.GetBool()) return "";
+
+            var names = NotifyBitten
+                .Select(PlayerCatch.GetPlayerById)
+                .Where(target => target != null)
+                .Select(target => target.GetRealName())
+                .ToList();
+
+            if (names.Count == 0) return "";
+
+            // 一度メッセージを構築したら、次回会議まで重複表示しないようにクリア
+            NotifyBitten.Clear();
+
+            return FormatBittenLine(string.Join("、", names));
+        }
+
+        private static string FormatBittenLine(string text)
+        {
+            if (!OptionNotify.GetBool())
+            {
+                return "";
+            }
+            if (CultureInfo.CurrentCulture.Name == "ja-JP")
+            {
+                return $"<size=80%>{text}が<#ff1919>ヴァンパイア</color>に噛まれたようです...</size>";
+            }
+            else
+            {
+                return $"<size=80%>It looks like {text} was bitten by a <#ff1919>Vampire</color>...</size>";
+            }
+        }
+
         public override void OnReportDeadBody(PlayerControl repo, NetworkedPlayerInfo __)
         {
             if (AddOns.Common.Amnesia.CheckAbilityreturn(Player)) return;

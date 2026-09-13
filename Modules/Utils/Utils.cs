@@ -690,7 +690,18 @@ namespace TownOfHost
                 pc.SetChatVisible(true);
             }
         }
+        /// <summary>
+        /// 生存者全員のチャットを非表示にする
+        /// </summary>
+        public static void SetChatInVisibleForAll()
+        {
+            if (!AmongUsClient.Instance.AmHost || GameStates.IsMeeting) return;
 
+            foreach (var pc in PlayerCatch.AllAlivePlayerControls)
+            {
+                pc.SetChatVisible(false);
+            }
+        }
         /// <param name="pc">seer</param>
         /// <param name="force">強制かつ全員に送信</param>
         public static void ApplySuffix(PlayerControl pc, bool force = false, bool countdown = false)
@@ -999,6 +1010,10 @@ namespace TownOfHost
                 {
                     _ = new LateTask(() => SetChatVisibleForAll(), 0.5f, "ShowChatAfterMeeting");
                 }
+                else
+                {
+                    _ = new LateTask(() => SetChatInVisibleForAll(), 0.5f, "ShowChatAfterMeeting");
+                }
             }
         }
         #endregion
@@ -1242,7 +1257,11 @@ namespace TownOfHost
                 {
                     if (Options.OptionGameChatSetting.GetBool())
                     {
-                        _ = new LateTask(() => Utils.SetChatVisibleForAll(), 0.5f, "ShowChatOnGameStart");
+                        _ = new LateTask(() => SetChatVisibleForAll(), 0.5f, "ShowChatOnGameStart");
+                    }
+                    else
+                    {
+                        _ = new LateTask(() => SetChatInVisibleForAll(), 0.5f, "ShowChatAfterMeeting");
                     }
                 }
             }

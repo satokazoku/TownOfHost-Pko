@@ -451,7 +451,7 @@
 "InsiderInfo","Knowledge is power","知は力なり","","","Знание - сила!","Conhecimento é poder",""
 "AntiReporterInfo","I won't let you report a corpse!","死体通報はさせないぞ！","我不会让你举报尸体的！","我不會讓你舉報屍體的！","Я не позволю вам сообщить о трупе!","Eu não vou deixar você denunciar um cadáver!",""
 "TeleportKillerInfo","Teleport to you!","君のもとへテレポート！","传送到你身边！","傳送到你身邊！","Телепортируйтесь к вам!","Teletransporte para você!",""
-"BomberInfo","Art is a blast","芸術は爆発だ","艺术是一种爆炸","藝術是一種爆炸","Искусство - это взрыв","A arte é uma explosão",""
+"BomberInfo","Blast is a art","爆発は芸術だ！！","艺术是一种爆炸","藝術是一種爆炸","Искусство - это взрыв","A arte é uma explosão",""
 "TairouInfo","Confuse the Crewmates","クルーを惑わせ！"
 "EvilgamblerInfo","Life is a Gamble","人生はギャンブルゾイ"
 "NotifierInfo","Don't be afraid of kill","キルを恐れるな"
@@ -1940,6 +1940,7 @@
 "BomberKillChace","Probability of death for crew members within the blast radius","爆発範囲に居たクルーが死亡する確率"
 "BomberInstallationTime","Time Required to Plant a Bomb","爆弾設置にかかる時間"
 "BomberMaxKillDelay","Maximum time until explosion","爆発するまでの時間の最大時間"
+"VampireNotify","At the start of the meeting, notify those who have been bitten.","会議開始時、噛まれた人を通知する"
 
 "## MadMate Role Setting"
 "MadmateOption","MadMate Options","マッドメイト系役職の設定"

@@ -65,13 +65,13 @@ public sealed class QuickKiller : RoleBase, IImpostor, IUsePhantomButton
     }
     private static void SetupOptionItem()
     {
-        OptionKillCoolDown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.KillCooldown, OptionBaseCoolTime, 20f, false)
+        OptionKillCoolDown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.KillCooldown, OptionBaseCoolTime, 30f, false)
                 .SetValueFormat(OptionFormat.Seconds);
         OptionQuickKillTimer = FloatOptionItem.Create(RoleInfo, 11, OptionName.QuickKillerTimer, new(0.1f, 10f, 0.1f), 3f, false)
                 .SetValueFormat(OptionFormat.Seconds);
         OptionAbiltyCanUsePlayercount = IntegerOptionItem.Create(RoleInfo, 12, OptionName.QuickKillerCanuseplayercount, new(0, 15, 1), 6, false)
             .SetValueFormat(OptionFormat.Players).SetZeroNotation(OptionZeroNotation.Off);
-        OptionUseCount = IntegerOptionItem.Create(RoleInfo, 13, GeneralOption.OptionCount, new(0, 14, 1), 1, false)
+        OptionUseCount = IntegerOptionItem.Create(RoleInfo, 13, GeneralOption.OptionCount, new(1, 14, 1), 1, false)
             .SetValueFormat(OptionFormat.Times).SetZeroNotation(OptionZeroNotation.Off);
         OptionCanSeeNameColor = BooleanOptionItem.Create(RoleInfo, 14, OptionName.QuickKillerChangeNameColor, true, false);
         OptionCanKill = BooleanOptionItem.Create(RoleInfo, 15, OptionName.QuickKillerCanKill, true, false);

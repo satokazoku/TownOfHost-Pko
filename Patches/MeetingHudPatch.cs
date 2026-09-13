@@ -313,6 +313,11 @@ public static class MeetingHudPatch
             {
                 Send += silverBuzzerMessage + "\n";
             }
+            var vampiremsg = Vampire.SendMessage();
+            if (vampiremsg != "")
+            {
+                Send += vampiremsg + "\n";
+            }
             if (Options.SyncButtonMode.GetBool())
             {
                 Send += "<#006e54>★" + string.Format(GetString("Message.SyncButtonLeft"), Options.SyncedButtonCount.GetFloat() - Options.UsedButtonCount) + "</color>\n";
