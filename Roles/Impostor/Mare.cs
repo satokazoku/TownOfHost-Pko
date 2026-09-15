@@ -120,7 +120,6 @@ public sealed class Mare : RoleBase, IImpostor
     {
         IsActivateKill = reader.ReadBoolean();
     }
-
     public override void OnFixedUpdate(PlayerControl player)
     {
         if (GameStates.IsInTask)

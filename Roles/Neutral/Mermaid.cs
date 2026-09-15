@@ -3,6 +3,7 @@ using AmongUs.GameOptions;
 using HarmonyLib;
 using Hazel;
 using Steamworks;
+using TownOfHost.Roles.AddOns.Common;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using UnityEngine;
@@ -28,11 +29,7 @@ public sealed class Mermaid : RoleBase, ILNKiller, ISchrodingerCatOwner, IAdditi
             "#1d7fad",
             (2, 2),
             true,
-            countType: CountTypes.Crew,
-            assignInfo: new RoleAssignInfo(CustomRoles.Mermaid, CustomRoleTypes.Neutral)
-            {
-                AssignCountRule = new(1, 1, 1)
-            }
+            countType: CountTypes.Crew
         );
     public Mermaid(PlayerControl player)
     : base(
@@ -54,10 +51,10 @@ public sealed class Mermaid : RoleBase, ILNKiller, ISchrodingerCatOwner, IAdditi
     public static OptionItem OptionLockMode;
     public static OptionItem OptionNotify;
 
-    static int chatcount;
-    static int Currentmode; //1=人魚(インポスター) 0=人間(クルーメイト)
-    static bool IsKilledImpostor;
-    static bool cancangemode;
+    int chatcount;
+    int Currentmode; //1=人魚(インポスター) 0=人間(クルーメイト)
+    bool IsKilledImpostor;
+    bool cancangemode;
     int MeetingCount;
 
     enum OptionName
@@ -104,10 +101,11 @@ public sealed class Mermaid : RoleBase, ILNKiller, ISchrodingerCatOwner, IAdditi
         {
             IsKilledImpostor = false;
         }
+        SendRPC();
         return;
     }
 
-    public static void ChangeMode(PlayerControl Player)
+    public void ChangeMode(PlayerControl Player)
     {
         if (!Player.IsAlive())
         {
@@ -116,11 +114,13 @@ public sealed class Mermaid : RoleBase, ILNKiller, ISchrodingerCatOwner, IAdditi
         if (IsKilledImpostor)
         {
             Currentmode = 1;
+            SendRPC();
             return;
         }
         if (Currentmode == 1)
         {
             Currentmode = 0;
+            SendRPC();
             if (!OptionNotifyChange.GetBool())
             {
                 return;
@@ -134,6 +134,7 @@ public sealed class Mermaid : RoleBase, ILNKiller, ISchrodingerCatOwner, IAdditi
         if (Currentmode == 0)
         {
             Currentmode = 1;
+            SendRPC();
             if (!OptionNotifyChange.GetBool())
             {
                 return;
@@ -155,12 +156,22 @@ public sealed class Mermaid : RoleBase, ILNKiller, ISchrodingerCatOwner, IAdditi
         return progress;
     }
 
-    public static bool CheckCanwin(ref GameOverReason reason)
+    public static void SCheckCanwin(ref GameOverReason reason)
     {
         if (OptionAddWin.GetBool())
         {
-            return false;
+            return;
         }
+        foreach (var p in AllAlivePlayerControls)
+        {
+            if (p.GetRoleClass() is Mermaid mermaid)
+            {
+                mermaid.MermaidCheckWin(ref reason);
+            }
+        }      
+    }
+    public bool MermaidCheckWin(ref GameOverReason reason)
+    {
         var currentWinner = CustomWinnerHolder.WinnerTeam;
         if (currentWinner == CustomWinner.Crewmate && Currentmode == 0)
         {
@@ -199,6 +210,24 @@ public sealed class Mermaid : RoleBase, ILNKiller, ISchrodingerCatOwner, IAdditi
             return false;
         }
     }
+    public void SendRPC()
+    {
+        using var sender = CreateSender();
+        sender.Writer.Write(cancangemode);
+        sender.Writer.Write(IsKilledImpostor);
+        sender.Writer.Write(Currentmode);
+        sender.Writer.Write(chatcount);
+        sender.Writer.Write(MeetingCount);
+    }
+
+    public override void ReceiveRPC(MessageReader reader)
+    {
+        cancangemode = reader.ReadBoolean();
+        IsKilledImpostor = reader.ReadBoolean();
+        Currentmode = reader.ReadInt32();
+        chatcount = reader.ReadInt32();
+        MeetingCount = reader.ReadInt32();
+    }
     public bool CheckWin(ref CustomRoles winnerRole)
         => Currentmode == 1 && OptionAddWin.GetBool() ? CustomWinnerHolder.WinnerTeam == CustomWinner.Impostor : CustomWinnerHolder.WinnerTeam == CustomWinner.Crewmate;
 
@@ -225,14 +254,15 @@ public sealed class Mermaid : RoleBase, ILNKiller, ISchrodingerCatOwner, IAdditi
             chatcount = OptionChangingChats.GetInt();
         }
     }
-    public static void Notify()
+    public void Notify()
     {
         if (IsKilledImpostor)
         {
             Currentmode = 1;
+            SendRPC();
             return;
         }
-
+        SendRPC();
         var Player = PlayerControl.LocalPlayer;
 
         if (Currentmode == 1)
@@ -253,23 +283,29 @@ public sealed class Mermaid : RoleBase, ILNKiller, ISchrodingerCatOwner, IAdditi
             if (sourcePlayer == null || !sourcePlayer) return;
             if (!sourcePlayer.IsAlive()) return;
             if (sourcePlayer.GetRoleClass() is not Mermaid Mermaid) return;
-            if (IsKilledImpostor) //インポスターをキルしていて設定が有効な場合は何もしない
+            foreach (var p in AllAlivePlayerControls)
             {
-                Currentmode = 1;
-                return;
-            }
+                if (p.GetRoleClass() is Mermaid mermaid)
+                {
+                    if (mermaid.IsKilledImpostor) //インポスターをキルしていて設定が有効な場合は何もしない
+                    {
+                        mermaid.Currentmode = 1;
+                        return;
+                    }
 
-            // ★ /cmd を含むメッセージはコマンドなのでリセットしない
-            if (chatText != null && chatText.TrimStart().StartsWith("/cmd"))
-            {
-                return;
-            }
-            ++chatcount;
-            if (chatcount >= OptionChangingChats.GetInt() && !cancangemode && !IsKilledImpostor)
-            {
-                cancangemode = true;
-                Notify();
-                chatcount = 0;
+                    // ★ /cmd を含むメッセージはコマンドなのでリセットしない
+                    if (chatText != null && chatText.TrimStart().StartsWith("/cmd"))
+                    {
+                        return;
+                    }
+                    ++mermaid.chatcount;
+                    if (mermaid.chatcount >= OptionChangingChats.GetInt() && !mermaid.cancangemode && !mermaid.IsKilledImpostor)
+                    {
+                        mermaid.cancangemode = true;
+                        mermaid.chatcount = 0;
+                    }
+                    mermaid.Notify();
+                }
             }
         }
     }

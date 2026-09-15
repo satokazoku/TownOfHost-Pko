@@ -85,7 +85,7 @@ public static class CustomRoleManager
         {
             if (killer.IsKiller)
             {
-                if (killerRole is EarnestWolf earnestWolf)//最優先f
+                if (killerRole is EarnestWolf earnestWolf)//最優先
                 {
                     if (Amnesia.CheckAbility(attemptKiller))
                         if (earnestWolf.OnCheckMurderAsEarnestWolf(info))
@@ -903,6 +903,7 @@ public enum CustomRoles
     SmokeMaker,
     Whiteshark,
     HateKiller,
+    OverLoader,
     //DEBUG only Impostor
     //Madmate
     MadGuardian,

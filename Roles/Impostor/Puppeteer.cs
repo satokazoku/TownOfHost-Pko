@@ -84,6 +84,7 @@ public sealed class Puppeteer : RoleBase, IImpostor, IUsePhantomButton
         AdjustKillCooldown = false;
         ResetCooldown = false;
         IsPuppetMode = !IsPuppetMode;
+        SendRPC(byte.MaxValue, 3);   // 新しいtypeIdでモード切替を通知
     }
 
     public override void ReceiveRPC(MessageReader reader)
@@ -93,17 +94,20 @@ public sealed class Puppeteer : RoleBase, IImpostor, IUsePhantomButton
 
         switch (typeId)
         {
-            case 0: //Dictionaryのクリア
+            case 0:
                 Puppets.Clear();
                 PuppetCooltime.Clear();
                 break;
-            case 1: //Dictionaryに追加
+            case 1:
                 Puppets[targetId] = this;
                 PuppetCooltime[targetId] = 0;
                 break;
-            case 2: //DictionaryのKey削除
+            case 2:
                 Puppets.Remove(targetId);
                 PuppetCooltime.Remove(targetId);
+                break;
+            case 3:                          // ← 追加
+                IsPuppetMode = !IsPuppetMode;
                 break;
         }
     }

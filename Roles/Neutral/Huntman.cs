@@ -125,6 +125,7 @@ namespace TownOfHost.Roles.Neutral
         bool targetCankill;
 
         bool targetDied;
+
         public override void ApplyGameOptions(IGameOptions opt)
         {
             opt.SetVision(OptionHasImpostorVision.GetBool());
@@ -145,6 +146,7 @@ namespace TownOfHost.Roles.Neutral
                 {
                     // タイマーを減らす
                     darkenTimer -= Time.fixedDeltaTime;
+                    SendRPC();
                     // タイマーが0になったらみんなの視界を戻してタイマーと暗転プレイヤーをリセットする
                     if (darkenTimer <= 0)
                     {
@@ -212,11 +214,13 @@ namespace TownOfHost.Roles.Neutral
                 {
                     DarkenPlayers(playersToDarken);
                 }
+                SendRPC();
                 _ = new LateTask(() =>
                 {
                     targeted = false;
                     PublicRoleColor = false;
                     Player.RpcResetAbilityCooldown();
+                    SendRPC();
                 }, changetimer, "", true);
             }
         }
@@ -234,6 +238,7 @@ namespace TownOfHost.Roles.Neutral
             }
             darkenTimer = DarkenTime;
             UtilsNotifyRoles.NotifyRoles(SpecifySeer: Player);
+            SendRPC();
         }
 
         private void DarkenPlayers(IEnumerable<PlayerControl> playersToDarken)
@@ -244,6 +249,7 @@ namespace TownOfHost.Roles.Neutral
                 PlayerState.GetByPlayerId(player.PlayerId).IsBlackOut = true;
                 player.MarkDirtySettings();
             }
+            SendRPC();
             if (0 < playersToDarken.Count()) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);
         }
 
@@ -305,7 +311,7 @@ namespace TownOfHost.Roles.Neutral
                         targetCankill = true;
                     }
                     targetDied = false;
-
+                    SendRPC();
                 }
                 else
                 {
@@ -347,6 +353,7 @@ namespace TownOfHost.Roles.Neutral
             targetCankill = true;
             targeted = false;
             KillWaitPlayer = null;
+            SendRPC();
         }
         public override string GetAbilityButtonText() => "選択";
         public override bool OverrideAbilityButton(out string text)
@@ -354,6 +361,25 @@ namespace TownOfHost.Roles.Neutral
             text = "Hunter_Ability";
             return true;
         }
+        public void SendRPC()
+        {
+            using var sender = CreateSender();
+            sender.Writer.Write(darkenTimer);
+            sender.Writer.Write(targeted);
+            sender.Writer.Write(changetimer);
+            sender.Writer.Write(targetId);
+            sender.Writer.Write(targetCankill);
+        }
+
+        public override void ReceiveRPC(MessageReader reader)
+        {
+            darkenTimer = reader.ReadSingle();
+            targeted = reader.ReadBoolean();
+            changetimer = reader.ReadInt32();
+            targetId = reader.ReadByte();
+            targetCankill = reader.ReadBoolean();
+        }
+
         public static System.Collections.Generic.Dictionary<int, Achievement> achievements = new();
         [Attributes.PluginModuleInitializer]
         public static void Load()

@@ -1,6 +1,6 @@
 using System.Linq;
 using AmongUs.GameOptions;
-
+using Hazel;
 using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
@@ -87,7 +87,19 @@ public sealed class Madpsycho : RoleBase
     public override bool OnCompleteTask(uint taskid)
     {
         CompletedTaskCount++;
+        SendRPC();
         return true;
+    }
+
+    private void SendRPC()
+    {
+        using var sender = CreateSender();
+        sender.Writer.Write(CompletedTaskCount);
+    }
+
+    public override void ReceiveRPC(MessageReader reader)
+    {
+        CompletedTaskCount = reader.ReadInt32();
     }
 
     public override bool OnCheckMurderAsTarget(MurderInfo info)

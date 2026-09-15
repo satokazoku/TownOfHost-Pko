@@ -97,6 +97,7 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
                     if (!CanSubkill)
                     {
                         CanSubkill = true;
+                        SendRPC();
                     }
                 }, PhantomCooldown, "", true);
             }
@@ -107,6 +108,7 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
                     if (!CanSubkill)
                     {
                         CanSubkill = true;
+                        SendRPC();
                     }
                 }, 1f, "", true);
             }
@@ -145,7 +147,8 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
             float savedKillTimer = Player.killTimer;
             Vector2 targetPos = target.transform.position;
             CanSubkill = false; // Murderが実行されないうちにサブキル不可にする。
-            CustomRoleManager.OnCheckMurder(Player, target, target, target, true, true, 1, CustomDeathReason.Kill);
+            SendRPC();
+            CustomRoleManager.OnCheckMurder(Player, target, Player, target, true, true, 1, CustomDeathReason.Kill);
             SnapToPosition(targetPos);
         }
         if (PhantomCooldown < 1f) //キルク1未満でも一秒待たない。
@@ -153,6 +156,7 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
             _ = new LateTask(() =>
             {
                 CanSubkill = true;
+                SendRPC();
             }, PhantomCooldown, "", true);
         }
         else
@@ -160,10 +164,20 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
             _ = new LateTask(() =>
             {
                 CanSubkill = true;
+                SendRPC();
             }, 1f, "", true);
         }
     }
-
+    //念のためRPC送っとく
+    void SendRPC()
+    {
+        using var sender = CreateSender();
+        sender.Writer.Write(CanSubkill);
+    }
+    public override void ReceiveRPC(MessageReader reader)
+    {
+        CanSubkill = reader.ReadBoolean();
+    }
     private void SnapToPosition(Vector2 position)
     {
         Player.NetTransform.SnapTo(position);

@@ -1,10 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
+using Hazel;
+using Rewired.Utils.Classes.Data;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using UnityEngine;
 using static Sentry.MeasurementUnit;
+using static UnityEngine.GraphicsBuffer;
 
 namespace TownOfHost.Roles.Impostor;
 
@@ -42,8 +45,6 @@ public sealed class Warlock : RoleBase, IImpostor, IUsePhantomButton
     public static OptionItem OptionCantMovetime;
     public static OptionItem OptionCantmove;
     bool IsCursed;
-    bool IsCantMove;
-    Vector2 pos;
     enum OptionName
     {
         WarlockDouki,
@@ -68,15 +69,7 @@ public sealed class Warlock : RoleBase, IImpostor, IUsePhantomButton
     {
         CursedPlayer = null;
         IsCursed = false;
-        IsCantMove = false;
-    }
-
-    public override void OnFixedUpdate(PlayerControl player)
-    {
-        if (IsCantMove && OptionCantmove.GetBool())
-        {
-            Player.RpcSnapToForced(pos);
-        }
+        Main.AllPlayerSpeed[Player.PlayerId] = Main.NormalOptions.PlayerSpeedMod;
     }
 
     public override string GetAbilityButtonText() => GetString("WarlockCurseButtonText");
@@ -89,9 +82,8 @@ public sealed class Warlock : RoleBase, IImpostor, IUsePhantomButton
 
     public override void AfterMeetingTasks()
     {
-        IsCantMove = false;
+        Main.AllPlayerSpeed[Player.PlayerId] = Main.NormalOptions.PlayerSpeedMod;
     }
-
 
     bool IUsePhantomButton.IsresetAfterKill => Optiondouki.GetBool();
     bool IUsePhantomButton.IsPhantomRole => true;
@@ -100,9 +92,9 @@ public sealed class Warlock : RoleBase, IImpostor, IUsePhantomButton
     {
         AdjustKillCooldown = false;
 
-        if (IsCursed)
+        if (IsCursed && AmongUsClient.Instance.AmHost)
         {
-            if (CursedPlayer != null && CursedPlayer.IsAlive() && AmongUsClient.Instance.AmHost)
+            if (CursedPlayer != null && CursedPlayer.IsAlive())
             {
                 Vector2 cpPos = CursedPlayer.transform.position;
                 Dictionary<PlayerControl, float> candidateList = new();
@@ -124,6 +116,7 @@ public sealed class Warlock : RoleBase, IImpostor, IUsePhantomButton
                     RPC.PlaySoundRPC(Player.PlayerId, Sounds.KillSound);
                 }
                 CursedPlayer = null;
+
                 Achievements.RpcCompleteAchievement(Player.PlayerId, 1, achievements[0]);
                 if (killTarget.IsTeammate(Player))
                 {
@@ -133,15 +126,18 @@ public sealed class Warlock : RoleBase, IImpostor, IUsePhantomButton
                 {
                     Player.SetKillCooldown();
                 }
-                IsCantMove = true;
-                pos = Player.transform.position;
-            }
+                if (OptionCantmove.GetBool())
+                {
+                    Main.AllPlayerSpeed[Player.PlayerId] = 0f;
+                    _ = new LateTask(() =>
+                    {
+                        Main.AllPlayerSpeed[Player.PlayerId] = Main.NormalOptions.PlayerSpeedMod;
+                    }, OptionCantMovetime.GetFloat(), "Warlock_koutyoku", true);
+                }
+            }       
             IsCursed = false;
             ResetCooldown = true;
-            _ = new LateTask(() =>
-            {
-                IsCantMove = false;
-            }, OptionCantMovetime.GetFloat(), "Warlock_koutyoku", true);
+            SendRPC();
         }
         else
         {
@@ -152,17 +148,33 @@ public sealed class Warlock : RoleBase, IImpostor, IUsePhantomButton
             {
                 IsCursed = true;
             }
+            SendRPC();
         }
     }
     public override void OnReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
     {
         CursedPlayer = null;
         IsCursed = false;
+        SendRPC();
     }
     public override bool OverrideAbilityButton(out string text)
     {
         text = "Warlock_Ability";
         return true;
+    }
+    public void SendRPC()
+    {
+        using var sender = CreateSender();
+        sender.Writer.Write(IsCursed);
+        sender.Writer.Write(CursedPlayer != null);
+        if (CursedPlayer != null) sender.Writer.Write(CursedPlayer.PlayerId);
+    }
+
+    public override void ReceiveRPC(MessageReader reader)
+    {
+        IsCursed = reader.ReadBoolean();
+        bool hasCursed = reader.ReadBoolean();
+        CursedPlayer = hasCursed ? PlayerCatch.GetPlayerById(reader.ReadByte()) : null;
     }
     public static Dictionary<int, Achievement> achievements = new();
     [Attributes.PluginModuleInitializer]

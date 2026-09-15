@@ -218,11 +218,13 @@ public sealed class Jizo : RoleBase
     {
         using var sender = CreateSender();
         sender.Writer.Write(JizocooldownLeft);
+        sender.Writer.Write(UseCount);
     }
 
     public override void ReceiveRPC(MessageReader reader)
     {
         JizocooldownLeft = reader.ReadSingle();
+        UseCount = reader.ReadInt32();
         var roomId = reader.ReadByte();
 
         UsedRoom = roomId == byte.MaxValue ? null : (SystemTypes)roomId;

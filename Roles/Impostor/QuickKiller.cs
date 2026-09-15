@@ -1,5 +1,6 @@
 using System;
 using AmongUs.GameOptions;
+using Hazel;
 using MS.Internal.Xml.XPath;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
@@ -37,6 +38,7 @@ public sealed class QuickKiller : RoleBase, IImpostor, IUsePhantomButton
         CanSubkill = true;
         IsPhantom = true;
         IsQuick = false;
+        KillCoolTimer = KillCool;
     }
     static OptionItem OptionKillCoolDown;
     static OptionItem OptionAbiltyCanUsePlayercount;
@@ -54,6 +56,8 @@ public sealed class QuickKiller : RoleBase, IImpostor, IUsePhantomButton
     float? timer;
     public bool CanSubkill;
     bool IsQuick;
+    bool isCheckKillScheduled;
+    float KillCoolTimer;
     enum OptionName
     {
         QuickKillerCanuseplayercount,
@@ -95,10 +99,13 @@ public sealed class QuickKiller : RoleBase, IImpostor, IUsePhantomButton
     public override void OnFixedUpdate(PlayerControl player)
     {
         CheckKill();
-        if (!AmongUsClient.Instance.AmHost || !player.IsAlive() || timer == null) return;
+        if (!player.IsAlive()) return;
         if (GameStates.IsMeeting) return;
-        timer -= Time.fixedDeltaTime;
-        if (timer < 0)
+        if (timer != null && AmongUsClient.Instance.AmHost)
+        {
+            timer -= Time.fixedDeltaTime;
+        }      
+        if (timer < 0 && timer != null && AmongUsClient.Instance.AmHost)
         {
             timer = null;
             quickmodekillcount = 0;
@@ -107,6 +114,7 @@ public sealed class QuickKiller : RoleBase, IImpostor, IUsePhantomButton
                 KillCool += OptionPenaltyKillCool.GetFloat();
                 Cool += OptionPenaltyCool.GetFloat();
             }
+            KillCoolTimer = KillCool;
             Main.AllPlayerKillCooldown[Player.PlayerId] = KillCool;
             player.ResetKillCooldown();
             player.SetKillCooldown(force: true);
@@ -117,43 +125,43 @@ public sealed class QuickKiller : RoleBase, IImpostor, IUsePhantomButton
                 IsPhantom = false;
             }
         }
-        if (IsQuick)
+        if (timer != null && timer > 0f)
         {
-            Main.AllPlayerKillCooldown[player.PlayerId] = 0.0001f;
+            KillCoolTimer = 0.0001f;
+            Main.AllPlayerKillCooldown[player.PlayerId] = KillCoolTimer;
         }
         else
         {
-            Player.ResetKillCooldown();
-            Player.SetKillCooldown(force: true);
+            KillCoolTimer -= Time.fixedDeltaTime;
         }
-        if (Main.AllPlayerKillCooldown[Player.PlayerId] != KillCool)
-        {
-            Main.AllPlayerKillCooldown[Player.PlayerId] = KillCool;
-        }
+        Main.AllPlayerKillCooldown[player.PlayerId] = KillCoolTimer;
     }
     public void CheckKill()
     {
+        if (OptionAbilityCoolDown.GetFloat() < 1f && !isCheckKillScheduled && !CanSubkill) //キルク1未満でも一秒待たない。
         {
-            if (OptionAbilityCoolDown.GetFloat() < 1f) //キルク1未満でも一秒待たない。
+            isCheckKillScheduled = true;
+            _ = new LateTask(() =>
             {
-                _ = new LateTask(() =>
+                if (!CanSubkill)
                 {
-                    if (!CanSubkill)
-                    {
-                        CanSubkill = true;
-                    }
-                }, OptionAbilityCoolDown.GetFloat(), "", true);
-            }
-            else
+                    CanSubkill = true;
+                    isCheckKillScheduled = false;
+                    SendRPC();
+                }
+            }, OptionAbilityCoolDown.GetFloat(), "", true);
+        }
+        else if (!isCheckKillScheduled && !CanSubkill)
+        {
+            _ = new LateTask(() =>
             {
-                _ = new LateTask(() =>
+                if (!CanSubkill)
                 {
-                    if (!CanSubkill)
-                    {
-                        CanSubkill = true;
-                    }
-                }, 1f, "", true);
-            }
+                    CanSubkill = true;
+                    isCheckKillScheduled = false;
+                    SendRPC();
+                }
+            }, 1f, "", true);
         }
     }
     void IKiller.OnMurderPlayerAsKiller(MurderInfo info)
@@ -164,6 +172,7 @@ public sealed class QuickKiller : RoleBase, IImpostor, IUsePhantomButton
         if (OptionCanKill.GetBool() && !IsQuick)
         {
             Main.AllPlayerKillCooldown[Player.PlayerId] = KillCool;
+            KillCoolTimer = KillCool;
             Player.ResetKillCooldown();
             Player.SetKillCooldown(force: true);
             return;
@@ -190,6 +199,7 @@ public sealed class QuickKiller : RoleBase, IImpostor, IUsePhantomButton
         killer.RpcResetAbilityCooldown();
         //タイマー進行中なら止める
         Main.AllPlayerKillCooldown[killer.PlayerId] = 0.0001f;
+        KillCoolTimer = 0f;
 
         if (timer.HasValue)
         {
@@ -213,6 +223,8 @@ public sealed class QuickKiller : RoleBase, IImpostor, IUsePhantomButton
         timer = null;
         CanSubkill = true;
         IsQuick = false;
+        KillCoolTimer = KillCool;
+        SendRPC();
     }
     public override string GetAbilityButtonText() => GetString("QuickKiller_Timer");
     public override bool CanUseAbilityButton() => true;
@@ -227,12 +239,11 @@ public sealed class QuickKiller : RoleBase, IImpostor, IUsePhantomButton
         ResetCooldown = false;
 
         var target = Player.GetKillTarget(true);
-        var targetrole = target.GetCustomRole();
 
-        if (!Player.IsAlive() || targetrole.IsImpostor() || target == null || !CanSubkill || UseCount <= 0 || IsQuick)
-        {
-            return;
-        }
+        if (!Player.IsAlive() || target == null || !CanSubkill || UseCount <= 0 || IsQuick) { Main.AllPlayerKillCooldown[Player.PlayerId] = KillCoolTimer; SendRPC(); return; }
+
+        var targetrole = target.GetCustomRole();
+        if (targetrole.IsImpostor()) { Main.AllPlayerKillCooldown[Player.PlayerId] = KillCoolTimer; return; }
 
         else if (target.Is(CustomRoles.Madpsycho))
         {
@@ -251,26 +262,40 @@ public sealed class QuickKiller : RoleBase, IImpostor, IUsePhantomButton
             float savedKillTimer = Player.killTimer;
             Vector2 targetPos = target.transform.position;
             CanSubkill = false;
-            CustomRoleManager.OnCheckMurder(Player, target, target, target, true, true, 1, CustomDeathReason.Kill);
+            CustomRoleManager.OnCheckMurder(Player, target, Player, target, true, true, 1, CustomDeathReason.Kill);
             if (Player.IsAlive()) RPC.PlaySoundRPC(Player.PlayerId, Sounds.KillSound);
             Player.RpcSnapToForced(targetPos);
-            if (OptionCanKill.GetBool())
-            {
-                KillCool += OptionPenaltyKillCool.GetFloat();
-                Cool += OptionPenaltyCool.GetFloat();
-            }
-            Main.AllPlayerKillCooldown[Player.PlayerId] = KillCool;
-            Player.ResetKillCooldown();
-            Player.SetKillCooldown(force: true);
-            killer.RpcResetAbilityCooldown();
             IsQuick = true;
-            //タイマー進行中なら止める
-            Main.AllPlayerKillCooldown[killer.PlayerId] = 0.0001f;
+            KillCoolTimer = 0.0001f;
             quickmodekillcount = 0;
             timer = OptionQuickKillTimer.GetFloat();
-            killer.SyncSettings();
+            SendRPC();
         }
 
+    }
+    void SendRPC()
+    {
+        using var sender = CreateSender();
+        sender.Writer.Write(IsQuick);
+        sender.Writer.Write(timer.HasValue);
+        if (timer.HasValue) sender.Writer.Write(timer.Value);
+        sender.Writer.Write(UseCount);
+        sender.Writer.Write(KillCool);
+        sender.Writer.Write(Cool);
+        sender.Writer.Write(CanSubkill);
+        sender.Writer.Write(KillCoolTimer);
+    }
+
+    public override void ReceiveRPC(MessageReader reader)
+    {
+        IsQuick = reader.ReadBoolean();
+        bool hasTimer = reader.ReadBoolean();
+        timer = hasTimer ? reader.ReadSingle() : null;
+        UseCount = reader.ReadInt32();
+        KillCool = reader.ReadSingle();
+        Cool = reader.ReadSingle();
+        CanSubkill = reader.ReadBoolean();
+        KillCoolTimer = reader.ReadSingle();
     }
     int quickmodekillcount;
     public override string GetLowerText(PlayerControl seer, PlayerControl seen = null,

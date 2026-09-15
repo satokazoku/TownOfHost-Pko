@@ -90,10 +90,10 @@ namespace TownOfHost.Roles.Impostor
         {
             using var sender = CreateSender();
             sender.Writer.Write(BomberExplosion);
-        }
-        public override void ReceiveRPC(MessageReader reader)
-        {
-            BomberExplosion = reader.ReadInt32();
+            sender.Writer.Write(maxbomb);
+            sender.Writer.Write(IsDetectioned);
+            sender.Writer.Write(IsInstallation);
+            sender.Writer.Write(KillDelay);
         }
         public void OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
         {
@@ -122,6 +122,7 @@ namespace TownOfHost.Roles.Impostor
                 }
             }
             if (!BomberExplosionPlayers.TryAdd(Bombtarget.PlayerId, 0f)) return;
+            SendAddRPC(Bombtarget.PlayerId);
             Jizo.BomCheckroom(Player.GetPlainShipRoom(), Player);
             IsInstallation = false;
             BomberExplosion--;
@@ -175,8 +176,8 @@ namespace TownOfHost.Roles.Impostor
                             if (maxbomb <= count) maxbomb = count;
                         }
                     }
-
                     BomberExplosionPlayers.Remove(targetId);
+                    SendRemoveRPC(targetId);
                 }
                 else
                 {
@@ -268,6 +269,39 @@ namespace TownOfHost.Roles.Impostor
         public void OnCheckMurderAsKiller(MurderInfo info)
         {
             Jizo.Checkroom(Player.GetPlainShipRoom(), Player);
+        }
+        private void SendAddRPC(byte targetId)
+        {
+            using var sender = CreateSender();
+            sender.Writer.Write((byte)1); // typeId: 追加
+            sender.Writer.Write(targetId);
+        }
+        private void SendRemoveRPC(byte targetId)
+        {
+            using var sender = CreateSender();
+            sender.Writer.Write((byte)2); // typeId: 削除
+            sender.Writer.Write(targetId);
+        }
+
+        public override void ReceiveRPC(MessageReader reader)
+        {
+            var typeId = reader.ReadByte();
+            switch (typeId)
+            {
+                case 0: 
+                    BomberExplosion = reader.ReadInt32();
+                    maxbomb = reader.ReadInt32();
+                    IsDetectioned = reader.ReadBoolean();
+                    IsInstallation = reader.ReadBoolean();
+                    KillDelay = reader.ReadSingle();
+                    break;
+                case 1:
+                    BomberExplosionPlayers.TryAdd(reader.ReadByte(), 0f);
+                    break;
+                case 2:
+                    BomberExplosionPlayers.Remove(reader.ReadByte());
+                    break;
+            }
         }
         [Attributes.PluginModuleInitializer]
         public static void Load()
