@@ -104,6 +104,8 @@ public sealed class Swooper : RoleBase, IImpostor, IUsePhantomButton
 
     public void OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
     {
+        AdjustKillCooldown = false;
+        ResetCooldown = false;
     }
 
     bool IUsePhantomButton.IsresetAfterKill => false;

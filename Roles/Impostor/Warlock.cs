@@ -128,10 +128,12 @@ public sealed class Warlock : RoleBase, IImpostor, IUsePhantomButton
                 }
                 if (OptionCantmove.GetBool())
                 {
+                    //多分今の速度保存しといたほうがいい
+                    var Speed = Main.AllPlayerSpeed[Player.PlayerId];
                     Main.AllPlayerSpeed[Player.PlayerId] = 0f;
                     _ = new LateTask(() =>
                     {
-                        Main.AllPlayerSpeed[Player.PlayerId] = Main.NormalOptions.PlayerSpeedMod;
+                        Main.AllPlayerSpeed[Player.PlayerId] = Speed;
                     }, OptionCantMovetime.GetFloat(), "Warlock_koutyoku", true);
                 }
             }       

@@ -534,10 +534,14 @@ public static class MeetingHudPatch
                             continue;
                     }
                 }
+                //二重表示消えるはず
                 if (seer.Is(CustomRoles.NiceGuesser) || seer.Is(CustomRoles.EvilGuesser))
                 {
-                    if (!seer.Data.IsDead && !target.Data.IsDead && target != seer)
-                        fsb.Append(Utils.ColorString(Color.yellow, target.PlayerId.ToString()) + " ");
+                    if (!seer.Is(CustomRoles.Guesser))
+                    {
+                        if (!seer.Data.IsDead && !target.Data.IsDead && target != seer)
+                            fsb.Append(Utils.ColorString(Color.yellow, target.PlayerId.ToString()) + " ");
+                    }
                 }
                 if (RoleAddAddons.GetRoleAddon(seer.GetCustomRole(), out var data, seer, subrole: CustomRoles.Guesser) && data.GiveGuesser.GetBool())
                 {

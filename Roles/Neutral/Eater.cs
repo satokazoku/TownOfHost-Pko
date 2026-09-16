@@ -296,7 +296,6 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
             return true;
         }
         return false;
-        return false;
     }
     public void Win()
     {
