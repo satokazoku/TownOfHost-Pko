@@ -60,8 +60,7 @@ static class Event
     /// <returns>ロールが使用可能ならtrueを返します</returns>
     public static bool CheckRole(CustomRoles role, bool useApiData = true)
     {
-        return true;
-       /* //イベント役職以外はtrueを返す!!
+        ///イベント役職以外はtrueを返す!!
         if (!EventRoles.TryGetValue(role, out var check)) return true;
 
         //キャッシュ済みならそっちを使う
@@ -97,7 +96,7 @@ static class Event
             }
         }
         cachedEventFlags[(role, true)] = result;
-        return result;*/
+        return result;
     }
 
     private static bool IsEventDataActiveForRole(VersionInfoManager.VersionInfo.EventData data, CustomRoles role)
@@ -110,41 +109,16 @@ static class Event
 
     public static Dictionary<CustomRoles, Func<bool>> EventRoles = new()
     {
-        {CustomRoles.Altair,() => Tanabata},
-        {CustomRoles.Vega,() => Tanabata},
-        {CustomRoles.Amateras,() => Tanabata},
-        {CustomRoles.SpeedStar , () => Special},
-        {CustomRoles.Chameleon , () => Special},
-        {CustomRoles.Cakeshop , () => NowRoleEvent}
+        //{CustomRoles.Altair,() => Tanabata},
+        //{CustomRoles.Vega,() => Tanabata},
+        //{CustomRoles.Amateras,() => Tanabata},
+        //{CustomRoles.SpeedStar , () => Special},
+        //{CustomRoles.Chameleon , () => Special},
+        //{CustomRoles.Cakeshop , () => NowRoleEvent}
     };
 
     public static Dictionary<(CustomRoles role, bool isApiData), bool> cachedEventFlags = new(EventRoles.Count);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 //やぁ。気付いちゃった...?( ᐛ )
 //ファイル作っちゃうとばれちゃうからね。
@@ -175,6 +149,7 @@ public sealed class SpeedStar : RoleBase, IImpostor, IUsePhantomButton
         abilitytime = optabilitytime.GetFloat();
         cooldown = optcooldown.GetFloat();
         killcooldown = optkillcooldown.GetFloat();
+        IsBoosted = false;
     }
     static OptionItem optabilitytime;
     static OptionItem optcooldown;
@@ -184,6 +159,10 @@ public sealed class SpeedStar : RoleBase, IImpostor, IUsePhantomButton
     static float abilitytime;
     static float cooldown;
     static float killcooldown;
+    bool IsBoosted;
+    bool IUsePhantomButton.IsresetAfterKill => !IsBoosted;
+    public float CalculateKillCooldown() => killcooldown;
+
     Dictionary<byte, float> allplayerspeed = new();
     public override void StartGameTasks()
     {
@@ -199,7 +178,6 @@ public sealed class SpeedStar : RoleBase, IImpostor, IUsePhantomButton
         optabilitytime = FloatOptionItem.Create(RoleInfo, 12, "GhostNoiseSenderTime", new(1, 300, 1f), 10f, false).SetValueFormat(OptionFormat.Seconds);
         optSpeed = FloatOptionItem.Create(RoleInfo, 13, "SpeedStarSpeed", new(0, 10, 0.05f), 3f, false).SetValueFormat(OptionFormat.Multiplier);
     }
-    public float CalculateKillCooldown() => killcooldown;
     [PluginModuleInitializer]
     public static void Load()
     {
@@ -211,12 +189,15 @@ public sealed class SpeedStar : RoleBase, IImpostor, IUsePhantomButton
     public override void ApplyGameOptions(IGameOptions opt) => AURoleOptions.PhantomCooldown = cooldown;
     public void OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
     {
-        ResetCooldown = true;
+        ResetCooldown = false;
         AdjustKillCooldown = true;
         foreach (var pc in PlayerCatch.AllAlivePlayerControls)
         {
             Main.AllPlayerSpeed[pc.PlayerId] = speed;
         }
+        IsBoosted = true;
+        AURoleOptions.PhantomCooldown = abilitytime;
+        Player.RpcResetAbilityCooldown();
         UtilsOption.MarkEveryoneDirtySettings();
         _ = new LateTask(() =>
         {
@@ -227,7 +208,9 @@ public sealed class SpeedStar : RoleBase, IImpostor, IUsePhantomButton
                     Main.AllPlayerSpeed[pc.PlayerId] = allplayerspeed[pc.PlayerId];
                 }
                 _ = new LateTask(() => UtilsOption.MarkEveryoneDirtySettings(), 0.2f, "", true);
-                Player.RpcResetAbilityCooldown();
+                IsBoosted = false;
+                AURoleOptions.PhantomCooldown = cooldown;
+                Player.RpcResetAbilityCooldown();       
             }
         }, abilitytime, "", true);
     }
@@ -235,12 +218,17 @@ public sealed class SpeedStar : RoleBase, IImpostor, IUsePhantomButton
     {
         if (GameStates.InGame)
         {
+            IsBoosted = false;
             foreach (var pc in PlayerCatch.AllPlayerControls)
             {
                 Main.AllPlayerSpeed[pc.PlayerId] = allplayerspeed[pc.PlayerId];
             }
             _ = new LateTask(() => UtilsOption.MarkEveryoneDirtySettings(), 0.2f, "", true);
         }
+    }
+    public void OnCheckMurderAsKiller(MurderInfo info)
+    {
+        Player.ResetKillCooldown();
     }
     public override string GetLowerText(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
     {
@@ -311,7 +299,14 @@ public sealed class Chameleon : RoleBase, IAdditionalWinner
             TeamList.Add(CustomRoles.Fox);
         if (CustomRoles.Arsonist.IsPresent())
             TeamList.Add(CustomRoles.Arsonist);
-
+        if (CustomRoles.StandMaster.IsPresent())
+            TeamList.Add(CustomRoles.StandMaster);
+        if (CustomRoles.PavlovOwner.IsPresent())
+            TeamList.Add(CustomRoles.PavlovOwner);
+        if (CustomRoles.Eater.IsPresent())
+            TeamList.Add(CustomRoles.Eater);
+        if (CustomRoles.Huntman.IsPresent())
+            TeamList.Add(CustomRoles.Huntman);
     }
     CustomRoles NowTeam;
     List<CustomRoles> TeamList = new();
@@ -337,6 +332,14 @@ public sealed class Chameleon : RoleBase, IAdditionalWinner
             TeamList.Remove(CustomRoles.Fox);
         if (!PlayerCatch.AllAlivePlayerControls.Any(p => p.GetCustomRole() is CustomRoles.Arsonist))
             TeamList.Remove(CustomRoles.Arsonist);
+        if (!PlayerCatch.AllAlivePlayerControls.Any(p => p.GetCustomRole() is CustomRoles.StandMaster))
+            TeamList.Remove(CustomRoles.StandMaster);
+        if (!PlayerCatch.AllAlivePlayerControls.Any(p => p.GetCustomRole() is CustomRoles.PavlovOwner))
+            TeamList.Remove(CustomRoles.PavlovOwner);
+        if (!PlayerCatch.AllAlivePlayerControls.Any(p => p.GetCustomRole() is CustomRoles.Eater))
+            TeamList.Remove(CustomRoles.Eater);
+        if (!PlayerCatch.AllAlivePlayerControls.Any(p => p.GetCustomRole() is CustomRoles.Huntman))
+            TeamList.Remove(CustomRoles.Huntman);
 
         //リストをシャッフル! → 更にランダム！
         NowTeam = TeamList.OrderBy(x => Guid.NewGuid()).ToArray()[IRandom.Instance.Next(TeamList.Count)];
@@ -355,7 +358,7 @@ public sealed class Chameleon : RoleBase, IAdditionalWinner
     {
         NowTeam = (CustomRoles)reader.ReadPackedInt32();
     }
-    public override void OverrideTrueRoleName(ref UnityEngine.Color roleColor, ref string roleText) => roleText = Translator.GetString($"{NowTeam}").Color(UtilsRoleText.GetRoleColor(NowTeam)) + Translator.GetString("Chameleon");
+    public override void OverrideTrueRoleName(ref UnityEngine.Color roleColor, ref string roleText) => roleText = NowTeam == CustomRoles.PavlovOwner ? Translator.GetString($"{CustomRoles.PavlovDog}").Color(UtilsRoleText.GetRoleColor(NowTeam)) + Translator.GetString("Chameleon") : Translator.GetString($"{NowTeam}").Color(UtilsRoleText.GetRoleColor(NowTeam)) + Translator.GetString("Chameleon");
     public override void AfterMeetingTasks() => _ = new LateTask(() => { if (!GameStates.CalledMeeting) ChengeTeam(); }, 5f, "", true);
     public bool CheckWin(ref CustomRoles winnerRole) => ((CustomRoles)CustomWinnerHolder.WinnerTeam == NowTeam) || CustomWinnerHolder.AdditionalWinnerRoles.Contains(NowTeam);
 }
