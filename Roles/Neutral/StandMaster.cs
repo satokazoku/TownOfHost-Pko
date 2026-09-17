@@ -25,7 +25,7 @@ public sealed class StandMaster : RoleBase, ILNKiller, IUsePhantomButton
             SetupOptionItem,
             "stm",
             "#8B4513",
-            (5, 8),
+            (6, 4),
             true,
             countType: CountTypes.StandMaster,
             assignInfo: new RoleAssignInfo(CustomRoles.StandMaster, CustomRoleTypes.Neutral)

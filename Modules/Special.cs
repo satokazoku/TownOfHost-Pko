@@ -60,7 +60,8 @@ static class Event
     /// <returns>ロールが使用可能ならtrueを返します</returns>
     public static bool CheckRole(CustomRoles role, bool useApiData = true)
     {
-        //イベント役職以外はtrueを返す!!
+        return true;
+       /* //イベント役職以外はtrueを返す!!
         if (!EventRoles.TryGetValue(role, out var check)) return true;
 
         //キャッシュ済みならそっちを使う
@@ -96,7 +97,7 @@ static class Event
             }
         }
         cachedEventFlags[(role, true)] = result;
-        return result;
+        return result;*/
     }
 
     private static bool IsEventDataActiveForRole(VersionInfoManager.VersionInfo.EventData data, CustomRoles role)
