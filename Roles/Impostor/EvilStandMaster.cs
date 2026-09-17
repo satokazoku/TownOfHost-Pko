@@ -23,7 +23,7 @@ public sealed class EvilStandMaster : RoleBase, IImpostor, IUsePhantomButton
             327000,
             SetupOptionItem,
             "esm",
-            OptionSort: (3, 11),
+            OptionSort: (2, 11),
             from: From.TownOfHost_Pko
         );
 

@@ -228,7 +228,251 @@ public static class CustomRoleManager
         if (info.CanKill && info.DoKill)//ノイメ対応
         {
             //特別な処理の役職は部屋チェックから除外
-            if (!appearanceKiller.Is(CustomRoles.Bomber) && !appearanceKiller.Is(CustomRoles.Vampire) && !appearanceKiller.Is(CustomRoles.Samurai) && !appearanceKiller.Is(CustomRoles.SelfBomber) && !appearanceKiller.Is(CustomRoles.Limiter) && !appearanceKiller.Is(CustomRoles.HadouHo)&& !appearanceKiller.Is(CustomRoles.HadouHo) && !appearanceKiller.Is(CustomRoles.JackalHadouHo) && !appearanceKiller.Is(CustomRoles.SheriffHadouHo))
+            if (!appearanceKiller.Is(CustomRoles.Bomber) && !appearanceKiller.Is(CustomRoles.Vampire) && !appearanceKiller.Is(CustomRoles.Samurai) && !appearanceKiller.Is(CustomRoles.SelfBomber) && !appearanceKiller.Is(CustomRoles.Limiter) && !appearanceKiller.Is(CustomRoles.HadouHo) && !appearanceKiller.Is(CustomRoles.HadouHo) && !appearanceKiller.Is(CustomRoles.JackalHadouHo) && !appearanceKiller.Is(CustomRoles.SheriffHadouHo))
+            {
+                Jizo.Checkroom(appearanceKiller.GetPlainShipRoom(), appearanceKiller);
+            }
+            if ((appearanceKiller.GetCustomRole() is CustomRoles.Viper || (appearanceKiller.GetRoleClass()?.HaveAddRole() is CustomRoles.Viper)) && !info.IsFakeSuicide && !info.IsSuicide)//DesyncImp役職だと死体が溶けないので一瞬だけViperにする。
+            {
+                if (AmongUsClient.Instance.AmHost)
+                    foreach (var pc in PlayerCatch.AllPlayerControls)
+                    {
+                        appearanceKiller.RpcSetRoleDesync(RoleTypes.Viper, pc.GetClientId());
+                    }
+                Achievements.RpcCompleteAchievement(appearanceKiller.PlayerId, 1, Viper.achievements[0]);
+            }
+            if (info.DontRoleAbility is false)
+            {
+                if (appearanceTarget.GetCustomRole().GetRoleInfo()?.BaseRoleType.Invoke() == RoleTypes.Noisemaker)
+                {
+                    Achievements.RpcCompleteAchievement(appearanceTarget.PlayerId, 0, Noisemaker.achievements[0]);
+                    if (AmongUsClient.Instance.AmHost)
+                        foreach (var pc in PlayerCatch.AllPlayerControls)
+                        {
+                            if (pc == PlayerControl.LocalPlayer)
+                                appearanceTarget.StartCoroutine(appearanceTarget.CoSetRole(RoleTypes.Noisemaker, true));
+                            else
+                                appearanceTarget.RpcSetRoleDesync(RoleTypes.Noisemaker, pc.GetClientId());
+                        }
+                }
+            }
+            if (GhostNoiseSender.Nois.ContainsValue(appearanceTarget.PlayerId))
+            {
+                if (AmongUsClient.Instance.AmHost)
+                {
+                    foreach (var gn in GhostNoiseSender.Nois.Where(n => n.Value == appearanceTarget.PlayerId))
+                    {
+                        Achievements.RpcCompleteAchievement(gn.Key, 0, GhostNoiseSender.achievements[0]);
+                    }
+                    foreach (var pc in PlayerCatch.AllPlayerControls)
+                    {
+                        if (pc == PlayerControl.LocalPlayer)
+                            appearanceTarget.StartCoroutine(appearanceTarget.CoSetRole(RoleTypes.Noisemaker, true));
+                        else
+                            appearanceTarget.RpcSetRoleDesync(RoleTypes.Noisemaker, pc.GetClientId());
+                        appearanceTarget.SyncSettings();
+                    }
+                }
+            }
+
+            if (info.DontRoleAbility is false)
+            {
+                Gatekeeper.CanAbility(appearanceTarget, appearanceTarget.GetPlainShipRoom());
+                Psychic.CanAbility(appearanceTarget);
+            }
+
+            //MurderPlayer用にinfoを保存
+            CheckMurderInfos[appearanceKiller.PlayerId] = info;
+            appearanceKiller.RpcMurderPlayer(appearanceTarget);
+
+            if (info.AppearanceKiller.GetCustomRole() is CustomRoles.Viper)
+            {
+                foreach (var pc in PlayerCatch.AllPlayerControls)
+                {
+                    if (pc.IsModClient()) continue;
+                    if (pc.PlayerId == info.AppearanceKiller.PlayerId || (pc.GetCustomRole().IsImpostor() && !pc.Is(CustomRoles.OneWolf)) || pc.GetCustomRole() is CustomRoles.Egoist) continue;
+                    _ = new LateTask(() => info.AppearanceKiller.RpcSetRoleDesync(RoleTypes.Crewmate, pc.GetClientId()), 0.5f, "SetCrew", true); ;
+                }
+            }
+            return true;
+        }
+        else
+        {
+            if (!info.CanKill) Logger.Info($"{appearanceTarget.GetNameWithRole().RemoveHtmlTags()}をキル出来ない。", "CheckMurder");
+            if (!info.DoKill) Logger.Info($"{appearanceKiller.GetNameWithRole().RemoveHtmlTags()}はキルしない。", "CheckMurder");
+            return false;
+        }
+    }
+    public static bool HadouHoOnCheckMurder(PlayerControl attemptKiller, PlayerControl attemptTarget, PlayerControl appearanceKiller, PlayerControl appearanceTarget, bool? force = false, bool? DontRoleAbility = false, int Killpower = 1,
+CustomDeathReason deathReason = CustomDeathReason.Kill)
+    {
+        Logger.Info($"Attempt  :{attemptKiller.GetNameWithRole().RemoveHtmlTags()} => {attemptTarget.GetNameWithRole().RemoveHtmlTags()}", "CheckMurder");
+        if (appearanceKiller != attemptKiller || appearanceTarget != attemptTarget)
+            Logger.Info($"Apperance:{appearanceKiller.GetNameWithRole().RemoveHtmlTags()} => {appearanceTarget.GetNameWithRole().RemoveHtmlTags()}", "CheckMurder");
+
+        var info = new MurderInfo(attemptKiller, attemptTarget, appearanceKiller, appearanceTarget, DontRoleAbility, Killpower, 0, deathReason);
+
+        appearanceKiller.ResetKillCooldown();
+
+        // 無効なキルをブロックする処理 必ず最初に実行する
+        if (!CheckMurderPatch.CheckForInvalidMurdering(info, force == true))
+        {
+            return false;
+        }
+
+        var killerRole = attemptKiller.GetRoleClass();
+        var targetRole = attemptTarget.GetRoleClass();
+        int GuardreasonNumber = -1;
+
+        // キラーがキル能力持ちなら
+        if (killerRole is IKiller killer)
+        {
+            if (killer.IsKiller)
+            {
+                if (killerRole is EarnestWolf earnestWolf)//最優先
+                {
+                    if (Amnesia.CheckAbility(attemptKiller))
+                        if (earnestWolf.OnCheckMurderAsEarnestWolf(info))
+                            return true;
+                }
+
+                if (targetRole != null && info.DontRoleAbility is not true)
+                {
+                    if (Amnesia.CheckAbility(attemptTarget))
+                    {
+                        if (!targetRole.OnCheckMurderAsTarget(info))
+                        {
+                            killer.OnCheckMurderDontKill(info);
+                            CheckMurderPatch.TimeSinceLastKill[attemptKiller.PlayerId] = 0f;//タゲ側でガードされるときってキルガードだけのはずだから。
+                            return false;
+                        }
+                    }
+                }
+
+                if (AsistingAngel.Guard)
+                {
+                    if (attemptTarget == AsistingAngel.Asist)
+                    {
+                        GuardreasonNumber = 2;
+                        info.GuardPower = 1;
+                        Achievements.RpcCompleteAchievement(AsistingAngel.AsistingAngelId, 0, AsistingAngel.achievements[0]);
+                    }
+                }
+                //守護天使ちゃんの天使チェック
+                if (GuardianAngel.GuardianAngelGuarding.ContainsKey(attemptTarget.PlayerId))
+                {
+                    GuardreasonNumber = 1;
+                    info.GuardPower = 1;
+                }
+                //アブソーブチェック
+                if (info.KillPower > info.GuardPower && Absorb.IsAchive())
+                {
+                    if (Absorb.AbsorbGuard.TryGetValue(attemptTarget.PlayerId, out var count))
+                    {
+                        if (count > 0)
+                        {
+                            GuardreasonNumber = 4;
+                            info.GuardPower = 1;
+                        }
+                    }
+                }
+                //属性ガードのチェック
+                if (info.KillPower > info.GuardPower)//消費する必要がある
+                {
+                    var state = attemptTarget.GetPlayerState();
+                    var CanuseGuards = state.HaveGuard.Where(data => data.Value > 0).Where(data => info.KillPower <= data.Key);
+
+                    if (CanuseGuards.Count() > 0)//今ここで使えるガードがある場合
+                    {
+                        info.GuardPower = CanuseGuards.First().Key;
+                        GuardreasonNumber = 0;
+                    }
+                }
+                if (info.AttemptKiller.Is(CustomRoles.Faction) && info.AttemptTarget.Is(CustomRoles.Faction) && deathReason is CustomDeathReason.Kill && Faction.CantKillFaction.GetBool())
+                {
+                    info.CanKill = false;
+                }
+                OneWolf.OnCheckMurder(info);
+            }
+
+            // キラーのキルチェック処理実行
+            //ダブルトリガー無効なら通常処理
+            if (!DoubleTrigger.OnCheckMurderAsKiller(info) && force is false)//特殊強制キルの場合は処理しない
+            {
+                killer.OnCheckMurderAsKiller(info);
+            }
+
+            /* キル可能かのチェック */
+            if (info.KillPower <= info.GuardPower && killer.IsKiller)
+            {
+                info.IsGuard = true;
+                info.CanKill = false;
+                if (GuardreasonNumber is -1) GuardreasonNumber = 3;
+            }
+
+            if (info.IsGuard && killer.IsKiller)
+            {
+                switch (GuardreasonNumber)
+                {
+                    case 0: //AddonGuard
+                        var state = attemptTarget.GetPlayerState();
+                        var CanuseGuards = state.HaveGuard.Where(data => data.Value > 0).Where(data => info.KillPower <= data.Key);
+
+                        if (CanuseGuards.Count() > 0)//今ここで使えるガードがある場合
+                        {
+                            state.HaveGuard[CanuseGuards.First().Key] += -1;
+                        }
+                        var HaveGuardCount = 0;
+                        state.HaveGuard.Do(data =>
+                        {
+                            HaveGuardCount += data.Value;
+                        });
+
+                        UtilsGameLog.AddGameLog($"Guard", UtilsName.GetPlayerColor(attemptTarget) + ":  " + string.Format(Translator.GetString("GuardMaster.Guard"), UtilsName.GetPlayerColor(attemptKiller, true)));
+                        Logger.Info($"{attemptTarget.GetNameWithRole().RemoveHtmlTags()} ガード残り : {HaveGuardCount}", "Guarding");
+                        break;
+                    case 1: //Guardianangel
+                            //死んでる人にはパリーン見せる
+                        var owner = GuardianAngel.GuardianAngelGuarding[attemptTarget.PlayerId].owner;
+                        PlayerCatch.AllPlayerControls.Where(pc => pc is not null && !pc.IsAlive())
+                            .Do(pc =>
+                            {
+                                attemptKiller.RpcProtectedMurderPlayer(pc, attemptTarget);
+                                if (pc.PlayerId == owner) pc.RpcProtectedMurderPlayer();
+                            });
+                        GuardianAngel.MeetingNotify |= true;
+                        UtilsGameLog.AddGameLog($"GuardianAngel", UtilsName.GetPlayerColor(attemptTarget) + ":  " + string.Format(Translator.GetString("GuardMaster.Guard"), UtilsName.GetPlayerColor(attemptKiller, true)
+                            + $"({UtilsName.GetPlayerColor(owner)}"));
+                        Logger.Info($"{attemptKiller.GetNameWithRole().RemoveHtmlTags()} => {attemptTarget.GetNameWithRole().RemoveHtmlTags()}守護天使ちゃんのガード!", "GuardianAngel");
+                        if (GuardianAngel.GuardianAngelGuarding.ContainsKey(attemptTarget.PlayerId))
+                            GuardianAngel.GuardianAngelGuarding[attemptTarget.PlayerId] = (999f, owner);
+                        break;
+                    case 2://AsistingAngel
+                        UtilsGameLog.AddGameLog($"AsistingAngel", UtilsName.GetPlayerColor(PlayerCatch.AllPlayerControls.FirstOrDefault(x => x.Is(CustomRoles.AsistingAngel)))
+                        + ":  " + string.Format(Translator.GetString("GuardMaster.Guard"), UtilsName.GetPlayerColor(attemptKiller, true)));
+                        break;
+                    case 3://Role
+                        break;
+                    case 4:
+                        Logger.Info($"AbsorbGuard : {--Absorb.AbsorbGuard[attemptTarget.PlayerId]}", "Absorb");
+                        UtilsGameLog.AddGameLog($"Guard", UtilsName.GetPlayerColor(attemptTarget) + ":  " + string.Format(Translator.GetString("GuardMaster.Guard"), UtilsName.GetPlayerColor(attemptKiller, true)));
+                        break;
+                    default:
+                        break;
+                }
+                attemptKiller.RpcProtectedMurderPlayer(attemptTarget);
+                CheckMurderPatch.TimeSinceLastKill[attemptKiller.PlayerId] = 0f;
+                UtilsNotifyRoles.NotifyRoles();
+                killer.OnCheckMurderDontKill(info);
+                return false;
+            }
+        }
+
+        //キル可能だった場合のみMurderPlayerに進む
+        if (info.CanKill && info.DoKill)//ノイメ対応
+        {
+            //特別な処理の役職は部屋チェックから除外
+            if (!appearanceKiller.Is(CustomRoles.Bomber) && !appearanceKiller.Is(CustomRoles.Vampire) && !appearanceKiller.Is(CustomRoles.Samurai) && !appearanceKiller.Is(CustomRoles.SelfBomber) && !appearanceKiller.Is(CustomRoles.Limiter) && !appearanceKiller.Is(CustomRoles.HadouHo) && !appearanceKiller.Is(CustomRoles.HadouHo) && !appearanceKiller.Is(CustomRoles.JackalHadouHo) && !appearanceKiller.Is(CustomRoles.SheriffHadouHo))
             {
                 Jizo.Checkroom(appearanceKiller.GetPlainShipRoom(), appearanceKiller);
             }

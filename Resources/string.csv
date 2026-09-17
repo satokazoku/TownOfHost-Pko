@@ -1948,6 +1948,7 @@
 "CmdAndSelfVote","command and selfvote","自投票 + コマンド"
 "TargetingMode","Estimation Methods","推測方法"
 "EvilGuesserSelfVoteInfo","Self-vote → Specify target /bt Position Name → Guess","自投票→ターゲット指定　/bt 役職名→推測"
+"HadouHoHitKillFlash","When the beam hits, it triggers a kill flash.","ビームがヒットした際、キルフラッシュを発生させる"
 
 "## MadMate Role Setting"
 "MadmateOption","MadMate Options","マッドメイト系役職の設定"

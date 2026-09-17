@@ -24,7 +24,7 @@ public sealed class Freeter : RoleBase, IKiller, IAdditionalWinner
             SetupOptionItem,
             "tt",
             "#32cd32",
-            (6, 2),
+            (8, 2),
             from: From.SuperNewRoles,
             isDesyncImpostor: true
         );

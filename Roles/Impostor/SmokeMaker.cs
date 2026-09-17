@@ -22,7 +22,7 @@ public sealed class SmokeMaker : RoleBase, IImpostor, IUsePhantomButton
             126400,
             SetupOptionItem,
             "sm",
-            OptionSort: (3, 10),
+            OptionSort: (6, 13),
             from: From.TownOfHost_Pko
         );
 

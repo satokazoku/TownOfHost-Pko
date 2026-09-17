@@ -20,7 +20,7 @@ public sealed class Chaser : RoleBase, IImpostor, ISidekickable
             SetUpOptionItem,
             "ch",
             from: From.TownOfHost_Y,
-            OptionSort: (7, 7)
+            OptionSort: (6, 12)
 
         );
 

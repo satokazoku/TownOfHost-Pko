@@ -22,7 +22,7 @@ public sealed class Duelist : RoleBase, IAdditionalWinner
             SetupOptionItem,
             "dl",
             "#ff6347",
-            (4, 9),
+            (7, 4),
             from: From.TownOfHost_Y
         );
 

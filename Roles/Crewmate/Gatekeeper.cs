@@ -21,7 +21,7 @@ public sealed class Gatekeeper : RoleBase
             SetupOptionItem,
             "gt",
             "#dc143c",
-            (9, 3),
+            (6, 4),
             introSound: () => GetIntroSound(RoleTypes.Tracker)
         );
     public Gatekeeper(PlayerControl player)

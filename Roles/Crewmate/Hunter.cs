@@ -26,7 +26,7 @@ public sealed class Hunter : RoleBase, IKiller, ISchrodingerCatOwner
             SetupOptionItem,
             "hun",
             "#f8cd46",
-            (2, 0),
+            (2, 3),
             true,
             introSound: () => GetIntroSound(RoleTypes.Crewmate),
             Desc: () =>

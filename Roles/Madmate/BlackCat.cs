@@ -18,7 +18,7 @@ public sealed class BlackCat : RoleBase, INekomata
             22500,
             SetupOptionItems,
             "bc",
-            OptionSort: (2, 3),
+            OptionSort: (3, 2),
             from: From.SuperNewRoles
         );
 

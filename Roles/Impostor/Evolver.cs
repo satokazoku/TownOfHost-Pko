@@ -23,7 +23,7 @@ public sealed class Evolver : RoleBase, IImpostor, IUsePhantomButton
             4700,
             SetupOptionItem,
             "ev",
-            OptionSort: (4, 5),
+            OptionSort: (7, 8),
             from: From.ExtremeRoles,
             introSound: () => GetIntroSound(RoleTypes.Shapeshifter)
         );

@@ -136,7 +136,8 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
     static OptionItem OptionCanMakeSidekick;
     static OptionItem OptionSidekickCooldown;
     static float SidekickCooldown;
-
+    static OptionItem OptionKillFlash;
+    List<byte> KillFlashedPlayerId;
     static OptionItem OptionTamaLoadCooldown;
     static OptionItem OptionTamaCanLoad;
     static OptionItem OptionTamaCanVent;
@@ -163,6 +164,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         JackalHadouHoSidekickCanSeeOldImpostorTeammates,
         JackalHadouHoImpostorCanSeeNameColor,
         JackalHadouHoSidekickPromotion,
+        HadouHoHitKillFlash,
         TamaOption,
         TamaCanLoad,
         TamaLoadCooldown,
@@ -215,6 +217,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         OptionSidekickCanSeeOldImpostorTeammates = BooleanOptionItem.Create(RoleInfo, 24, OptionName.JackalHadouHoSidekickCanSeeOldImpostorTeammates, false, false, OptionImpostorCanSidekick);
         OptionImpostorCanSeeNameColor = BooleanOptionItem.Create(RoleInfo, 34, OptionName.JackalHadouHoImpostorCanSeeNameColor, false, false, OptionImpostorCanSidekick);
         OptionSidekickPromotion = BooleanOptionItem.Create(RoleInfo, 35, OptionName.JackalHadouHoSidekickPromotion, false, false, OptionCanMakeSidekick);
+        OptionKillFlash = BooleanOptionItem.Create(RoleInfo, 36, OptionName.HadouHoHitKillFlash, true, false);
 
         ObjectOptionitem.Create(RoleInfo, 25, OptionName.TamaOption, true, "")
             .SetOptionName(() => "TAMA OPTION");
@@ -231,8 +234,8 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         OptionTamaCountAsJackalKiller = BooleanOptionItem.Create(RoleInfo, 32, "TamaCountAsJackalKiller", false, false);
         OptionTamaCountAsKillerOnlyWhenPromotionEnabled = BooleanOptionItem.Create(RoleInfo, 33, OptionName.TamaCountAsKillerOnlyWhenPromotionEnabled, false, false, OptionTamaCountAsJackalKiller);
 
-        ObjectOptionitem.Create(RoleInfo, 36, "AddonOption", true, null).SetOptionName(() => "Sidekick Setting");
-        RoleAddAddons.Create(RoleInfo, 37, NeutralKiller: true);
+        ObjectOptionitem.Create(RoleInfo, 37, "AddonOption", true, null).SetOptionName(() => "Sidekick Setting");
+        RoleAddAddons.Create(RoleInfo, 38, NeutralKiller: true);
 
         HideRoleOptions(CustomRoles.Tama);
     }
@@ -723,7 +726,6 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
             if (dot <= 0) continue;
             if ((toTarget - dir * dot).magnitude > 1.3f) continue;
             Jizo.Checkroom(Player.GetPlainShipRoom(), Player);
-            CustomRoleManager.OnCheckMurder(Player, target, target, target, true, deathReason: CustomDeathReason.Evaporation);
             HasHit = true;
             UtilsGameLog.AddGameLog("JackalHadouHo", $"<color=#00b4eb>【波動砲】</color> {UtilsName.GetPlayerColor(Player, true)} ═> {UtilsName.GetPlayerColor(target, true)}");
         }
@@ -747,7 +749,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
             if (dot <= 0) continue;
             if ((toTarget - dir * dot).magnitude > 4.0f) continue;
             Jizo.Checkroom(Player.GetPlainShipRoom(), Player);
-            CustomRoleManager.OnCheckMurder(Player, target, target, target, true, deathReason: CustomDeathReason.Evaporation);
+            CustomRoleManager.HadouHoOnCheckMurder(Player, target, target, target, true, deathReason: CustomDeathReason.Evaporation);
             HasHit = true;
             UtilsGameLog.AddGameLog("JackalHadouHo", $"<color=#ff0000>【超波動砲】</color> {UtilsName.GetPlayerColor(Player, true)} ═> {UtilsName.GetPlayerColor(target, true)}");
         }

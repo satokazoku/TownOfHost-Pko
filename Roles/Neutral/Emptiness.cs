@@ -18,7 +18,7 @@ public sealed class Emptiness : RoleBase
             null,
             "emp",
             "#221d26",
-            (99, 99),
+            (8, 0),
             countType: CountTypes.None,
             from: From.TownOfHost_K
         );

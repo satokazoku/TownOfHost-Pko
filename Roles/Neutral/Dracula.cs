@@ -4,7 +4,7 @@ using Hazel;
 using MS.Internal.Xml.XPath;
 using TMPro;
 using TownOfHost.Roles.Core;
-using TownOfHost.Roles.Core.Interfaces;
+/*using TownOfHost.Roles.Core.Interfaces;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
@@ -213,4 +213,4 @@ public sealed class Dracula : RoleBase, ILNKiller, IUsePhantomButton
         AdjustKillCooldown = false;
         ResetCooldown = false;
     }
-}
+}*/

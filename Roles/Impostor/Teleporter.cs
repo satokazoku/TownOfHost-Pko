@@ -25,7 +25,7 @@ public sealed class Teleporter : RoleBase, IImpostor, IUsePhantomButton
             7500,
             SetupOptionItem,
             "etp",
-            OptionSort: (3, 16),
+            OptionSort: (6, 15),
             from: From.SuperNewRoles
         );
 

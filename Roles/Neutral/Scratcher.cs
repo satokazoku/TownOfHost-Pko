@@ -22,7 +22,7 @@ public sealed class Scratcher : RoleBase, IAdditionalWinner
             SetupOptionItem,
             "scr",
             "#d4af37",
-            (4, 8),
+            (5, 7),
             true,
             from: From.TownOfHost_Pko
         );

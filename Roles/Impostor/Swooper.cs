@@ -23,7 +23,7 @@ public sealed class Swooper : RoleBase, IImpostor, IUsePhantomButton
             326500,
             SetupOptionItem,
             "sw",
-            OptionSort: (3, 10),
+            OptionSort: (6, 14),
             from: From.TownOfHost_Enhanced
         );
 

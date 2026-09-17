@@ -25,6 +25,8 @@ using TownOfHost.Patches;
 using TownOfHost.Attributes;
 using Hazel;
 using InnerNet;
+using TownOfHost.Roles.Impostor;
+using TownOfHost.Roles.Neutral;
 
 namespace TownOfHost
 {
@@ -158,6 +160,7 @@ namespace TownOfHost
                 ((seer.Is(CustomRoles.Seeing) && (!IsActive(SystemTypes.Comms) || Seeing.OptionCanSeeActiveComms.GetBool())))
             };
         }
+
         public static bool NowKillFlash = false;
         public static void KillFlash(this PlayerControl player, bool force = false)
         {

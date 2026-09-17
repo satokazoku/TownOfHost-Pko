@@ -16,7 +16,7 @@ public sealed class Minimalist : RoleBase, IImpostor
             5600,
             SetupOptionItem,
             "mml",
-            OptionSort: (2, 11),
+            OptionSort: (7, 10),
             from: From.SuperNewRoles
         );
 

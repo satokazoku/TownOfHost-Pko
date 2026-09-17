@@ -19,7 +19,7 @@ public sealed class Apprentice : RoleBase
             SetupOptionItem,
             "ap",
             "#c8a46e",
-            (5, 5),
+            (8, 3),
             introSound: () => GetIntroSound(RoleTypes.Crewmate)
         );
 

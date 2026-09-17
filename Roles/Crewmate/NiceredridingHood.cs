@@ -21,7 +21,7 @@ public sealed class NiceredridingHood : RoleBase
             SetupOptionItem,
             "nrrh",
             "#fa8072",
-            (5, 3),
+            (1, 3),
             introSound: () => GetIntroSound(RoleTypes.Crewmate),
             from: From.SuperNewRoles
         );

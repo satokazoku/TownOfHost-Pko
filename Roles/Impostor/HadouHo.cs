@@ -8,6 +8,7 @@ using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Crewmate;
 using UnityEngine;
+using static UnityEngine.ParticleSystem.PlaybackState;
 
 namespace TownOfHost.Roles.Impostor;
 
@@ -73,8 +74,10 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
     static OptionItem OptionSelfDestructOnMiss;
     static bool SelfDestructOnMiss;
     static OptionItem OptionKillImpostor;
+    static OptionItem OptionKillFlash;
     static bool KillImpostor;
-    enum OptionName { HadouHoChargeTime, HadouHoSelfDestruct, HadouHoKillImpostor, HadouHoBeamTime }
+    List<byte> KillFlashedPlayerId;
+    enum OptionName { HadouHoChargeTime, HadouHoSelfDestruct, HadouHoKillImpostor, HadouHoBeamTime, HadouHoHitKillFlash}
 
     static void SetUpOptionItem()
     {
@@ -83,7 +86,8 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
         OptionChargeTime = FloatOptionItem.Create(RoleInfo, 12, OptionName.HadouHoChargeTime, new(0.5f, 10f, 0.5f), 3f, false).SetValueFormat(OptionFormat.Seconds);
         OptionBeamTime = FloatOptionItem.Create(RoleInfo, 13, OptionName.HadouHoBeamTime, new(0.5f, 10f, 0.5f), 3f, false).SetValueFormat(OptionFormat.Seconds);
         OptionSelfDestructOnMiss = BooleanOptionItem.Create(RoleInfo, 14, OptionName.HadouHoSelfDestruct, false, false);
-        OptionKillImpostor = BooleanOptionItem.Create(RoleInfo, 15, OptionName.HadouHoKillImpostor, false, false);
+        OptionKillImpostor = BooleanOptionItem.Create(RoleInfo, 15, OptionName.HadouHoKillImpostor, true, false);
+        OptionKillFlash = BooleanOptionItem.Create(RoleInfo, 16, OptionName.HadouHoHitKillFlash, true, false);
     }
 
     public override void Add()
@@ -261,7 +265,6 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
             }, 0.2f, "HadouHoResetKillCool", true);
         }, BeamTime);
     }
-
     void ApplyBeamHit()
     {
         if (!AmongUsClient.Instance.AmHost || !Player.IsAlive()) return;
@@ -274,6 +277,7 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
         // 以降の対象判定がおかしくなるのを防ぐ。
         foreach (var target in PlayerCatch.AllAlivePlayerControls.ToArray())
         {
+            if (target is null) continue;
             if (!Player.IsAlive()) break;
             if (target.PlayerId == Player.PlayerId) continue;
             if (!target.IsAlive()) continue;
@@ -285,7 +289,7 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
             var perp = toTarget - proj;
             if (perp.magnitude > 1.3f) continue;
             Jizo.Checkroom(Player.GetPlainShipRoom(), Player);
-            CustomRoleManager.OnCheckMurder(Player, target, target, target, true, deathReason: CustomDeathReason.Evaporation);
+            CustomRoleManager.HadouHoOnCheckMurder(Player, target, target, target, true, deathReason: CustomDeathReason.Evaporation);
             HasHit = true;
         }
     }

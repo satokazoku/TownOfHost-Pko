@@ -32,7 +32,7 @@ public sealed class God : RoleBase, ISystemTypeUpdateHook, IDeathReasonSeeable
     {
     }
 
-    static OptionItem Bakuro;
+    //static OptionItem Bakuro;
 
     public static OptionItem SeeVotesOpt;
     public static OptionItem CanSeeDeathReasonOpt;

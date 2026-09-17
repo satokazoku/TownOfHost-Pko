@@ -29,7 +29,7 @@ public sealed class Jizo : RoleBase
             SetupOptionItem,
             "jz",
             "#a9a9a9",
-            (1, 9),
+            (6, 5),
             assignInfo: new RoleAssignInfo(CustomRoles.Jizo, CustomRoleTypes.Crewmate)
             {
                 AssignCountRule = new(1, 1, 1) 

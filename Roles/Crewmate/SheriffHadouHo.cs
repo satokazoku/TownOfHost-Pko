@@ -67,7 +67,8 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
     static int BeamColorModeValue;
     static OptionItem OptionBeamUnlockTask;
     static int BeamUnlockTaskCount;
-
+    static OptionItem OptionKillFlash;
+    List<byte> KillFlashedPlayerId;
     int ShotLimit;
     public bool IsCharging;
     float chargeTimer;
@@ -97,6 +98,7 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
         SheriffHadouHoBeamUnlockTask,
         SheriffHadouHoSelfDestruct,
         SheriffHadouHoBeamTime,
+        HadouHoHitKillFlash,
     }
 
     static void SetupOptionItem()
@@ -117,6 +119,7 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
         OptionBeamUnlockTask = IntegerOptionItem.Create(RoleInfo, 16,
             OptionName.SheriffHadouHoBeamUnlockTask,
             new(0, 10, 1), 0, false).SetValueFormat(OptionFormat.Times);
+        OptionKillFlash = BooleanOptionItem.Create(RoleInfo, 17, OptionName.HadouHoHitKillFlash, true, false);
     }
 
     public override void Add()
@@ -410,7 +413,7 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
             var perp = toTarget - proj;
             if (perp.magnitude > 1.3f) continue;
             Jizo.Checkroom(Player.GetPlainShipRoom(), Player);
-            CustomRoleManager.OnCheckMurder(Player, target, target, target, true, deathReason: CustomDeathReason.Evaporation);
+            CustomRoleManager.HadouHoOnCheckMurder(Player, target, target, target, true, deathReason: CustomDeathReason.Evaporation);
             if (!target.Is(CustomRoleTypes.Crewmate))
             {
                 HasHit = true;

@@ -21,7 +21,7 @@ public sealed class BoostLighter : RoleBase
             SetupOptionItem,
             "bl",
             "#ffe066",
-            (5, 1),
+            (7, 4),
             from: From.None
         );
 

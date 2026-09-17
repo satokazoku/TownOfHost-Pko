@@ -22,7 +22,7 @@ public sealed class Vanity : RoleBase, IKiller, ISchrodingerCatOwner, IAdditiona
             SetupOptionItem,
             "van",
             "#aa8d22",
-            (2, 2),
+            (5, 9),
             introSound: () => GetIntroSound(RoleTypes.Crewmate),
             countType: CountTypes.Vanity,
             from: From.NebulaontheShip,

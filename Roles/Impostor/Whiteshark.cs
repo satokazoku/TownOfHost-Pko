@@ -24,7 +24,7 @@ public sealed class Whiteshark : RoleBase, IImpostor, IUsePhantomButton
             SetupOptionItem,
             "wsk",
             "#ff1919",
-            OptionSort: (3, 6)
+            OptionSort: (7, 11)
         );
     public Whiteshark(PlayerControl player)
     : base(RoleInfo, player)
