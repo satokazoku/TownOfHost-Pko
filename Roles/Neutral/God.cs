@@ -65,8 +65,9 @@ public sealed class God : RoleBase, ISystemTypeUpdateHook, IDeathReasonSeeable
         SoloWinOption.Create(RoleInfo, 7, defo: 5);
         OverrideTasksData.Create(RoleInfo, 20);
 
-        Bakuro = BooleanOptionItem.Create(RoleInfo, 18, OptionName.GodBakuro, false, false)
-            .SetParentRole(CustomRoles.God);
+        //動作してないので消しておきます
+        /*Bakuro = BooleanOptionItem.Create(RoleInfo, 18, OptionName.GodBakuro, false, false)
+            .SetParentRole(CustomRoles.God);*/
 
         SeeVotesOpt = BooleanOptionItem.Create(RoleInfo, 10, OptionName.GodSeeVotes, true, false)
             .SetParentRole(CustomRoles.God);
@@ -80,7 +81,7 @@ public sealed class God : RoleBase, ISystemTypeUpdateHook, IDeathReasonSeeable
         RequireTasksToWinOpt = BooleanOptionItem.Create(RoleInfo, 12, OptionName.GodRequireTasksToWin, false, false)
             .SetParentRole(CustomRoles.God);
 
-        TaskCountOpt = IntegerOptionItem.Create(RoleInfo, 13, OptionName.GodTaskCount, new(0, 999, 1), 0, false)
+        TaskCountOpt = IntegerOptionItem.Create(RoleInfo, 13, OptionName.GodTaskCount, new(0, 999, 1), 0, false, RequireTasksToWinOpt)
             .SetParentRole(CustomRoles.God);
 
         CantFixReactorOpt = BooleanOptionItem.Create(RoleInfo, 14, OptionName.GodCantFixReactor, false, false)

@@ -48,6 +48,7 @@ namespace TownOfHost
             Spawndummy = IntegerOptionItem.Create(5, "Spawndummy", new(0, 14, 1), 0, TabGroup.MainSettings, true)
                 .SetColor(Color.green)
                 .SetZeroNotation(OptionZeroNotation.Off)
+                .SetParent(EnableTOHPDebugMode)
                 .SetHidden(!AmDebugger);
             DummyAssignRole = BooleanOptionItem.Create(6, "DummyAssignRole", false, TabGroup.MainSettings, true)
                 .SetHidden(!AmDebugger)
