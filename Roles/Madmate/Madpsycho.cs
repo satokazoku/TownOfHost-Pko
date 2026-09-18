@@ -73,6 +73,12 @@ public sealed class MadPsycho : RoleBase
     {
         CustomDeathReason.Kill, CustomDeathReason.Counter
     };
+    public override bool OnCheckMurderAsTarget(MurderInfo info)
+    {
+        info.GuardPower = 1;
+        Psycho(info.AttemptKiller, info.KillPower);
+        return true;
+    }
     public void Psycho(PlayerControl killer, int power)
     {
         if (power >= 2) return;
@@ -94,6 +100,6 @@ public sealed class MadPsycho : RoleBase
             }
         }
         PlayerState.GetByPlayerId(killer.PlayerId).DeathReason = deathReasons[OptionDeathReason.GetValue()];
-        CustomRoleManager.OnCheckMurder(Player, killer, Player, killer, Killpower: 999);
+        CustomRoleManager.OnCheckMurder(Player, killer, Player, killer, Killpower: 10);
     }
 }
