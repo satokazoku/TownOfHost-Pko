@@ -1,46 +1,50 @@
 {
-    "AllVersion": {
-        "Unavailable": false,
-        "NotAvailableOnline": false
-    },
-    "4.32.17.75": {
-        "Unavailable": false,
-        "NotAvailableOnline": false
-    },
-    "5.33.18.89": {
-        "Unavailable": false,
-        "NotAvailableOnline": false
-    },
-    "5.33.18.90": {
-        "Unavailable": false,
-        "NotAvailableOnline": false
-    },
-    "5.33.18.91": {
-        "Unavailable": false,
-        "NotAvailableOnline": false
-    },
-    "5.33.18.92": {
-        "Unavailable": false,
-        "NotAvailableOnline": false
-    },
-    "5.34.18.93": {
-        "Unavailable": false,
-        "NotAvailableOnline": false
-    },
-    "5.34.19.94": {
-        "Unavailable": false,
-        "NotAvailableOnline": false
-    },
-    "5.34.20.95": {
-        "Unavailable": false,
-        "NotAvailableOnline": false
-    },
-    "5.34.21.96": {
-        "Unavailable": false,
-        "NotAvailableOnline": false
-    },
-    "5.35.22.97": {
-        "Unavailable": false,
-        "NotAvailableOnline": false
-    }
+  "AllVersion": {
+    "Unavailable": false,
+    "NotAvailableOnline": false
+  },
+  "4.32.17.75": {
+    "Unavailable": false,
+    "NotAvailableOnline": false
+  },
+  "5.33.18.89": {
+    "Unavailable": false,
+    "NotAvailableOnline": false
+  },
+  "5.33.18.90": {
+    "Unavailable": false,
+    "NotAvailableOnline": false
+  },
+  "5.33.18.91": {
+    "Unavailable": false,
+    "NotAvailableOnline": false
+  },
+  "5.33.18.92": {
+    "Unavailable": false,
+    "NotAvailableOnline": false
+  },
+  "5.34.18.93": {
+    "Unavailable": false,
+    "NotAvailableOnline": false
+  },
+  "5.34.19.94": {
+    "Unavailable": false,
+    "NotAvailableOnline": false
+  },
+  "5.34.20.95": {
+    "Unavailable": false,
+    "NotAvailableOnline": false
+  },
+  "5.34.21.96": {
+    "Unavailable": false,
+    "NotAvailableOnline": false
+  },
+  "5.35.22.97": {
+    "Unavailable": false,
+    "NotAvailableOnline": false
+  },
+  "5.36.22.98": {
+    "Unavailable": false,
+    "NotAvailableOnline": false
+  }
 }
