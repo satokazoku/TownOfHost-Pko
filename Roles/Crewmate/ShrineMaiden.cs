@@ -7,6 +7,7 @@ using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Madmate;
 using UnityEngine;
 using static TownOfHost.Modules.SelfVoteManager;
+using static UnityEngine.GraphicsBuffer;
 
 namespace TownOfHost.Roles.Crewmate;
 
@@ -163,45 +164,13 @@ public sealed class ShrineMaiden : RoleBase, ISelfVoter
         SendRPC();
         var t1 = role1.GetCustomRoleTypes();
         var t2 = role2.GetCustomRoleTypes();
-        if (target1.Is(CustomRoles.Madpsycho))
+        if (target1.GetRoleClass() is MadPsycho ms)
         {
-            if (Madpsycho.CanPsycho)
-            {
-                PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = Madpsycho.deathReasons[Madpsycho.OptionDeathReason.GetValue()];
-                target1.RpcMurderPlayer(Player);
-                string send = "";
-                if (!Player.IsAlive())
-                {
-                    send = string.Format(GetString("Rpsych"), UtilsName.GetPlayerColor(Player, true), UtilsName.GetPlayerColor(target1, true));
-                }
-                else
-                {
-                    send = string.Format(GetString("RMeetingKill"), UtilsName.GetPlayerColor(Player, true), UtilsName.GetPlayerColor(Player, true));
-                }
-                foreach (var spl in PlayerCatch.AllPlayerControls.Where(pc => !pc.IsAlive())) Utils.SendMessage(send, spl.PlayerId, GetString("RMSKillTitle"));
-
-                return;
-            }
+            ms.Psycho(Player, 1);
         }
-        else if (target2.Is(CustomRoles.Madpsycho))
+        else if (target2.GetRoleClass() is MadPsycho ms2)
         {
-            if (Madpsycho.CanPsycho)
-            {
-                PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = Madpsycho.deathReasons[Madpsycho.OptionDeathReason.GetValue()];
-                target2.RpcMurderPlayer(Player);
-                string send = "";
-                if (!Player.IsAlive())
-                {
-                    send = string.Format(GetString("Rpsych"), UtilsName.GetPlayerColor(Player, true), UtilsName.GetPlayerColor(target2, true));
-                }
-                else
-                {
-                    send = string.Format(GetString("RMeetingKill"), UtilsName.GetPlayerColor(Player, true), UtilsName.GetPlayerColor(Player, true));
-                }
-                foreach (var spl in PlayerCatch.AllPlayerControls.Where(pc => !pc.IsAlive())) Utils.SendMessage(send, spl.PlayerId, GetString("RMSKillTitle"));
-
-                return;
-            }
+            ms2.Psycho(Player, 1);
         }
         var madmate = Options.MadTellOpt().GetCustomRoleTypes();
 

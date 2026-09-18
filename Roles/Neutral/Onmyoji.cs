@@ -168,14 +168,9 @@ public sealed class Onmyoji : RoleBase, IKiller, ISelfVoter
 
         (_, var target) = info.AttemptTuple;
         if (!IsValidShikigamiTarget(target)) return;
-        if (target.Is(CustomRoles.Madpsycho))
+        if (target.GetRoleClass() is MadPsycho ms)
         {
-            if (Madpsycho.CanPsycho)
-            {
-                PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = Madpsycho.deathReasons[Madpsycho.OptionDeathReason.GetValue()];
-                target.RpcMurderPlayer(Player);
-                return;
-            }
+            ms.Psycho(Player, 1);
         }
         nominateMode = false;
         ApplyModeDesync(false);
@@ -415,14 +410,9 @@ public sealed class Onmyoji : RoleBase, IKiller, ISelfVoter
         if (ShikigamiIds.Count >= 1) return;
         if (!IsValidShikigamiTarget(target)) return;
         if (Walkure.TryRejectRoleChange(Player, target, Walkure.RoleChangeSource.Jackal)) return;
-        if (target.Is(CustomRoles.Madpsycho))
+        if (target.GetRoleClass() is MadPsycho ms)
         {
-            if (Madpsycho.CanPsycho)
-            {
-                PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = Madpsycho.deathReasons[Madpsycho.OptionDeathReason.GetValue()];
-                target.RpcMurderPlayer(Player);
-                return;
-            }
+            ms.Psycho(Player, 1);
         }
         ShikigamiIds.Add(target.PlayerId);
         TargetArrow.Add(Player.PlayerId, target.PlayerId);

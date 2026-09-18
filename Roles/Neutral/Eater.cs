@@ -151,14 +151,9 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
         var (killer, target) = info.AttemptTuple;
         info.DoKill = false;
 
-        if (target.Is(CustomRoles.Madpsycho))
+        if (target.GetRoleClass() is MadPsycho ms)
         {
-            if (Madpsycho.CanPsycho)
-            {
-                PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = Madpsycho.deathReasons[Madpsycho.OptionDeathReason.GetValue()];
-                target.RpcMurderPlayer(Player);
-                return;
-            }
+            ms.Psycho(Player, 1);
         }
         killer.SetKillCooldown(OptionSwallowTime.GetFloat());
         if (target.IsAlive() && pendingSwallow == null)

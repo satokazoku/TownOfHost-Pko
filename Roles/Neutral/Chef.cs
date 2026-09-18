@@ -86,20 +86,14 @@ public sealed class Chef : RoleBase, IKiller, IAdditionalWinner
     public void OnCheckMurderAsKiller(MurderInfo info)
     {
         var (killer, target) = info.AttemptTuple;
-        if (target.Is(CustomRoles.Madpsycho))
-        {
-            info.DoKill = false;
+        info.DoKill = false;
 
-            if (Madpsycho.CanPsycho)
-            {
-                PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = Madpsycho.deathReasons[Madpsycho.OptionDeathReason.GetValue()];
-                target.RpcMurderPlayer(Player);
-                return;
-            }
+        if (target.GetRoleClass() is MadPsycho ms)
+        {
+            ms.Psycho(Player, 1);
         }
         if (ChefTarget.Contains(target.PlayerId))
         {
-            info.DoKill = false;
             return;
         }
         killer.SetKillCooldown(1);
@@ -107,7 +101,6 @@ public sealed class Chef : RoleBase, IKiller, IAdditionalWinner
         SendRPC(target.PlayerId);
         UtilsNotifyRoles.NotifyRoles(SpecifySeer: Player);
         Logger.Info($"Player: {Player.name},Target: {target.name}", "Chef");
-        info.DoKill = false;
     }
     public override string GetMark(PlayerControl seer, PlayerControl seen, bool isForMeeting = false)
     {

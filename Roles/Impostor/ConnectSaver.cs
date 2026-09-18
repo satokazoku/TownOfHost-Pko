@@ -156,45 +156,13 @@ public sealed class ConnectSaver : RoleBase, IImpostor, ISelfVoter
 
             var targetpc1 = PlayerCatch.GetPlayerById(target1);
             var targetpc2 = PlayerCatch.GetPlayerById(target2);
-            if (targetpc1.Is(CustomRoles.Madpsycho))
+            if (targetpc1.GetRoleClass() is MadPsycho ms)
             {
-                if (Madpsycho.CanPsycho)
-                {
-                    PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = Madpsycho.deathReasons[Madpsycho.OptionDeathReason.GetValue()];
-                    targetpc1.RpcMurderPlayer(Player);
-                    string send = "";
-                    if (!Player.IsAlive())
-                    {
-                        send = string.Format(GetString("Rpsych"), UtilsName.GetPlayerColor(Player, true), UtilsName.GetPlayerColor(targetpc1, true));
-                    }
-                    else
-                    {
-                        send = string.Format(GetString("RMeetingKill"), UtilsName.GetPlayerColor(Player, true), UtilsName.GetPlayerColor(Player, true));
-                    }
-                    foreach (var spl in PlayerCatch.AllPlayerControls.Where(pc => !pc.IsAlive())) Utils.SendMessage(send, spl.PlayerId, GetString("RMSKillTitle"));
-
-                    return;
-                }
+                ms.Psycho(Player, 1);
             }
-            else if (targetpc2.Is(CustomRoles.Madpsycho))
+            if (targetpc2.GetRoleClass() is MadPsycho ms2)
             {
-                if (Madpsycho.CanPsycho)
-                {
-                    PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = Madpsycho.deathReasons[Madpsycho.OptionDeathReason.GetValue()];
-                    targetpc2.RpcMurderPlayer(Player);
-                    string send = "";
-                    if (!Player.IsAlive())
-                    {
-                        send = string.Format(GetString("Rpsych"), UtilsName.GetPlayerColor(Player, true), UtilsName.GetPlayerColor(targetpc2, true));
-                    }
-                    else
-                    {
-                        send = string.Format(GetString("RMeetingKill"), UtilsName.GetPlayerColor(Player, true), UtilsName.GetPlayerColor(Player, true));
-                    }
-                    foreach (var spl in PlayerCatch.AllPlayerControls.Where(pc => !pc.IsAlive())) Utils.SendMessage(send, spl.PlayerId, GetString("RMSKillTitle"));
-
-                    return;
-                }
+                ms2.Psycho(Player, 1);
             }
             if (!targetpc1.IsAlive() || targetpc1 == null) target1 = byte.MaxValue;
             if (!targetpc2.IsAlive() || targetpc2 == null) target2 = byte.MaxValue;

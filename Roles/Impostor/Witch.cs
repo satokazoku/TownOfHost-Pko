@@ -207,14 +207,9 @@ namespace TownOfHost.Roles.Impostor
             {
                 ResetCooldown = true;
                 var target = Player.GetKillTarget(true);
-                if (target.Is(CustomRoles.Madpsycho))
+                if (target.GetRoleClass() is MadPsycho ms)
                 {
-                    if (Madpsycho.CanPsycho)
-                    {
-                        PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = Madpsycho.deathReasons[Madpsycho.OptionDeathReason.GetValue()];
-                        target.RpcMurderPlayer(Player);
-                        return;
-                    }
+                    ms.Psycho(Player, 1);
                 }
                 if (target != null)
                 {

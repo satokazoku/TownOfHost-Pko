@@ -147,27 +147,19 @@ public sealed class MassMedia : RoleBase, IKiller, IKillFlashSeeable
     public void OnCheckMurderAsKiller(MurderInfo info)
     {
         var (killer, target) = info.AttemptTuple;
-        if (target.Is(CustomRoles.Madpsycho))
+        info.DoKill = false;
+        if (target.GetRoleClass() is MadPsycho ms)
         {
-            info.DoKill = false;
-
-            if (Madpsycho.CanPsycho)
-            {
-                PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = Madpsycho.deathReasons[Madpsycho.OptionDeathReason.GetValue()];
-                target.RpcMurderPlayer(Player);
-                return;
-            }
+            ms.Psycho(Player, 1);
         }
         if (Is(killer))
         {
             if (Targetid != byte.MaxValue)
             {
-                info.DoKill = false;
                 return;
             }
             Targetid = target.PlayerId;
             SendRPC();
-            info.DoKill = false;
             Main.AllPlayerKillCooldown[killer.PlayerId] = 999;
             killer.SyncSettings();
             killer.RpcProtectedMurderPlayer();

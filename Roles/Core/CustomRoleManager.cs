@@ -1177,7 +1177,7 @@ public enum CustomRoles
     MadHacker,
     MadSheriff,
     MadWare,
-    Madpsycho,
+    MadPsycho,
     //DEBUG only Madmate
     //Crewmate(Vanilla)
     Engineer,

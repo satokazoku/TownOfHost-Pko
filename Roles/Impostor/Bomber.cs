@@ -7,6 +7,7 @@ using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Crewmate;
 using TownOfHost.Roles.Madmate;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 namespace TownOfHost.Roles.Impostor
 {
@@ -112,14 +113,9 @@ namespace TownOfHost.Roles.Impostor
         {
             Logger.Info($"{Player?.Data?.GetLogPlayerName() ?? "???"} => {Bombtarget?.Data?.GetLogPlayerName() ?? "失敗"}", "Bomber");
             if (Bombtarget == null || BomberExplosionPlayers.ContainsKey(Bombtarget?.PlayerId ?? byte.MaxValue)) return;
-            if (Bombtarget.Is(CustomRoles.Madpsycho))
+            if (target.GetRoleClass() is MadPsycho ms)
             {
-                if (Madpsycho.CanPsycho)
-                {
-                    PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = Madpsycho.deathReasons[Madpsycho.OptionDeathReason.GetValue()];
-                    Bombtarget.RpcMurderPlayer(Player);
-                    return;
-                }
+                ms.Psycho(Player, 1);
             }
             if (!BomberExplosionPlayers.TryAdd(Bombtarget.PlayerId, 0f)) return;
             SendAddRPC(Bombtarget.PlayerId);

@@ -384,14 +384,9 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         {
             info.DoKill = false;
             (_, var target) = info.AttemptTuple;
-            if (target.Is(CustomRoles.Madpsycho))
+            if (target.GetRoleClass() is MadPsycho ms)
             {
-                if (Madpsycho.CanPsycho)
-                {
-                    PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = Madpsycho.deathReasons[Madpsycho.OptionDeathReason.GetValue()];
-                    target.RpcMurderPlayer(Player);
-                    return;
-                }
+                ms.Psycho(Player, 1);
             }
             DoSideKick(target);
 
@@ -806,14 +801,9 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
         Player.RpcProtectedMurderPlayer(target);
         target.RpcProtectedMurderPlayer(Player);
         target.RpcProtectedMurderPlayer(target);
-        if (target.Is(CustomRoles.Madpsycho))
+        if (target.GetRoleClass() is MadPsycho ms)
         {
-            if (Madpsycho.CanPsycho)
-            {
-                PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = Madpsycho.deathReasons[Madpsycho.OptionDeathReason.GetValue()];
-                target.RpcMurderPlayer(Player);
-                return;
-            }
+            ms.Psycho(Player, 1);
         }
         target.RpcSetCustomRole(CustomRoles.Tama, log: null);
         if (target.GetRoleClass() is Tama tama) tama.SetOwner(Player.PlayerId);

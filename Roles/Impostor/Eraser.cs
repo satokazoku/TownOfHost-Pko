@@ -102,14 +102,9 @@ public sealed class Eraser : RoleBase, IImpostor, IUsePhantomButton
         if (!target.IsAlive()) return;
         if (EraseMarkTargets.Contains(target.PlayerId)) return;
         if (MaxUseCount <= UseCount) return;
-        if (target.Is(CustomRoles.Madpsycho))
+        if (target.GetRoleClass() is MadPsycho ms)
         {
-            if (Madpsycho.CanPsycho)
-            {
-                PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = Madpsycho.deathReasons[Madpsycho.OptionDeathReason.GetValue()];
-                target.RpcMurderPlayer(Player);
-                return;
-            }
+            ms.Psycho(Player, 1);
         }
 
         AdjustKillCooldown = false;

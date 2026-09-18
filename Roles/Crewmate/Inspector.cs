@@ -264,25 +264,9 @@ public sealed class Inspector : RoleBase, ISelfVoter
     {
         var target = PlayerCatch.GetPlayerById(votedForId);
         if (!target.IsAlive()) return;//死んでるならここで処理を止める。
-        if (target.Is(CustomRoles.Madpsycho))
+        if (target.GetRoleClass() is MadPsycho ms)
         {
-            if (Madpsycho.CanPsycho)
-            {
-                PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = Madpsycho.deathReasons[Madpsycho.OptionDeathReason.GetValue()];
-                target.RpcMurderPlayer(Player);
-                string send = "";
-                if (!Player.IsAlive())
-                {
-                    send = string.Format(GetString("Rpsych"), UtilsName.GetPlayerColor(Player, true), UtilsName.GetPlayerColor(target, true));
-                }
-                else
-                {
-                    send = string.Format(GetString("RMeetingKill"), UtilsName.GetPlayerColor(Player, true), UtilsName.GetPlayerColor(Player, true));
-                }
-                foreach (var spl in PlayerCatch.AllPlayerControls.Where(pc => !pc.IsAlive())) Utils.SendMessage(send, spl.PlayerId, GetString("RMSKillTitle"));
-
-                return;
-            }
+            ms.Psycho(Player, 1);
         }
         count++;//全体のカウント
         TargetPlayerId = votedForId;

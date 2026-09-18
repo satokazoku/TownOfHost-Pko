@@ -79,14 +79,9 @@ public sealed class Mafia : RoleBase, IImpostor, IUsePhantomButton
         if (!SKMad || Options.CanMakeMadmateCount.GetInt() <= PlayerCatch.SKMadmateNowCount) return;
         var target = Player.GetKillTarget(true);
         if (target == null || target.GetCustomRole() is CustomRoles.King or CustomRoles.Merlin or CustomRoles.AlienHijack || (target.IsTeammate(Player) && !SuddenDeathMode.NowSuddenDeathTemeMode)) return;
-        if (target.Is(CustomRoles.Madpsycho))
+        if (target.GetRoleClass() is MadPsycho ms)
         {
-            if (Madpsycho.CanPsycho)
-            {
-                PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = Madpsycho.deathReasons[Madpsycho.OptionDeathReason.GetValue()];
-                target.RpcMurderPlayer(Player);
-                return;
-            }
+            ms.Psycho(Player, 1);
         }
         SKMad = false;
         SendRPC();

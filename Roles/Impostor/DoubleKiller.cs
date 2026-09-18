@@ -130,14 +130,9 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
         {
             return;
         }
-        else if (target.Is(CustomRoles.Madpsycho))
+        else if (target.GetRoleClass() is MadPsycho ms)
         {
-            if (Madpsycho.CanPsycho)
-            {
-                PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = Madpsycho.deathReasons[Madpsycho.OptionDeathReason.GetValue()];
-                target.RpcMurderPlayer(Player);
-                return;
-            }
+            ms.Psycho(Player, 1);
         }
         else
         {

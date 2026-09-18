@@ -80,14 +80,9 @@ namespace TownOfHost
                             shapeshifter.RpcRejectShapeshift();
                             return false;
                         }
-                        if (targetm.Is(CustomRoles.Madpsycho))
+                        if (targetm.GetRoleClass() is MadPsycho ms)
                         {
-                            if (Madpsycho.CanPsycho)
-                            {
-                                PlayerState.GetByPlayerId(shapeshifter.PlayerId).DeathReason = Madpsycho.deathReasons[Madpsycho.OptionDeathReason.GetValue()];
-                                target.RpcMurderPlayer(shapeshifter);
-                                return false;
-                            }
+                            ms.Psycho(shapeshifter, 1);
                         }
                         if (SuddenDeathMode.NowSuddenDeathTemeMode)
                         {

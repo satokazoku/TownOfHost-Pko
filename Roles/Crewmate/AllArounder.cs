@@ -10,8 +10,10 @@ using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Impostor;
 using TownOfHost.Roles.Madmate;
 using TownOfHost.Roles.Neutral;
+using TownOfHost.Roles.Vanilla;
 using UnityEngine;
 using static TownOfHost.Modules.SelfVoteManager;
+using static UnityEngine.GraphicsBuffer;
 
 namespace TownOfHost.Roles.Crewmate;
 
@@ -248,25 +250,9 @@ public sealed class AllArounder : RoleBase, ISystemTypeUpdateHook, IKillFlashSee
         PlayerState state;
         var target = PlayerCatch.GetPlayerById(votedForId);
         if (!target.IsAlive()) return;
-        if (target.Is(CustomRoles.Madpsycho))
+        if (target.GetRoleClass() is MadPsycho ms)
         {
-            if (Madpsycho.CanPsycho)
-            {
-                PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = Madpsycho.deathReasons[Madpsycho.OptionDeathReason.GetValue()];
-                target.RpcMurderPlayer(Player);
-                string send = "";
-                if (!Player.IsAlive())
-                {
-                    send = string.Format(GetString("Rpsych"), UtilsName.GetPlayerColor(Player, true), UtilsName.GetPlayerColor(target, true));
-                }
-                else
-                {
-                    send = string.Format(GetString("RMeetingKill"), UtilsName.GetPlayerColor(Player, true), UtilsName.GetPlayerColor(Player, true));
-                }
-                foreach (var spl in PlayerCatch.AllPlayerControls.Where(pc => !pc.IsAlive())) Utils.SendMessage(send, spl.PlayerId, GetString("RMSKillTitle"));
-
-                return;
-            }
+            ms.Psycho(Player, 1);
         }
         if (!AmongUsClient.Instance.AmHost) return;
         var meetingHud = MeetingHud.Instance;

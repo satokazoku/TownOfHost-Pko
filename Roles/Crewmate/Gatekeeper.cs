@@ -106,6 +106,10 @@ public sealed class Gatekeeper : RoleBase
                     }, Noisemaker.NoisemakerAlertDuration.GetFloat(), "GateKeeper_Noise", true);
                     break;
                 }
+                else if (gt.NoiseRoom != room.RoomId)
+                {
+                    Logger.Info($"部屋が違います　NoiseRoom:{gt.NoiseRoom}room.RoomId:{room.RoomId}", "GateKeeper");
+                }
             }
             foreach (var p in PlayerCatch.AllAlivePlayerControls)
             {
@@ -130,6 +134,10 @@ public sealed class Gatekeeper : RoleBase
                     else
                         target.RpcSetRoleDesync(RoleTypes.Noisemaker, gt.Player.GetClientId());
                     target.SyncSettings();
+                }
+                else if (gt.NoiseRoom != room.RoomId)
+                {
+                    Logger.Info($"部屋が違います　NoiseRoom:{gt.NoiseRoom}room.RoomId:{room.RoomId}", "GateKeeper");
                 }
             }
         }

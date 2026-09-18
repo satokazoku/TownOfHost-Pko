@@ -96,14 +96,9 @@ public sealed class EvilTeller : RoleBase, IImpostor, IUsePhantomButton
         var target = Player.GetKillTarget(true);
         if (target == null) { ResetCooldown = false; return; }
         if (target.IsTeammate(Player)) { ResetCooldown = false; return; }
-        if (target.Is(CustomRoles.Madpsycho))
+        if (target.GetRoleClass() is MadPsycho ms)
         {
-            if (Madpsycho.CanPsycho)
-            {
-                PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = Madpsycho.deathReasons[Madpsycho.OptionDeathReason.GetValue()];
-                target.RpcMurderPlayer(Player);
-                return;
-            }
+            ms.Psycho(Player, 1);
         }
         if (seentarget.ContainsKey(target.PlayerId) || TargetInfo != null) { ResetCooldown = false; return; }
 
