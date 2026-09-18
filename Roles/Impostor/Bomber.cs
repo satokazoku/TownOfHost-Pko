@@ -113,7 +113,7 @@ namespace TownOfHost.Roles.Impostor
         {
             Logger.Info($"{Player?.Data?.GetLogPlayerName() ?? "???"} => {Bombtarget?.Data?.GetLogPlayerName() ?? "失敗"}", "Bomber");
             if (Bombtarget == null || BomberExplosionPlayers.ContainsKey(Bombtarget?.PlayerId ?? byte.MaxValue)) return;
-            if (target.GetRoleClass() is MadPsycho ms)
+            if (Bombtarget.GetRoleClass() is MadPsycho ms)
             {
                 ms.Psycho(Player, 1);
             }
