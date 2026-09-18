@@ -152,8 +152,6 @@ namespace TownOfHost
         //試験的機能
         public static OptionItem ExperimentalMode;
         public static OptionItem ExAftermeetingflash;
-        public static OptionItem ExHideChatCommand;
-        public static OptionItem ExCsHideChat;
         public static OptionItem FixSpawnPacketSize;
         public static OptionItem ExRpcWeightR;
         public static OptionItem ExCallMeetingBlackout;
@@ -541,6 +539,8 @@ namespace TownOfHost
         public static OptionItem CanseeVoteresult;
         public static OptionItem CommnTaskResetAssing;
         public static OptionItem OutroCrewWinreasonchenge;
+        public static OptionItem ExHideChatCommand;
+        public static OptionItem ExCsHideChat;
         public static OptionItem TeamHideChat;
         public static OptionItem ImpostorHideChat;
         public static OptionItem LoversHideChat;
@@ -704,41 +704,6 @@ namespace TownOfHost
                 .SetTag(CustomOptionTags.Standard);
             ExAftermeetingflash = BooleanOptionItem.Create(105001, "ExAftermeetingflash", false, TabGroup.MainSettings, false).SetParent(ExperimentalMode)
                 .SetTag(CustomOptionTags.Standard);
-            ExHideChatCommand = BooleanOptionItem.Create(105002, "ExHideChatCommand", false, TabGroup.MainSettings, false).SetParent(ExperimentalMode)
-                .SetTag(CustomOptionTags.Standard).SetInfo(Translator.GetString("ExHideChatCommandInfo"));
-            TeamHideChat = BooleanOptionItem.Create(105003, "TeamHideChat", false, TabGroup.MainSettings, false)
-                .SetTag(CustomOptionTags.Standard)
-                .SetParent(ExHideChatCommand);
-            ImpostorHideChat = BooleanOptionItem.Create(105004, "ImpostorHideChat", false, TabGroup.MainSettings, false)
-                .SetTag(CustomOptionTags.Standard)
-                .SetColor(ModColors.ImpostorRed).SetParent(TeamHideChat);
-            JackalHideChat = BooleanOptionItem.Create(105005, "JackalHideChat", false, TabGroup.MainSettings, false)
-                .SetTag(CustomOptionTags.Standard)
-                .SetColor(UtilsRoleText.GetRoleColor(CustomRoles.Jackal)).SetParent(TeamHideChat);
-            LoversHideChat = BooleanOptionItem.Create(105006, "LoversHideChat", false, TabGroup.MainSettings, false)
-                .SetTag(CustomOptionTags.Standard)
-                .SetColor(UtilsRoleText.GetRoleColor(CustomRoles.Lovers)).SetParent(TeamHideChat);
-            CupidHideChat = BooleanOptionItem.Create(125006, "CupidHideChat", false, TabGroup.MainSettings, false)
-                .SetTag(CustomOptionTags.Standard)
-                .SetColor(UtilsRoleText.GetRoleColor(CustomRoles.Cupid)).SetParent(LoversHideChat);
-            TwinsHideChat = BooleanOptionItem.Create(105007, "TwinsCanUseHideChet", false, TabGroup.MainSettings, false)
-                .SetTag(CustomOptionTags.Standard)
-                .SetColor(UtilsRoleText.GetRoleColor(CustomRoles.Twins)).SetParent(TeamHideChat);
-            ConnectingHideChat = BooleanOptionItem.Create(105008, "ConnectingHideChat", false, TabGroup.MainSettings, false)
-                .SetTag(CustomOptionTags.Standard)
-                .SetColor(UtilsRoleText.GetRoleColor(CustomRoles.Connecting)).SetParent(TeamHideChat);
-            OnmyojiHideChat = BooleanOptionItem.Create(105013, "OnmyojiHideChat", false, TabGroup.MainSettings, false)
-                .SetTag(CustomOptionTags.Standard)
-                .SetColor(UtilsRoleText.GetRoleColor(CustomRoles.Onmyoji)).SetParent(TeamHideChat);
-            PavlovHideChat = BooleanOptionItem.Create(155014, "PavlovHideChat", false, TabGroup.MainSettings, false)
-                .SetTag(CustomOptionTags.Standard)
-                .SetColor(UtilsRoleText.GetRoleColor(CustomRoles.PavlovDog)).SetParent(TeamHideChat);
-            StandHideChat = BooleanOptionItem.Create(155015, "StandHideChat", false, TabGroup.MainSettings, false)
-                .SetTag(CustomOptionTags.Standard)
-                .SetColor(UtilsRoleText.GetRoleColor(CustomRoles.StandMaster)).SetParent(TeamHideChat);
-            FreeterHideChat = BooleanOptionItem.Create(155016, "FreeterHideChat", false, TabGroup.MainSettings, false)
-                .SetTag(CustomOptionTags.Standard)
-                .SetColor(UtilsRoleText.GetRoleColor(CustomRoles.Freeter)).SetParent(TeamHideChat);
             ExRpcWeightR = BooleanOptionItem.Create(105009, "ExRpcWeightR", false, TabGroup.MainSettings, false).SetParent(ExperimentalMode);
             ExCallMeetingBlackout = BooleanOptionItem.Create(105012, "ExCallMeetingBlackout", false, TabGroup.MainSettings, false)
                 .SetParent(ExperimentalMode)
@@ -1160,6 +1125,41 @@ namespace TownOfHost
                 .SetParent(GhostIgnoreTasks);
 
             // その他
+            ExHideChatCommand = BooleanOptionItem.Create(105002, "ExHideChatCommand", false, TabGroup.MainSettings, false).SetColor(Palette.CrewmateSettingChangeText)
+                .SetTag(CustomOptionTags.Standard).SetInfo(Translator.GetString("ExHideChatCommandInfo"));
+            TeamHideChat = BooleanOptionItem.Create(105003, "TeamHideChat", false, TabGroup.MainSettings, false)
+                .SetTag(CustomOptionTags.Standard)
+                .SetParent(ExHideChatCommand);
+            ImpostorHideChat = BooleanOptionItem.Create(105004, "ImpostorHideChat", false, TabGroup.MainSettings, false)
+                .SetTag(CustomOptionTags.Standard)
+                .SetColor(ModColors.ImpostorRed).SetParent(TeamHideChat);
+            JackalHideChat = BooleanOptionItem.Create(105005, "JackalHideChat", false, TabGroup.MainSettings, false)
+                .SetTag(CustomOptionTags.Standard)
+                .SetColor(UtilsRoleText.GetRoleColor(CustomRoles.Jackal)).SetParent(TeamHideChat);
+            LoversHideChat = BooleanOptionItem.Create(105006, "LoversHideChat", false, TabGroup.MainSettings, false)
+                .SetTag(CustomOptionTags.Standard)
+                .SetColor(UtilsRoleText.GetRoleColor(CustomRoles.Lovers)).SetParent(TeamHideChat);
+            CupidHideChat = BooleanOptionItem.Create(125006, "CupidHideChat", false, TabGroup.MainSettings, false)
+                .SetTag(CustomOptionTags.Standard)
+                .SetColor(UtilsRoleText.GetRoleColor(CustomRoles.Cupid)).SetParent(LoversHideChat);
+            TwinsHideChat = BooleanOptionItem.Create(105007, "TwinsCanUseHideChet", false, TabGroup.MainSettings, false)
+                .SetTag(CustomOptionTags.Standard)
+                .SetColor(UtilsRoleText.GetRoleColor(CustomRoles.Twins)).SetParent(TeamHideChat);
+            ConnectingHideChat = BooleanOptionItem.Create(105008, "ConnectingHideChat", false, TabGroup.MainSettings, false)
+                .SetTag(CustomOptionTags.Standard)
+                .SetColor(UtilsRoleText.GetRoleColor(CustomRoles.Connecting)).SetParent(TeamHideChat);
+            OnmyojiHideChat = BooleanOptionItem.Create(105013, "OnmyojiHideChat", false, TabGroup.MainSettings, false)
+                .SetTag(CustomOptionTags.Standard)
+                .SetColor(UtilsRoleText.GetRoleColor(CustomRoles.Onmyoji)).SetParent(TeamHideChat);
+            PavlovHideChat = BooleanOptionItem.Create(155014, "PavlovHideChat", false, TabGroup.MainSettings, false)
+                .SetTag(CustomOptionTags.Standard)
+                .SetColor(UtilsRoleText.GetRoleColor(CustomRoles.PavlovDog)).SetParent(TeamHideChat);
+            StandHideChat = BooleanOptionItem.Create(155015, "StandHideChat", false, TabGroup.MainSettings, false)
+                .SetTag(CustomOptionTags.Standard)
+                .SetColor(UtilsRoleText.GetRoleColor(CustomRoles.StandMaster)).SetParent(TeamHideChat);
+            FreeterHideChat = BooleanOptionItem.Create(155016, "FreeterHideChat", false, TabGroup.MainSettings, false)
+                .SetTag(CustomOptionTags.Standard)
+                .SetColor(UtilsRoleText.GetRoleColor(CustomRoles.Freeter)).SetParent(TeamHideChat);
             ConvenientOptions = BooleanOptionItem.Create(111000, "ConvenientOptions", true, TabGroup.MainSettings, false)
                     .SetColorcode("#cc3366")
                     .SetHeader(true);
