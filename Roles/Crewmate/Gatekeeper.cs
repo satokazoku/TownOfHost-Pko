@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+/*using System.Collections.Generic;
 using AmongUs.GameOptions;
 
 using TownOfHost.Roles.Core;
@@ -143,4 +143,4 @@ public sealed class Gatekeeper : RoleBase
         }
     }
 
-}
+}*/
