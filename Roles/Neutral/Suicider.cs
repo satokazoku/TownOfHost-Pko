@@ -29,7 +29,7 @@ public sealed class Suicider : RoleBase
     {
         InitialTimer = OptionInitialTimer.GetFloat();
         TaskTimeBonus = OptionTaskTimeBonus.GetFloat();
-        FallChance = OptionFallChance.GetFloat() / 100f;
+        //FallChance = OptionFallChance.GetFloat() / 100f;
         AfterMeetingTimer = OptionAfterMeetingTimer.GetFloat();
         HasWon = false;
         timer = InitialTimer;
@@ -39,7 +39,7 @@ public sealed class Suicider : RoleBase
 
     static OptionItem OptionInitialTimer; static float InitialTimer;
     static OptionItem OptionTaskTimeBonus; static float TaskTimeBonus;
-    static OptionItem OptionFallChance; static float FallChance;
+    //static OptionItem OptionFallChance; static float FallChance;
     static OptionItem OptionAfterMeetingTimer; static float AfterMeetingTimer;
 
     enum OptionName
@@ -57,9 +57,9 @@ public sealed class Suicider : RoleBase
             new(10f, 300f, 5f), 60f, false).SetValueFormat(OptionFormat.Seconds);
         OptionTaskTimeBonus = FloatOptionItem.Create(RoleInfo, 11, OptionName.SuiciderTaskTimeBonus,
             new(0f, 60f, 1f), 15f, false).SetValueFormat(OptionFormat.Seconds).SetZeroNotation(OptionZeroNotation.Off);
-        OptionFallChance = FloatOptionItem.Create(RoleInfo, 12, OptionName.SuiciderFallChance,
-            new(0f, 100f, 5f), 0f, false).SetValueFormat(OptionFormat.Percent).SetZeroNotation(OptionZeroNotation.Off);
-        OptionTaskTimeBonus = FloatOptionItem.Create(RoleInfo, 13, OptionName.SuiciderAfterMeetingTimer,
+        /*OptionFallChance = FloatOptionItem.Create(RoleInfo, 12, OptionName.SuiciderFallChance,
+            new(0f, 100f, 5f), 0f, false).SetValueFormat(OptionFormat.Percent).SetZeroNotation(OptionZeroNotation.Off);*/
+        OptionAfterMeetingTimer = FloatOptionItem.Create(RoleInfo, 13, OptionName.SuiciderAfterMeetingTimer,
             new(0f, 60f, 0.5f), 15f, false).SetValueFormat(OptionFormat.Seconds).SetZeroNotation(OptionZeroNotation.Off);
         OverrideTasksData.Create(RoleInfo, 20);
     }
@@ -142,14 +142,13 @@ public sealed class Suicider : RoleBase
         if (hasExploded) return;
         hasExploded = true;
 
-        bool isFall = IRandom.Instance.Next(0, 100) < (int)(FallChance * 100);
         PlayerState.GetByPlayerId(Player.PlayerId).DeathReason =
-            isFall ? CustomDeathReason.Fall : CustomDeathReason.Suicide;
+            CustomDeathReason.Suicide;
 
         Player.RpcMurderPlayerV2(Player);
 
         UtilsGameLog.AddGameLog("Suicider",
-            $"{UtilsName.GetPlayerColor(Player)}が自爆した ({(isFall ? "転落死" : "自殺")})");
+            $"{UtilsName.GetPlayerColor(Player)}が自爆した");
     }
 
     public override void OnStartMeeting()

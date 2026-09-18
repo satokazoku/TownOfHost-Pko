@@ -2719,6 +2719,7 @@
 "VanityCanAwarenessKillCrew","Become Aware Of Vanity When Kill Crewmate","クルーをキルするとヴァニティを自覚可能"
 "VanityCanAwarenessTasks","Can Become Aware Of Vanity via Task","タスクでヴァニティを自覚可能"
 "VanityCanAwarenessCount","Tasks Required For Self-admission","自覚に必要なタスク数"
+"SuiciderAfterMeetingTimer","Minimum value for the post-meeting suicide timer","会議後の自殺タイマーの最低値"
 
 "## Unit Role Setting"
 "BraidKillCooldown","Bread Task Complete Driver Killcool","ブレイドが全タスク完了時のキルクール"
