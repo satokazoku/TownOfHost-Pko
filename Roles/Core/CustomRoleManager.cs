@@ -42,11 +42,18 @@ public static class CustomRoleManager
     /// <param name="attemptTarget">>Killerが実際にキルを行おうとしたプレイヤー 不変</param>
     public static bool OnCheckMurder(PlayerControl attemptKiller, PlayerControl attemptTarget)
     {
-        if (attemptKiller.Is(CustomRoles.Powerful)
-        || (attemptKiller.Is(CustomRoles.LastImpostor) && LastImpostor.GivePowerful.GetBool())
-        || (attemptKiller.Is(CustomRoles.LastNeutral) && LastNeutral.GivePowerful.GetBool()))
+        if (attemptKiller.Is(CustomRoles.Powerful))
         {
-            return OnCheckMurder(attemptKiller, attemptTarget, attemptKiller, attemptTarget, Killpower: 2);
+            Logger.Info($"パワフルキル実行。キルパワー：{Powerful.OptionKillPower.GetInt()}","");
+            return OnCheckMurder(attemptKiller, attemptTarget, attemptKiller, attemptTarget, Killpower: Powerful.OptionKillPower.GetInt());
+        }
+        else if ((attemptKiller.Is(CustomRoles.LastImpostor) && LastImpostor.GivePowerful.GetBool()))
+        {
+            return OnCheckMurder(attemptKiller, attemptTarget, attemptKiller, attemptTarget, Killpower: LastImpostor.OptionKillPower.GetInt());
+        }
+        else if (attemptKiller.Is(CustomRoles.LastNeutral) && LastNeutral.GivePowerful.GetBool())
+        {
+            return OnCheckMurder(attemptKiller, attemptTarget, attemptKiller, attemptTarget, Killpower: LastNeutral.OptionKillPower.GetInt());
         }
         return OnCheckMurder(attemptKiller, attemptTarget, attemptKiller, attemptTarget);
     }

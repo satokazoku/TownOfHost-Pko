@@ -151,11 +151,9 @@ public sealed class Abuser : RoleBase, IImpostor, IUsePhantomButton
         victim.Awaken();
         pendingRetaliation = true;
         retaliationKillerId = info.AttemptKiller?.PlayerId ?? byte.MaxValue;
-        info.CanKill = false;
         info.GuardPower = 9;
-        info.AppearanceKiller?.RpcProtectedMurderPlayer(Player);
         SendRPC();
-        return false;
+        return true;
     }
 
     public void OnMurderPlayerAsKiller(MurderInfo info)

@@ -274,7 +274,9 @@ namespace TownOfHost
             {
                 return false;
             }
-            if (!GameStates.IsMeeting && !Options.OptionGameChatSetting.GetBool() && GameStates.IsInGame)
+            var text = __instance.freeChatField.textArea.text;
+
+            if (!GameStates.IsMeeting && !Options.OptionGameChatSetting.GetBool() && GameStates.IsInGame && !text.StartsWith("/"))
             {
                 return false;
             }
@@ -285,7 +287,6 @@ namespace TownOfHost
                 __instance.freeChatField.textArea.Clear();
                 return false;
             }
-            var text = __instance.freeChatField.textArea.text;
             if (ChatHistory.Count == 0 || ChatHistory[^1] != text) ChatHistory.Add(text);
             ChatControllerUpdatePatch.CurrentHistorySelection = ChatHistory.Count;
 

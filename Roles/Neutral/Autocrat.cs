@@ -122,7 +122,7 @@ public sealed class Autocrat : RoleBase, IAdditionalWinner
             bountyHunter.OnCratKill(this);
         }
         killer.SetKillCooldown(target: target);
-        return false;
+        return true;
     }
     public override void OnFixedUpdate(PlayerControl player)
     {

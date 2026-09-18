@@ -124,8 +124,11 @@ namespace TownOfHost.Roles.Crewmate
 
                     guardUsedCount++;
                     info.GuardPower = 2;
-                    killer.RpcProtectedMurderPlayer(target);
-                    killer.SetKillCooldown(target: target, force: true);
+                    if (info.KillPower > 2)
+                    {
+                        killer.RpcProtectedMurderPlayer(target);
+                        killer.SetKillCooldown(target: target, force: true);
+                    }
 
                     if (notifyOnGuard)
                     {
@@ -135,7 +138,7 @@ namespace TownOfHost.Roles.Crewmate
                     }
 
                     Logger.Info($"{Player.Data.GetLogPlayerName()} ガード ({guardUsedCount}/{guardMaxCount})", "Pukupuku");
-                    return false;
+                    return true;
 
                 case AbilityMode.Reflect:
                     info.DoKill = false;
@@ -152,7 +155,7 @@ namespace TownOfHost.Roles.Crewmate
                             $"{UtilsName.GetPlayerColor(Player)}が{UtilsName.GetPlayerColor(killer)}のキルを反射した");
                     }, 0.1f, "Pukupuku.Reflect", true);
 
-                    return false;
+                    return true;
 
                 case AbilityMode.Revenge:
                     killerRef = killer;

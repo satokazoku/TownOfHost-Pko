@@ -84,7 +84,7 @@ public sealed class MadGuardian : RoleBase, IKillFlashSeeable, IDeathReasonSeeab
                 Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);
         }
 
-        return false;
+        return true;
     }
     public bool? CheckKillFlash(MurderInfo info) => MadmateCanSeeKillFlash.GetBool();
     public bool? CheckSeeDeathReason(PlayerControl seen) => MadmateCanSeeDeathReason.GetBool();

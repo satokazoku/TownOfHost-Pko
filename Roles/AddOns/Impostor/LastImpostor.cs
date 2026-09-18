@@ -35,6 +35,7 @@ namespace TownOfHost.Roles.AddOns.Impostor
         public static OptionItem GiveTiebreaker;
         //パワフル
         public static OptionItem GivePowerful;
+        public static OptionItem OptionKillPower;
         public static void SetupCustomOption()
         {
             SetupRoleOptions(Id, TabGroup.Addons, CustomRoles.LastImpostor, new(1, 1, 1), fromtext: "<color=#000000>From:</color><color=#00bfff>TownOfHost</color></size>");
@@ -64,6 +65,7 @@ namespace TownOfHost.Roles.AddOns.Impostor
             AutopsyCanSeeComms = BooleanOptionItem.Create(Id + 28, "CanUseActiveComms", true, TabGroup.Addons, false).SetParent(GiveAutopsy).SetParentRole(CustomRoles.LastImpostor);
             GiveTiebreaker = BooleanOptionItem.Create(Id + 29, "GiveTiebreaker", false, TabGroup.Addons, false).SetParent(CustomRoleSpawnChances[CustomRoles.LastImpostor]).SetParentRole(CustomRoles.LastImpostor);
             GivePowerful = BooleanOptionItem.Create(Id + 30, "GivePowerful", false, TabGroup.Addons, false).SetSubRoleOptionItem(CustomRoles.LastImpostor);
+            OptionKillPower = IntegerOptionItem.Create(Id + 31, "PowerfulKillPower", new(2, 10, 1), 2, TabGroup.Addons, false).SetParent(GivePowerful).SetParentRole(CustomRoles.LastImpostor);
         }
         public static void Init()
         {

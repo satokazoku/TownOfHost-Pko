@@ -558,7 +558,6 @@ public sealed class Stand : RoleBase, ILNKiller
         (var killer, var target) = info.AttemptTuple;
         if (killer.PlayerId == target.PlayerId) return true;
 
-        killer.RpcProtectedMurderPlayer(target);
         info.GuardPower = 1;
 
         if (!sm.isRevealed) { sm.isRevealed = true; sm.SyncState(); }

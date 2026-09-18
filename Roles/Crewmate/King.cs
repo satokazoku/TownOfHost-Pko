@@ -105,7 +105,7 @@ public sealed class King : RoleBase
             bountyHunter.OnKingKill(this);
         }
         killer.SetKillCooldown(target: target);
-        return false;
+        return true;
     }
     public override void OnFixedUpdate(PlayerControl player)
     {

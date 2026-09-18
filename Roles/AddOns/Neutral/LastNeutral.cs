@@ -39,6 +39,7 @@ namespace TownOfHost.Roles.AddOns.Neutral
         public static OptionItem GiveTiebreaker;
         //パワフル
         public static OptionItem GivePowerful;
+        public static OptionItem OptionKillPower;
         public static void SetupCustomOption()
         {
             SetupRoleOptions(Id, TabGroup.Addons, CustomRoles.LastNeutral, new(1, 1, 1), fromtext: UtilsOption.GetFrom(From.TownOfHost_K));
@@ -71,6 +72,7 @@ namespace TownOfHost.Roles.AddOns.Neutral
             AutopsyCanSeeComms = BooleanOptionItem.Create(Id + 28, "CanUseActiveComms", true, TabGroup.Addons, false).SetParent(GiveAutopsy).SetParentRole(CustomRoles.LastNeutral);
             GiveTiebreaker = BooleanOptionItem.Create(Id + 29, "GiveTiebreaker", false, TabGroup.Addons, false).SetParent(CustomRoleSpawnChances[CustomRoles.LastNeutral]).SetParentRole(CustomRoles.LastNeutral);
             GivePowerful = BooleanOptionItem.Create(Id + 32, "GivePowerful", false, TabGroup.Addons, false).SetSubRoleOptionItem(CustomRoles.LastNeutral);
+            OptionKillPower = IntegerOptionItem.Create(Id + 33, "PowerfulKillPower", new(2, 10, 1), 2, TabGroup.Addons, false).SetParent(GivePowerful).SetParentRole(CustomRoles.LastNeutral);
         }
         public static void Init() => currentId = byte.MaxValue;
         public static void Add(byte id) => currentId = id;

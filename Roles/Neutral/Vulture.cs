@@ -61,7 +61,6 @@ public sealed class Vulture : RoleBase, IKillFlashSeeable, IAdditionalWinner
         OptOnikuArrowtaskcount = OptionOnikuArrowtskcount.GetInt();
         OptVentInTime = OptionVentIntime.GetFloat();
         OptVentCooldown = OptionVentCooldown.GetFloat();
-        Achievements.RpcCompleteAchievement(Player.PlayerId, 1, achievements[0]);
         CustomRoleManager.MarkOthers.Add(GetMarkOthers);
 
         MyTaskState.NeedTaskCount = OptKillflashTaskcount < OptOnikuArrowtaskcount ? OptOnikuArrowtaskcount : OptKillflashTaskcount;

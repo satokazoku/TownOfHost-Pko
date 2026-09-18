@@ -185,6 +185,7 @@ public sealed class VentOpener : RoleBase
         if (BlockKill && expelledPlayers.Contains(info.AttemptKiller.PlayerId))
         {
             info.GuardPower = 1;
+            info.CanKill = info.GuardPower > info.KillPower;
         }
         return true;
     }

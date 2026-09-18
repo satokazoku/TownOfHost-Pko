@@ -68,7 +68,11 @@ public sealed class GuardMaster : RoleBase
             if (CanSeeProtect)
                 NameColorManager.Add(target.PlayerId, killer.PlayerId, RoleInfo.RoleColorCode);
         }
-        killer.RpcProtectedMurderPlayer(target);
+        if (info.KillPower > 1)
+        {
+            killer.RpcProtectedMurderPlayer(target);
+            killer.SetKillCooldown(target: target, force: true);
+        }
         if (CanSeeProtect && Awakened) target.RpcProtectedMurderPlayer(target);
         info.GuardPower = 1;
         Guard--;

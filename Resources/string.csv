@@ -1187,7 +1187,7 @@
 "MagicHandInfoLong","Add-ons:\nGive to Only Kill Roles\nKill distance becomes a set value.","(属性):\nキル可能役職にのみ付与される属性。\nキルディスタンスが設定値になる。"
 "AntiTeleporterInfoLong","Add-ons:\nThe Anti Teleport Modifier prevents the player from getting teleported to the Meeting Table if a body gets reported or an Emergency Meeting is called.\nThe player will start the round where the previous one ended (Emergency Meeting Call/Body Report).","(属性):\n会議や死体レポートなどが起こってもその後にテレポートせず、元居た場所からスタートします。","(附加效果):\n如果有尸体被报告或紧急会议被召集，通讯兵效果可以防止玩家被远程传送到会议桌。\n玩家将在上一回合结束时的位置继续（紧急会议/尸体报告）."
 "StackInfoLong","The attributes you set will be applied at the start of the game.","設定した属性がゲーム開始時に付与される。"
-"PowerfulInfoLong","An attribute granted only to roles capable of performing kills. \nThe kill power of a standard kill becomes 2.","キル可能役職にのみ付与される属性。\n通常キルのキルパワーが2になる。"
+"PowerfulInfoLong","An attribute granted only to roles capable of performing kills. \The kill power for a standard kill is set to the specified value.","キル可能役職にのみ付与される属性。\n通常キルのキルパワーが設定値になる。"
 "AbsorbInfoLong","Prevents you from being killed while the number of survivors remains above the set threshold or until the set number of days has passed.","設定人数以上が生存または、設定日数までの間、キルをガードする。"
 
 "# デバフ属性"
@@ -2793,7 +2793,7 @@
 "SealerAssignToEngineer","Assign to Engineer","エンジニアに付与する"
 "SealerAssignToNeutralTeam","Assign to Neutral roles","第三陣営に付与する"
 "GivePowerful","Give<#f08e39>Powerful</color>","<#f08e39>パワフル</color>を付与する"
-"GivePowerfulInfo","Give<#f08e39>Powerful</color>","通常キルのキルパワーが2になる"
+"GivePowerfulInfo","The kill power for a normal kill is set to the specified value.","通常キルのキルパワーが設定値になる"
 "GiveGuesserInfo","Guess the position and make the kill.","役職を推測してキルを行う"
 "GiveWatchingInfo","Anonymous voting is turned off.","匿名投票がOFFになる"
 "GiveManagementInfo","You can see the progress of tasks.","タスク進捗が分かる"
@@ -2891,6 +2891,7 @@
 "SunglassesVisionmagnification_Info","SunglassesCrewVision:{0} => {1}\nSunglassesImposotrVision:{2} => {3}","サングラスクルー視界:{0} => {1}\nサングラスインポスター視界:{2} => {3}"
 "AbsorbDisableDay","DisableDay","無効化される日"
 "AbsorbDisablePlayerCount","DisablePlayerCount","無効化される生存人数"
+"PowerfulKillPower","Kill Power","キルパワー"
 
 "## 幽霊役職設定"
 "GhostRoleOptions","GhostRole Options","幽霊役職の設定"
