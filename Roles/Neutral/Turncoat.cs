@@ -63,7 +63,7 @@ public sealed class Turncoat : RoleBase, IKiller
         OptionDuration = FloatOptionItem.Create(RoleInfo, 15, GeneralOption.Duration, new(0f, 180f, 0.5f), 0f, false, OptionCanShapeShift)
                 .SetZeroNotation(OptionZeroNotation.Infinity)
                 .SetValueFormat(OptionFormat.Seconds);
-        OptionShapeAnime = BooleanOptionItem.Create(RoleInfo, 16, GeneralOption.PlayShapeAnimate, false, false);
+        OptionShapeAnime = BooleanOptionItem.Create(RoleInfo, 16, GeneralOption.PlayShapeAnimate, false, false, OptionCanShapeShift);
 
         RoleAddAddons.Create(RoleInfo, 20);
     }
@@ -138,9 +138,6 @@ public sealed class Turncoat : RoleBase, IKiller
     }
     public override void CheckWinner(GameOverReason reason)
     {
-        //生きてないなら負け。
-        if (!Player.IsAlive()) return;
-
         if (targetid.GetPlayerControl() is null)//相手が回線落ちの場合の特別処理
         {
             Logger.Info($"{targetid} is null.", "Turncoat_Wincheck");
