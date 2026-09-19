@@ -157,7 +157,7 @@ namespace TownOfHost
         public static bool IsPavlovWinnerTeam()
         {
             static bool IsPavlovRole(CustomRoles role)
-                => role is CustomRoles.PavlovDog or CustomRoles.PavlovOwner or CustomRoles.PavlovDogImprint;
+                => role is CustomRoles.PavlovDog or CustomRoles.PavlovOwner;
 
             if ((int)CustomWinnerHolder.WinnerTeam >= 0 && IsPavlovRole((CustomRoles)CustomWinnerHolder.WinnerTeam))
                 return true;

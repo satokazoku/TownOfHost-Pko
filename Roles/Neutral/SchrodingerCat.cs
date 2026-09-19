@@ -212,7 +212,7 @@ public sealed class SchrodingerCat : RoleBase, IAdditionalWinner, IDeathReasonSe
         {
             candidates.Add(TeamType.Jackal);
         }
-        if (CustomRoles.PavlovDog.IsPresent() || CustomRoles.PavlovOwner.IsPresent() || CustomRoles.PavlovDogImprint.IsPresent())
+        if (CustomRoles.PavlovDog.IsPresent() || CustomRoles.PavlovOwner.IsPresent())
         {
             candidates.Add(TeamType.Pavlov);
         }

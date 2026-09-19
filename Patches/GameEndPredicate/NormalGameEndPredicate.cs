@@ -195,7 +195,6 @@ namespace TownOfHost
                 CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Pavlov, byte.MaxValue);
                 CustomWinnerHolder.WinnerRoles.Add(CustomRoles.PavlovDog);
                 CustomWinnerHolder.WinnerRoles.Add(CustomRoles.PavlovOwner);
-                CustomWinnerHolder.WinnerRoles.Add(CustomRoles.PavlovDogImprint);
             }
             else if (standMasterAlive
                 && Imp == 0 && Jackal == 0 && Remotekiller == 0 && GrimReaper == 0
@@ -455,7 +454,6 @@ namespace TownOfHost
                 CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Pavlov, byte.MaxValue);
                 CustomWinnerHolder.WinnerRoles.Add(CustomRoles.PavlovDog);
                 CustomWinnerHolder.WinnerRoles.Add(CustomRoles.PavlovOwner);
-                CustomWinnerHolder.WinnerRoles.Add(CustomRoles.PavlovDogImprint);
             }
             else if (standMasterAlive
                 && Imp == 0 && Jackal == 0 && Remotekiller == 0 && GrimReaper == 0

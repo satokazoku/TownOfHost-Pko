@@ -301,7 +301,7 @@ public sealed class Chameleon : RoleBase, IAdditionalWinner
             TeamList.Add(CustomRoles.Arsonist);
         if (CustomRoles.StandMaster.IsPresent())
             TeamList.Add(CustomRoles.StandMaster);
-        if (CustomRoles.PavlovOwner.IsPresent())
+        if (CustomRoles.PavlovOwner.IsPresent() || CustomRoles.PavlovDog.IsPresent())
             TeamList.Add(CustomRoles.PavlovOwner);
         if (CustomRoles.Eater.IsPresent())
             TeamList.Add(CustomRoles.Eater);

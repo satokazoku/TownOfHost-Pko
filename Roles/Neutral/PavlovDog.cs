@@ -84,7 +84,6 @@ public sealed class PavlovDog : PavlovDogBase
         RoleAddAddons.Create(RoleInfo, 30, NeutralKiller: true);
 
         HideRoleOptions(CustomRoles.PavlovOwner);
-        HideRoleOptions(CustomRoles.PavlovDogImprint);
     }
 
 
@@ -104,7 +103,7 @@ public sealed class PavlovDog : PavlovDogBase
     }
 
     public static bool IsPavlovTeamRole(CustomRoles role)
-        => role is CustomRoles.PavlovDog or CustomRoles.PavlovOwner or CustomRoles.PavlovDogImprint;
+        => role is CustomRoles.PavlovDog or CustomRoles.PavlovOwner;
 
     public static bool IsPavlovTeam(PlayerControl player)
         => player != null && IsPavlovTeamRole(player.GetCustomRole());
@@ -113,7 +112,7 @@ public sealed class PavlovDog : PavlovDogBase
         => PlayerCatch.AllAlivePlayerControls.Any(pc =>
             pc != null &&
             pc.IsAlive() &&
-            (pc.Is(CustomRoles.PavlovDog) || pc.Is(CustomRoles.PavlovDogImprint)));
+            pc.Is(CustomRoles.PavlovDog));
     public static bool IsOwnerDogAndOneNonKillerAlive()
     {
         var alivePlayers = PlayerCatch.AllAlivePlayerControls
@@ -121,7 +120,7 @@ public sealed class PavlovDog : PavlovDogBase
             .ToArray();
 
         if (!alivePlayers.Any(pc => pc.Is(CustomRoles.PavlovOwner))) return false;
-        if (!alivePlayers.Any(pc => pc.Is(CustomRoles.PavlovDog) || pc.Is(CustomRoles.PavlovDogImprint))) return false;
+        if (!alivePlayers.Any(pc => pc.Is(CustomRoles.PavlovDog))) return false;
 
         var nonPavlovAlive = alivePlayers.Where(pc => !IsPavlovTeam(pc)).ToArray();
         if (nonPavlovAlive.Length != 1) return false;
@@ -339,41 +338,6 @@ public sealed class PavlovOwner : RoleBase, IKiller, IAdditionalWinner, ISchrodi
     {
         RemainingImprintCount = reader.ReadInt32();
         RefreshState(force: true);
-    }
-}
-
-public sealed class PavlovDogImprint : PavlovDogBase
-{
-    public static readonly SimpleRoleInfo RoleInfo =
-        SimpleRoleInfo.Create(
-            typeof(PavlovDogImprint),
-            player => new PavlovDogImprint(player),
-            CustomRoles.PavlovDogImprint,
-            () => RoleTypes.Shapeshifter,
-            CustomRoleTypes.Neutral,
-            77100,
-            SetupOptionItem,
-            "pvi",
-            "#F4A96A",
-            (6, 6),
-            true,
-            tab: TabGroup.Combinations,
-            countType: CountTypes.Pavlov,
-            assignInfo: new RoleAssignInfo(CustomRoles.PavlovDogImprint, CustomRoleTypes.Neutral)
-            {
-                IsInitiallyAssignableCallBack = () => false,
-                AssignCountRule = new(0, 0, 1)
-            }
-        );
-
-    public PavlovDogImprint(PlayerControl player)
-        : base(RoleInfo, player)
-    {
-    }
-
-    private static void SetupOptionItem()
-    {
-        PavlovDog.HideRoleOptions(CustomRoles.PavlovDogImprint);
     }
 }
 

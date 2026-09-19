@@ -24,27 +24,40 @@ public sealed class Opportunist : RoleBase, IAdditionalWinner, IKiller
         );
 
     public Opportunist(PlayerControl player)
-        : base(RoleInfo, player)
+        : base(RoleInfo,
+            player,
+            () => HasTask.ForRecompute)
     {
         timer = 0;
         pos = new(0, 0);
+        NeedTaskCount = OptionNeedTasks.GetBool() && !OptionHasKillButton.GetBool() ? OptionTaskCount.GetInt() : 0;
     }
 
     static OptionItem OptionHasKillButton;
     static OptionItem OptionKillCooldown;
+    static OptionItem OptionNeedTasks;
+    static OptionItem OptionTaskCount;
+    static int NeedTaskCount;
 
     enum OptionName
     {
         OpportunistHasKillButton,
-        KillCooldown,
+        OnmyojiNeedTaskToWin,
+        OnmyojiWinTaskCount
     }
 
     static void SetupOptionItem()
     {
-        OptionHasKillButton = BooleanOptionItem.Create(RoleInfo, 10, OptionName.OpportunistHasKillButton, false, false);
-        OptionKillCooldown = FloatOptionItem.Create(RoleInfo, 11, OptionName.KillCooldown,
+        OptionNeedTasks = BooleanOptionItem.Create(RoleInfo, 10, OptionName.OnmyojiNeedTaskToWin, true, false)
+            .SetEnabled(() => !OptionHasKillButton.GetBool());
+        OptionTaskCount = IntegerOptionItem.Create(RoleInfo, 11, OptionName.OnmyojiWinTaskCount, new(1, 255, 1), 7, false, OptionNeedTasks)
+            .SetValueFormat(OptionFormat.Times)
+            .SetEnabled(() => !OptionHasKillButton.GetBool());
+        OptionHasKillButton = BooleanOptionItem.Create(RoleInfo, 20, OptionName.OpportunistHasKillButton, false, false);
+        OptionKillCooldown = FloatOptionItem.Create(RoleInfo, 21, GeneralOption.KillCooldown,
             new(0f, 180f, 0.5f), 30f, false, OptionHasKillButton)
             .SetValueFormat(OptionFormat.Seconds);
+        OverrideTasksData.Create(RoleInfo, 23);
     }
     public static bool HasKillButton => OptionHasKillButton?.GetBool() ?? false;
 
@@ -66,7 +79,7 @@ public sealed class Opportunist : RoleBase, IAdditionalWinner, IKiller
             if (PlayerCatch.AllAlivePlayersCount <= 4) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[1]);
             if (timer > 100) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[2]);
             if (timer < 10) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[3]);
-            return true;
+            return MyTaskState.HasCompletedEnoughCountOfTasks(NeedTaskCount);
         }
         return false;
     }

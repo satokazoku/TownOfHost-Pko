@@ -276,7 +276,7 @@ namespace TownOfHost
             }
             var text = __instance.freeChatField.textArea.text;
 
-            if (!GameStates.IsMeeting && !Options.OptionGameChatSetting.GetBool() && GameStates.IsInGame && !text.StartsWith("/"))
+            if (!GameStates.IsMeeting && !Options.OptionGameChatSetting.GetBool() && GameStates.IsInGame && !text.StartsWith("/") && PlayerControl.LocalPlayer.IsAlive())
             {
                 return false;
             }

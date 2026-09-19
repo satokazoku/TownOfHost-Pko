@@ -1297,7 +1297,6 @@ public enum CustomRoles
     Spelunker,
     PavlovDog,
     PavlovOwner,
-    PavlovDogImprint,
     PoisonedBakery,
     Suicider,
     PokerFace,

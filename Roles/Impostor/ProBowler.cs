@@ -96,7 +96,7 @@ public sealed class ProBowler : RoleBase, IImpostor, IUsePhantomButton
         var dummyshapetarget = PlayerControl.LocalPlayer;
         Player.RpcShapeshift(dummyshapetarget, true);
         Player.RpcShapeshift(Player, true);
-        var sender = CustomRpcSender.Create("VultureEatShape");
+        var sender = CustomRpcSender.Create("ProBowlerShape");
         sender.AutoStartRpc(Player.NetId, RpcCalls.Shapeshift)
             .Write(dummyshapetarget)
             .Write(true)
