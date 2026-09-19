@@ -206,7 +206,7 @@ namespace TownOfHost
     {
         public static void Prefix(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> teamToDisplay)
         {
-            if (PlayerControl.LocalPlayer.Is(CustomRoleTypes.Neutral) && !PlayerControl.LocalPlayer.Is(CustomRoles.BakeCat) && !PlayerControl.LocalPlayer.Is(CustomRoles.Vanity) && !PlayerControl.LocalPlayer.Is(CustomRoles.Amnesia))
+            if (PlayerControl.LocalPlayer.Is(CustomRoleTypes.Neutral) && (!PlayerControl.LocalPlayer.Is(CustomRoles.BakeCat) && BakeCat.OptionMisidentify.GetBool()) && !PlayerControl.LocalPlayer.Is(CustomRoles.Vanity) && !PlayerControl.LocalPlayer.Is(CustomRoles.Amnesia))
             {
                 //ぼっち役職
                 var soloTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
@@ -351,19 +351,37 @@ namespace TownOfHost
     {
         public static bool Prefix(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> yourTeam)
         {
-            if (PlayerControl.LocalPlayer.GetCustomRole() is CustomRoles.Sheriff or CustomRoles.WolfBoy or CustomRoles.BakeCat or CustomRoles.NiceLogger
+            if (PlayerControl.LocalPlayer.GetCustomRole() is CustomRoles.Sheriff or CustomRoles.WolfBoy or CustomRoles.NiceLogger
             || PlayerControl.LocalPlayer.Is(CustomRoles.Amnesiac) || PlayerControl.LocalPlayer.Is(CustomRoles.Vanity) || (PlayerControl.LocalPlayer.GetCustomRole().GetRoleInfo()?.IsDesyncImpostor == true) && PlayerControl.LocalPlayer.Is(CustomRoles.Amnesia))
             {
-                //シェリフの場合はキャンセルしてBeginCrewmateに繋ぐ
-                yourTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-                yourTeam.Add(PlayerControl.LocalPlayer);
-                foreach (var pc in PlayerCatch.AllPlayerControls)
+                if (PlayerControl.LocalPlayer.GetCustomRole() is CustomRoles.BakeCat)
                 {
-                    if (!pc.AmOwner) yourTeam.Add(pc);
+                    if (BakeCat.OptionMisidentify.GetBool())
+                    {
+                        yourTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
+                        yourTeam.Add(PlayerControl.LocalPlayer);
+                        foreach (var pc in PlayerCatch.AllPlayerControls)
+                        {
+                            if (!pc.AmOwner) yourTeam.Add(pc);
+                        }
+                        __instance.BeginCrewmate(yourTeam);
+                        __instance.overlayHandle.color = Palette.CrewmateBlue;
+                        return false;
+                    }
                 }
-                __instance.BeginCrewmate(yourTeam);
-                __instance.overlayHandle.color = Palette.CrewmateBlue;
-                return false;
+                else
+                {
+                    //シェリフの場合はキャンセルしてBeginCrewmateに繋ぐ
+                    yourTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
+                    yourTeam.Add(PlayerControl.LocalPlayer);
+                    foreach (var pc in PlayerCatch.AllPlayerControls)
+                    {
+                        if (!pc.AmOwner) yourTeam.Add(pc);
+                    }
+                    __instance.BeginCrewmate(yourTeam);
+                    __instance.overlayHandle.color = Palette.CrewmateBlue;
+                    return false;
+                }
             }
             BeginCrewmatePatch.Prefix(__instance, ref yourTeam);
             if (PlayerControl.LocalPlayer.GetCustomRole().IsImpostor())
@@ -502,11 +520,14 @@ namespace TownOfHost
                 // そのままだとホストのみDesyncImpostorの暗室内での視界がクルー仕様になってしまう
                 var roleInfo = PlayerControl.LocalPlayer.GetCustomRole().GetRoleInfo();
                 var amDesyncImpostor = roleInfo?.IsDesyncImpostor == true;
-                if (amDesyncImpostor && PlayerControl.LocalPlayer.GetCustomRole() is not CustomRoles.BakeCat && PlayerControl.LocalPlayer.GetCustomRole() is not CustomRoles.Vanity)
+                if (amDesyncImpostor && PlayerControl.LocalPlayer.GetCustomRole() is not CustomRoles.Vanity)
                 {
                     PlayerControl.LocalPlayer.Data.Role.AffectedByLightAffectors = false;
                 }
-
+                if (amDesyncImpostor && PlayerControl.LocalPlayer.GetCustomRole() is CustomRoles.BakeCat && !BakeCat.OptionMisidentify.GetBool())
+                {
+                    PlayerControl.LocalPlayer.Data.Role.AffectedByLightAffectors = false;
+                }
                 GameStates.task = true;
                 Logger.Info("タスクフェイズ開始", "Phase");
                 TaskBattle.timer = 0;
@@ -614,7 +635,11 @@ namespace TownOfHost
             {
                 var roleInfo = PlayerControl.LocalPlayer.GetCustomRole().GetRoleInfo();
                 var amDesyncImpostor = roleInfo?.IsDesyncImpostor == true;
-                if (amDesyncImpostor && PlayerControl.LocalPlayer.GetCustomRole() is not CustomRoles.BakeCat && PlayerControl.LocalPlayer.GetCustomRole() is not CustomRoles.Vanity)
+                if (amDesyncImpostor && PlayerControl.LocalPlayer.GetCustomRole() is not CustomRoles.Vanity)
+                {
+                    PlayerControl.LocalPlayer.Data.Role.AffectedByLightAffectors = false;
+                }
+                if (amDesyncImpostor && PlayerControl.LocalPlayer.GetCustomRole() is CustomRoles.BakeCat && !BakeCat.OptionMisidentify.GetBool())
                 {
                     PlayerControl.LocalPlayer.Data.Role.AffectedByLightAffectors = false;
                 }

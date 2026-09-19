@@ -206,7 +206,7 @@ class StandardIntro
                     roleType = role.IsCrewmate() ? RoleTypes.Crewmate : (role.IsMadmate() ? RoleTypes.Crewmate : ((role.IsNeutral() && role is not CustomRoles.Egoist) ? RoleTypes.Impostor : roleType));
                     if (role is CustomRoles.Amnesiac || role is CustomRoles.Vanity) roleType = RoleTypes.Crewmate;
                 }
-                if (role is CustomRoles.BakeCat) roleType = RoleTypes.Crewmate;
+                if (role is CustomRoles.BakeCat && BakeCat.OptionMisidentify.GetBool()) roleType = RoleTypes.Crewmate;
                 if (pc.Is(CustomRoles.Amnesia) && Amnesia.dontcanUseability)
                 {
                     roleType = role.IsImpostor() && !pc.Is(CustomRoles.Amnesiac) ? RoleTypes.Impostor : RoleTypes.Crewmate;
@@ -258,7 +258,7 @@ class StandardIntro
                         if (role is CustomRoles.Amnesiac) roleType = RoleTypes.Crewmate;
                     }
 
-                    if (role is CustomRoles.BakeCat) roleType = RoleTypes.Crewmate;
+                    if (role is CustomRoles.BakeCat && BakeCat.OptionMisidentify.GetBool()) roleType = RoleTypes.Crewmate;
                     if (role is CustomRoles.Vanity) roleType = RoleTypes.Crewmate;
 
                     if (pc.Is(CustomRoles.Amnesia) && Amnesia.dontcanUseability)
