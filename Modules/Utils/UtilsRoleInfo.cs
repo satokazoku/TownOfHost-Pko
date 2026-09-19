@@ -244,20 +244,24 @@ namespace TownOfHost
                     var roleInfo = roledata.Key.GetRoleInfo();
                     if (roleInfo != null && roleInfo.Description != null)
                     {
-                        SendMessage(roleInfo.Description.FullFormatHelp, sendTo: player, checkl: true);
+                        // 役職名の後ろに (略称) を付ける
+                        SendMessage(AddShortName(roleInfo.Description.FullFormatHelp, roledata.Key, roleShort), sendTo: player, checkl: true);
                         var addhaverole = roleInfo.AddHaveRole?.Invoke();
                         if (addhaverole is not null and not CustomRoles.NotAssigned)
                         {
                             var addroleInfo = addhaverole.Value.GetRoleInfo();
                             if (addroleInfo != null && addroleInfo.Description != null)
-                                SendMessage(addroleInfo.Description.FullFormatHelp, player, ColorString(GetRoleColor(roledata.Key), GetString("AddRoleInfoTitle")), checkl: true);
+                            {
+                                roleCommands.TryGetValue(addhaverole.Value, out var addShort);
+                                SendMessage(AddShortName(addroleInfo.Description.FullFormatHelp, addhaverole.Value, addShort), player, ColorString(GetRoleColor(roledata.Key), GetString("AddRoleInfoTitle")), checkl: true);
+                            }
                         }
                     }
                     // RoleInfoがない役職は従来の処理
                     else
                     {
                         if (roledata.Key.IsAddOn() || roledata.Key.IsLovers() || roledata.Key == CustomRoles.Amanojaku || roledata.Key.IsGhostRole()) SendMessage(GetAddonsHelp(roledata.Key), sendTo: player);
-                        else SendMessage(ColorString(GetRoleColor(roledata.Key), "<b><line-height=2.0pic><size=150%>" + GetString(roleName) + "\n<line-height=1.8pic><size=90%>" + GetString($"{roleName}Info")) + "\n<line-height=1.3pic></b><size=60%>\n" + GetString($"{roleName}InfoLong"), sendTo: player);
+                        else SendMessage(BuildRoleHelp(roledata.Key, roleShort), sendTo: player);
                     }
                     return;
                 }
@@ -266,23 +270,28 @@ namespace TownOfHost
             if (GetRoleByInputName(role, out var hr, true))
             {
                 if (hr is CustomRoles.Crewmate or CustomRoles.Impostor) SendMessage(msg, player);
+                roleCommands.TryGetValue(hr, out var hrShort);
                 var roleInfo = hr.GetRoleInfo();
                 if (roleInfo != null && roleInfo.Description != null)
                 {
-                    SendMessage(roleInfo.Description.FullFormatHelp, sendTo: player, checkl: true);
+                    // 役職名の後ろに (略称) を付ける
+                    SendMessage(AddShortName(roleInfo.Description.FullFormatHelp, hr, hrShort), sendTo: player, checkl: true);
                     var addhaverole = roleInfo.AddHaveRole?.Invoke();
                     if (addhaverole is not null and not CustomRoles.NotAssigned)
                     {
                         var addroleInfo = addhaverole.Value.GetRoleInfo();
                         if (addroleInfo != null && addroleInfo.Description != null)
-                            SendMessage(addroleInfo.Description.FullFormatHelp, player, ColorString(GetRoleColor(hr), GetString("AddRoleInfoTitle")), checkl: true);
+                        {
+                            roleCommands.TryGetValue(addhaverole.Value, out var addShort);
+                            SendMessage(AddShortName(addroleInfo.Description.FullFormatHelp, addhaverole.Value, addShort), player, ColorString(GetRoleColor(hr), GetString("AddRoleInfoTitle")), checkl: true);
+                        }
                     }
                 }
                 // RoleInfoがない役職は従来の処理
                 else
                 {
                     if (hr.IsAddOn() || hr.IsLovers() || hr == CustomRoles.Amanojaku || hr.IsGhostRole()) SendMessage(GetAddonsHelp(hr), sendTo: player);
-                    else SendMessage(ColorString(GetRoleColor(hr), "<b><line-height=2.0pic><size=150%>" + GetString($"{hr}") + "\n<line-height=1.8pic><size=90%>" + GetString($"{hr}Info")) + "\n<line-height=1.3pic></b><size=60%>\n" + GetString($"{hr}InfoLong"), sendTo: player);
+                    else SendMessage(BuildRoleHelp(hr, hrShort), sendTo: player);
                 }
                 return;
             }
@@ -293,6 +302,34 @@ namespace TownOfHost
             if (player == byte.MaxValue) player = 0;
             SendMessage(msg, player);
         }
+
+        /// <summary>
+        /// RoleInfoを持たない役職用。「役職名(略称)\n説明」の形式でヘルプ文字列を作る
+        /// </summary>
+        private static string BuildRoleHelp(CustomRoles role, string shortName)
+        {
+            var roleName = role.ToString();
+            var title = GetString(roleName) + (string.IsNullOrEmpty(shortName) ? "" : $"({shortName})");
+            return ColorString(GetRoleColor(role),
+                    "<b><line-height=2.0pic><size=150%>" + title
+                    + "\n<line-height=1.8pic><size=90%>" + GetString($"{roleName}Info"))
+                + "\n<line-height=1.3pic></b><size=60%>\n" + GetString($"{roleName}InfoLong");
+        }
+
+        /// <summary>
+        /// FullFormatHelp の最初に出てくる役職名の直後に (略称) を差し込む。
+        /// 役職名が見つからない・略称がない場合は元の文字列をそのまま返す
+        /// </summary>
+        private static string AddShortName(string help, CustomRoles role, string shortName)
+        {
+            if (string.IsNullOrEmpty(help) || string.IsNullOrEmpty(shortName)) return help;
+            var name = GetString(role.ToString());
+            if (string.IsNullOrEmpty(name)) return help;
+            var idx = help.IndexOf(name, StringComparison.Ordinal);
+            if (idx < 0) return help;
+            return help.Insert(idx + name.Length, $"({shortName})");
+        }
+
         /// <summary>
         /// 複数登録するor特別な奴以外はしなくてよい。
         /// </summary>
