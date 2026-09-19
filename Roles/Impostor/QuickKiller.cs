@@ -239,8 +239,9 @@ public sealed class QuickKiller : RoleBase, IImpostor, IUsePhantomButton
         ResetCooldown = false;
 
         var target = Player.GetKillTarget(true);
+        if (target is null) return;
 
-        if (!Player.IsAlive() || target == null || !CanSubkill || UseCount <= 0 || IsQuick) { Main.AllPlayerKillCooldown[Player.PlayerId] = KillCoolTimer; SendRPC(); return; }
+        if (!Player.IsAlive() || !CanSubkill || UseCount <= 0 || IsQuick) return;
 
         var targetrole = target.GetCustomRole();
         if (targetrole.IsImpostor()) { Main.AllPlayerKillCooldown[Player.PlayerId] = KillCoolTimer; return; }

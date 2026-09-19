@@ -96,7 +96,7 @@ public sealed class Hunter : RoleBase, IKiller, ISchrodingerCatOwner
 
     private static void SetupOptionItem()
     {
-        KillCooldown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.KillCooldown, new(0f, 990f, 0.5f), 30f, false)
+        KillCooldown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.KillCooldown, new(0f, 180f, 0.5f), 30f, false)
             .SetValueFormat(OptionFormat.Seconds);
         OverrideKilldistance.Create(RoleInfo, 15);
         ShotLimitOpt = IntegerOptionItem.Create(RoleInfo, 25, OptionName.SheriffShotLimit, new(1, 15, 1), 15, false)

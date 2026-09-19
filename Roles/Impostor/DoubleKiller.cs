@@ -124,12 +124,10 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
         ResetCooldown = false;
 
         var target = Player.GetKillTarget(true);
-        var targetrole = target.GetCustomRole();
+        if (target is null) return;
 
-        if (usedPhantomCount >= OptionPhantomUsageCount.GetInt() || !Player.IsAlive() || targetrole.IsImpostor() || target == null || !CanSubkill)
-        {
-            return;
-        }
+        if (usedPhantomCount >= OptionPhantomUsageCount.GetInt() || !Player.IsAlive() || target.Is(CustomRoleTypes.Impostor) || !CanSubkill) return;
+
         else if (target.GetRoleClass() is MadPsycho ms)
         {
             ms.Psycho(Player, 1);

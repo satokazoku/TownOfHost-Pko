@@ -3,6 +3,7 @@ using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
 using Rewired.Utils.Classes.Data;
+using TMPro;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using UnityEngine;
@@ -126,14 +127,14 @@ public sealed class Warlock : RoleBase, IImpostor, IUsePhantomButton
                 {
                     Player.SetKillCooldown();
                 }
-                if (OptionCantmove.GetBool())
+                if (OptionCantmove.GetBool() && Player.IsAlive())
                 {
-                    //多分今の速度保存しといたほうがいい
-                    var Speed = Main.AllPlayerSpeed[Player.PlayerId];
                     Main.AllPlayerSpeed[Player.PlayerId] = 0f;
+                    UtilsOption.MarkEveryoneDirtySettings();
                     _ = new LateTask(() =>
                     {
-                        Main.AllPlayerSpeed[Player.PlayerId] = Speed;
+                        Main.AllPlayerSpeed[Player.PlayerId] = Main.NormalOptions.PlayerSpeedMod;
+                        UtilsOption.MarkEveryoneDirtySettings();
                     }, OptionCantMovetime.GetFloat(), "Warlock_koutyoku", true);
                 }
             }       
@@ -178,6 +179,21 @@ public sealed class Warlock : RoleBase, IImpostor, IUsePhantomButton
         bool hasCursed = reader.ReadBoolean();
         CursedPlayer = hasCursed ? PlayerCatch.GetPlayerById(reader.ReadByte()) : null;
     }
+
+    public override string GetMark(PlayerControl seer, PlayerControl seen, bool isForMeeting = false)
+    {
+        //seenが省略の場合seer
+        seen ??= seer;
+        if (CursedPlayer is null)
+        {
+            return "";
+        }
+        if (seen.PlayerId == CursedPlayer.PlayerId) 
+            return Utils.ColorString(RoleInfo.RoleColor, "★");
+
+        return "";
+    }
+
     public static Dictionary<int, Achievement> achievements = new();
     [Attributes.PluginModuleInitializer]
     public static void Load()

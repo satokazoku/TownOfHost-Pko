@@ -59,7 +59,7 @@ namespace TownOfHost.Roles.Neutral
         static OptionItem OptionShowRoleNameToKillerTeam;
         static OptionItem OptionCountChenge;
         static OptionItem OptionCanSeeKillableTeammate;
-        static OptionItem OptionMisidentify;
+        public static OptionItem OptionMisidentify;
         PlayerControl Killer;
         byte KillerId = byte.MaxValue;
         readonly HashSet<byte> RoleNameSeerIds = [];
@@ -67,7 +67,7 @@ namespace TownOfHost.Roles.Neutral
         /// 自分をキルしてきた人のロール
         /// </summary>
         private ISchrodingerCatOwner owner = null;
-        private TeamType _team = TeamType.None;
+        public TeamType _team = TeamType.None;
         public TeamType SchrodingerCatChangeTo => Team;
         static Dictionary<byte, byte> MadCats = new(14);
 
