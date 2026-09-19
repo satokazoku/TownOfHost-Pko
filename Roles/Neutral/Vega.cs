@@ -30,7 +30,8 @@ public sealed class Vega : RoleBase, IKiller, IAdditionalWinner
                 AssignCountRule = new(1, 1, 1),
                 AssignUnitRoles = [CustomRoles.Vega, CustomRoles.Altair]
             },
-            combination: CombinationRoles.VegaandAltair
+            combination: CombinationRoles.VegaandAltair,
+            from: From.TownOfHost_K
         );
     public Vega(PlayerControl player)
     : base(
