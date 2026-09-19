@@ -148,6 +148,13 @@ public sealed class Autocrat : RoleBase, IAdditionalWinner
         //マーメイドは弾く
         if (seer.Is(CustomRoleTypes.Neutral) && !seer.Is(CustomRoles.Mermaid))
         {
+            if (seer.GetRoleClass() is BakeCat bakecat && BakeCat.OptionMisidentify.GetBool() && bakecat.Team == ISchrodingerCatOwner.TeamType.None)
+            {
+                enabled = false;
+                roleText = "";
+                addon = false;
+                return;
+            }
             enabled = true;
             roleColor = StringHelper.CodeColor("#8b0000");
             roleText = GetString("Autocrat");
