@@ -85,7 +85,7 @@ public sealed class MassMedia : RoleBase, IKiller, IKillFlashSeeable
         SoloWinOption.Create(RoleInfo, 9, defo: 1);
         OptionKillCoolDown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.Cooldown, new(0f, 180f, 0.5f), 20f, false)
                 .SetValueFormat(OptionFormat.Seconds);
-        OptionBlackVision = FloatOptionItem.Create(RoleInfo, 11, Option.MassMediaShikai, new(0f, 0.20f, 0.02f), 0.04f, false)
+        OptionBlackVision = FloatOptionItem.Create(RoleInfo, 11, Option.MassMediaShikai, new(0f, 1f, 0.02f), 0.76f, false)
                 .SetValueFormat(OptionFormat.Multiplier);
         OptionMeetingTargetReset = BooleanOptionItem.Create(RoleInfo, 12, Option.MassMediaMeetingTargetReset, false, false);
         OptionCanSeeKillflash = BooleanOptionItem.Create(RoleInfo, 13, Option.MassMediaCanSeeKillflash, false, false);
