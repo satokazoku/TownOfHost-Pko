@@ -206,9 +206,15 @@ namespace TownOfHost
     {
         public static void Prefix(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> teamToDisplay)
         {
-            if (PlayerControl.LocalPlayer.Is(CustomRoleTypes.Neutral) && (!PlayerControl.LocalPlayer.Is(CustomRoles.BakeCat) && BakeCat.OptionMisidentify.GetBool()) && !PlayerControl.LocalPlayer.Is(CustomRoles.Vanity) && !PlayerControl.LocalPlayer.Is(CustomRoles.Amnesia))
+            if (PlayerControl.LocalPlayer.Is(CustomRoleTypes.Neutral) && !PlayerControl.LocalPlayer.Is(CustomRoles.Vanity) && !PlayerControl.LocalPlayer.Is(CustomRoles.Amnesia))
             {
                 //ぼっち役職
+                var soloTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
+                soloTeam.Add(PlayerControl.LocalPlayer);
+                teamToDisplay = soloTeam;
+            }
+            if (PlayerControl.LocalPlayer.Is(CustomRoles.BakeCat) && !BakeCat.OptionMisidentify.GetBool())
+            {
                 var soloTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
                 soloTeam.Add(PlayerControl.LocalPlayer);
                 teamToDisplay = soloTeam;
