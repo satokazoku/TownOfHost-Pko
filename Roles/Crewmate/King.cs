@@ -2,7 +2,9 @@ using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
 using TownOfHost.Roles.Core;
+using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Impostor;
+using TownOfHost.Roles.Neutral;
 
 namespace TownOfHost.Roles.Crewmate;
 
@@ -130,6 +132,22 @@ public sealed class King : RoleBase
         if (seer == Player) return;
         if (seer.Is(CustomRoleTypes.Crewmate) || seer.Is(CustomRoles.BakeCat))
         {
+            if (seer.GetRoleClass() is BakeCat bakecat)
+            {
+                if (BakeCat.OptionMisidentify.GetBool() && bakecat.Team == ISchrodingerCatOwner.TeamType.None)
+                {
+                    enabled = true;
+                    roleColor = StringHelper.CodeColor("#FFD700");
+                    roleText = GetString("King");
+                    addon = false;
+                    return;
+                }
+                enabled = false;
+                roleText = "";
+                addon = false;
+                return;
+            }
+
             enabled = true;
             roleColor = StringHelper.CodeColor("#FFD700");
             roleText = GetString("King");
