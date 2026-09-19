@@ -75,7 +75,7 @@ public sealed class Satellite : RoleBase, ISelfVoter
         Option1MeetingMaximum = IntegerOptionItem.Create(RoleInfo, 11, GeneralOption.MeetingMaxTime, new(0, 99, 1), 1, false)
             .SetValueFormat(OptionFormat.Times)
             .SetZeroNotation(OptionZeroNotation.Infinity);
-        OptiontaskCount = IntegerOptionItem.Create(RoleInfo, 12, GeneralOption.cantaskcount, new(0, 99, 1), 5, false);
+        OptiontaskCount = IntegerOptionItem.Create(RoleInfo, 12, GeneralOption.cantaskcount, new(0, 99, 1), 0, false);
         OptionAwakening = BooleanOptionItem.Create(RoleInfo, 13, GeneralOption.AbilityAwakening, false, false);
     }
 
@@ -94,7 +94,7 @@ public sealed class Satellite : RoleBase, ISelfVoter
 
     public override void OnFixedUpdate(PlayerControl player)
     {
-        if (Utils.IsActive(SystemTypes.Comms) || !AmongUsClient.Instance.AmHost || player.IsAlive() is false) return;
+        if (!AmongUsClient.Instance.AmHost || player.IsAlive() is false) return;
         // 検出された当たり判定の格納用に使い回す配列 変換時の負荷を回避するためIl2CppReferenceArrayで扱う
         Il2CppReferenceArray<Collider2D> colliders = new(45);
         // 各部屋の人数カウント処理
@@ -162,11 +162,6 @@ public sealed class Satellite : RoleBase, ISelfVoter
         if (target.GetRoleClass() is MadPsycho ms)
         {
             ms.Psycho(Player, 1);
-        }
-        if (Utils.IsActive(SystemTypes.Comms))
-        {
-            Utils.SendMessage(string.Format(GetString("SatelliteModeInfoFall") + string.Format(GetString("EvilSateliteSkillInfo3"), maximum - UsedSkillCount), Player.PlayerId, $"<{RoleInfo.RoleColorCode}>{string.Format(GetString("SatelliteTitle"), UtilsName.GetPlayerColor(votedForId))}"), Player.PlayerId);
-            return;
         }
 
         var systemTypes = SentPlayers.TryGetValue(votedForId, out var sentdata) ? sentdata : null;
