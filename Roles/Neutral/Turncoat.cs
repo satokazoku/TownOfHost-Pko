@@ -38,7 +38,8 @@ public sealed class Turncoat : RoleBase, IKiller
     static OptionItem OptionCanTargetImpostor;
     static OptionItem OptionCanTargetNeutral;
     static OptionItem OptionCanTargetMadmate;
-    static OptionItem OptionCanShapeShift; static OptionItem OptionCooldown; static OptionItem OptionDuration;
+    static OptionItem OptionCanShapeShift; static OptionItem OptionCooldown; static OptionItem OptionDuration; static OptionItem OptionShapeAnime;
+
     static float cooldown; static float duration;
 
     enum OptionName
@@ -53,15 +54,16 @@ public sealed class Turncoat : RoleBase, IKiller
 
     private static void SetupOptionItem()
     {
+        OptionCanTargetImpostor = BooleanOptionItem.Create(RoleInfo, 10, OptionName.TurncoatCanTargetImpostor, true, false);
+        OptionCanTargetMadmate = BooleanOptionItem.Create(RoleInfo, 11, OptionName.TurncoatCanTargetMadmate, true, false);
+        OptionCanTargetNeutral = BooleanOptionItem.Create(RoleInfo, 12, OptionName.TurncoatCanTargetNeutral, true, false);
         OptionCanShapeShift = BooleanOptionItem.Create(RoleInfo, 13, "JesterCanUseShapeshift", true, false);
         OptionCooldown = FloatOptionItem.Create(RoleInfo, 14, GeneralOption.Cooldown, new(0f, 180f, 0.5f), 0f, false, OptionCanShapeShift)
                 .SetValueFormat(OptionFormat.Seconds);
         OptionDuration = FloatOptionItem.Create(RoleInfo, 15, GeneralOption.Duration, new(0f, 180f, 0.5f), 0f, false, OptionCanShapeShift)
                 .SetZeroNotation(OptionZeroNotation.Infinity)
                 .SetValueFormat(OptionFormat.Seconds);
-        OptionCanTargetImpostor = BooleanOptionItem.Create(RoleInfo, 10, OptionName.TurncoatCanTargetImpostor, true, false);
-        OptionCanTargetMadmate = BooleanOptionItem.Create(RoleInfo, 11, OptionName.TurncoatCanTargetMadmate, true, false);
-        OptionCanTargetNeutral = BooleanOptionItem.Create(RoleInfo, 12, OptionName.TurncoatCanTargetNeutral, true, false);
+        OptionShapeAnime = BooleanOptionItem.Create(RoleInfo, 16, GeneralOption.PlayShapeAnimate, false, false);
 
         RoleAddAddons.Create(RoleInfo, 20);
     }
@@ -221,6 +223,11 @@ public sealed class Turncoat : RoleBase, IKiller
             targetname += $"{Utils.ColorString(UtilsRoleText.GetRoleColor(role), $"({GetString($"{role}")})")}";
         }
         return $"{string.Format(GetString("TurncoatLowerText"), targetname)}";
+    }
+    public override bool CheckShapeshift(PlayerControl target, ref bool animate)
+    {
+        animate = OptionShapeAnime.GetBool();
+        return true;
     }
     public override string GetProgressText(bool comms = false, bool GameLog = false) => $"<color={TargetColorcode}>★</color>";
 
