@@ -95,7 +95,7 @@ public sealed class MassMedia : RoleBase, IKiller, IKillFlashSeeable
         OptionBlackVision = FloatOptionItem.Create(RoleInfo, 11, Option.MassMediaShikai, new(0f, 1f, 0.02f), 0.76f, false)
                 .SetValueFormat(OptionFormat.Multiplier);
         OptionCanMissCount = IntegerOptionItem.Create(RoleInfo, 12, Option.MassMediaCanMissCount, new(0, 99, 1), 2, false)
-                .SetValueFormat(OptionFormat.Seconds);
+                .SetValueFormat(OptionFormat.Times);
         OptionCanGuessOtherReport = BooleanOptionItem.Create(RoleInfo, 13, Option.MassMediaCanGuessOtherReport, true, false);
         OptionMeetingTargetReset = BooleanOptionItem.Create(RoleInfo, 14, Option.MassMediaMeetingTargetReset, false, false);
         OptionCanSeeKillflash = BooleanOptionItem.Create(RoleInfo, 15, Option.MassMediaCanSeeKillflash, false, false);

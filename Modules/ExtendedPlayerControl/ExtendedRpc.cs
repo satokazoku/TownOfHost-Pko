@@ -12,6 +12,7 @@ using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Crewmate;
 using TownOfHost.Roles.Madmate;
+using TownOfHost.Roles.Neutral;
 using UnityEngine;
 using static TownOfHost.ExtendedPlayerControl;
 using static TownOfHost.Translator;
@@ -43,6 +44,10 @@ namespace TownOfHost
             if (role == CustomRoles.UltraStar || role == CustomRoles.Express)
             {
                 resetExpressSpeed = false;
+            }
+            if (role == CustomRoles.Opportunist && beforeRole != CustomRoles.Opportunist)
+            {
+                Opportunist.ChangedOppos.Add(player.PlayerId);
             }
             if (resetExpressSpeed)
                 Main.AllPlayerSpeed[player.PlayerId] = Main.NormalOptions.PlayerSpeedMod;

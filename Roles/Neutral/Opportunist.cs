@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using AmongUs.GameOptions;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
@@ -38,6 +39,7 @@ public sealed class Opportunist : RoleBase, IAdditionalWinner, IKiller
     static OptionItem OptionNeedTasks;
     static OptionItem OptionTaskCount;
     static int NeedTaskCount;
+    public static List<byte> ChangedOppos;
 
     enum OptionName
     {
@@ -75,11 +77,22 @@ public sealed class Opportunist : RoleBase, IAdditionalWinner, IKiller
     {
         if (Player.IsAlive())
         {
-            Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);
-            if (PlayerCatch.AllAlivePlayersCount <= 4) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[1]);
-            if (timer > 100) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[2]);
-            if (timer < 10) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[3]);
-            return MyTaskState.HasCompletedEnoughCountOfTasks(NeedTaskCount);
+            if (ChangedOppos.Contains(Player.PlayerId))
+            {
+                Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);
+                if (PlayerCatch.AllAlivePlayersCount <= 4) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[1]);
+                if (timer > 100) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[2]);
+                if (timer < 10) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[3]);
+                return true;
+            }
+            else if (MyTaskState.HasCompletedEnoughCountOfTasks(NeedTaskCount))
+            {
+                Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);
+                if (PlayerCatch.AllAlivePlayersCount <= 4) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[1]);
+                if (timer > 100) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[2]);
+                if (timer < 10) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[3]);
+                return true;
+            }
         }
         return false;
     }
