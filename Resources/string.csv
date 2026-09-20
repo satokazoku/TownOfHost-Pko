@@ -2451,6 +2451,7 @@
 "MassMediaMeetingTargetReset","Meeting Target Reset","会議でターゲットをリセットするか"
 "MassMediaCanSeeKillflash","Target Kill Can See Killflash","ターゲットのキルフラッシュが見える"
 "MassMediaCriminalprofile","Criminal","犯人候補にマークをつける"
+"MassMediaCanMissCount","Number of Allowed Failures","失敗可能回数"
 "BankerFarstCoin","First Have Coin","最初に所持しているポイント"
 "BankerTaskAddCoin","Taskcomplete Get Coins","タスクを行うことで手に入るポイント"
 "BankerKillAddCoin","Kill Get Coins","キルすることで手に入るポイント"

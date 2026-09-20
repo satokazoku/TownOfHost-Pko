@@ -8,6 +8,7 @@ using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Madmate;
 using UnityEngine;
+using static TownOfHost.Roles.Crewmate.AllArounder;
 
 namespace TownOfHost.Roles.Neutral;
 
@@ -37,6 +38,7 @@ public sealed class MassMedia : RoleBase, IKiller, IKillFlashSeeable
     )
     {
         CustomRoleManager.OnMurderPlayerOthers.Add(TageKillCh);
+        CanMissCount = OptionCanMissCount.GetInt() + 1;
     }
     public bool CanKill { get; private set; } = false;
     static OptionItem OptionKillCoolDown;
@@ -44,6 +46,7 @@ public sealed class MassMedia : RoleBase, IKiller, IKillFlashSeeable
     static OptionItem OptionMeetingTargetReset;
     static OptionItem OptionCanSeeKillflash;
     static OptionItem OptionCriminalprofile;
+    static OptionItem OptionCanMissCount;
     List<byte> Suspects;
     bool SuspectsSearch;
     static bool MeetingTargetReset;
@@ -56,12 +59,14 @@ public sealed class MassMedia : RoleBase, IKiller, IKillFlashSeeable
     bool Win;
     Vector3 TargetPosition;
     public static HashSet<MassMedia> MassMedias = new();
+    int CanMissCount;
     enum Option
     {
         MassMediaShikai,
         MassMediaMeetingTargetReset,
         MassMediaCanSeeKillflash,
-        MassMediaCriminalprofile
+        MassMediaCriminalprofile,
+        MassMediaCanMissCount
     }
     public override void Add()
     {
@@ -87,9 +92,11 @@ public sealed class MassMedia : RoleBase, IKiller, IKillFlashSeeable
                 .SetValueFormat(OptionFormat.Seconds);
         OptionBlackVision = FloatOptionItem.Create(RoleInfo, 11, Option.MassMediaShikai, new(0f, 1f, 0.02f), 0.76f, false)
                 .SetValueFormat(OptionFormat.Multiplier);
-        OptionMeetingTargetReset = BooleanOptionItem.Create(RoleInfo, 12, Option.MassMediaMeetingTargetReset, false, false);
-        OptionCanSeeKillflash = BooleanOptionItem.Create(RoleInfo, 13, Option.MassMediaCanSeeKillflash, false, false);
-        OptionCriminalprofile = BooleanOptionItem.Create(RoleInfo, 14, Option.MassMediaCriminalprofile, false, false);
+        OptionCanMissCount = IntegerOptionItem.Create(RoleInfo, 12, Option.MassMediaCanMissCount, new(0, 99, 1), 2, false)
+                .SetValueFormat(OptionFormat.Seconds);
+        OptionMeetingTargetReset = BooleanOptionItem.Create(RoleInfo, 13, Option.MassMediaMeetingTargetReset, false, false);
+        OptionCanSeeKillflash = BooleanOptionItem.Create(RoleInfo, 14, Option.MassMediaCanSeeKillflash, false, false);
+        OptionCriminalprofile = BooleanOptionItem.Create(RoleInfo, 15, Option.MassMediaCriminalprofile, false, false);
     }
     public override void OnFixedUpdate(PlayerControl player)
     {
@@ -254,12 +261,21 @@ public sealed class MassMedia : RoleBase, IKiller, IKillFlashSeeable
             }
             else
             {
-                Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[1]);
-                //違うなら消えてもらおうか。
-                MeetingVoteManager.Instance.ClearAndExile(Player.PlayerId, Player.PlayerId);
-                MeetingHudPatch.TryAddAfterMeetingDeathPlayers(CustomDeathReason.Misfire, Player.PlayerId);
+                --CanMissCount;
 
-                UtilsGameLog.AddGameLog($"MassMedia", string.Format(GetString("MassMedia.log"), UtilsName.GetPlayerColor(Player)));
+                if (CanMissCount < 0)
+                {
+                    Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[1]);
+                    //違うなら消えてもらおうか。
+                    MeetingVoteManager.Instance.ClearAndExile(Player.PlayerId, Player.PlayerId);
+                    MeetingHudPatch.TryAddAfterMeetingDeathPlayers(CustomDeathReason.Misfire, Player.PlayerId);
+
+                    UtilsGameLog.AddGameLog($"MassMedia", string.Format(GetString("MassMedia.log"), UtilsName.GetPlayerColor(Player)));
+                }
+                else
+                {
+                    Player.RpcProtectedMurderPlayer(Player);
+                }
                 return true;
             }
         }
@@ -305,6 +321,12 @@ public sealed class MassMedia : RoleBase, IKiller, IKillFlashSeeable
     }
     public float CalculateKillCooldown() => KillCooldown;
 
+    public override string GetProgressText(bool comms = false, bool GameLog = false)
+    {
+        return Utils.ColorString(RoleInfo.RoleColor, $"({CanMissCount - 1})");
+    }
+
+
     public bool OverrideKillButton(out string text)
     {
         text = "MassMedia_Kill";
@@ -319,6 +341,7 @@ public sealed class MassMedia : RoleBase, IKiller, IKillFlashSeeable
         sender.Writer.Write(Targetid);
         sender.Writer.Write(isPos999);
         if (!isPos999) NetHelpers.WriteVector2(TargetPosition, sender.Writer);
+        sender.Writer.Write(CanMissCount);
     }
 
     public override void ReceiveRPC(MessageReader reader)
@@ -326,6 +349,7 @@ public sealed class MassMedia : RoleBase, IKiller, IKillFlashSeeable
         GuessMode = reader.ReadBoolean();
         var newTargetId = reader.ReadByte();
         Vector2 newTargetPosition = reader.ReadBoolean() ? new Vector3(999f, 999f) : NetHelpers.ReadVector2(reader);
+        CanMissCount = reader.ReadInt32();
 
         //idが更新されたときのみ処理
         if (newTargetId != Targetid)

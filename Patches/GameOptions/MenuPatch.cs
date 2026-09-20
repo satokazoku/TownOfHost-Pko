@@ -381,48 +381,43 @@ namespace TownOfHost
                     search?.gameObject?.SetActive(true);
                     search.submitButton.OnPressed = (Action)(() =>
                     {
-                        bool ch = false;
-                        List<OptionItem> subopt = new();
-                        foreach (var op in OptionItem.AllOptions.Where(o => (o as ObjectOptionitem)?.IsHedderObject is not true))
+                        var text = search.textArea.text;
+                        if (string.IsNullOrEmpty(text)) return;
+
+                        OptionItem best = null;
+                        int bestScore = int.MaxValue;
+
+                        foreach (var op in OptionItem.AllOptions)
                         {
+                            if ((op as ObjectOptionitem)?.IsHedderObject is true) continue;
+
                             var name = op.GetName().RemoveHtmlTags();
+                            int score;
+                            if (name == text) score = 0;
+                            else if (name.StartsWith(text, StringComparison.Ordinal)) score = 10;
+                            else if (name.Contains(text)) score = 20;
+                            else continue;
 
-                            if (name == search.textArea.text)
-                            {
-                                scroll(op);
-                                ch = true;
-                                break;
-                            }
+                            // 役職ページ内の個別設定(シェリフのキル対象設定など)は後回し
+                            if (op.ParentRole is not CustomRoles.NotAssigned && op.CustomRole is CustomRoles.NotAssigned)
+                                score += 100;
 
-                            if (name.Contains(search.textArea.text))
+                            if (score < bestScore)
                             {
-                                subopt.Add(op);
-                                break;
-                            }
-                        }
-
-                        //不必要なループをなくしてみる
-                        if (!ch)
-                        {
-                            foreach (var op in subopt)
-                            {
-                                scroll(op);
-                                break;
+                                best = op;
+                                bestScore = score;
+                                if (score == 0) break; // 完全一致なら確定
                             }
                         }
+
+                        if (best != null) scroll(best);
                         search.textArea.Clear();
 
                         //スクロール処理
                         void scroll(OptionItem op)
                         {
-                            var opt = op;
-                            while (opt.Parent != null && (!opt.GetBool() || roleopts.Contains(opt)))
-                            {
-                                opt = opt.Parent;
-                            }
-
-                            int tabIndex = (int)opt.Tab;
-
+                            // 先にタブを開いて生成させる(roleopts が埋まる)
+                            int tabIndex = (int)op.Tab;
                             if (tabIndex >= 0 && tabIndex < tabButtons.Count && tabButtons[tabIndex] != null)
                             {
                                 tabButtons[tabIndex].OnClick.Invoke();
@@ -431,10 +426,20 @@ namespace TownOfHost
                             _ = new LateTask(() =>
                             {
                                 if (!(ModSettingsTab?.gameObject?.active ?? false)) return;
+
+                                // 生成後に親を辿る(役職個別設定 → 役職ヘッダ)
+                                var opt = op;
+                                while (opt.Parent != null && (!opt.GetBool() || roleopts.Contains(opt)))
+                                {
+                                    opt = opt.Parent;
+                                }
+                                if (opt.OptionBehaviour == null) return;
+
                                 ModSettingsTab.scrollBar.velocity = Vector2.zero;
-                                var relativePosition = ModSettingsTab.scrollBar.transform.InverseTransformPoint(opt.OptionBehaviour.transform.FindChild("Title Text").transform.position);// Scrollerのローカル空間における座標に変換
+                                var relativePosition = ModSettingsTab.scrollBar.transform.InverseTransformPoint(
+                                    opt.OptionBehaviour.transform.FindChild("Title Text").transform.position);
                                 var scrollAmount = 1 - relativePosition.y;
-                                ModSettingsTab.scrollBar.Inner.localPosition = ModSettingsTab.scrollBar.Inner.localPosition + Vector3.up * scrollAmount;  // 強制スクロール
+                                ModSettingsTab.scrollBar.Inner.localPosition += Vector3.up * scrollAmount;
                                 ModSettingsTab.scrollBar.ScrollRelative(Vector2.zero);
                             }, 0.1f, "", true);
                         }
