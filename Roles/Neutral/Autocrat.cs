@@ -155,6 +155,13 @@ public sealed class Autocrat : RoleBase, IAdditionalWinner
                 addon = false;
                 return;
             }
+            if (seer.GetRoleClass() is Vanity vanity && !vanity.Realized)
+            {
+                enabled = false;
+                roleText = "";
+                addon = false;
+                return;
+            }
             enabled = true;
             roleColor = StringHelper.CodeColor("#8b0000");
             roleText = GetString("Autocrat");

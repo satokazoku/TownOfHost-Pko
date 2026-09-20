@@ -147,7 +147,24 @@ public sealed class King : RoleBase
                 addon = false;
                 return;
             }
-
+            if (seer.GetRoleClass() is Vanity vanity)
+            {
+                if (!vanity.Realized)
+                {
+                    enabled = true;
+                    roleColor = StringHelper.CodeColor("#FFD700");
+                    roleText = GetString("King");
+                    addon = false;
+                    return;
+                }
+                else
+                {
+                    enabled = false;
+                    roleText = "";
+                    addon = false;
+                    return;
+                }
+            }
             enabled = true;
             roleColor = StringHelper.CodeColor("#FFD700");
             roleText = GetString("King");
