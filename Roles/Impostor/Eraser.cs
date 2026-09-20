@@ -23,7 +23,7 @@ public sealed class Eraser : RoleBase, IImpostor, IUsePhantomButton
             SetupOptionItem,
             "Er",
             OptionSort: (6, 3),
-            from: From.TownOfHost_K
+            from: From.TheOtherRoles
         );
     public Eraser(PlayerControl player)
     : base(
