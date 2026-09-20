@@ -6,8 +6,6 @@ using TownOfHost.Roles.Core.Interfaces;
 using System.Reflection;
 
 namespace TownOfHost.Roles.Crewmate;
-//Note
-//治らなかったらいったんリストラ
 
 public sealed class UltraStar : RoleBase, IKiller, ISchrodingerCatOwner
 {

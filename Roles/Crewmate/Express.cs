@@ -31,14 +31,14 @@ public sealed class Express : RoleBase
 
     enum OptionName
     {
-        ExpressSpeed
+        AddSpeed
     }
 
     private static float speed;
 
     private static void SetupOptionItem()
     {
-        OptionSpeed = FloatOptionItem.Create(RoleInfo, 10, OptionName.ExpressSpeed, new(1.5f, 10f, 0.25f), 3.0f, false)
+        OptionSpeed = FloatOptionItem.Create(RoleInfo, 10, OptionName.AddSpeed, new(1.5f, 10f, 0.25f), 3.0f, false)
             .SetValueFormat(OptionFormat.Multiplier);
     }
 
