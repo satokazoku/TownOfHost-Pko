@@ -1,23 +1,24 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Hazel;
-using UnityEngine;
 using AmongUs.GameOptions;
-
+using Hazel;
+using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
-using TownOfHost.Modules;
+using UnityEngine;
+using static TownOfHost.Roles.Crewmate.AllArounder;
 
 namespace TownOfHost.Roles.Impostor;
 
-public sealed class Sniper : RoleBase, IImpostor
+public sealed class Sniper : RoleBase, IImpostor, IUsePhantomButton
 {
     public static readonly SimpleRoleInfo RoleInfo =
         SimpleRoleInfo.Create(
             typeof(Sniper),
             player => new Sniper(player),
             CustomRoles.Sniper,
-            () => RoleTypes.Shapeshifter,
+            () => OptionShotType.GetInt() == 0 ? RoleTypes.Phantom : RoleTypes.Shapeshifter,
             CustomRoleTypes.Impostor,
             7100,
             SetupOptionItem,
@@ -30,7 +31,10 @@ public sealed class Sniper : RoleBase, IImpostor
                 if (SniperAimAssist.GetBool()) adddesc += GetString("SniperDescAimAssist");
                 if (OpShowArrowTime.GetBool()) adddesc += string.Format(GetString("SniperDescArrow"), OpShowArrowTime.GetFloat());
                 if (OpCankill.GetBool() is false) adddesc += GetString("SniperDescCantKill");
-
+                if (OptionShotType.GetInt() == 0)
+                {
+                    return string.Format(GetString("SniperDescPhantom"), SniperBulletCount.GetInt()) + adddesc;
+                }
                 return string.Format(GetString("SniperDesc"), SniperBulletCount.GetInt()) + adddesc;
             }
         );
@@ -40,6 +44,7 @@ public sealed class Sniper : RoleBase, IImpostor
         player
     )
     {
+        OneClickMode = OptionShotType.GetInt() == 0;
         MaxBulletCount = SniperBulletCount.GetInt();
         PrecisionShooting = SniperPrecisionShooting.GetBool();
         AimAssist = SniperAimAssist.GetBool();
@@ -66,6 +71,7 @@ public sealed class Sniper : RoleBase, IImpostor
     static OptionItem OpShapeCool;
     static OptionItem OpShowArrowTime;
     static OptionItem OpFriendlyFire;
+    static OptionItem OptionShotType;
     enum OptionName
     {
         SniperBulletCount,
@@ -75,8 +81,18 @@ public sealed class Sniper : RoleBase, IImpostor
         SniperCanKill,
         SniperCanShapeshift,
         SniperShowArrowTime,
-        SniperFriendlyFire
+        SniperFriendlyFire,
+        SniperShotType
     }
+    enum ShotType
+    {
+        OneClick,
+        ShapeShift
+    }
+
+    /// <summary>ワンクリック(ファントム)モード: 1回目のクリック位置→2回目のクリック位置に発砲</summary>
+    bool OneClickMode;
+
     Vector3 SnipeBasePosition;
     Vector3 LastPosition;
     int BulletCount;
@@ -96,16 +112,26 @@ public sealed class Sniper : RoleBase, IImpostor
     float ShapeCooldown;
     float ShapeDuration;
     bool MeetingReset;
+    public static bool KnowTargetRoleColor(PlayerControl target, bool isMeeting)
+    => target.GetRoleClass() is Sniper sniper && sniper.IsAim && !isMeeting;
     public static void SetupOptionItem()
     {
+        var shottypes = Enum.GetNames(typeof(ShotType));
+
+        OptionShotType = StringOptionItem.Create(RoleInfo, 9, OptionName.SniperShotType, shottypes, 1, false);
+
         SniperBulletCount = IntegerOptionItem.Create(RoleInfo, 10, OptionName.SniperBulletCount, new(1, 99, 1), 2, false)
             .SetValueFormat(OptionFormat.Pieces);
-        OpShapeCool = FloatOptionItem.Create(RoleInfo, 11, GeneralOption.Cooldown, new(0f, 180f, 0.5f), 40f, false).SetValueFormat(OptionFormat.Seconds);
-        OpShapeDuration = FloatOptionItem.Create(RoleInfo, 12, GeneralOption.Duration, new(0f, 180f, 0.5f), 10f, false).SetZeroNotation(OptionZeroNotation.Infinity).SetValueFormat(OptionFormat.Seconds);
+        OpShapeCool = FloatOptionItem.Create(RoleInfo, 11, GeneralOption.Cooldown, new(0f, 180f, 0.5f), 40f, false)
+            .SetValueFormat(OptionFormat.Seconds);
+        OpShapeDuration = FloatOptionItem.Create(RoleInfo, 12, GeneralOption.Duration, new(0f, 180f, 0.5f), 10f, false)
+            .SetZeroNotation(OptionZeroNotation.Infinity).SetValueFormat(OptionFormat.Seconds)
+            .SetEnabled(() => OptionShotType.GetInt() == 1);
         SniperPrecisionShooting = BooleanOptionItem.Create(RoleInfo, 13, OptionName.SniperPrecisionShooting, false, false);
         SniperAimAssist = BooleanOptionItem.Create(RoleInfo, 14, OptionName.SniperAimAssist, false, false);
         SniperAimAssistOnshot = BooleanOptionItem.Create(RoleInfo, 15, OptionName.SniperAimAssistOneshot, false, false, SniperAimAssist);
-        OpCanShape = BooleanOptionItem.Create(RoleInfo, 16, OptionName.SniperCanShapeshift, false, false);
+        OpCanShape = BooleanOptionItem.Create(RoleInfo, 16, OptionName.SniperCanShapeshift, false, false)
+            .SetEnabled(() => OptionShotType.GetInt() == 1);
         OpCankill = BooleanOptionItem.Create(RoleInfo, 17, OptionName.SniperCanKill, true, false);
         OpShowArrowTime = FloatOptionItem.Create(RoleInfo, 18, OptionName.SniperShowArrowTime, new(0f, 60f, 1f), 10f, false).SetZeroNotation(OptionZeroNotation.Off).SetValueFormat(OptionFormat.Seconds);
         OpFriendlyFire = BooleanOptionItem.Create(RoleInfo, 19, OptionName.SniperFriendlyFire, true, false);
@@ -114,7 +140,10 @@ public sealed class Sniper : RoleBase, IImpostor
     {
         AURoleOptions.ShapeshifterDuration = ShapeDuration;
         AURoleOptions.ShapeshifterCooldown = ShapeCooldown;
+        AURoleOptions.PhantomCooldown = ShapeDuration;
     }
+    public bool IsresetAfterKill => false;
+
     public override void Add()
     {
         Logger.Disable("Sniper");
@@ -165,25 +194,10 @@ public sealed class Sniper : RoleBase, IImpostor
         if (!Player.IsAlive() || (BulletCount <= 0 && !CanNomalShape)) return false;
         return true;
     }
-    /// <summary>
-    /// 狙撃の場合死因設定
-    /// </summary>
-    /// <param name="info"></param>
-    public void OnMurderPlayerAsKiller(MurderInfo info)
-    {
-        //AttemptKillerは自分確定
-        //スナイパーがAppearanceKillerだった場合は狙撃じゃない
-        //ターゲットが自殺扱いなら狙撃
-        if (!Is(info.AppearanceKiller) && info.IsFakeSuicide)
-        {
-            PlayerState.GetByPlayerId(info.AttemptTarget.PlayerId).DeathReason = CustomDeathReason.Sniped;
-        }
-    }
-
     Dictionary<PlayerControl, float> GetSnipeTargets()
     {
         var targets = new Dictionary<PlayerControl, float>();
-        //変身開始地点→解除地点のベクトル
+        //エイム開始地点→発砲地点(変身解除 or 2回目のクリック)のベクトル
         var snipeBasePos = SnipeBasePosition;
         var snipePos = Player.transform.position;
         var dir = (snipePos - snipeBasePos).normalized;
@@ -236,8 +250,50 @@ public sealed class Sniper : RoleBase, IImpostor
         return targets;
 
     }
+
+    /// <summary>
+    /// ワンクリック(ファントム)モード
+    /// 1回目: クリックした位置を起点にエイム開始
+    /// 2回目: 起点→2回目にクリックした位置の方向へ発砲
+    /// </summary>
+    void IUsePhantomButton.OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
+    {
+        AdjustKillCooldown = false;
+        ResetCooldown = true;
+
+        if (!Player.IsAlive() || BulletCount <= 0) return;
+
+        if (!IsAim)
+        {
+            //1回目: 起点登録してエイム開始(クールダウンは発砲時まで動かさない)
+            ResetCooldown = false;
+
+            MeetingReset = false;
+            SnipeBasePosition = Player.transform.position;
+            LastPosition = Player.transform.position;
+            IsAim = true;
+            AimTime = 0f;
+            return;
+        }
+
+        //2回目: エイム終了して発砲
+        IsAim = false;
+        AimTime = 0f;
+
+        //一発消費して
+        BulletCount--;
+
+        //命中判定はホストのみ行う
+        if (!AmongUsClient.Instance.AmHost) return;
+
+        ExecuteShot();
+    }
+
     public override void OnShapeshift(PlayerControl target)
     {
+        //ワンクリック(ファントム)は OnClick で処理する
+        if (OneClickMode) return;
+
         var shapeshifting = Player.PlayerId != target.PlayerId;
 
         if (BulletCount <= 0) return;
@@ -275,6 +331,14 @@ public sealed class Sniper : RoleBase, IImpostor
         //命中判定はホストのみ行う
         if (!AmongUsClient.Instance.AmHost) return;
 
+        ExecuteShot();
+    }
+
+    /// <summary>
+    /// 命中判定・通知・矢印表示の本体
+    /// </summary>
+    private void ExecuteShot()
+    {
         var targets = GetSnipeTargets();
 
         if (targets.Count != 0)
@@ -288,7 +352,8 @@ public sealed class Sniper : RoleBase, IImpostor
 
             if (CustomRoleManager.OnCheckMurder(
                 Player, snipedTarget,       // sniperがsnipedTargetを打ち抜く
-                snipedTarget, snipedTarget, true, Killpower: 1 // 表示上はsnipedTargetの自爆
+                snipedTarget, snipedTarget, true, Killpower: 1, // 表示上はsnipedTargetの自爆
+                deathReason: CustomDeathReason.Sniped //死因設定
             ))
             {
                 if (snipedTarget.IsTeammate(Player))
@@ -297,7 +362,7 @@ public sealed class Sniper : RoleBase, IImpostor
 
             //あたった通知
             if (CanUseKillButton()) Player.SetKillCooldown();
-            else Player.RpcProtectedMurderPlayer(target);
+            else Player.RpcProtectedMurderPlayer(Player);
 
             //スナイプが起きたことを聞こえそうな対象に通知したい
             targets.Remove(snipedTarget);
@@ -336,6 +401,7 @@ public sealed class Sniper : RoleBase, IImpostor
             }
         }, Main.LagTime, "", true);
     }
+
     public override void OnFixedUpdate(PlayerControl player)
     {
         if (!Player.IsAlive()) return;
@@ -380,8 +446,28 @@ public sealed class Sniper : RoleBase, IImpostor
     public override void OnReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
     {
         MeetingReset = true;
+        //ワンクリックは変身解除イベントが来ないので、会議開始でエイムを終了させる
+        if (OneClickMode)
+        {
+            IsAim = false;
+            AimTime = 0f;
+        }
         foreach (var pc in PlayerCatch.AllPlayerControls)
             GetArrow.Remove(pc.PlayerId, SnipeBasePosition);
+    }
+    public override string GetLowerText(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
+    {
+        seen ??= seer;
+
+        if (!OneClickMode)
+        {
+            return "";
+        }
+        if (IsAim)
+        {
+            return GetString("Sniper_Lower_2");
+        }
+        return GetString("Sniper_Lower");
     }
     public override string GetProgressText(bool comms = false, bool gamelog = false)
     {
@@ -430,6 +516,11 @@ public sealed class Sniper : RoleBase, IImpostor
     public override string GetAbilityButtonText()
     {
         return GetString(BulletCount <= 0 ? "DefaultShapeshiftText" : "SniperSnipeButtonText");
+    }
+    public override bool OverrideAbilityButton(out string text)
+    {
+        text = "Sniper_Ability";
+        return true;
     }
     public static Dictionary<int, Achievement> achievements = new();
     [Attributes.PluginModuleInitializer]
