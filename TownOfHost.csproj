@@ -31,7 +31,7 @@
 
 	<ItemGroup>
 	  <Folder Include="ChatServer\" />
-	  <Folder Include="Resources\TOHP\BGM\" />
+	  <Folder Include="Resources\TOHP\Sounds\" />
 	</ItemGroup>
 
 	<ItemGroup>

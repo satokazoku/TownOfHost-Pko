@@ -140,7 +140,7 @@ public sealed class Sniper : RoleBase, IImpostor, IUsePhantomButton
     {
         AURoleOptions.ShapeshifterDuration = ShapeDuration;
         AURoleOptions.ShapeshifterCooldown = ShapeCooldown;
-        AURoleOptions.PhantomCooldown = ShapeDuration;
+        AURoleOptions.PhantomCooldown = ShapeCooldown;
     }
     public bool IsresetAfterKill => false;
 
@@ -159,11 +159,14 @@ public sealed class Sniper : RoleBase, IImpostor, IUsePhantomButton
 
         Snipers.Add(this);
     }
+    private enum RpcType : byte { ShotNotify, ShotSound }
+
     private void SendRPC()
     {
         Logger.Info($"{Player.GetNameWithRole().RemoveHtmlTags()}:SendRPC", "Sniper");
         using var sender = CreateSender();
 
+        sender.Writer.Write((byte)RpcType.ShotNotify);   // ← 追加
         var snList = ShotNotify;
         sender.Writer.Write(snList.Count);
         foreach (var sn in snList)
@@ -172,8 +175,21 @@ public sealed class Sniper : RoleBase, IImpostor, IUsePhantomButton
         }
     }
 
+    private void SendShotSoundRPC()
+    {
+        using var sender = CreateSender();
+        sender.Writer.Write((byte)RpcType.ShotSound);
+    }
+
     public override void ReceiveRPC(MessageReader reader)
     {
+        var type = (RpcType)reader.ReadByte();   // ← 追加
+        if (type == RpcType.ShotSound)
+        {
+            CustomSound.Play(CustomSound.SniperShot);
+            return;
+        }
+
         ShotNotify.Clear();
         var count = reader.ReadInt32();
         while (count > 0)
@@ -265,7 +281,6 @@ public sealed class Sniper : RoleBase, IImpostor, IUsePhantomButton
 
         if (!IsAim)
         {
-            //1回目: 起点登録してエイム開始(クールダウンは発砲時まで動かさない)
             ResetCooldown = false;
 
             MeetingReset = false;
@@ -273,6 +288,7 @@ public sealed class Sniper : RoleBase, IImpostor, IUsePhantomButton
             LastPosition = Player.transform.position;
             IsAim = true;
             AimTime = 0f;
+            PlayKamaeSound();
             return;
         }
 
@@ -301,16 +317,12 @@ public sealed class Sniper : RoleBase, IImpostor, IUsePhantomButton
         //弾が残ってたら
         if (shapeshifting)
         {
-            //Aim開始
             MeetingReset = false;
-
-            //スナイプ地点の登録
             SnipeBasePosition = Player.transform.position;
-
             LastPosition = Player.transform.position;
             IsAim = true;
             AimTime = 0f;
-
+            PlayKamaeSound();
             return;
         }
 
@@ -339,6 +351,12 @@ public sealed class Sniper : RoleBase, IImpostor, IUsePhantomButton
     /// </summary>
     private void ExecuteShot()
     {
+        if (Player.AmOwner)
+        {
+            //自分だけは外しても鳴らす
+            CustomSound.Play(CustomSound.SniperShot);
+        }
+
         var targets = GetSnipeTargets();
 
         if (targets.Count != 0)
@@ -357,6 +375,8 @@ public sealed class Sniper : RoleBase, IImpostor, IUsePhantomButton
             ))
             {
                 Player.KillFlash();
+                CustomSound.Play(CustomSound.SniperShot);
+                SendShotSoundRPC();
 
                 if (snipedTarget.IsTeammate(Player))
                     Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[3]);
@@ -403,7 +423,11 @@ public sealed class Sniper : RoleBase, IImpostor, IUsePhantomButton
             }
         }, Main.LagTime, "", true);
     }
-
+    private void PlayKamaeSound()
+    {
+        if (!Player.AmOwner) return;
+        CustomSound.Play(CustomSound.SniperKamae);
+    }
     public override void OnFixedUpdate(PlayerControl player)
     {
         if (!Player.IsAlive()) return;
