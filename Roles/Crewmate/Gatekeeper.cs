@@ -71,12 +71,13 @@ public sealed class Gatekeeper : RoleBase
     }
     public override bool OnEnterVent(PlayerPhysics physics, int ventId)
     {
+        if (!MyTaskState.HasCompletedEnoughCountOfTasks(OptionCanTaskcount.GetInt())) return false;
         if (!IsNoised && NoiseRoom is null)
         {
             NoiseRoom = Player.GetPlainShipRoom().RoomId;
             tpventId = ventId;
         }
-        else
+        else if (IsNoised)
         {
             Player.MyPhysics?.RpcBootFromVent(tpventId);
         }
