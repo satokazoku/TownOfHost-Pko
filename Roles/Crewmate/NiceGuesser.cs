@@ -30,7 +30,8 @@ public sealed class NiceGuesser : RoleBase, ISelfVoter
             Desc: () => string.Format
             (
                 TargetingMode.GetInt() == 0 ? GetString("EvilGuesserDesc") : GetString("EvilGuesserDescSelfVote")
-            )
+            ),
+            from: From.TheOtherRoles
         );
 
     public NiceGuesser(PlayerControl player)

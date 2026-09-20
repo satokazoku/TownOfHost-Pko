@@ -22,7 +22,8 @@ public sealed class BoostLighter : RoleBase
             "bl",
             "#ffe066",
             (7, 4),
-            from: From.None
+            from: From.TheOtherRoles
+            //from: From.None
         );
 
     public BoostLighter(PlayerControl player)

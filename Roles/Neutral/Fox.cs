@@ -31,7 +31,7 @@ public sealed class Fox : RoleBase, ISystemTypeUpdateHook, IRoomTasker
             {
                 AssignCountRule = new(1, 1, 1)
             },
-            from: From.TOR_GM_Edition
+            from: From.TownOfHost_K
         );
     public Fox(PlayerControl player)
     : base(
