@@ -169,7 +169,7 @@ namespace TownOfHost
                 }
                 if (!SpecialEventText) return;
                 SpecialEventText.enabled = TitleLogoPatch.amongUsLogo != null;
-                if (!Event.IsInitialRelease)
+                if (Event.IsInitialRelease && Event.Birthday12)
                 {
                     SpecialEventText.text = $"Happy Birthday to {Main.ModName}!";
                     if (ColorUtility.TryParseHtmlString(Main.ModColor, out var col))

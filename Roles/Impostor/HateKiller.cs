@@ -40,8 +40,8 @@ public sealed class HateKiller : RoleBase, IImpostor
     private static OptionItem OptionCountSelfVotes;
     float currentKillCooldown;
     float MinimumKillCooldown;
-    static int ImpostorVotes;
-    static int selfvote;
+    int ImpostorVotes;
+    int selfvote;
 
     private enum OptionName
     {
@@ -109,14 +109,14 @@ public sealed class HateKiller : RoleBase, IImpostor
     /// <summary>
     /// インポスターがヘイトキラーに投票した数を増やす(自投票除く)
     /// </summary>
-    public static void AddImpVote()
+    public void AddImpVote()
     {
         ++ImpostorVotes;
     }
     /// <summary>
     /// ヘイトキラーが自投票した数を増やす
     /// </summary>
-    public static void AddSelfVote()
+    public void AddSelfVote()
     {
         ++selfvote;
     }

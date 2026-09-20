@@ -7,6 +7,7 @@ using TownOfHost.Roles.AddOns.Common;
 using TownOfHost.Roles.AddOns.Impostor;
 using TownOfHost.Roles.AddOns.Neutral;
 using TownOfHost.Roles.Core;
+using TownOfHost.Roles.Madmate;
 using TownOfHost.Roles.Neutral;
 using UnityEngine;
 
@@ -316,6 +317,7 @@ public class MeetingVoteManager
 
             var voter = PlayerCatch.GetPlayerById(vote.Voter);
             if (voter == null) continue;
+            var votedPlayer = PlayerCatch.GetPlayerById(vote.VotedFor);
 
             if (votes.ContainsKey(vote.VotedFor))
             {
@@ -325,18 +327,17 @@ public class MeetingVoteManager
             {
                 votes.TryAdd(vote.VotedFor, vote.NumVotes);
             }
+            if (votedPlayer != null)
+            {
+                if (voter.Is(CustomRoleTypes.Impostor) && vote.VotedFor != voter.PlayerId
+                    && votedPlayer.GetRoleClass() is HateKiller htk)
+                    htk.AddImpVote();
 
-            if (voter.Is(CustomRoleTypes.Impostor) && !voter.Is(CustomRoles.HateKiller))
-            {
-                var VotedFor = PlayerCatch.GetPlayerById(vote.VotedFor);
-                if (VotedFor.Is(CustomRoles.HateKiller))
-                {
-                    HateKiller.AddImpVote();
-                }
-            }
-            if (vote.VotedFor == voter.PlayerId && voter.Is(CustomRoles.HateKiller))
-            {
-                HateKiller.AddSelfVote();
+                if (vote.VotedFor == voter.PlayerId && votedPlayer.GetRoleClass() is HateKiller hatekiller)
+                    hatekiller.AddSelfVote();
+
+                if (votedPlayer.GetRoleClass() is MadPukupuku madPukupuku)
+                    madPukupuku.VotedPlayerId.Add(voter.PlayerId);
             }
             if (vote.NumVotes is not 0)
             {

@@ -43,6 +43,7 @@ public sealed class Mermaid : RoleBase, ILNKiller, ISchrodingerCatOwner, IAdditi
         Currentmode = 1;
         cancangemode = false;
         MeetingCount = 0;
+        SendedMsg = false;
     }
     public static OptionItem OptionKillCooldown;
     public static OptionItem OptionAddWin;
@@ -56,6 +57,7 @@ public sealed class Mermaid : RoleBase, ILNKiller, ISchrodingerCatOwner, IAdditi
     bool IsKilledImpostor;
     bool cancangemode;
     int MeetingCount;
+    bool SendedMsg;
 
     enum OptionName
     {
@@ -87,6 +89,7 @@ public sealed class Mermaid : RoleBase, ILNKiller, ISchrodingerCatOwner, IAdditi
     public override void Add()
     {
         KillCooldown = OptionKillCooldown.GetFloat();
+        SendedMsg = false;
     }
     public bool CanUseSabotageButton() => false;
     public bool CanUseImpostorVentButton() => false;
@@ -233,6 +236,7 @@ public sealed class Mermaid : RoleBase, ILNKiller, ISchrodingerCatOwner, IAdditi
 
     public override void AfterMeetingTasks()
     {
+        SendedMsg = false;
         if (cancangemode && !IsKilledImpostor)
         {
             ChangeMode(Player);
@@ -263,8 +267,9 @@ public sealed class Mermaid : RoleBase, ILNKiller, ISchrodingerCatOwner, IAdditi
             return;
         }
         SendRPC();
+        if (SendedMsg) return;
         var Player = PlayerControl.LocalPlayer;
-
+        SendedMsg = true;
         if (Currentmode == 1)
         {
             Utils.SendMessage(string.Format(GetString("MermaidChangeNotifyForMermaidCrew")), Player.PlayerId);

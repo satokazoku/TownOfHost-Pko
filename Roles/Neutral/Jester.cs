@@ -55,7 +55,7 @@ public sealed class Jester : RoleBase, IKiller
         OverrideTasksData.Create(RoleInfo, 11);
     }
 
-    public bool CanUseImpostorVentButton() => false;
+    public bool CanUseImpostorVentButton() => CanUseVent.GetBool();
     // ★ EngineerのベントボタンをそのままCanUseVentで制御
     public override bool CanClickUseVentButton => CanUseVent.GetBool();
     public override bool CanUseAbilityButton() => false;
