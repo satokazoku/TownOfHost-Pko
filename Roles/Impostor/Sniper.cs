@@ -356,6 +356,8 @@ public sealed class Sniper : RoleBase, IImpostor, IUsePhantomButton
                 deathReason: CustomDeathReason.Sniped //死因設定
             ))
             {
+                Player.KillFlash();
+
                 if (snipedTarget.IsTeammate(Player))
                     Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[3]);
             }
