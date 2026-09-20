@@ -17,7 +17,8 @@ public sealed class Lighter : RoleBase
             "li",
             "#eee5be",
             (7, 0),
-            from: From.TheOtherRoles
+            from: From.TownOfHost
+            //from: From.TheOtherRoles
         );
     public Lighter(PlayerControl player)
     : base(
