@@ -99,7 +99,7 @@ public sealed class Lawyer : RoleBase, IAdditionalWinner
             .Where(pc => pc.PlayerId != Player.PlayerId
                       && (pc.GetCustomRole().IsImpostor()
                           || (pc.GetCustomRole().IsNeutral()
-                              && (pc.GetRoleClass() is IKiller || pc.GetRoleClass() is ILNKiller))))
+                              && ((pc.GetRoleClass() is IKiller && !pc.Is(CustomRoles.Opportunist)) || pc.GetRoleClass() is ILNKiller) || (pc.Is(CustomRoles.Opportunist) && Opportunist.HasKillButton))))
             .ToList();
 
         if (candidates.Count == 0) return;
