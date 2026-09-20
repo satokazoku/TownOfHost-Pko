@@ -164,12 +164,12 @@ namespace TownOfHost
                         parent: TOHPLogo.transform);
                     SpecialEventText.name = "SpecialEventText";
                     SpecialEventText.fontSizeMin = 3f;
-                    SpecialEventText.transform.localPosition = new Vector3(0f, 0.8f, 0f);
+                    SpecialEventText.transform.localPosition = new Vector3(0f, -0.5f, 0f);
                     SpecialEventText?.gameObject?.SetActive(true);
                 }
                 if (!SpecialEventText) return;
                 SpecialEventText.enabled = TitleLogoPatch.amongUsLogo != null;
-                if (Event.IsInitialRelease)
+                if (!Event.IsInitialRelease)
                 {
                     SpecialEventText.text = $"Happy Birthday to {Main.ModName}!";
                     if (ColorUtility.TryParseHtmlString(Main.ModColor, out var col))
