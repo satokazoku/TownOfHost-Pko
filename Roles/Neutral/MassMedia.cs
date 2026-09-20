@@ -47,6 +47,7 @@ public sealed class MassMedia : RoleBase, IKiller, IKillFlashSeeable
     static OptionItem OptionCanSeeKillflash;
     static OptionItem OptionCriminalprofile;
     static OptionItem OptionCanMissCount;
+    static OptionItem OptionCanGuessOtherReport;
     List<byte> Suspects;
     bool SuspectsSearch;
     static bool MeetingTargetReset;
@@ -66,7 +67,8 @@ public sealed class MassMedia : RoleBase, IKiller, IKillFlashSeeable
         MassMediaMeetingTargetReset,
         MassMediaCanSeeKillflash,
         MassMediaCriminalprofile,
-        MassMediaCanMissCount
+        MassMediaCanMissCount,
+        MassMediaCanGuessOtherReport
     }
     public override void Add()
     {
@@ -94,9 +96,10 @@ public sealed class MassMedia : RoleBase, IKiller, IKillFlashSeeable
                 .SetValueFormat(OptionFormat.Multiplier);
         OptionCanMissCount = IntegerOptionItem.Create(RoleInfo, 12, Option.MassMediaCanMissCount, new(0, 99, 1), 2, false)
                 .SetValueFormat(OptionFormat.Seconds);
-        OptionMeetingTargetReset = BooleanOptionItem.Create(RoleInfo, 13, Option.MassMediaMeetingTargetReset, false, false);
-        OptionCanSeeKillflash = BooleanOptionItem.Create(RoleInfo, 14, Option.MassMediaCanSeeKillflash, false, false);
-        OptionCriminalprofile = BooleanOptionItem.Create(RoleInfo, 15, Option.MassMediaCriminalprofile, false, false);
+        OptionCanGuessOtherReport = BooleanOptionItem.Create(RoleInfo, 13, Option.MassMediaCanGuessOtherReport, true, false);
+        OptionMeetingTargetReset = BooleanOptionItem.Create(RoleInfo, 14, Option.MassMediaMeetingTargetReset, false, false);
+        OptionCanSeeKillflash = BooleanOptionItem.Create(RoleInfo, 15, Option.MassMediaCanSeeKillflash, false, false);
+        OptionCriminalprofile = BooleanOptionItem.Create(RoleInfo, 16, Option.MassMediaCriminalprofile, false, false);
     }
     public override void OnFixedUpdate(PlayerControl player)
     {
@@ -188,13 +191,24 @@ public sealed class MassMedia : RoleBase, IKiller, IKillFlashSeeable
     public override void OnReportDeadBody(PlayerControl repo, NetworkedPlayerInfo tg)
     {
         if (AddOns.Common.Amnesia.CheckAbilityreturn(Player)) return;
-        if (Is(repo) && Player.Is(CustomRoles.MassMedia))//自分が通報したならチャンスだよ!!
+        if (OptionCanGuessOtherReport.GetBool())
         {
-            //死体通報なら～
             if (tg != null && tg.PlayerId == Targetid)
             {
                 GuessMode = true;
                 Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);
+            }
+        }
+        else
+        {
+            if (Is(repo) && Player.Is(CustomRoles.MassMedia))//自分が通報したならチャンスだよ!!
+            {
+                //死体通報なら～
+                if (tg != null && tg.PlayerId == Targetid)
+                {
+                    GuessMode = true;
+                    Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);
+                }
             }
         }
         //リセット
