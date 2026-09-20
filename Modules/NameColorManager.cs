@@ -66,6 +66,7 @@ namespace TownOfHost
                 || Mare.KnowTargetRoleColor(target, isMeeting)
                 || QuickKiller.KnowTargetRoleColor(target, isMeeting)
                 || Huntman.KnowTargetRoleColor(target, isMeeting)
+                || Sniper.KnowTargetRoleColor(target, isMeeting)
                 || ((seer.Is(CountTypes.Jackal) || seer.Is(CustomRoles.Jackaldoll)) && (target.Is(CountTypes.Jackal) || target.Is(CustomRoles.Jackaldoll)))
                 || (seer.Is(CountTypes.MilkyWay) && target.Is(CountTypes.MilkyWay)));
         }

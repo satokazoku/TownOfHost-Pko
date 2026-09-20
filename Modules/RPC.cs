@@ -315,8 +315,8 @@ namespace TownOfHost
                                 case CustomRoles.Cakeshop:
                                     Cakeshop.ReceivePublickRPC(reader);
                                     break;
-                                case CustomRoles.EvilBlender:
-                                    EvilBlender.ReceivePublickRpc(reader);
+                                case CustomRoles.Siren:
+                                    //Siren.ReceivePublickRpc(reader);
                                     break;
                             }
                         }

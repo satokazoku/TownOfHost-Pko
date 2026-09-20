@@ -100,6 +100,7 @@
 "BeginnerImpostor","Beginner Impostor","ビギナーインポスター"
 "Whiteshark","Great White Shark","ホオジロザメ"
 "HateKiller","Hate Killer","ヘイトキラー"
+"Siren","Siren","セイレーン"
 "#ImpostorName"
 
 "# マッドメイト系役職"
@@ -510,6 +511,7 @@
 "BeginnerImpostorInfo","Train hard and grow stronger","鍛錬を積んで強くなろう"
 "WhitesharkInfo","Keep moving and hunt","常に動き、捕食しよう"
 "HateKillerInfo","Suspicion Itself Is a Source of Strength","疑心こそが力となる"
+"SirenInfo","Drawn by a beautiful singing voice...","美しい歌声に誘われて..."
 "#ImpostorInfo"
 
 "# マッドメイト系役職"
@@ -1078,6 +1080,7 @@
 "SniperDescAimAssist","\n<u>While aiming (during shapeshift), stopping allows you to check if there is a player in the direction you are aiming.</u>","\n<u>エイム中、(シェイプシフト中)に立ち止まると狙っている方向にプレイヤーがいるか確認ができる。</u>"
 "SniperDescArrow","\n\n<u>The sniped location will be shown to everyone with an arrow for <b>{0} seconds</b>.</u>","\n\n<u>狙撃した場所が<b>{0}秒間</b>矢印で全員に表示される。</u>"
 "SniperDescCantKill","\n\n<u>You cannot perform a normal kill while carrying bullets.</u>","\n\n<u>弾を所持している間は通常キルができない。</u>"
+"SniperDescPhantom","An Impostor capable of sniping distant enemies. \nThey carry <b>{0} rounds</b>, and \npressing the single-click button turns their name red. \nPressing the single-click button again fires a shot from the direction they were facing when they first pressed it to the direction they were facing when they pressed it again, taking out one player. \nPlayers who are hit by the bullet are notified with an exclamation mark (!).","遠くの敵を狙撃できるインポスター。\n弾を<b>{0}発</b>所持しており、\nワンクリックボタンを押すと自身の名前が赤くなる。\nもう一度ワンクリックボタンを押すと最初に押した方向からもう一度押した方向へ銃を発砲し、プレイヤーを一人撃ち抜く。\n弾が近くを通ったプレイヤーは！で通知される。"
 "DecrescendDesc","Kill cooldown and other effects gradually worsen after <b>{0} kills</b>.\nIf you kill again while weakened, the kill cooldown increases <b>{1}→{2}→{3} (max {4})</b>... and the weakening progresses further.","<b>{0}回</b>キルするとキルクール増加等だんだん弱くなる。\n弱化中に更にキルをするとキルクールが<b>{1}→{2}→{3}(最大{4})</b>...と増え{5}たり\n弱化が進行していく。"
 "DecrescendDescVision","\n</u>Vision narrows like <b>{0}→{1}→{2} (minimum {3})</b></u>...","\n</u>視界が<b>{0}→{1}→{2}(最低({3}))</b></u>...のように狭まくなっ"
 "MareDesc","An Impostor specialized in sabotaging lights.\nDuring a blackout, the kill cooldown becomes <b>{0} seconds</b> and movement speed is increased by <b>{1}x</b>. {2}\nOutside of a blackout, {3}","停電に特化したインポスター。\n停電中はキルクールが<b>{0}秒</b>になり、移動速度が<b>{1}x</b>加算される。{2}\n停電中以外は{3}"
@@ -1951,6 +1954,8 @@
 "TargetingMode","Estimation Methods","推測方法"
 "EvilGuesserSelfVoteInfo","Self-vote → Specify target /bt Position Name → Guess","自投票→ターゲット指定　/bt 役職名→推測"
 "HadouHoHitKillFlash","When the beam hits, it triggers a kill flash.","ビームがヒットした際、キルフラッシュを発生させる"
+"ShapeShift","ShapeShift","シェイプシフト"
+"OneClick","OneClick","ワンクリック"
 
 "## MadMate Role Setting"
 "MadmateOption","MadMate Options","マッドメイト系役職の設定"
@@ -3281,6 +3286,9 @@
 "EvilBlender_SabotageLowerAlive","<#ff1919>!!Poison Gas Detected!!\n!!<#ffffff>Reach {1} within {0}</color> seconds!!</color>","<#ff1919>!!毒ガス発生中!!\n!!<#ffffff>{0}</color>秒以内に{1}へ行け!!</color>"
 "EvilBlender_SabotageLower","<#ff1919>!!Poison Gas Detected!!<#ffffff>{0}</color></color>","<#ff1919>!!毒ガス発生中!!<#ffffff>({0}s)</color></color>"
 "Analyzer_Ability","vent → UseAbility","ベント → 陣営の残り人数を確認"
+"SirenTargetInfo","I heard a beautiful voice... If I don't get to {0} within {1} seconds, I'll die.","美しい歌声が聞こえてきた...{1}秒以内に{0}に行かなければ死亡してしまう"
+"Sniper_Lower","<#ff1919>Start aiming with a Phantom Button</color>","<#ff1919>ファントムボタンでエイム開始</color>"
+"Sniper_Lower_2","<#ff1919>[Aiming] Fire with a Phantom Button</color>","<#ff1919>【エイム中】ファントムボタンで発射</color>"
 
 "## かくれんぼ設定"
 "HideAndSeekOptions","Hide and Seek Settings","かくれんぼの設定","躲猫猫设置","躲貓貓設定","Настройки Пряток","Configurações do Esconde-Esconde",""
@@ -3323,6 +3331,7 @@
 "DeathReason.Retaliation","Retaliation","報復"
 "DeathReason.Sacrifice","Sacrifice","殉死"
 "DeathReason.Bloodloss","Bloodloss","失血死"
+"DeathReason.Drowning","Drowning","溺死"
 "DeathReason.etc","Other","その他","其他","其他","Другое","Outros",""
 "Counter","Counter","返り討ち"
 "Alive","Alive","生存","存活","存活","Выжил","Vivo",""
@@ -3378,6 +3387,8 @@
 "Archer_AbilityButton","Shot","矢を放つ"
 "EvilBlender_AbilityButton","ReleaseGas","毒ガス発生"
 "Fortuner_AbilityButton","Give","付与"
+"SirenAbility","Invite","誘う"
+"SirenAbility2","Until drowning","溺死まで"
 
 "## クライアント設定"
 "Close","Close","閉じる","关闭","","Закрыть","Fechar",""

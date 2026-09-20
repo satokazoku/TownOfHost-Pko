@@ -442,6 +442,7 @@ namespace TownOfHost
         RuleViolation,
         Sacrifice,
         Bloodloss,
+        Drowning,
         etc = -1
     }
     //WinData

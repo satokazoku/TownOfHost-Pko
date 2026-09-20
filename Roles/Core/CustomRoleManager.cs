@@ -1154,6 +1154,7 @@ public enum CustomRoles
     SmokeMaker,
     Whiteshark,
     HateKiller,
+    Siren,
     //DEBUG only Impostor
     //Madmate
     MadGuardian,
