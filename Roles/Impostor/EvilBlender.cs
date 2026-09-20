@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+/*using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
 using HarmonyLib;
@@ -353,3 +353,4 @@ public sealed class EvilBlender : RoleBase, IImpostor, IUsePhantomButton
         achievements.Add(2, l1);
     }
 }
+*/
