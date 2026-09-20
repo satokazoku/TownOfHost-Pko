@@ -69,10 +69,13 @@ namespace TownOfHost
             {
                 ForceEnd = ClientActionItem.Create("ForceEnd", ForceEndProcess, __instance);
             }
+#if Release
+            //デバッグだと被る
             if (HidePko == null || HidePko.ToggleButton == null)
             {
                 HidePko = ClientOptionItem.Create("HidePko", HidePkoProcess, __instance);
             }
+#endif
             if (UseWebHook == null || UseWebHook.ToggleButton == null)
             {
                 if (Main.IsAndroid() is false)

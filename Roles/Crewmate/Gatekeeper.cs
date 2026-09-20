@@ -1,6 +1,6 @@
-/*using System.Collections.Generic;
+using System.Collections.Generic;
 using AmongUs.GameOptions;
-
+using Hazel;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Vanilla;
 using UnityEngine;
@@ -39,13 +39,22 @@ public sealed class Gatekeeper : RoleBase
         AURoleOptions.EngineerCooldown = Cooldown;
         AURoleOptions.EngineerInVentMaxTime = 1;
     }
+    public override void Add()
+    {
+        Gatekeepers.Add(this);
+    }
+    public override void OnDestroy()
+    {
+        Gatekeepers.Clear();
+    }
     private static OptionItem OptionCooldown;
     private static OptionItem OptionCanseeNoiseAllPlayer;
     private static OptionItem OptionTeleport;
-    SystemTypes NoiseRoom;
+    private static OptionItem OptionCanTaskcount;
+    SystemTypes? NoiseRoom;
     bool IsNoised;
     static HashSet<Gatekeeper> Gatekeepers = new();
-    Vector2 pos;
+    int tpventId;
     enum OptionName
     {
         GatekeeperCanseeNoiseAllPlayer,
@@ -58,20 +67,22 @@ public sealed class Gatekeeper : RoleBase
             .SetValueFormat(OptionFormat.Seconds);
         OptionCanseeNoiseAllPlayer = BooleanOptionItem.Create(RoleInfo, 11, OptionName.GatekeeperCanseeNoiseAllPlayer, false, false);
         OptionTeleport = BooleanOptionItem.Create(RoleInfo, 12, OptionName.GateKeepeeCanTeleport, false, false);
+        OptionCanTaskcount = IntegerOptionItem.Create(RoleInfo, 13, GeneralOption.cantaskcount, new(0, 99, 1), 0, false);
     }
     public override bool OnEnterVent(PlayerPhysics physics, int ventId)
     {
-        if (!IsNoised)
+        if (!IsNoised && NoiseRoom is null)
         {
             NoiseRoom = Player.GetPlainShipRoom().RoomId;
-            pos = Player.transform.position;
+            tpventId = ventId;
         }
         else
         {
-            Player.RpcSnapToForced(pos);
+            Player.MyPhysics?.RpcBootFromVent(tpventId);
         }
         return false;
     }
+
     public override string GetAbilityButtonText() => GetString("GatekeeperAbility");
     public override bool OverrideAbilityButton(out string text)
     {
@@ -80,11 +91,21 @@ public sealed class Gatekeeper : RoleBase
     }
     public override void AfterMeetingTasks()
     {
-        NoiseRoom = SystemTypes.Dropship;
+        NoiseRoom = null;
         IsNoised = false;
     }
     public static void CanAbility(PlayerControl target, PlainShipRoom room)
     {
+        foreach (var gt in Gatekeepers)
+        {
+            if (gt.Player.IsAlive() && gt.NoiseRoom == room.RoomId)
+            {
+                if (OptionTeleport.GetBool())
+                {
+                    gt.Player.MyPhysics?.RpcBootFromVent(gt.tpventId);
+                }
+            }
+        }
         if (!AmongUsClient.Instance.AmHost) return;
 
         if (OptionCanseeNoiseAllPlayer.GetBool())
@@ -95,16 +116,11 @@ public sealed class Gatekeeper : RoleBase
                 if (gt.Player.IsAlive() && gt.NoiseRoom == room.RoomId)
                 {
                     CanNoise = true;
-                    if (OptionTeleport.GetBool())
-                    {
-                        gt.Player.RpcSnapToForced(gt.pos);
-                    }
                     gt.IsNoised = true;
                     _ = new LateTask(() =>
                     {
                         gt.IsNoised = false;
                     }, Noisemaker.NoisemakerAlertDuration.GetFloat(), "GateKeeper_Noise", true);
-                    break;
                 }
                 else if (gt.NoiseRoom != room.RoomId)
                 {
@@ -143,4 +159,4 @@ public sealed class Gatekeeper : RoleBase
         }
     }
 
-}*/
+}

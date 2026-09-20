@@ -111,9 +111,9 @@ public sealed class Fanatic : RoleBase, IKillFlashSeeable, IDeathReasonSeeable
         };
     }
 
-    public bool? CheckKillFlash(MurderInfo info) => canSeeKillFlash;
-    public bool? CheckSeeDeathReason(PlayerControl seen) => canSeeDeathReason;
-    public override CustomRoles TellResults(PlayerControl player) => OptionOmoikomiRole.GetRole();
+    public bool? CheckKillFlash(MurderInfo info) => CanseeTrueRole() ? false : canSeeKillFlash;
+    public bool? CheckSeeDeathReason(PlayerControl seen) => CanseeTrueRole() && canSeeDeathReason;
+    public override CustomRoles TellResults(PlayerControl player) => CanseeTrueRole() ? CustomRoles.Fanatic : OptionOmoikomiRole.GetRole();
     public override CustomRoles Misidentify() => CanseeTrueRole() ? CustomRoles.Fanatic : OptionOmoikomiRole.GetRole();
     public override void ApplyGameOptions(IGameOptions opt)
     {

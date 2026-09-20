@@ -1,4 +1,4 @@
-/*using System.Collections.Generic;
+using System.Collections.Generic;
 using AmongUs.GameOptions;
 
 using TownOfHost.Roles.Core;
@@ -106,4 +106,3 @@ public sealed class MadPukupuku : RoleBase, IKillFlashSeeable, IDeathReasonSeeab
         return true;
     }
 }
-*/

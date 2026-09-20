@@ -22,8 +22,9 @@ static class Event
     public static bool GoldenWeek = DateTime.Now.Month == 5 && DateTime.Now.Day is 3 or 4 or 5;
     public static bool April = DateTime.Now.Month == 4 && DateTime.Now.Day is 1 or 2 or 3 or 4 or 5 or 6 or 7 or 8;
     public static bool Tanabata = DateTime.Now.Month == 7 && DateTime.Now.Day is > 6 and < 15;
-    public static bool Birthday12 = DateTime.Now.Month == /*10*/9 && DateTime.Now.Day is 19 or 20 or 21 or 22 or 23 or 24 or 25 or 26;
-    public static bool IsEventDay => IsChristmas || White || IsInitialRelease || IsHalloween || GoldenWeek || April;
+    //public static bool Birthday12 = DateTime.Now.Month == 10 && DateTime.Now.Day is 19 or 20 or 21 or 22 or 23 or 24 or 25 or 26;
+    public static bool Birthday12 = true;
+    public static bool IsEventDay => IsChristmas || White || IsInitialRelease || IsHalloween || GoldenWeek || April || Birthday12;
     public static bool Special = false;
     public static bool NowRoleEvent => false;
     public static List<string> OptionLoad = new();
@@ -117,7 +118,7 @@ static class Event
         //{CustomRoles.Chameleon , () => Special},
         //{CustomRoles.Cakeshop , () => NowRoleEvent},
 
-        //{CustomRoles.MadPukupuku,() => Birthday12}
+        {CustomRoles.MadPukupuku,() => Birthday12}
     };
 
     public static Dictionary<(CustomRoles role, bool isApiData), bool> cachedEventFlags = new(EventRoles.Count);

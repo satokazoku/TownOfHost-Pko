@@ -211,7 +211,7 @@
 "StepDancer","Step Dancer","ステップダンサー"
 "Fanatic","Fanatic","盲信者"
 "Hunter","Hunter","ハンター","猎人"
-"Gatekeeper","Gatekeeper","ゲートキーパー(未完成)","守门人","守門人","Страж Врат","Guardião do Portão","Guardião do Portão"
+"Gatekeeper","Gatekeeper","ゲートキーパー","守门人","守門人","Страж Врат","Guardião do Portão","Guardião do Portão"
 "#CrewmateName"
 
 "# ニュートラル役職"
@@ -302,7 +302,7 @@
 "Dancer","Dancer","ダンサー"
 "Mermaid","Mermaid","マーメイド"
 "Vanity","Vanity","ヴァニティ"
-"Dracula","Dracula","ドラキュラ(未完成)"
+"Dracula","Dracula","ドラキュラ"
 "Kenzoku","Servant","眷属"
 "#NeutralName"
 
@@ -620,6 +620,7 @@
 "JizoInfo","The One Who Sees the Way","道を視る者"
 "FanaticInfo","Believing in a False Lord","偽りの主を信じて"
 "HunterInfo","Let's kill the suspicious person","怪しい人を斬ろう","让我们杀死可疑的人"
+"GatekeeperInfo","Let's start the patrol!","見回り開始！"
 "#CrewmateInfo"
 
 "# ニュートラル役職"
@@ -977,6 +978,7 @@
 "JizoInfoLong","When you pet a pet, you become temporarily immobilized, but in exchange, you can detect specific actions that occur in the room you're in within a set number of seconds. \nHowever, the person who performed the action will also be aware that you were notified.","ペットを撫でることで、一時的に動けなくなる代わりに、設定秒数内に自身がいる部屋で発生した設定された行動を感知できる。\nただし、通知されたことは行動をした相手にもわかる。"
 "FanaticInfoLong","This role is a Crewmate but believes themselves to be a Madmate. \nThis role’s tasks are not included in the victory conditions for Crewmates. \nIf “Misconception” is enabled, the names of a random number of players equal to the number of Impostors will turn red. \nIf there are fewer than three Impostors, \n“The first faction targeted by the misconception,” “The second faction targeted by the misconception,” and “The third faction targeted by the misconception” \nwill be randomly selected to match the number of Impostors.","この役職はクルーメイトでありながら自身をマッドメイトと思い込みます。\nこの役職のタスクはクルーメイトのタスク勝利判定に含まれません。\n「思い込むか」がオンの場合、インポスターの数だけ指定陣営の人のうちランダムな人の名前が赤くなります。\nインポスターが三人に満たない場合は、\n「一人目の思い込み対象陣営」、「二人目の思い込み対象陣営」、「三人目の思い込み対象陣営」\nのうちインポスター数だけ陣営がランダムに選ばれます。"
 "HunterInfoLong","The Hunter can kill any player. You can switch between Task Mode and Hunter Mode by petting your pet. \nThe Hunter's killing ability cannot be used while in Task Mode. \nYou cannot perform tasks while in Hunter Mode.","ハンターはすべてのプレイヤーを殺すことができる。ペットを撫でることでタスクモードとハンターモードを切り替えることが出来る。\nタスクモード中にはハンターのキル能力が使用できない。\nハンターモードではタスクが行えない。"
+"GatekeeperInfoLong","","ベントに入ると警戒状態になり、入った部屋を警備する。\n警備中の部屋で死体が発生するとノイズメーカーのノイズが発生する。\nノイズが発生している状態でベントに入ることで最初警戒状態になった時に入ったベントに瞬間移動する。\n警戒する部屋は毎ターンリセットされ、ベント移動はできない"
 "#CrewmateInfoLong"
 
 "# ニュートラル役職"
@@ -2352,6 +2354,8 @@
 "FanaticCantOmoikomiroles","Positions to Exclude from the Scope of Assumptions","思い込み対象から除外する役職"
 "HunterKnowTargetIsImpostor","Can Show If the Kill Target Is Not Crewmate","キルした時、敵陣営かどうか分かる","可以显示杀死的目标是不是船员"
 "HunterKnowTargetMadIsImpostor","MadMate Is Indicated By Imposter Determination.","マッドメイトはインポスター判定で表示する"
+"GatekeeperCanseeNoiseAllPlayer","Other people can hear the noise too","自分以外にもノイズが聞こえる"
+"GateKeepeeCanTeleport","If noise occurs, immediately teleport to the vent","ノイズが発生したら即座にベントに瞬間移動する"
 
 "## Neutral Role Setting"
 "SchrodingerCatExiledTeamChanges","Team Changes When Ejected","吊られた際、陣営が変化する","薛定谔的猫被放逐时会加入其他阵营","薛定諤的貓被丟出時陣營會轉變","Команда меняется после его Изгнания","Time Muda Quando Exilado",""

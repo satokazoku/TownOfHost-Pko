@@ -284,7 +284,7 @@ public static class CustomRoleManager
 
             if (info.DontRoleAbility is false)
             {
-                //Gatekeeper.CanAbility(appearanceTarget, appearanceTarget.GetPlainShipRoom());
+                Gatekeeper.CanAbility(appearanceTarget, appearanceTarget.GetPlainShipRoom());
                 Psychic.CanAbility(appearanceTarget);
             }
 
@@ -528,7 +528,7 @@ CustomDeathReason deathReason = CustomDeathReason.Kill)
 
             if (info.DontRoleAbility is false)
             {
-                //Gatekeeper.CanAbility(appearanceTarget, appearanceTarget.GetPlainShipRoom());
+                Gatekeeper.CanAbility(appearanceTarget, appearanceTarget.GetPlainShipRoom());
                 Psychic.CanAbility(appearanceTarget);
             }
 
