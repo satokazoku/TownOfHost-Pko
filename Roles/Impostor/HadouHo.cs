@@ -76,7 +76,6 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
     static OptionItem OptionKillImpostor;
     static OptionItem OptionKillFlash;
     static bool KillImpostor;
-    List<byte> KillFlashedPlayerId;
     enum OptionName { HadouHoChargeTime, HadouHoSelfDestruct, HadouHoKillImpostor, HadouHoBeamTime, HadouHoHitKillFlash}
 
     static void SetUpOptionItem()
@@ -290,6 +289,10 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
             if (perp.magnitude > 1.3f) continue;
             Jizo.Checkroom(Player.GetPlainShipRoom(), Player);
             CustomRoleManager.HadouHoOnCheckMurder(Player, target, target, target, true, deathReason: CustomDeathReason.Evaporation);
+            if (OptionKillFlash.GetBool())
+            {
+                Player.KillFlash();
+            }
             HasHit = true;
         }
     }

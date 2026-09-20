@@ -137,7 +137,6 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
     static OptionItem OptionSidekickCooldown;
     static float SidekickCooldown;
     static OptionItem OptionKillFlash;
-    List<byte> KillFlashedPlayerId;
     static OptionItem OptionTamaLoadCooldown;
     static OptionItem OptionTamaCanLoad;
     static OptionItem OptionTamaCanVent;
@@ -720,7 +719,12 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
             float dot = Vector2.Dot(toTarget, dir);
             if (dot <= 0) continue;
             if ((toTarget - dir * dot).magnitude > 1.3f) continue;
+            CustomRoleManager.HadouHoOnCheckMurder(Player, target, target, target, true, deathReason: CustomDeathReason.Evaporation);
             Jizo.Checkroom(Player.GetPlainShipRoom(), Player);
+            if (OptionKillFlash.GetBool())
+            {
+                Player.KillFlash();
+            }
             HasHit = true;
             UtilsGameLog.AddGameLog("JackalHadouHo", $"<color=#00b4eb>【波動砲】</color> {UtilsName.GetPlayerColor(Player, true)} ═> {UtilsName.GetPlayerColor(target, true)}");
         }
@@ -745,6 +749,10 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
             if ((toTarget - dir * dot).magnitude > 4.0f) continue;
             Jizo.Checkroom(Player.GetPlainShipRoom(), Player);
             CustomRoleManager.HadouHoOnCheckMurder(Player, target, target, target, true, deathReason: CustomDeathReason.Evaporation);
+            if (OptionKillFlash.GetBool())
+            {
+                Player.KillFlash();
+            }
             HasHit = true;
             UtilsGameLog.AddGameLog("JackalHadouHo", $"<color=#ff0000>【超波動砲】</color> {UtilsName.GetPlayerColor(Player, true)} ═> {UtilsName.GetPlayerColor(target, true)}");
         }
