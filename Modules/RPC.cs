@@ -316,7 +316,7 @@ namespace TownOfHost
                                     Cakeshop.ReceivePublickRPC(reader);
                                     break;
                                 case CustomRoles.Siren:
-                                    //Siren.ReceivePublickRpc(reader);
+                                    Siren.ReceivePublickRPC(reader);
                                     break;
                             }
                         }

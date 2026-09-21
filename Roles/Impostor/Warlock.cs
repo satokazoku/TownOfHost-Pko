@@ -45,12 +45,14 @@ public sealed class Warlock : RoleBase, IImpostor, IUsePhantomButton
     public static OptionItem OptionAbilityCoolDown;
     public static OptionItem OptionCantMovetime;
     public static OptionItem OptionCantmove;
+    static OptionItem OptionCanKillNakama;
     bool IsCursed;
     enum OptionName
     {
         WarlockDouki,
         WarlockCantMovetime,
         WarlockKoutyoku,
+        WarlockCanKillNakama
     }
 
 
@@ -58,12 +60,11 @@ public sealed class Warlock : RoleBase, IImpostor, IUsePhantomButton
     {
         OptionAbilityCoolDown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.Cooldown, OptionBaseCoolTime, 20f, false)
             .SetValueFormat(OptionFormat.Seconds);
-        OptionCantmove = BooleanOptionItem.Create(RoleInfo, 11, OptionName.WarlockKoutyoku, true, false)
-            .SetValueFormat(OptionFormat.Seconds);
+        OptionCantmove = BooleanOptionItem.Create(RoleInfo, 11, OptionName.WarlockKoutyoku, true, false);
         OptionCantMovetime = FloatOptionItem.Create(RoleInfo, 12, OptionName.WarlockCantMovetime, OptionBaseCoolTime, 5f, false, OptionCantmove)
             .SetValueFormat(OptionFormat.Seconds);
-        Optiondouki = BooleanOptionItem.Create(RoleInfo, 13, OptionName.WarlockDouki, true, false)
-            .SetValueFormat(OptionFormat.Seconds);
+        OptionCanKillNakama = BooleanOptionItem.Create(RoleInfo, 13, OptionName.WarlockCanKillNakama, true, false);
+        Optiondouki = BooleanOptionItem.Create(RoleInfo, 14, OptionName.WarlockDouki, true, false);
     }
 
     public override void Add()
@@ -102,11 +103,23 @@ public sealed class Warlock : RoleBase, IImpostor, IUsePhantomButton
                 float distance;
                 foreach (PlayerControl candidatePC in PlayerCatch.AllAlivePlayerControls)
                 {
-                    if (candidatePC != CursedPlayer && !candidatePC.Is(CustomRoles.King) && !candidatePC.Is(CustomRoles.Autocrat))
+                    if (OptionCanKillNakama.GetBool())
                     {
-                        distance = Vector2.Distance(cpPos, candidatePC.transform.position);
-                        candidateList.Add(candidatePC, distance);
-                        Logger.Info($"{candidatePC?.Data?.GetLogPlayerName()}の位置{distance}", "Warlock");
+                        if (candidatePC != CursedPlayer && !candidatePC.Is(CustomRoles.King) && !candidatePC.Is(CustomRoles.Autocrat))
+                        {
+                            distance = Vector2.Distance(cpPos, candidatePC.transform.position);
+                            candidateList.Add(candidatePC, distance);
+                            Logger.Info($"{candidatePC?.Data?.GetLogPlayerName()}の位置{distance}", "Warlock");
+                        }
+                    }
+                    else
+                    {
+                        if (candidatePC != CursedPlayer && !candidatePC.Is(CustomRoles.King) && !candidatePC.Is(CustomRoles.Autocrat) && !candidatePC.Is(CustomRoleTypes.Impostor))
+                        {
+                            distance = Vector2.Distance(cpPos, candidatePC.transform.position);
+                            candidateList.Add(candidatePC, distance);
+                            Logger.Info($"{candidatePC?.Data?.GetLogPlayerName()}の位置{distance}", "Warlock");
+                        }
                     }
                 }
                 var nearest = candidateList.OrderBy(c => c.Value).FirstOrDefault();

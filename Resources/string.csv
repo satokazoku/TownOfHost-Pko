@@ -1957,6 +1957,8 @@
 "HadouHoHitKillFlash","When the beam hits, it triggers a kill flash.","ビームがヒットした際、キルフラッシュを発生させる"
 "ShapeShift","ShapeShift","シェイプシフト"
 "OneClick","OneClick","ワンクリック"
+"SirenTimeLimit","Seconds Until Drowning","溺死するまでの秒数"
+"WarlockCanKillNakama","You can curse the imposter to death","インポスターを能力キルの対象に含める"
 
 "## MadMate Role Setting"
 "MadmateOption","MadMate Options","マッドメイト系役職の設定"
@@ -3287,7 +3289,7 @@
 "EvilBlender_SabotageLowerAlive","<#ff1919>!!Poison Gas Detected!!\n!!<#ffffff>Reach {1} within {0}</color> seconds!!</color>","<#ff1919>!!毒ガス発生中!!\n!!<#ffffff>{0}</color>秒以内に{1}へ行け!!</color>"
 "EvilBlender_SabotageLower","<#ff1919>!!Poison Gas Detected!!<#ffffff>{0}</color></color>","<#ff1919>!!毒ガス発生中!!<#ffffff>({0}s)</color></color>"
 "Analyzer_Ability","vent → UseAbility","ベント → 陣営の残り人数を確認"
-"SirenTargetInfo","I heard a beautiful voice... If I don't get to {0} within {1} seconds, I'll die.","美しい歌声が聞こえてきた...{1}秒以内に{0}に行かなければ死亡してしまう"
+"SirenTargetInfo","I heard a beautiful voice... \nIf I don't get to {0} within {1} seconds, I'll die.","美しい歌声が聞こえてきた...\n{1}秒以内に{0}に行かなければ死亡してしまう"
 "Sniper_Lower","<#ff1919>Start aiming with a Phantom Button</color>","<#ff1919>ファントムボタンでエイム開始</color>"
 "Sniper_Lower_2","<#ff1919>[Aiming] Fire with a Phantom Button</color>","<#ff1919>【エイム中】ファントムボタンで発射</color>"
 

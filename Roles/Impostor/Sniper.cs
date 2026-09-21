@@ -161,35 +161,22 @@ public sealed class Sniper : RoleBase, IImpostor, IUsePhantomButton
     }
     private enum RpcType : byte { ShotNotify, ShotSound }
 
-    private void SendRPC()
+    private void SendRPC(bool playShotSoundToAll = false)
     {
         Logger.Info($"{Player.GetNameWithRole().RemoveHtmlTags()}:SendRPC", "Sniper");
         using var sender = CreateSender();
 
-        sender.Writer.Write((byte)RpcType.ShotNotify);   // ← 追加
         var snList = ShotNotify;
         sender.Writer.Write(snList.Count);
         foreach (var sn in snList)
         {
             sender.Writer.Write(sn);
         }
-    }
-
-    private void SendShotSoundRPC()
-    {
-        using var sender = CreateSender();
-        sender.Writer.Write((byte)RpcType.ShotSound);
+        sender.Writer.Write(playShotSoundToAll);   // ← 追加
     }
 
     public override void ReceiveRPC(MessageReader reader)
     {
-        var type = (RpcType)reader.ReadByte();   // ← 追加
-        if (type == RpcType.ShotSound)
-        {
-            CustomSound.Play(CustomSound.SniperShot);
-            return;
-        }
-
         ShotNotify.Clear();
         var count = reader.ReadInt32();
         while (count > 0)
@@ -197,7 +184,23 @@ public sealed class Sniper : RoleBase, IImpostor, IUsePhantomButton
             ShotNotify.Add(reader.ReadByte());
             count--;
         }
+        var playToAll = reader.ReadBoolean();   // ← 追加
         Logger.Info($"{Player.GetNameWithRole().RemoveHtmlTags()}:ReceiveRPC", "Sniper");
+
+        if (playToAll) CustomSound.Play(CustomSound.SniperShot);
+        else PlayShotSoundIfNotified();
+    }
+    private void SendShotSoundRPC()
+    {
+        using var sender = CreateSender();
+        sender.Writer.Write((byte)RpcType.ShotSound);
+    }
+    /// <summary>自分が通知対象に入っていれば発砲音を鳴らす</summary>
+    private void PlayShotSoundIfNotified()
+    {
+        var local = PlayerControl.LocalPlayer;
+        if (local == null || !ShotNotify.Contains(local.PlayerId)) return;
+        CustomSound.Play(CustomSound.SniperShot);
     }
     public bool CanUseKillButton()
     {
@@ -288,6 +291,8 @@ public sealed class Sniper : RoleBase, IImpostor, IUsePhantomButton
             LastPosition = Player.transform.position;
             IsAim = true;
             AimTime = 0f;
+            UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
+
             PlayKamaeSound();
             return;
         }
@@ -298,6 +303,7 @@ public sealed class Sniper : RoleBase, IImpostor, IUsePhantomButton
 
         //一発消費して
         BulletCount--;
+        UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
 
         //命中判定はホストのみ行う
         if (!AmongUsClient.Instance.AmHost) return;
@@ -309,7 +315,6 @@ public sealed class Sniper : RoleBase, IImpostor, IUsePhantomButton
     {
         //ワンクリック(ファントム)は OnClick で処理する
         if (OneClickMode) return;
-
         var shapeshifting = Player.PlayerId != target.PlayerId;
 
         if (BulletCount <= 0) return;
@@ -321,6 +326,7 @@ public sealed class Sniper : RoleBase, IImpostor, IUsePhantomButton
             SnipeBasePosition = Player.transform.position;
             LastPosition = Player.transform.position;
             IsAim = true;
+            UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
             AimTime = 0f;
             PlayKamaeSound();
             return;
@@ -329,6 +335,7 @@ public sealed class Sniper : RoleBase, IImpostor, IUsePhantomButton
         //エイム終了
         IsAim = false;
         AimTime = 0f;
+        UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
 
         //ミーティングによる変身解除なら射撃しない
         if (MeetingReset)
@@ -351,12 +358,7 @@ public sealed class Sniper : RoleBase, IImpostor, IUsePhantomButton
     /// </summary>
     private void ExecuteShot()
     {
-        if (Player.AmOwner)
-        {
-            //自分だけは外しても鳴らす
-            CustomSound.Play(CustomSound.SniperShot);
-        }
-
+        bool arrowOn = OpShowArrowTime.GetFloat() > 0;
         var targets = GetSnipeTargets();
 
         if (targets.Count != 0)
@@ -395,6 +397,10 @@ public sealed class Sniper : RoleBase, IImpostor, IUsePhantomButton
                 snList.Add(otherPc.PlayerId);
                 UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: otherPc);
             }
+            PlayShotSoundIfNotified();
+            if (arrowOn) CustomSound.Play(CustomSound.SniperShot);
+            else PlayShotSoundIfNotified();
+            SendRPC(arrowOn);
             SendRPC();
             _ = new LateTask(() =>
             {
@@ -413,6 +419,12 @@ public sealed class Sniper : RoleBase, IImpostor, IUsePhantomButton
         else
         {
             Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);
+            if (arrowOn)
+            {
+                ShotNotify.Clear();
+                CustomSound.Play(CustomSound.SniperShot);
+                SendRPC(true);
+            }
         }
         _ = new LateTask(() =>
         {

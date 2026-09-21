@@ -9,6 +9,7 @@ public static class CustomSound
     private static AudioClip kamae, shot;
     public static AudioClip SniperKamae => kamae ??= Load("TownOfHost.Resources.Sounds.Sniper_Kamae.wav");
     public static AudioClip SniperShot => shot ??= Load("TownOfHost.Resources.Sounds.Sniper_Shot.wav");
+    public static AudioClip HadouHoCharge => shot ??= Load("TownOfHost.Resources.Sounds.Hadouho_Charge.wav");
 
     public static void Play(AudioClip clip, float volume = 1f)
     {
