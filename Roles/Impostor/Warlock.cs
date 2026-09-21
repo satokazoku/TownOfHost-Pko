@@ -141,12 +141,16 @@ public sealed class Warlock : RoleBase, IImpostor, IUsePhantomButton
                     Player.SetKillCooldown();
                 }
                 if (OptionCantmove.GetBool() && Player.IsAlive())
-                {
-                    Main.AllPlayerSpeed[Player.PlayerId] = 0f;
+                {         
+                    var tmpSpeed = Main.AllPlayerSpeed[Player.PlayerId];
+
+                    Main.AllPlayerSpeed[Player.PlayerId] = Main.MinSpeed;
                     UtilsOption.MarkEveryoneDirtySettings();
                     _ = new LateTask(() =>
                     {
-                        Main.AllPlayerSpeed[Player.PlayerId] = Main.NormalOptions.PlayerSpeedMod;
+                        Logger.Info("硬直解除", "Warlock");
+
+                        Main.AllPlayerSpeed[Player.PlayerId] = tmpSpeed;
                         UtilsOption.MarkEveryoneDirtySettings();
                     }, OptionCantMovetime.GetFloat(), "Warlock_koutyoku", true);
                 }
