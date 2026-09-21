@@ -341,8 +341,6 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
         bool oldBeamMark = ShowBeamMark;
         IsCharging = reader.ReadBoolean();
         ShowBeamMark = reader.ReadBoolean();
-        if (IsCharging)
-            CustomSound.Play(CustomSound.SniperShot);
         if (oldCharging != IsCharging || oldBeamMark != ShowBeamMark)
             UtilsNotifyRoles.NotifyRoles(ForceLoop: true);
     }

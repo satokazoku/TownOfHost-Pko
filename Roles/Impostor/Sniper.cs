@@ -143,7 +143,8 @@ public sealed class Sniper : RoleBase, IImpostor, IUsePhantomButton
         AURoleOptions.PhantomCooldown = ShapeCooldown;
     }
     public bool IsresetAfterKill => false;
-
+    public bool IsPhantomRole => OneClickMode;
+    public bool UseOneclickButton => OneClickMode;
     public override void Add()
     {
         Logger.Disable("Sniper");
@@ -280,7 +281,7 @@ public sealed class Sniper : RoleBase, IImpostor, IUsePhantomButton
         AdjustKillCooldown = false;
         ResetCooldown = OpShapeCool.GetFloat() > 1f;
 
-        if (!Player.IsAlive() || BulletCount <= 0) return;
+        if (!Player.IsAlive() || BulletCount <= 0 || !OneClickMode) return;
 
         if (!IsAim)
         {

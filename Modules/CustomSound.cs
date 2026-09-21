@@ -7,10 +7,16 @@ namespace TownOfHost;
 public static class CustomSound
 {
     private static AudioClip kamae, shot;
-    public static AudioClip SniperKamae => kamae ??= Load("TownOfHost.Resources.Sounds.Sniper_Kamae.wav");
-    public static AudioClip SniperShot => shot ??= Load("TownOfHost.Resources.Sounds.Sniper_Shot.wav");
-    public static AudioClip HadouHoCharge => shot ??= Load("TownOfHost.Resources.Sounds.Hadouho_Charge.wav");
 
+    public static AudioClip SniperKamae => Get(ref kamae, "TownOfHost.Resources.Sounds.Sniper_Kamae.wav");
+    public static AudioClip SniperShot => Get(ref shot, "TownOfHost.Resources.Sounds.Sniper_Shot.wav");
+
+    private static AudioClip Get(ref AudioClip cache, string resourceName)
+    {
+        // Unityに破棄されたものは == null が true になる（??= では検出できない）
+        if (cache == null) cache = Load(resourceName);
+        return cache;
+    }
     public static void Play(AudioClip clip, float volume = 1f)
     {
         if (clip == null) return;
@@ -49,6 +55,7 @@ public static class CustomSound
 
                 var clip = AudioClip.Create(resourceName, count / channels, channels, sampleRate, false);
                 clip.SetData(samples, 0);
+                clip.hideFlags |= HideFlags.HideAndDontSave | HideFlags.DontSaveInEditor;
                 return clip;
             }
             else br.ReadBytes(size);
