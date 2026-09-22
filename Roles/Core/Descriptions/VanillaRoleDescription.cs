@@ -26,8 +26,9 @@ public class VanillaRoleDescription : RoleDescription
                     desc += "\n" + Translator.GetString("ViperDescMark");
                 return desc;
             }
-            if (vanillaRoleType is RoleTypes.Impostor)
-                return DestroyableSingleton<RoleManager>.Instance.GetRole(vanillaRoleType).Blurb;
+            //BlurbMed雑い役はここでInfoLongを参照させる
+            if (vanillaRoleType is RoleTypes.Impostor or RoleTypes.Shapeshifter or RoleTypes.Crewmate or RoleTypes.Tracker or RoleTypes.Detective)
+                return Translator.GetString($"{RoleInfo.RoleName}{SingleRoleDescription.DescriptionSuffix}");
             return DestroyableSingleton<RoleManager>.Instance.GetRole(vanillaRoleType).BlurbMed;
         }
     }

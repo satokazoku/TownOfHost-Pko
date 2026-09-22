@@ -19,6 +19,9 @@ namespace TownOfHost
         public static SpriteRenderer TOHPLogo { get; private set; }
         private static TextMeshPro pingTrackerCredential = null;
         private static AspectPosition pingTrackerCredentialAspectPos = null;
+#if DEBUG
+        private static float deltaTime = 0.0f;
+#endif
         public static bool a = false;
         public static List<float> fpss = new();
 
