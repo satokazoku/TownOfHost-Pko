@@ -1960,7 +1960,7 @@
 "OneClick","OneClick","ワンクリック"
 "SirenTimeLimit","Seconds Until Drowning","溺死するまでの秒数"
 "WarlockCanKillNakama","You can curse the imposter to death","インポスターを能力キルの対象に含める"
-"ViperShowMark","Display a mark on the person who has been melted","溶かされたプレイヤーにマークを表示する"
+"ViperShowMark","Marking the Dissolved Corpses","溶かされた死体にマークを付ける"
 
 "## MadMate Role Setting"
 "MadmateOption","MadMate Options","マッドメイト系役職の設定"
