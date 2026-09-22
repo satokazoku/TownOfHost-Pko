@@ -134,15 +134,12 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
         }
         else
         {
-            if (Player.IsAlive()) RPC.PlaySoundRPC(Player.PlayerId, Sounds.KillSound);
-
             Player.RpcResetAbilityCooldown(Sync: true);
             float savedKillTimer = Player.killTimer;
             Vector2 targetPos = target.transform.position;
-            CanSubkill = false; // Murderが実行されないうちにサブキル不可にする。
+            CanSubkill = false;
             SendRPC();
-            CustomRoleManager.OnCheckMurder(Player, target, Player, target, true, true, 1, CustomDeathReason.Kill);
-            SnapToPosition(targetPos);
+            CustomRoleManager.OnCheckMurder(Player, target, Player, target, PlayKillSound: true);
         }
         if (PhantomCooldown < 1f) //キルク1未満でも一秒待たない。
         {

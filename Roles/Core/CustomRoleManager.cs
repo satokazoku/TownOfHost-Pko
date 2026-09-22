@@ -67,7 +67,7 @@ public static class CustomRoleManager
     /// <param name="deathReason">死因</param>
     /// <returns></returns>
     public static bool OnCheckMurder(PlayerControl attemptKiller, PlayerControl attemptTarget, PlayerControl appearanceKiller, PlayerControl appearanceTarget, bool? force = false, bool? DontRoleAbility = false, int Killpower = 1,
-    CustomDeathReason deathReason = CustomDeathReason.Kill)
+    CustomDeathReason deathReason = CustomDeathReason.Kill, bool PlayKillSound = false)
     {
         Logger.Info($"Attempt  :{attemptKiller.GetNameWithRole().RemoveHtmlTags()} => {attemptTarget.GetNameWithRole().RemoveHtmlTags()}", "CheckMurder");
         if (appearanceKiller != attemptKiller || appearanceTarget != attemptTarget)
@@ -234,6 +234,10 @@ public static class CustomRoleManager
         //キル可能だった場合のみMurderPlayerに進む
         if (info.CanKill && info.DoKill)//ノイメ対応
         {
+            if (PlayKillSound)
+            {
+                if (appearanceKiller.IsAlive()) RPC.PlaySoundRPC(appearanceKiller.PlayerId, Sounds.KillSound);
+            }
             //特別な処理の役職は部屋チェックから除外
             if (!appearanceKiller.Is(CustomRoles.Bomber) && !appearanceKiller.Is(CustomRoles.Vampire) && !appearanceKiller.Is(CustomRoles.Samurai) && !appearanceKiller.Is(CustomRoles.SelfBomber) && !appearanceKiller.Is(CustomRoles.Limiter) && !appearanceKiller.Is(CustomRoles.HadouHo) && !appearanceKiller.Is(CustomRoles.HadouHo) && !appearanceKiller.Is(CustomRoles.JackalHadouHo) && !appearanceKiller.Is(CustomRoles.SheriffHadouHo))
             {
