@@ -20,12 +20,12 @@ namespace TownOfHost
         private static ClientActionItem CustomName;
         private static ClientActionItem CustomSprite;
         private static ClientActionItem HideSomeFriendCodes;
-#if Release
+#if RELEASE
         private static ClientActionItem HidePko;
 #endif
         private static ToggleButtonBehaviour soundSettingsButton;
         public static ToggleButtonBehaviour StreamHopeButton;
-#if Debug
+#if DEBUG
         private static ClientActionItem ViewPingDetails;
         private static ClientActionItem DebugChatopen;
         private static ClientActionItem DebugSendAmout;
@@ -73,7 +73,7 @@ namespace TownOfHost
             {
                 ForceEnd = ClientActionItem.Create("ForceEnd", ForceEndProcess, __instance);
             }
-#if Release
+#if RELEASE
             //デバッグだと被る
             if (HidePko == null || HidePko.ToggleButton == null)
             {

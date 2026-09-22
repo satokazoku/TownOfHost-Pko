@@ -14,8 +14,8 @@ public sealed class Viper : RoleBase, IImpostor
             typeof(Viper),
             player => new Viper(player),
             RoleTypes.Viper,
-            SetUpCustomOption
-            , from: From.AmongUs
+            SetUpCustomOption,
+            from: From.AmongUs
         );
     public Viper(PlayerControl player)
     : base(
@@ -30,7 +30,7 @@ public sealed class Viper : RoleBase, IImpostor
     }
     static OptionItem OptKillcool; static float killcool;
     public static OptionItem OptViperDissolveTime; public static float ViperDissolveTime;
-    static OptionItem OptShowMark;
+    public static OptionItem OptShowMark;
     static List<byte> MeltedPlayers = new();
     static Dictionary<byte, float> ViperKilledPlayers = new();
     enum Op

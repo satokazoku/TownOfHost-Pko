@@ -150,8 +150,6 @@ namespace TownOfHost
                 }
             }
 
-            if (skinShuffleWriter != null) AmongUsClient.Instance.FinishRpcImmediately(skinShuffleWriter);
-
             StandardIntro.CoGameIntroWeight();
 
             Main.VisibleTasksCount = true;

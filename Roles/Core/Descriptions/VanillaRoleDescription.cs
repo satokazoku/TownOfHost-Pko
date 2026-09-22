@@ -1,4 +1,5 @@
-/*using AmongUs.GameOptions;
+using AmongUs.GameOptions;
+using TownOfHost.Roles.Vanilla;
 
 namespace TownOfHost.Roles.Core.Descriptions;
 
@@ -18,16 +19,20 @@ public class VanillaRoleDescription : RoleDescription
     {
         get
         {
-            // 純クルー・純インポスターはBlurbMedが未実装(簡素な文章しか返らない)ため
-            // InfoLongの翻訳文字列を直接参照する
-            if (vanillaRoleType is RoleTypes.Crewmate or RoleTypes.Impostor)
-                return Translator.GetString($"{RoleInfo.RoleName}{SingleRoleDescription.DescriptionSuffix}");
-
+            if (vanillaRoleType is RoleTypes.Viper)
+            {
+                var desc = Translator.GetString("ViperDesc");
+                if (Viper.OptShowMark.GetBool())
+                    desc += "\n" + Translator.GetString("ViperDescMark");
+                return desc;
+            }
+            if (vanillaRoleType is RoleTypes.Impostor)
+                return DestroyableSingleton<RoleManager>.Instance.GetRole(vanillaRoleType).Blurb;
             return DestroyableSingleton<RoleManager>.Instance.GetRole(vanillaRoleType).BlurbMed;
         }
     }
-}*/
-using AmongUs.GameOptions;
+}
+/*using AmongUs.GameOptions;
 
 namespace TownOfHost.Roles.Core.Descriptions;
 
@@ -47,4 +52,4 @@ public class VanillaRoleDescription : RoleDescription
         vanillaRoleType is RoleTypes.Impostor ? DestroyableSingleton<RoleManager>.Instance.GetRole(vanillaRoleType).Blurb :
     DestroyableSingleton<RoleManager>.Instance.GetRole(vanillaRoleType).BlurbMed //:
     /*DestroyableSingleton<RoleManager>.Instance.GetRole(vanillaRoleType).BlurbLong*/;
-}
+//}

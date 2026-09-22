@@ -1101,6 +1101,8 @@
 "WarlockDescKoutyoku","Click the button once to cast a curse on the target. \nAfter casting the curse, click the button again to teleport the cursed player to the nearest person and kill them. \n<b>After a curse kill, the player is immobilized for {0} seconds. </b>","ワンクリックボタンを使用するとキルターゲットに呪いをかける。\n呪った後ワンクリック再度押すと呪った人が一番近い人の元にテレポートしキルする。\n<b>呪いキル後、{0}秒間動けなくなる。</b>"
 "EvilGuesserDesc","On Meeting Can Guess.","会議中に誰かの役職を推測でき、的中すると対象をキルすることができる。\nただし、推測が外れると自殺する。\n\n<u>チャットに「/cmd bt (ID) (役職名)」と送信することで推測ができる。</u>\nプレイヤー名の左側に表示されている数字が、そのプレイヤーのIDである。"
 "EvilGuesserDescSelfVote","On Meeting Can Guess.","会議中に誰かの役職を推測でき、的中すると対象をキルすることができる。\nただし、推測が外れると自殺する。\n\n<u>自投票後投票でターゲットを選択した後、\nチャットに「/cmd bt (役職名)」と送信することで推測ができる。</u>"
+"ViperDesc","When you kill an enemy, the corpse gradually dissolves and disappears after a certain amount of time (it is displayed as a corpse in the meeting).\nYou cannot perform a normal kill.","キルをすると死体が徐々に溶けていき、一定時間後死体がなくなる(会議では死体として表示される。)。\n通常キルを行うことはできない。"
+"ViperDescMark","<u>A corpse that has completely dissolved during that turn is marked with a <color=#6f4204>×</color> in the meeting. </u>","<u>そのターンに溶け切った死体は会議で<color=#6f4204>×</color>が付く。</u>"
 
 "# MadmateDescInfos"
 
@@ -1958,6 +1960,7 @@
 "OneClick","OneClick","ワンクリック"
 "SirenTimeLimit","Seconds Until Drowning","溺死するまでの秒数"
 "WarlockCanKillNakama","You can curse the imposter to death","インポスターを能力キルの対象に含める"
+"ViperShowMark","Display a mark on the person who has been melted","溶かされたプレイヤーにマークを表示する"
 
 "## MadMate Role Setting"
 "MadmateOption","MadMate Options","マッドメイト系役職の設定"
