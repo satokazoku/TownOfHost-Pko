@@ -183,7 +183,7 @@ namespace TownOfHost
         public static OptionItem InsiderMode;
         public static OptionItem InsiderModeCanSeeTask;
         public static OptionItem CanSeeImpostorRole;
-        public static OptionItem AllPlayerSkinShuffle;
+        //public static OptionItem AllPlayerSkinShuffle;
 
         public static OptionItem TaskOption;
         public static OptionItem UploadDataIsLongTask;
@@ -695,8 +695,8 @@ namespace TownOfHost
                 .SetTooltip(() => Translator.GetString("ColorNameModeInfo")); ;
             CanSeeImpostorRole = BooleanOptionItem.Create(100004, "CanSeeImpostorRole", false, TabGroup.MainSettings, false).SetParent(ONspecialMode)
                 .SetTag(CustomOptionTags.Standard);
-            AllPlayerSkinShuffle = BooleanOptionItem.Create(100005, "AllPlayerSkinShuffle", false, TabGroup.MainSettings, false).SetParent(ONspecialMode)
-                .SetEnabled(() => Event.April || Event.Special).SetInfo(Translator.GetString("AprilfoolOnly"));
+            //AllPlayerSkinShuffle = BooleanOptionItem.Create(100005, "AllPlayerSkinShuffle", false, TabGroup.MainSettings, false).SetParent(ONspecialMode)
+            //    .SetEnabled(() => Event.April || Event.Special).SetInfo(Translator.GetString("AprilfoolOnly"));
 
 
             // 試験的機能

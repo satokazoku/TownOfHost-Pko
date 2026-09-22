@@ -20,15 +20,19 @@ namespace TownOfHost
         private static ClientActionItem CustomName;
         private static ClientActionItem CustomSprite;
         private static ClientActionItem HideSomeFriendCodes;
+#if Release
         private static ClientActionItem HidePko;
+#endif
         private static ToggleButtonBehaviour soundSettingsButton;
         public static ToggleButtonBehaviour StreamHopeButton;
+#if Debug
         private static ClientActionItem ViewPingDetails;
         private static ClientActionItem DebugChatopen;
         private static ClientActionItem DebugSendAmout;
         private static ClientActionItem DebugTours;
         private static ClientActionItem ShowDistance;
         private static ClientActionItem FpsLimitRemoval;
+#endif
         private static ClientActionItem AutoSaveScreenShot;
         private static ClientActionItem PreloadMapAssets;
         public static OptionsMenuBehaviour Instance;

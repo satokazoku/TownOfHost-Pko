@@ -1808,8 +1808,6 @@
 "BalloonerAfterMeetingRemoveCharge","AfterMeeting Remove","会議後、減算される爆破範囲"
 "BalloonerTargetImpostor","Target Impostor","インポスターを巻き込む"
 "ShapeKillerCanDeadReport","Can Dead Reported","死者での偽装通報ができる"
-"CharismaStarGatherCooldown","Gather Cooldown(>= Kill Cooldown)","集合能力のクールダウン(>=キルクール)"
-"CharismaStarGatherMaxCount","Gather Max Count","集合能力の使用回数",
 "CharismaStarNotGatherPlayerKill","Not Gather Player Kill","集合出来ないプレイヤーは自爆する",
 "CharismaStarCanAllPlayerGather","Can All Player Gather","全員を一気に集合できる"
 "AssasinCanCallMeetingKill","Can Call Meeting Kill","追放以外でもアサシン会議を起こす"

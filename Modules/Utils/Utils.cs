@@ -777,7 +777,7 @@ namespace TownOfHost
                 }
             }
 
-            if (GameStates.IsLobby && !Iscountdown && (force || (pc.name != "Player(Clone)" && pc.PlayerId != PlayerControl.LocalPlayer.PlayerId && !pc.IsModClient())))
+            if (GameStates.IsLobby && !Iscountdown && !GameStates.InGame && (force || (pc.name != "Player(Clone)" && pc.PlayerId != PlayerControl.LocalPlayer.PlayerId && !pc.IsModClient())))
             {
                 if (AmongUsClient.Instance.IsGameStarted) return;
                 var sb = new StringBuilder();
@@ -1005,6 +1005,7 @@ namespace TownOfHost
                     ventilationSystem.PlayersInsideVents.Clear();
                     ventilationSystem.IsDirty = true;
                 }
+                CoEnterVentPatch.VentPlayers.Clear();
                 GuessManager.Reset();//会議後にリセット入れる
                 GameStates.ExiledAnimate = false;
 
@@ -1223,6 +1224,7 @@ namespace TownOfHost
         {
             meetingsendhis = new();
             MeetingHudPatch.SetJudgeOverrulePatch.OverruleNonce = ushort.MinValue;
+            MeetingHudPatch.SetJudgeOverrulePatch.CallerId = byte.MaxValue;
             GameDataSerializePatch.DontTouch = false;
             Camouflage.ventplayr.Clear();
             PlayerCatch.OldAlivePlayerControles.Clear();
