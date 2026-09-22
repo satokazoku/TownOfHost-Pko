@@ -893,6 +893,30 @@ CustomDeathReason deathReason = CustomDeathReason.Kill)
     /// <returns>結合したLowerText</returns>
     public static string GetLowerTextOthers(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
     {
+        foreach (var p in PlayerCatch.AllAlivePlayerControls)
+        {
+            if (p.GetRoleClass() is SheriffHadouHo shh)
+            {
+                if (shh.ShowBeamMark)
+                {
+                    return "";
+                }
+            }
+            else if (p.GetRoleClass() is HadouHo hh)
+            {
+                if (hh.ShowBeamMark)
+                {
+                    return "";
+                }
+            }
+            else if (p.GetRoleClass() is JackalHadouHo jhh)
+            {
+                if (jhh.ShowBeamMark)
+                {
+                    return "";
+                }
+            }
+        }
         var sb = new StringBuilder(100);
         foreach (var lower in LowerOthers)
         {

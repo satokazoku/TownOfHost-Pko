@@ -123,7 +123,7 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
 
     public override void Add()
     {
-        //CustomRoleManager.LowerOthers.Add(GetLowerTextOthers);
+        CustomRoleManager.LowerOthers.Add(GetLowerTextOthers);
         PlayerSpeed = Main.AllPlayerSpeed[Player.PlayerId];
         BeamColorModeValue = OptionBeamColorMode.GetValue();
         BeamUnlockTaskCount = OptionBeamUnlockTask.GetInt();
@@ -138,7 +138,7 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
     public override void OnDestroy()
     {
         PetActionManager.Unregister(Player.PlayerId);
-        //CustomRoleManager.LowerOthers.Remove(GetLowerTextOthers);
+        CustomRoleManager.LowerOthers.Remove(GetLowerTextOthers);
     }
 
     public override void ApplyGameOptions(IGameOptions opt)
@@ -547,17 +547,17 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
         return $"{size}<color=#ff0000>ファントムボタン → チャージ発射{ready}</color>";
     }
 
-    /*public string GetLowerTextOthers(PlayerControl seer, PlayerControl seen = null,
+    public string GetLowerTextOthers(PlayerControl seer, PlayerControl seen = null,
         bool isForMeeting = false, bool isForHud = false)
     {
         seen ??= seer;
         if (seen != seer || isForMeeting || !Player.IsAlive()) return "";
         if (IsCharging && seer.PlayerId != Player.PlayerId)
             return $"\n<size=100%><color=#ff0000>チャージ中... {(int)(ChargeTime - chargeTimer)}s</color></size>";
-        if (ShowBeamMark && seer.PlayerId != Player.PlayerId)
-            return "\n<size=100%><color=#ff0000>ビーム中</color></size>";
+        //if (ShowBeamMark && seer.PlayerId != Player.PlayerId)
+        //    return "\n<size=100%><color=#ff0000>ビーム中</color></size>";
         return "";
-    }*/
+    }
 
     public override string GetProgressText(bool comms = false, bool GameLog = false)
     {
