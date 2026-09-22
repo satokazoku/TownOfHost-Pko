@@ -692,6 +692,7 @@ public sealed class AllArounder : RoleBase, ISystemTypeUpdateHook, IKillFlashSee
         RandomOpportunist = IntegerOptionItem.Create(RoleInfo, 32, OptionName.AllArounderRandomOpportunist, new(0, 100, 5), 100, false).SetValueFormat(OptionFormat.Percent);
         RandomMadmate = IntegerOptionItem.Create(RoleInfo, 33, OptionName.AllArounderRandomMadmate, new(0, 100, 5), 100, false).SetValueFormat(OptionFormat.Percent);
         RandomNone = IntegerOptionItem.Create(RoleInfo, 34, OptionName.AllArounderRandomNone, new(0, 100, 5), 100, false).SetValueFormat(OptionFormat.Percent);
+        MonkeyBehaviorBanOption.Create(RoleInfo);
     }
     #endregion
 

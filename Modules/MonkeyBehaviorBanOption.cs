@@ -13,11 +13,11 @@ public static class MonkeyBehaviorBanOption
     private static readonly Dictionary<CustomRoles, int> OptionIds = new()
     {
         [CustomRoles.Fortuner] = 1_700_001,
-        [CustomRoles.NiceAddoer] = 1_700_002,
+        [CustomRoles.WolfBoy] = 1_700_002,
         [CustomRoles.NiceEraser] = 1_700_003,
         [CustomRoles.NiceGuesser] = 1_700_004,
         [CustomRoles.Sheriff] = 1_700_005,
-        [CustomRoles.SheriffHadouHo] = 1_700_006,
+        [CustomRoles.Hunter] = 1_700_006,
         [CustomRoles.MeetingSheriff] = 1_700_007,
         [CustomRoles.FortuneTeller] = 1_700_008,
         [CustomRoles.PonkotuTeller] = 1_700_009,
@@ -34,6 +34,7 @@ public static class MonkeyBehaviorBanOption
         [CustomRoles.Balancer] = 1_700_020,
         [CustomRoles.Observer] = 1_700_021,
         [CustomRoles.Santa] = 1_700_022,
+        [CustomRoles.AllArounder] = 1_700_023,
     };
 
     private static readonly Dictionary<CustomRoles, OptionItem> Options = new();

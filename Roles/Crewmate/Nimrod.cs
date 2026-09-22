@@ -48,6 +48,7 @@ public sealed class Nimrod : RoleBase
     {
         OptionMeetingTime = IntegerOptionItem.Create(RoleInfo, 10, OptionName.NimrodMeetingTime,
             new(15, 120, 1), 30, false).SetValueFormat(OptionFormat.Seconds);
+        MonkeyBehaviorBanOption.Create(RoleInfo);
     }
 
     public override void Add()

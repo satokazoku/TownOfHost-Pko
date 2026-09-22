@@ -103,6 +103,7 @@ public sealed class Inspector : RoleBase, ISelfVoter
         OptionTargetroom = FloatOptionItem.Create(RoleInfo, 20, OptionName.InspectTargetRoom, new(0, 100, 5), 100, false, OptionSetRect).SetValueFormat(OptionFormat.Percent);
         OptAwakening = BooleanOptionItem.Create(RoleInfo, 12, GeneralOption.TaskAwakening, false, false);
         OptAwakeningTaskcount = IntegerOptionItem.Create(RoleInfo, 13, GeneralOption.AwakeningTaskcount, new(1, 255, 1), 5, false, OptAwakening);
+        MonkeyBehaviorBanOption.Create(RoleInfo);
     }
     public override void OnFixedUpdate(PlayerControl player)
     {

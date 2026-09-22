@@ -78,7 +78,7 @@ public sealed class NiceGuesser : RoleBase, ISelfVoter
         CanGuessVanilla = BooleanOptionItem.Create(RoleInfo, 12, OptionName.CanGuessVanilla, true, false);
         CanGuessNakama = BooleanOptionItem.Create(RoleInfo, 13, OptionName.CanGuessNakama, true, false);
         CanGuessWhiteCrew = BooleanOptionItem.Create(RoleInfo, 14, OptionName.CanWhiteCrew, false, false);
-
+        MonkeyBehaviorBanOption.Create(RoleInfo);
         var targetingModeNames = Enum.GetNames(typeof(TargetingModeOption));
         TargetingMode = StringOptionItem.Create(RoleInfo, 15, OptionName.TargetingMode, targetingModeNames, 1, false);
     }

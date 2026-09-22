@@ -83,6 +83,7 @@ public sealed class FortuneTeller : RoleBase, ISelfVoter
         Option1MeetingMaximum = IntegerOptionItem.Create(RoleInfo, 15, GeneralOption.MeetingMaxTime, new(0, 99, 1), 0, false)
             .SetValueFormat(OptionFormat.Times).SetZeroNotation(OptionZeroNotation.Infinity);
         OptAwakening = BooleanOptionItem.Create(RoleInfo, 16, GeneralOption.AbilityAwakening, false, false);
+        MonkeyBehaviorBanOption.Create(RoleInfo);
     }
 
     private void SendRPC(byte targetid, CustomRoles role)

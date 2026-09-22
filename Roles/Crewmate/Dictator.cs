@@ -38,6 +38,7 @@ public sealed class Dictator : RoleBase, ISelfVoter
     static void SetupOptionItem()
     {
         OptionSelfVote = BooleanOptionItem.Create(RoleInfo, 10, OptionName.DictatorSelfVote, false, false);
+        MonkeyBehaviorBanOption.Create(RoleInfo);
     }
     bool IsUseTurn;
     static OptionItem OptionSelfVote;

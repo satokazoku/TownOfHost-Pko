@@ -82,6 +82,7 @@ public sealed class Medium : RoleBase
         Option1MeetingMaximum = IntegerOptionItem.Create(RoleInfo, 14, GeneralOption.MeetingMaxTime, new(0, 99, 1), 0, false)
             .SetValueFormat(OptionFormat.Times).SetZeroNotation(OptionZeroNotation.Infinity);
         OptAwakening = BooleanOptionItem.Create(RoleInfo, 15, GeneralOption.AbilityAwakening, false, false);
+        MonkeyBehaviorBanOption.Create(RoleInfo);
     }
 
     private int RemainingCount => Math.Max(0, OptionMaximum.GetInt() - usedCount);

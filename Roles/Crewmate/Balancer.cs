@@ -74,6 +74,7 @@ public sealed class Balancer : RoleBase, ISelfVoter
             .SetValueFormat(OptionFormat.Seconds);
         OptionCanUseAllAlive = BooleanOptionItem.Create(RoleInfo, 11, Option.BalancerCanUseAllAlive, false, false);
         OptionCanMeetingAbility = BooleanOptionItem.Create(RoleInfo, 12, Option.BalancerCanUseMeetingAbility, false, false);
+        MonkeyBehaviorBanOption.Create(RoleInfo);
     }
 
     public override void OnDestroy()

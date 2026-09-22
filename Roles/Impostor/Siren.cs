@@ -166,6 +166,9 @@ public sealed class Siren : RoleBase, IImpostor
         if (Utils.IsActive(SystemTypes.Electrical) || UsedOnThisDay || OptionUseCount.GetInt() - UseCount <= 0) return false;
 
         Room = Player.GetPlainShipRoom().RoomId;
+        //部屋じゃないなら
+        if (Room == SystemTypes.Jungle || Room == SystemTypes.Hallway) return false;
+
         ++UseCount;
         UsedOnThisDay = true;
         Target = target;
@@ -183,6 +186,11 @@ public sealed class Siren : RoleBase, IImpostor
     {
         if (UsedOnThisDay || OptionUseCount.GetInt() - UseCount <= 0) return "";
         return $"<#ff1919>({OptionUseCount.GetInt() - UseCount})</color>";
+    }
+    public override string GetLowerText(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
+    {
+        seen ??= seer;
+        return $"<size=50%>{Player.GetPlainShipRoom().RoomId}</size>";
     }
     public string GetLowerTextOthers(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
     {

@@ -80,6 +80,7 @@ public sealed class MeetingSheriff : RoleBase, ISelfVoter
         OptionMeetingSheriffCanKillLovers = BooleanOptionItem.Create(RoleInfo, 15, Option.SheriffCanKillLovers, true, false);
         Option1MeetingMaximum = IntegerOptionItem.Create(RoleInfo, 14, GeneralOption.MeetingMaxTime, new(0, 99, 1), 0, false)
             .SetValueFormat(OptionFormat.Times).SetZeroNotation(OptionZeroNotation.Infinity);
+        MonkeyBehaviorBanOption.Create(RoleInfo);
     }
     private void SendRPC()
     {

@@ -1,13 +1,12 @@
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using AmongUs.GameOptions;
 using HarmonyLib;
-using UnityEngine;
-
+using Hazel;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
-using Hazel;
 using TownOfHost.Roles.Vanilla;
+using UnityEngine;
 
 namespace TownOfHost.Roles.Neutral;
 

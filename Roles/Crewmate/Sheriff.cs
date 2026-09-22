@@ -102,6 +102,7 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
             .SetValueFormat(OptionFormat.Times);
         StartInTaskMode = BooleanOptionItem.Create(RoleInfo, 30, OptionName.SheriffStartInTaskMode, true, false);
         OverrideTasksData.Create(RoleInfo, 35, parent: StartInTaskMode);
+        MonkeyBehaviorBanOption.Create(RoleInfo);
         CanKillAllAlive = BooleanOptionItem.Create(RoleInfo, 40, OptionName.SheriffCanKillAllAlive, true, false);
         CanKillMadmate = SetUpKillTargetOption(CustomRoles.Madmate, 45);
         CanKillLovers = BooleanOptionItem.Create(RoleInfo, 51, OptionName.SheriffCanKillLovers, true, false);

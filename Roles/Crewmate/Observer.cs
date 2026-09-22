@@ -51,6 +51,7 @@ public sealed class Observer : RoleBase
             .SetValueFormat(OptionFormat.Times);
         OptAwakening = BooleanOptionItem.Create(RoleInfo, 11, GeneralOption.TaskAwakening, false, false);
         OptAwakeningTaskCount = FloatOptionItem.Create(RoleInfo, 12, GeneralOption.AwakeningTaskcount, new(0f, 255f, 1f), 5f, false, OptAwakening);
+        MonkeyBehaviorBanOption.Create(RoleInfo);
     }
 
     enum Option

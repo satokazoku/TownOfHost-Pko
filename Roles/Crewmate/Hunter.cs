@@ -106,6 +106,7 @@ public sealed class Hunter : RoleBase, IKiller, ISchrodingerCatOwner
         CanKillAllAlive = BooleanOptionItem.Create(RoleInfo, 40, OptionName.SheriffCanKillAllAlive, true, false);
         OptionCanSeeTeam = BooleanOptionItem.Create(RoleInfo, 45, OptionName.HunterKnowTargetIsImpostor, true, false);
         OptionMadIsImp = BooleanOptionItem.Create(RoleInfo, 50, OptionName.HunterKnowTargetMadIsImpostor, true, false, OptionCanSeeTeam);
+        MonkeyBehaviorBanOption.Create(RoleInfo);
     }
 
 

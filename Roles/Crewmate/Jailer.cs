@@ -128,6 +128,7 @@ public sealed class Jailer : RoleBase, IUsePhantomButton, IKiller
                 new(0, 99, 1), 0, false)
             .SetValueFormat(OptionFormat.Times)
             .SetZeroNotation(OptionZeroNotation.Infinity);
+        MonkeyBehaviorBanOption.Create(RoleInfo);
     }
 
     public override void Add()

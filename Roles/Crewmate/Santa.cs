@@ -94,7 +94,7 @@ public sealed class Santa : RoleBase, IKiller
         );
 
         OverrideTasksData.Create(RoleInfo, 20);
-
+        MonkeyBehaviorBanOption.Create(RoleInfo);
         OptCanGiftLovers = BooleanOptionItem.Create(
             RoleInfo, 18, OptionName.SantaCanGiftLovers,
             false, false

@@ -60,6 +60,7 @@ public sealed class NiceEraser : RoleBase, ISelfVoter
         OptionOneMeetingMaximum = IntegerOptionItem.Create(RoleInfo, 13, OptionName.NiceEraserOneMeetingMaximum, new(1, 99, 1), 1, false)
             .SetValueFormat(OptionFormat.Times);
         OptionAwakening = BooleanOptionItem.Create(RoleInfo, 14, GeneralOption.AbilityAwakening, true, false);
+        MonkeyBehaviorBanOption.Create(RoleInfo);
     }
 
     public NiceEraser(PlayerControl player)

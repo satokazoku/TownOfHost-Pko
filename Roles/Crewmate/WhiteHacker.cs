@@ -74,6 +74,7 @@ public sealed class WhiteHacker : RoleBase
         OptionMaximum = IntegerOptionItem.Create(RoleInfo, 11, Option.WhiteHackerTrackTimes, new(1, 99, 1), 1, false)
             .SetValueFormat(OptionFormat.Times);
         OptAwakening = BooleanOptionItem.Create(RoleInfo, 12, GeneralOption.AbilityAwakening, false, false);
+        MonkeyBehaviorBanOption.Create(RoleInfo);
     }
     public override void ApplyGameOptions(IGameOptions opt)
     {

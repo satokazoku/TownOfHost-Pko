@@ -112,6 +112,7 @@ public sealed class PonkotuTeller : RoleBase, ISelfVoter
         OptAwakening = BooleanOptionItem.Create(RoleInfo, 16, GeneralOption.AbilityAwakening, false, false, OptionNonAlignFortuneTeller);
         MeisFT = BooleanOptionItem.Create(RoleInfo, 18, Option.PonkotuTellerMyisFT, false, false);
         OptionDontChengeGame = BooleanOptionItem.Create(RoleInfo, 20, Option.PonkotuDontChengeGame, false, false);
+        MonkeyBehaviorBanOption.Create(RoleInfo);
     }
     private void SendRPC(byte targetId, CustomRoles role)
     {
