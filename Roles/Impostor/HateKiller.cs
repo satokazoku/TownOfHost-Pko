@@ -20,11 +20,7 @@ public sealed class HateKiller : RoleBase, IImpostor
             SetupOptionItem,
             "htk",
             "#ff1919",
-            (7, 9),
-            assignInfo: new RoleAssignInfo(CustomRoles.HateKiller, CustomRoleTypes.Impostor)
-            {
-                AssignCountRule = new(1, 1, 1)
-            }
+            (7, 9)
         );
     public HateKiller(PlayerControl player) : base(RoleInfo, player)
     {
