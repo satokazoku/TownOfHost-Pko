@@ -1200,6 +1200,8 @@ public enum CustomRoles
     Whiteshark,
     HateKiller,
     Siren,
+    Soulbinder,
+    SoulSlave,
     //DEBUG only Impostor
     //Madmate
     MadGuardian,
