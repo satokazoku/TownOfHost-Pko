@@ -298,11 +298,22 @@ namespace TownOfHost
                     }
                     continue;
                 }
+                if (pc.GetCustomRole() is CustomRoles.DollBetrayer)
+                {
+                    if (DollBetrayer.IsJackal() is false)
+                    {
+                        MadBetrayer++;
+                    }
+                    else
+                    {
+                        Crew++; FoxAndCrew++;
+                    }
+                    continue;
+                }
                 if (pc.Is(CustomRoles.Vanity))
                 {
                     if (pc.GetRoleClass() is Vanity vanity && vanity.KilledCrewmate && Roles.Neutral.Vanity.OptionSoloKiller.GetBool())
                     {
-                        Logger.Info($"Vanity is SoloKiller and has killed a crewmate, counting as Vanity.", "NormalGameEndPredicate");
                         Vanity++;
                     }
                     else
@@ -411,6 +422,11 @@ namespace TownOfHost
                 CustomWinnerHolder.WinnerRoles.Add(CustomRoles.JackalHadouHo);
                 CustomWinnerHolder.WinnerRoles.Add(CustomRoles.Tama);
                 CustomWinnerHolder.WinnerRoles.Add(CustomRoles.JackalWolf);
+                if (DollBetrayer.IsJackal())
+                {
+                    CustomWinnerHolder.WinnerRoles.Add(CustomRoles.DollBetrayer);
+                }
+
             }
             else if (Imp == 0 && Jackal == 0 && MilkyWay == 0 && MadBetrayer == 0
                 && Pavlov == 0 && StandMasterCount == 0 && EaterCount == 0 && Huntman == 0 && Dracula == 0 && Vanity == 0 && FoxAndCrew <= Remotekiller)
@@ -444,7 +460,16 @@ namespace TownOfHost
             {
                 reason = GameOverReason.ImpostorsByKill;
                 CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.MadBetrayer, byte.MaxValue);
-                CustomWinnerHolder.WinnerRoles.Add(CustomRoles.MadBetrayer);
+
+                //ドールベトレイヤー追加でこれ考えないといけなくなった。
+                if (Roles.Madmate.MadBetrayer.IsMadmate() is false)
+                {
+                    CustomWinnerHolder.WinnerRoles.Add(CustomRoles.MadBetrayer);
+                }
+                if (DollBetrayer.IsJackal() is false)
+                {
+                    CustomWinnerHolder.WinnerRoles.Add(CustomRoles.DollBetrayer);
+                }
             }
             else if (Imp == 0 && Jackal == 0 && Remotekiller == 0 && GrimReaper == 0
                 && MilkyWay == 0 && MadBetrayer == 0 && StandMasterCount == 0 && EaterCount == 0

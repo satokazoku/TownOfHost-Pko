@@ -353,10 +353,10 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
                     SetMode(Player, false);
                     return false;
                 }
-                var targetRole = target.GetCustomRole();
-                if (targetRole is CustomRoles.King or CustomRoles.Autocrat or CustomRoles.Jackal or CustomRoles.JackalAlien
-                    or CustomRoles.Jackaldoll or CustomRoles.JackalMafia or CustomRoles.JackalHadouHo
-                    or CustomRoles.Merlin)
+                var targetrole = target.GetCustomRole();
+
+                if ((targetrole is CustomRoles.King or CustomRoles.Merlin or CustomRoles.AlienHijack or CustomRoles.Autocrat || Jackal.IsJackal(targetrole))
+                    || ((targetrole.IsImpostor() || targetrole is CustomRoles.Egoist) && !OptionImpostorCanSidekick.GetBool()))
                 {
                     Utils.SendMessage("<color=#00b4eb>その役職はSKにできません。</color>", Player.PlayerId);
                     SetMode(Player, false);
@@ -796,14 +796,13 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
     private void DoSideKick(PlayerControl target)
     {
         CanSideKick = false;
-        var targetRole = target.GetCustomRole();
-        if (targetRole is CustomRoles.King or CustomRoles.Autocrat or CustomRoles.Jackal or CustomRoles.JackalAlien
-            or CustomRoles.Jackaldoll or CustomRoles.JackalMafia or CustomRoles.JackalHadouHo
-            or CustomRoles.Merlin
-            || ((targetRole.IsImpostor() || targetRole is CustomRoles.Egoist) && !OptionImpostorCanSidekick.GetBool()))
+        var targetrole = target.GetCustomRole();
+        if ((targetrole is CustomRoles.King or CustomRoles.Merlin or CustomRoles.AlienHijack or CustomRoles.Autocrat || Jackal.IsJackal(targetrole))
+            || ((targetrole.IsImpostor() || targetrole is CustomRoles.Egoist) && !OptionImpostorCanSidekick.GetBool()))
         {
-            Utils.SendMessage("<color=#00b4eb>この役職はSKにできません。</color>", Player.PlayerId);
-            SendRpc(); return;
+            Utils.SendMessage("<color=#00b4eb>その役職はSKにできません。</color>", Player.PlayerId);
+            SetMode(Player, false);
+            return;
         }
 
         Player.RpcProtectedMurderPlayer(target);

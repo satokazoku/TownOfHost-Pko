@@ -24,7 +24,6 @@ public sealed class Vanity : RoleBase, IKiller, ISchrodingerCatOwner, IAdditiona
             "#aa8d22",
             (5, 9),
             introSound: () => GetIntroSound(RoleTypes.Crewmate),
-            countType: CountTypes.Vanity,
             from: From.NebulaontheShip,
             Desc: () => string.Format(GetString("VanityDesc"), OptionSoloKiller.GetBool() ? GetString("VanityDescKiller") : GetString("VanityDescAdd"))
         );

@@ -488,6 +488,8 @@ namespace TownOfHost
         PhantomThief = CustomRoles.PhantomThief,
         MilkyWay = CustomRoles.Vega,
         MadBetrayer = CustomRoles.MadBetrayer,
+        DollBetrayer = CustomRoles.DollBetrayer,
+
         Strawdoll = CustomRoles.Strawdoll,
         Missioneer = CustomRoles.Missioneer,
         God = CustomRoles.God,

@@ -67,7 +67,7 @@ namespace TownOfHost
                 || QuickKiller.KnowTargetRoleColor(target, isMeeting)
                 || Huntman.KnowTargetRoleColor(target, isMeeting)
                 || Sniper.KnowTargetRoleColor(target, isMeeting)
-                || ((seer.Is(CountTypes.Jackal) || seer.Is(CustomRoles.Jackaldoll)) && (target.Is(CountTypes.Jackal) || target.Is(CustomRoles.Jackaldoll)))
+                || ((seer.Is(CountTypes.Jackal) || seer.Is(CustomRoles.Jackaldoll)) && (target.Is(CountTypes.Jackal) || target.Is(CustomRoles.Jackaldoll) || (target.Is(CustomRoles.DollBetrayer) && DollBetrayer.IsJackal() is true)))
                 || (seer.Is(CountTypes.MilkyWay) && target.Is(CountTypes.MilkyWay)));
         }
         public static bool TryGetData(PlayerControl seer, PlayerControl target, out string colorCode)

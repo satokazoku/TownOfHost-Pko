@@ -16,8 +16,10 @@ using TownOfHost.Roles.AddOns.Common;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Descriptions;
 using TownOfHost.Roles.Impostor;
+using TownOfHost.Roles.Madmate;
 using TownOfHost.Roles.Neutral;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
 using static TownOfHost.PlayerCatch;
 using static TownOfHost.Translator;
 using static TownOfHost.Utils;
@@ -66,6 +68,14 @@ namespace TownOfHost
 
         static bool IsOnmyojiChatRole(PlayerControl player)
             => player != null && (player.Is(CustomRoles.Onmyoji) || player.Is(CustomRoles.Shikigami));
+        static bool IsBetrayer(PlayerControl player)
+        {
+            if ((player.GetCustomRole() is CustomRoles.MadBetrayer && MadBetrayer.IsMadmate() is false) || (player.GetCustomRole() is CustomRoles.DollBetrayer && DollBetrayer.IsJackal() is false))
+            {
+               return true;
+            }
+            return false;
+        }
 
         static string GetHideChatDisplayName(PlayerControl player)
         {
@@ -1330,6 +1340,22 @@ namespace TownOfHost
                                     {
                                         SendMessage(send.Mark(ModColors.StandColor), Stand.PlayerId,
                                             ColorString(ModColors.StandColor, $"%{local.GetPlayerColor()}%"));
+                                    }
+                                }
+                                break;
+                            }
+                            //ベトレイヤー
+                            if (Options.BetrayerHideChat.GetBool()
+                                && IsBetrayer(local))
+                            {
+                                Logger.Info($"{local.Data.GetLogPlayerName()} : {send}", "BetrayerChat");
+                                foreach (var Bet in PlayerCatch.AllPlayerControls)
+                                {
+                                    if (Bet && (IsBetrayer(Bet))
+                                        || !Bet.IsAlive())
+                                    {
+                                        SendMessage(send.Mark(ModColors.BetrayerColor), Bet.PlayerId,
+                                            ColorString(ModColors.BetrayerColor, $"◆{local.GetPlayerColor()}◆"));
                                     }
                                 }
                                 break;
@@ -2907,7 +2933,28 @@ namespace TownOfHost
                             canceled = true;
                             break;
                         }
-
+                        //ベトレイヤー
+                        if (Options.BetrayerHideChat.GetBool()
+                            && IsBetrayer(player))
+                        {
+                            if (GetHideSendText(ref canceled, ref send) is false) return;
+                            Logger.Info($"{player.Data.GetLogPlayerName()} : {send}", "StandChat");
+                            foreach (var bet in AllPlayerControls)
+                            {
+                                if (bet == null) continue;
+                                bool isTarget = IsBetrayer(bet);
+                                if (!isTarget && bet.IsAlive()) continue;
+                                if (bet.PlayerId == player.PlayerId && !Isclient) continue;
+                                if (!AmongUsClient.Instance.AmHost) continue;
+                                var cid = bet.GetClientId();
+                                if (cid == -1) continue;
+                                SendMessage(send.Mark(ModColors.BetrayerColor), bet.PlayerId,
+                                    $"<#8b2551>◆{player.GetPlayerColor()}◆</line-height>");
+                            }
+                            player.RpcProtectedMurderPlayer();
+                            canceled = true;
+                            break;
+                        }
                         canceled = true;
                         break;
                     }

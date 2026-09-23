@@ -6,35 +6,37 @@ using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Crewmate;
 using TownOfHost.Roles.Madmate;
+using UnityEngine;
+
 namespace TownOfHost.Roles.Neutral
 {
-    public sealed class Jackal : RoleBase, ILNKiller, ISchrodingerCatOwner, IUsePhantomButton
+    public sealed class JackalMafia : RoleBase, ILNKiller, ISchrodingerCatOwner, IUsePhantomButton
     {
         public static readonly SimpleRoleInfo RoleInfo =
             SimpleRoleInfo.Create(
-                typeof(Jackal),
-                player => new Jackal(player),
-                CustomRoles.Jackal,
+                typeof(JackalMafia),
+                player => new JackalMafia(player),
+                CustomRoles.JackalMafia,
                 () => OptionCanMakeSidekick.GetBool() ? RoleTypes.Phantom : RoleTypes.Impostor,
                 CustomRoleTypes.Neutral,
-                51900,
+                52400,
                 SetupOptionItem,
-                "jac",
+                "jm",
                 "#00b4eb",
-                (1, 0),
+                (1, 2),
                 true,
                 countType: CountTypes.Jackal,
-                assignInfo: new RoleAssignInfo(CustomRoles.Jackal, CustomRoleTypes.Neutral)
+                assignInfo: new RoleAssignInfo(CustomRoles.JackalMafia, CustomRoleTypes.Neutral)
                 {
                     AssignCountRule = new(1, 1, 1)
                 },
-                from: From.TheOtherRoles,
                 Desc: () =>
                 {
-                    return string.Format(GetString("JackalDesc"), OptionCanMakeSidekick.GetBool() ? string.Format(GetString("JackalDescSidekick"), !OptionImpostorCanSidekick.GetBool() ? GetString("JackalDescImpostorSideKick") : "") : "");
-                }
+                    return GetString("JackalMafiaInfoLong") + (OptionCanMakeSidekick.GetBool() ? string.Format(GetString("JackalDescSidekick"), !OptionImpostorCanSidekick.GetBool() ? GetString("JackalDescImpostorSideKick") : "") : "");
+                },
+                from: From.TownOfHost_K
             );
-        public Jackal(PlayerControl player)
+        public JackalMafia(PlayerControl player)
         : base(
             RoleInfo,
             player,
@@ -42,9 +44,11 @@ namespace TownOfHost.Roles.Neutral
         )
         {
             KillCooldown = OptionKillCooldown.GetFloat();
-            CanVent = OptionCanVent.GetBool();
             Cooldown = OptionCooldown.GetFloat();
+            CanVent = OptionCanVent.GetBool();
             CanUseSabotage = OptionCanUseSabotage.GetBool();
+            JackalCanAlsoBeExposedToJMafia = OptionJackalCanAlsoBeExposedToJMafia.GetBool();
+            JackalMafiaCanAlsoBeExposedToJackal = OptionJJackalMafiaCanAlsoBeExposedToJackal.GetBool();
             CanSideKick = OptionCanMakeSidekick.GetBool();
         }
 
@@ -53,23 +57,33 @@ namespace TownOfHost.Roles.Neutral
         public static OptionItem OptionCanVent;
         public static OptionItem OptionCanUseSabotage;
         static OptionItem OptionHasImpostorVision;
-        public static OptionItem OptionCanMakeSidekick;
+        private static OptionItem OptionJackalCanAlsoBeExposedToJMafia;
+        private static OptionItem OptionJJackalMafiaCanAlsoBeExposedToJackal;
+        private static OptionItem OptionJJackalCanKillMafia;
         static OptionItem OptionImpostorCanSidekick;
         //サイドキックが元仲間の色を見える
         public static OptionItem OptionSidekickCanSeeOldImpostorTeammates;
         //元仲間impがサイドキック相手の名前の色を見える
         public static OptionItem OptionImpostorCanSeeNameColor;
+        public static OptionItem OptionCanMakeSidekick;
         public static OptionItem OptionSidekickPromotion;
         private static float KillCooldown;
         private static float Cooldown;
         public static bool CanVent;
         public static bool CanUseSabotage;
+        private static bool JackalCanAlsoBeExposedToJMafia;
+        private static bool JackalMafiaCanAlsoBeExposedToJackal;
         bool CanSideKick;
-
-        enum OptionName { JackalSidekickPromotion, JackalImpostorCanSidekick, JackalbeforeImpCanSeeImp, Jackaldollimpgaimpnimieru }
-
-        public ISchrodingerCatOwner.TeamType SchrodingerCatChangeTo => ISchrodingerCatOwner.TeamType.Jackal;
-
+        public enum JackalOption
+        {
+            JackalCanAlsoBeExposedToJMafia,
+            JackalMafiaCanAlsoBeExposedToJackal,
+            JackalCanKillMafia,
+            JackalImpostorCanSidekick,
+            JackalbeforeImpCanSeeImp,
+            Jackaldollimpgaimpnimieru,
+            JackalSidekickPromotion
+        }
         private static void SetupOptionItem()
         {
             OptionKillCooldown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.KillCooldown, new(0f, 180f, 0.5f), 30f, false)
@@ -77,21 +91,25 @@ namespace TownOfHost.Roles.Neutral
             OptionCanVent = BooleanOptionItem.Create(RoleInfo, 11, GeneralOption.CanVent, true, false);
             OptionCanUseSabotage = BooleanOptionItem.Create(RoleInfo, 12, GeneralOption.CanUseSabotage, false, false);
             OptionHasImpostorVision = BooleanOptionItem.Create(RoleInfo, 13, GeneralOption.ImpostorVision, true, false);
-
+            OptionJJackalCanKillMafia = BooleanOptionItem.Create(RoleInfo, 14, JackalOption.JackalCanKillMafia, false, false);
+            OptionJJackalMafiaCanAlsoBeExposedToJackal = BooleanOptionItem.Create(RoleInfo, 16, JackalOption.JackalMafiaCanAlsoBeExposedToJackal, false, false);
+            OptionJackalCanAlsoBeExposedToJMafia = BooleanOptionItem.Create(RoleInfo, 17, JackalOption.JackalCanAlsoBeExposedToJMafia, true, false);
             ObjectOptionitem.Create(RoleInfo, 9, "SideKickOption", true, null).SetOptionName(() => "Sidekick Setting");
-            OptionCanMakeSidekick = BooleanOptionItem.Create(RoleInfo, 14, GeneralOption.CanCreateSideKick, true, false);
-            OptionImpostorCanSidekick = BooleanOptionItem.Create(RoleInfo, 15, OptionName.JackalImpostorCanSidekick, false, false, OptionCanMakeSidekick);
-            OptionSidekickCanSeeOldImpostorTeammates = BooleanOptionItem.Create(RoleInfo, 16, OptionName.JackalbeforeImpCanSeeImp, false, false, OptionImpostorCanSidekick);
-            OptionImpostorCanSeeNameColor = BooleanOptionItem.Create(RoleInfo, 17, OptionName.Jackaldollimpgaimpnimieru, false, false, OptionImpostorCanSidekick);
-            OptionCooldown = FloatOptionItem.Create(RoleInfo, 18, GeneralOption.Cooldown, new(0f, 180f, 0.5f), 30f, false, OptionCanMakeSidekick)
-                .SetValueFormat(OptionFormat.Seconds);
-            OptionSidekickPromotion = BooleanOptionItem.Create(RoleInfo, 19, OptionName.JackalSidekickPromotion, false, false, OptionCanMakeSidekick);
-            ObjectOptionitem.Create(RoleInfo, 8, "AddonOption", true, null).SetOptionName(() => "Addon Setting");
-            RoleAddAddons.Create(RoleInfo, 20, NeutralKiller: true);
-        }
+            OptionCanMakeSidekick = BooleanOptionItem.Create(RoleInfo, 18, GeneralOption.CanCreateSideKick, true, false);
+            OptionImpostorCanSidekick = BooleanOptionItem.Create(RoleInfo, 19, JackalOption.JackalImpostorCanSidekick, false, false, OptionCanMakeSidekick);
+            OptionSidekickCanSeeOldImpostorTeammates = BooleanOptionItem.Create(RoleInfo, 20, JackalOption.JackalbeforeImpCanSeeImp, false, false, OptionImpostorCanSidekick);
+            OptionImpostorCanSeeNameColor = BooleanOptionItem.Create(RoleInfo, 22, JackalOption.Jackaldollimpgaimpnimieru, false, false, OptionImpostorCanSidekick);
+            OptionCooldown = FloatOptionItem.Create(RoleInfo, 23, GeneralOption.Cooldown, new(0f, 180f, 0.5f), 30f, false, OptionCanMakeSidekick)
+            .SetValueFormat(OptionFormat.Seconds);
+            OptionSidekickPromotion = BooleanOptionItem.Create(RoleInfo, 24, JackalOption.JackalSidekickPromotion, false, false, OptionCanMakeSidekick);
+            ObjectOptionitem.Create(RoleInfo, 8, "AddonOption", true, null).SetOptionName(() => "Sidekick Setting");
+            RoleAddAddons.Create(RoleInfo, 25, NeutralKiller: true);
+        }   //↑あってるかは知らない、
+        public ISchrodingerCatOwner.TeamType SchrodingerCatChangeTo => ISchrodingerCatOwner.TeamType.Jackal;
         public float CalculateKillCooldown() => KillCooldown;
         public bool CanUseSabotageButton() => CanUseSabotage;
         public bool CanUseImpostorVentButton() => CanVent;
+        public override bool OnInvokeSabotage(SystemTypes systemType) => CanUseSabotage;
         public override void ApplyGameOptions(IGameOptions opt)
         {
             opt.SetVision(OptionHasImpostorVision.GetBool());
@@ -120,7 +138,7 @@ namespace TownOfHost.Roles.Neutral
                 return;
             }
             var targetrole = target.GetCustomRole();
-            if ((targetrole is CustomRoles.King or CustomRoles.Jackal or CustomRoles.JackalAlien or CustomRoles.Jackaldoll or CustomRoles.JackalMafia or CustomRoles.Merlin or CustomRoles.JackalWolf or CustomRoles.AlienHijack or CustomRoles.JackalHadouHo or CustomRoles.Tama or CustomRoles.Autocrat)
+            if ((targetrole is CustomRoles.King or CustomRoles.Merlin or CustomRoles.AlienHijack or CustomRoles.Autocrat || Jackal.IsJackal(targetrole))
             || ((targetrole.IsImpostor() || targetrole is CustomRoles.Egoist) && !OptionImpostorCanSidekick.GetBool()))
             {
                 ResetCooldown = false;
@@ -137,15 +155,50 @@ namespace TownOfHost.Roles.Neutral
             }
             CanSideKick = false;
             SendRPC();
-            if (target.Is(CustomRoleTypes.Impostor)) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[1]);
+            if (target.Is(CustomRoleTypes.Impostor)) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, Jackal.achievements[1]);
             Player.RpcProtectedMurderPlayer(target);
             target.RpcProtectedMurderPlayer(Player);
             target.RpcProtectedMurderPlayer(target);
             UtilsGameLog.AddGameLog($"SideKick", string.Format(GetString("log.Sidekick"), UtilsName.GetPlayerColor(target, true) + $"({UtilsRoleText.GetTrueRoleName(target.PlayerId)})", UtilsName.GetPlayerColor(Player, true)));
             target.RpcSetCustomRole(CustomRoles.Jackaldoll, log: null);
-            JackalDoll.Sidekick(target, Player);
             if (!Utils.RoleSendList.Contains(target.PlayerId)) Utils.RoleSendList.Add(target.PlayerId);
+            JackalDoll.Sidekick(target, Player);
             UtilsOption.MarkEveryoneDirtySettings();
+        }
+
+        public bool CanUseKillButton()
+        {
+            if (PlayerState.AllPlayerStates == null) return false;
+            int livingImpostorsNum = 0;
+            foreach (var pc in PlayerCatch.AllAlivePlayerControls)
+            {
+                if (pc.PlayerId == Player.PlayerId) continue;
+                if (pc.Is(CountTypes.Jackal)) livingImpostorsNum++;
+            }
+            return livingImpostorsNum <= 0;
+        }
+        public override bool OnCheckMurderAsTarget(MurderInfo info)
+        {
+            (var killer, var target) = info.AttemptTuple;
+            if (killer.Is(CountTypes.Jackal) && !OptionJJackalCanKillMafia.GetBool())
+            {
+                info.DoKill = false;
+                killer.SetKillCooldown();
+                return false;
+            }
+            return true;
+        }
+        public override void OverrideDisplayRoleNameAsSeer(PlayerControl seen, ref bool enabled, ref Color roleColor, ref string roleText, ref bool addon)
+        {
+            addon = false;
+            if ((seen.Is(CustomRoles.Jackal) || seen.Is(CustomRoles.JackalMafia) || seen.Is(CustomRoles.JackalAlien) || seen.Is(CustomRoles.JackalWolf)) && JackalMafiaCanAlsoBeExposedToJackal)
+                enabled = true;
+        }
+        public override void OverrideDisplayRoleNameAsSeen(PlayerControl seen, ref bool enabled, ref Color roleColor, ref string roleText, ref bool addon)
+        {
+            addon = false;
+            if ((seen.Is(CustomRoles.Jackal) || seen.Is(CustomRoles.JackalMafia) || seen.Is(CustomRoles.JackalAlien) || seen.Is(CustomRoles.JackalWolf)) && JackalCanAlsoBeExposedToJMafia)
+                enabled = true;
         }
         public override string GetAbilityButtonText() => GetString("Sidekick");
         public override bool OverrideAbilityButton(out string text)
@@ -156,42 +209,34 @@ namespace TownOfHost.Roles.Neutral
         public override string GetLowerText(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
         {
             seen ??= seer;
-            if (seen.PlayerId != seer.PlayerId || isForMeeting || !Player.IsAlive() || JackalDoll.GetSideKickCount() <= JackalDoll.NowSideKickCount || !CanSideKick) return "";
+            if (seen.PlayerId != seer.PlayerId || isForMeeting || !Player.IsAlive()
+            || JackalDoll.GetSideKickCount() <= JackalDoll.NowSideKickCount || !CanSideKick) return "";
 
             if (isForHud) return GetString("PhantomButtonSideKick");
             return $"<size=50%>{GetString("PhantomButtonSideKick")}</size>";
         }
+
         public void SendRPC()
         {
             using var sender = CreateSender();
             sender.Writer.Write(CanSideKick);
         }
+
         public override void ReceiveRPC(MessageReader reader)
         {
             CanSideKick = reader.ReadBoolean();
         }
         public override void CheckWinner(GameOverReason reason)
         {
-            if (3 <= MyState.GetKillCount()) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);
+            if (3 <= MyState.GetKillCount()) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, Jackal.achievements[0]);
             if (Player.IsWinner(CustomWinner.Jackal) && !Player.IsLovers())
             {
                 foreach (var j in PlayerCatch.AllPlayerControls.Where(pc => pc.Is(CountTypes.Jackal)))
                 {
                     if (j.GetPlayerState().GetKillCount() > 0) return;
                 }
-                Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[2]);
+                Achievements.RpcCompleteAchievement(Player.PlayerId, 0, Jackal.achievements[2]);
             }
-        }
-        public static System.Collections.Generic.Dictionary<int, Achievement> achievements = new();
-        [Attributes.PluginModuleInitializer]
-        public static void Load()
-        {
-            var n1 = new Achievement(RoleInfo, 0, 1, 0, 0);
-            var l1 = new Achievement(RoleInfo, 1, 1, 0, 1);
-            var sp1 = new Achievement(RoleInfo, 2, 1, 0, 3, true);
-            achievements.Add(0, n1);
-            achievements.Add(1, l1);
-            achievements.Add(2, sp1);
         }
     }
 }

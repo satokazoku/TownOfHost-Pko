@@ -849,11 +849,13 @@ public sealed class JackalAlien : RoleBase, IMeetingTimeAlterable, ILNKiller, IS
             return;
         }
         var targetrole = target.GetCustomRole();
-        if (target == null || (targetrole is CustomRoles.King or CustomRoles.Jackal or CustomRoles.JackalAlien or CustomRoles.Jackaldoll or CustomRoles.JackalMafia or CustomRoles.Merlin or CustomRoles.JackalWolf or CustomRoles.AlienHijack or CustomRoles.JackalHadouHo or CustomRoles.Tama or CustomRoles.Autocrat) || ((targetrole.IsImpostor() || targetrole is CustomRoles.Egoist) && !OptionImpostorCanSidekick.GetBool()))
+        if ((targetrole is CustomRoles.King or CustomRoles.Merlin or CustomRoles.AlienHijack or CustomRoles.Autocrat || Jackal.IsJackal(targetrole))
+        || ((targetrole.IsImpostor() || targetrole is CustomRoles.Egoist) && !OptionImpostorCanSidekick.GetBool()))
         {
             ResetCooldown = false;
             return;
         }
+
         if (target.GetRoleClass() is MadPsycho ms)
         {
             ms.Psycho(Player, 1);

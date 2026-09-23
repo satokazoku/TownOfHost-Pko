@@ -31,6 +31,7 @@
 
 	<ItemGroup>
 	  <Folder Include="ChatServer\" />
+	  <Folder Include="Roles\Neutral\Jackal\" />
 	</ItemGroup>
 
 	<ItemGroup>

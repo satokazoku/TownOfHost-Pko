@@ -67,15 +67,20 @@ public static class CustomRoleManager
     /// <param name="deathReason">死因</param>
     /// <returns></returns>
     public static bool OnCheckMurder(PlayerControl attemptKiller, PlayerControl attemptTarget, PlayerControl appearanceKiller, PlayerControl appearanceTarget, bool? force = false, bool? DontRoleAbility = false, int Killpower = 1,
-    CustomDeathReason deathReason = CustomDeathReason.Kill, bool PlayKillSound = false)
+    CustomDeathReason deathReason = CustomDeathReason.Kill, bool PlayKillSound = false, bool IsSubKill = false)
     {
         Logger.Info($"Attempt  :{attemptKiller.GetNameWithRole().RemoveHtmlTags()} => {attemptTarget.GetNameWithRole().RemoveHtmlTags()}", "CheckMurder");
         if (appearanceKiller != attemptKiller || appearanceTarget != attemptTarget)
             Logger.Info($"Apperance:{appearanceKiller.GetNameWithRole().RemoveHtmlTags()} => {appearanceTarget.GetNameWithRole().RemoveHtmlTags()}", "CheckMurder");
 
-        var info = new MurderInfo(attemptKiller, attemptTarget, appearanceKiller, appearanceTarget, DontRoleAbility, Killpower, 0, deathReason);
-
-        appearanceKiller.ResetKillCooldown();
+        var info = new MurderInfo(attemptKiller, attemptTarget, appearanceKiller, appearanceTarget, DontRoleAbility, Killpower, 0, deathReason, isSubKill: IsSubKill == true); if (IsSubKill)
+        {
+            appearanceKiller.RpcResetAbilityCooldown();
+        }
+        else
+        {
+            appearanceKiller.ResetKillCooldown(IsSubKill);
+        }
 
         // 無効なキルをブロックする処理 必ず最初に実行する
         if (!CheckMurderPatch.CheckForInvalidMurdering(info, force == true))
@@ -160,7 +165,7 @@ public static class CustomRoleManager
 
             // キラーのキルチェック処理実行
             //ダブルトリガー無効なら通常処理
-            if (!DoubleTrigger.OnCheckMurderAsKiller(info) && force is false)//特殊強制キルの場合は処理しない
+            if (!DoubleTrigger.OnCheckMurderAsKiller(info) && force is false && !IsSubKill)//特殊強制キルの場合は処理しない
             {
                 killer.OnCheckMurderAsKiller(info);
             }
@@ -223,10 +228,14 @@ public static class CustomRoleManager
                     default:
                         break;
                 }
-                attemptKiller.RpcProtectedMurderPlayer(attemptTarget);
+                if (!IsSubKill)
+                {
+                    killer.OnCheckMurderDontKill(info);
+                    attemptKiller.RpcProtectedMurderPlayer(attemptTarget);
+                }
+
                 CheckMurderPatch.TimeSinceLastKill[attemptKiller.PlayerId] = 0f;
                 UtilsNotifyRoles.NotifyRoles();
-                killer.OnCheckMurderDontKill(info);
                 return false;
             }
         }
@@ -322,8 +331,6 @@ CustomDeathReason deathReason = CustomDeathReason.Kill)
             Logger.Info($"Apperance:{appearanceKiller.GetNameWithRole().RemoveHtmlTags()} => {appearanceTarget.GetNameWithRole().RemoveHtmlTags()}", "CheckMurder");
 
         var info = new MurderInfo(attemptKiller, attemptTarget, appearanceKiller, appearanceTarget, DontRoleAbility, Killpower, 0, deathReason);
-
-        appearanceKiller.ResetKillCooldown();
 
         // 無効なキルをブロックする処理 必ず最初に実行する
         if (!CheckMurderPatch.CheckForInvalidMurdering(info, force == true))
@@ -646,7 +653,7 @@ CustomDeathReason deathReason = CustomDeathReason.Kill)
         AllActiveRoles.Do(role => role.Value.OnDead(attemptTarget));
 
         //サドンデスの初手キル処理なので、バウハン等の影響受けないように限定にしておく
-        if (SuddenDeathMode.NowSuddenDeathMode && appearanceKiller.GetPlayerState().Is10secKillButton)
+        if (SuddenDeathMode.NowSuddenDeathMode && appearanceKiller.GetPlayerState().Is10secKillButton && !info.IsSubKill)
             appearanceKiller.ResetKillCooldown();
         UtilsOption.SyncAllSettings();
         UtilsNotifyRoles.NotifyRoles();
@@ -694,11 +701,17 @@ CustomDeathReason deathReason = CustomDeathReason.Kill)
                             RoleManager.Instance.SetRole(PlayerControl.LocalPlayer, RoleTypes.Shapeshifter);
                         }
                     }
-                    appearanceKiller.ResetKillCooldown();
+                    if (!info.IsSubKill)
+                    {
+                        appearanceKiller.ResetKillCooldown();
+                    }
                     _ = new LateTask(() =>
                     {
                         appearanceKiller.RpcResetAbilityCooldown(Sync: true);
-                        appearanceKiller.SetKillCooldown(delay: true);
+                        if (!info.IsSubKill)
+                        {
+                            appearanceKiller.SetKillCooldown(delay: true);
+                        }
                         UtilsNotifyRoles.NotifyRoles();
                     }, 0.2f, "SetKillCOolDown");
                 }
@@ -1037,7 +1050,10 @@ public class MurderInfo
     /// </summary>
     public bool IsCanKilling => !CheckHasGuard() && !IsSuicide && !IsFakeSuicide && DoKill && CanKill && !IsAccident;
     public CustomDeathReason DeathReason;
-    public MurderInfo(PlayerControl attemptKiller, PlayerControl attemptTarget, PlayerControl appearanceKiller, PlayerControl appearancetarget, bool? DontRoleAbility = false, int Killpower = 1, int guardpower = 0, CustomDeathReason deathReason = CustomDeathReason.Kill)
+    public bool IsSubKill = false;
+
+    public MurderInfo(PlayerControl attemptKiller, PlayerControl attemptTarget, PlayerControl appearanceKiller, PlayerControl appearancetarget,
+        bool? DontRoleAbility = false, int Killpower = 1, int guardpower = 0, CustomDeathReason deathReason = CustomDeathReason.Kill, bool isSubKill = false)
     {
         AttemptKiller = attemptKiller;
         AttemptTarget = attemptTarget;
@@ -1048,6 +1064,7 @@ public class MurderInfo
         KillPower = Killpower;
         GuardPower = guardpower;
         DeathReason = deathReason;
+        IsSubKill = isSubKill;
     }
     public bool CheckHasGuard() => KillPower <= GuardPower;
 }
@@ -1349,6 +1366,7 @@ public enum CustomRoles
     GrimReaper,
     Madonna,
     Jackaldoll,
+    DollBetrayer,
     Workaholic,
     Monochromer,
     DoppelGanger,
@@ -1357,6 +1375,7 @@ public enum CustomRoles
     Banker,
     BakeCat,
     Emptiness,
+    Betrayer,
     JackalAlien,
     CurseMaker,
     PhantomThief,

@@ -121,7 +121,8 @@ public sealed class Autocrat : RoleBase, IAdditionalWinner
         {
             bountyHunter.OnCratKill(this);
         }
-        killer.SetKillCooldown(target: target);
+        if (!info.IsSubKill)
+            killer.SetKillCooldown(target: target, force: true);
         return true;
     }
     public override void OnFixedUpdate(PlayerControl player)

@@ -333,8 +333,9 @@ namespace TownOfHost
             }
             return role;
         }
-        public static void ResetKillCooldown(this PlayerControl player)
+        public static void ResetKillCooldown(this PlayerControl player, bool IsSubKill = false)
         {
+            if (IsSubKill) return;
             if (SuddenDeathMode.NowSuddenDeathMode)
             {
                 var killcool = SuddenDeathMode.SuddenKillcooltime.GetFloat();

@@ -552,6 +552,7 @@ namespace TownOfHost
         public static OptionItem PavlovHideChat;
         public static OptionItem StandHideChat;
         public static OptionItem FreeterHideChat;
+        public static OptionItem BetrayerHideChat;
 
         public static OptionItem DisableTaskWin;
 
@@ -1160,6 +1161,9 @@ namespace TownOfHost
             FreeterHideChat = BooleanOptionItem.Create(155016, "FreeterHideChat", false, TabGroup.MainSettings, false)
                 .SetTag(CustomOptionTags.Standard)
                 .SetColor(UtilsRoleText.GetRoleColor(CustomRoles.Freeter)).SetParent(TeamHideChat);
+            BetrayerHideChat = BooleanOptionItem.Create(155017, "BetrayerHideChat", false, TabGroup.MainSettings, false)
+                .SetTag(CustomOptionTags.Standard)
+                .SetColor(UtilsRoleText.GetRoleColor(CustomRoles.MadBetrayer)).SetParent(TeamHideChat);
             ConvenientOptions = BooleanOptionItem.Create(111000, "ConvenientOptions", true, TabGroup.MainSettings, false)
                     .SetColorcode("#cc3366")
                     .SetHeader(true);

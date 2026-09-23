@@ -55,6 +55,7 @@ public class ModColors
     public static Color32 JackalColor = CodeColor("#00b4eb");
     public static Color32 PavlovColor = CodeColor("#F4A96A");
     public static Color32 StandColor = CodeColor("#8B4513");
+    public static Color32 BetrayerColor = CodeColor("#8b2551");
     public static Color32 SkeldColor = CodeColor("#666666");
     public static Color32 MiraHpColor = CodeColor("#ff6633");
     public static Color32 PolusColor = CodeColor("#980098");

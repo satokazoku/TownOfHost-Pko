@@ -71,7 +71,8 @@ public sealed class GuardMaster : RoleBase
         if (info.KillPower > 1)
         {
             killer.RpcProtectedMurderPlayer(target);
-            killer.SetKillCooldown(target: target, force: true);
+            if (!info.IsSubKill)
+                killer.SetKillCooldown(target: target, force: true);
         }
         if (CanSeeProtect && Awakened) target.RpcProtectedMurderPlayer(target);
         info.GuardPower = 1;

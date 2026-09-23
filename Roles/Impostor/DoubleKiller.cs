@@ -1,6 +1,7 @@
 using AmongUs.GameOptions;
 using Epic.OnlineServices.Presence;
 using Hazel;
+using MS.Internal.Xml.XPath;
 using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
@@ -134,12 +135,14 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
         }
         else
         {
-            Player.RpcResetAbilityCooldown(Sync: true);
             float savedKillTimer = Player.killTimer;
             Vector2 targetPos = target.transform.position;
             CanSubkill = false;
             SendRPC();
-            CustomRoleManager.OnCheckMurder(Player, target, Player, target, PlayKillSound: true);
+            if (CustomRoleManager.OnCheckMurder(Player, target, Player, target, PlayKillSound: true, IsSubKill: true))
+            {
+                Player.RpcResetAbilityCooldown(Sync: true);
+            }
         }
         if (PhantomCooldown < 1f) //キルク1未満でも一秒待たない。
         {
@@ -158,6 +161,14 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
             }, 1f, "", true);
         }
     }
+    public void OnCheckMurderAsKiller(MurderInfo info)
+    {
+        if (info.GuardPower < 2)
+        {
+            info.DoKill = false;
+            Player.SetKillCooldown(target: info.AttemptTarget);
+        }
+    }
     //念のためRPC送っとく
     void SendRPC()
     {
@@ -168,18 +179,6 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
     {
         CanSubkill = reader.ReadBoolean();
     }
-    private void SnapToPosition(Vector2 position)
-    {
-        Player.NetTransform.SnapTo(position);
-
-        ushort sid = (ushort)(Player.NetTransform.lastSequenceId + 2U);
-        var writer = AmongUsClient.Instance.StartRpcImmediately(
-            Player.NetTransform.NetId, (byte)RpcCalls.SnapTo, Hazel.SendOption.Reliable);
-        NetHelpers.WriteVector2(position, writer);
-        writer.Write(sid);
-        AmongUsClient.Instance.FinishRpcImmediately(writer);
-    }
-
     public override string GetProgressText(bool comms = false, bool GameLog = false)
     {
         int remaining = Mathf.Max(0, OptionPhantomUsageCount.GetInt() - usedPhantomCount);

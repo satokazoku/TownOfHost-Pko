@@ -44,7 +44,7 @@ public sealed class QuickKiller : RoleBase, IImpostor, IUsePhantomButton
     static OptionItem OptionAbiltyCanUsePlayercount;
     static OptionItem OptionQuickKillTimer;
     static OptionItem OptionUseCount;
-    static OptionItem OptionCanKill;
+    public static OptionItem OptionCanKill;
     static OptionItem OptionAbilityCoolDown;
     static OptionItem OptionPenaltyKillCool;
     static OptionItem OptionPenaltyCool;
@@ -258,7 +258,7 @@ public sealed class QuickKiller : RoleBase, IImpostor, IUsePhantomButton
             float savedKillTimer = Player.killTimer;
             Vector2 targetPos = target.transform.position;
             CanSubkill = false;
-            CustomRoleManager.OnCheckMurder(Player, target, Player, target, true, true, 1, CustomDeathReason.Kill);
+            CustomRoleManager.OnCheckMurder(Player, target, Player, target, PlayKillSound: true, IsSubKill: true);
             if (Player.IsAlive()) RPC.PlaySoundRPC(Player.PlayerId, Sounds.KillSound);
             Player.RpcSnapToForced(targetPos);
             IsQuick = true;

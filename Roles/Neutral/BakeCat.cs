@@ -352,7 +352,7 @@ namespace TownOfHost.Roles.Neutral
                 TeamType.Remotekiller => CustomWinnerHolder.winners.Contains(CustomWinner.Remotekiller),
                 TeamType.DoppelGanger => CustomWinnerHolder.winners.Contains(CustomWinner.DoppelGanger),
                 TeamType.MilkyWay => CustomWinnerHolder.winners.Contains(CustomWinner.MilkyWay),
-                TeamType.Betrayer => CustomWinnerHolder.winners.Contains(CustomWinner.MadBetrayer),
+                TeamType.Betrayer => CustomWinnerHolder.winners.Contains(CustomWinner.MadBetrayer) || CustomWinnerHolder.winners.Contains(CustomWinner.DollBetrayer),
                 TeamType.Pavlov => CustomWinnerHolder.winners.Contains(CustomWinner.Pavlov),
                 TeamType.Vanity => CustomWinnerHolder.winners.Contains(CustomWinner.Vanity),
 

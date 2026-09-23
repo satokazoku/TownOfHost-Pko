@@ -305,6 +305,7 @@
 "Vanity","Vanity","ヴァニティ"
 "Dracula","Dracula","ドラキュラ"
 "Kenzoku","Servant","眷属"
+"DollBetrayer","Doll Betlayer","ドールベトレイヤー"
 "#NeutralName"
 
 "#コンビネーション役職"
@@ -716,6 +717,7 @@
 "MermaidInfo","What I gained after losing my voice...","声を失って得た物は..."
 "UnHappyJesterInfo","","追放されだぐない゛い゛"
 "VanityInfo","What the Gratest Power!","あなたの正義でありたい"
+"DollBetrayerInfo","Good work, guys—you're just pawns.","ご苦労様、貴方達は捨て駒だから"
 "#NeutralInfo"
 
 "# HideAndSeek"
@@ -1065,6 +1067,7 @@
 "RulerInfoLong","Complete your tasks, self-vote in a meeting, then choose a player. That player chooses one of three random rules with /cmd ruler <number>. The chosen rule applies during the next task turn and disappears when the next meeting starts. Add rules the required number of times and survive until the game ends to win.","タスクを完了した状態で会議中に自投票し、プレイヤーを指定する。\n指定されたプレイヤーは /cmd ruler <番号> でランダムに選ばれた3つのルールから1つを選ぶ。\n選ばれたルールは次のタスクターン中に適応され、次の会議開始時に消滅する。\n勝利に必要な回数ルールを追加した状態で試合終了まで生存すると勝利できる。"
 "MermaidInfoLong","If you use the chat a set number of times while still alive, your appearance will change at the start of the next turn. \nThe number of chat uses carries over to the next turn. \nThere are two appearances: the “human form,” which appears when the Crewmates win, and the “Mermaid form,” which appears when the Imposter wins. \nBoth forms have the ability to kill. \nBy design, you cannot see the King and Autocrat.","生存している状態で設定回数チャットをすると次ターンに開始時に姿が変化します。\nチャット回数はターンを持ち越します。\n姿はクルーメイトが勝利した時勝利できる「人間の姿」とインポスターが勝利した時勝利する「人魚の姿」があります。\n最初は人魚の姿から始まり、どちらの姿もキル能力を持ちます。\n君臨者と独裁者を見ることはできない仕様です。"
 "VanityInfoLong","Although he believes himself to be the Sheriff, he does not accidentally shoot anyone. \nIf he has never killed a Crew member, he can earn an additional victory by joining the Crew. \nThe victory conditions for killing a Crew member vary depending on the settings.","自身をシェリフと思い込んでいるが、誤爆はしない。\nクルー陣営を一度もキルしていない場合クルー陣営と追加勝利できる。\nクルー陣営をキルした場合の勝利条件は設定によって変わる。"
+"DollBetrayerInfoLong","Sides with the Jackal team.\n Possesses the ability to kill an Jackal after completing all tasks.\nWhen the Jackal is killed, the role changes to Betrayer, gaining the ability to kill anyone.\nUpon becoming a Betrayer, the win condition changes to:\n“All harmful killing roles are dead, and the number of surviving Betrayers is equal to or greater than the number of Crewmates.”","ジャッカル陣営の味方をする。\n全てのタスクを完了させるとジャッカルをキルできる能力を持つ。\n\nジャッカルをキルすると、役職がベトレイヤーに変化し、全員を殺すことができるようになる。\nベトレイヤーになると勝利条件が\n「有害なキル役職が死亡しており、生き残っているベトレイヤーの人数がクルーと同じかそれ以上」に変化する。"
 "#NeutralInfoLong"
 
 "# ImpostorDescInfos"
@@ -1527,6 +1530,7 @@
 "PavlovHideChat","Pavlov Hide Chat (/sc)","パヴロフの犬・パブロフのオーナー\n秘匿チャット(/sc)"
 "StandHideChat","Stand Hide Chat (/sc)","スタンド・スタンドマスター\n秘匿チャット(/sc)"
 "FreeterHideChat","Freeter Hide Chat (/fc)","フリーター・就職先秘匿チャット(/fc)"
+"BetrayerHideChat","Betrayer Hide Chat (/sc)","ベトレイヤー秘匿チャット(/sc)"
 "OutroCrewWinreasonchenge","Display match results in non-client outros","非クライアントのアウトロで試合結果を表示"
 "AutoGrantPet","Automatically grant pets","自動でペットを付与する"
 "OptionBatchSetting","OptionBatchSetting","一括設定"
@@ -2000,6 +2004,8 @@
 "SillySheriffSuicideMotion","Misfire death animation","誤爆時の死亡モーション"
 "MotionKilled","Killed by target","相手に斬られる"
 "MadBetrayerImpostorRevealTaskcount","Impostor RevialTaskCount","インポスターが分かるタスク数"
+"MadBetrayerCanSeeOtherBetrayer","","キル能力所持時、ベトレイヤーが分かる"
+"MadBetrayerCanSeeOtherMDBetrayer","","ベトレイヤーがキル能力を持ったマッド・ドールベトレイヤーを視認できる"
 "MadHackerCanSeeDeadBodyPosition","CanSee DeadBody Positon","死体位置が見える"
 "MadHackerCheckImposotor","CheckImpsotorKill","インポスターのキルか確認できる"
 "BlackCatImpostorsGetRevenged","BlackCatImpostorsGetRevenged","インポスターを道ずれできる"
@@ -2740,6 +2746,7 @@
 "VanityCanAwarenessTasks","Can Become Aware Of Vanity via Task","タスクでヴァニティを自覚可能"
 "VanityCanAwarenessCount","Tasks Required For Self-admission","自覚に必要なタスク数"
 "SuiciderAfterMeetingTimer","Minimum value for the post-meeting suicide timer","会議後の自殺タイマーの最低値"
+"DollBetrayerImpostorRevealTaskcount","Jackal RevialTaskCount","ジャッカルが分かるタスク数"
 
 "## Unit Role Setting"
 "BraidKillCooldown","Bread Task Complete Driver Killcool","ブレイドが全タスク完了時のキルクール"
@@ -3286,6 +3293,7 @@
 "BalloonerLowerText1","add Bomdistance to walk","歩いて爆破範囲を広げよう"
 "BalloonerLowerText2","UsePhantomButton → Bom!","ファントムボタン → 破裂!"
 "MadBetrayerLowerText","Can kill the Impostor and betray them","インポスターをキルして裏切ることができる"
+"DollBetrayerLowerText","Can kill the Jackal and betray them","ジャッカルをキルして裏切ることができる"
 "MadBetrayerLowerTextBetray","You betrayed us. Become the imposter's replacement","裏切った。インポスターの代わりとなれ"
 "StrawdollSetTarget","Kill → SetTarget","キル → ターゲット指定"
 "StrawdollShape","Phantombutton → ShapeShift","ファントムボタン → 変身"

@@ -127,7 +127,8 @@ namespace TownOfHost.Roles.Crewmate
                     if (info.KillPower > 2)
                     {
                         killer.RpcProtectedMurderPlayer(target);
-                        killer.SetKillCooldown(target: target, force: true);
+                        if (!info.IsSubKill)
+                            killer.SetKillCooldown(target: target, force: true);
                     }
 
                     if (notifyOnGuard)

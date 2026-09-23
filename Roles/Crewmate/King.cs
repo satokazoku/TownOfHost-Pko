@@ -106,7 +106,11 @@ public sealed class King : RoleBase
         {
             bountyHunter.OnKingKill(this);
         }
-        killer.SetKillCooldown(target: target);
+        if (killer.Is(CustomRoles.DoubleKiller) && (killer.Is(CustomRoles.QuickKiller) && QuickKiller.OptionCanKill.GetBool())) return true;
+
+        if (!info.IsSubKill)
+            killer.SetKillCooldown(target: target);
+
         return true;
     }
     public override void OnFixedUpdate(PlayerControl player)
