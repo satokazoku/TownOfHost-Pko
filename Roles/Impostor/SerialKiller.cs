@@ -108,7 +108,7 @@ namespace TownOfHost.Roles.Impostor
         public override string GetAbilityButtonText() => GetString("SerialKillerSuicideButtonText");
         public override bool OverrideAbilityButton(out string text)
         {
-            text = "Serialkiller_Ability";
+            text = "BadGirl_Ability";
             return true;
         }
         public override void OnSpawn(bool initialState)

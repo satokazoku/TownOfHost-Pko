@@ -367,6 +367,10 @@ namespace TownOfHost
             if (State == null || player == null) return "";
             var role = State.MainRole;
             var roleClass = CustomRoleManager.GetByPlayerId(playerId);
+            if (Dracula.staticKenzokuid.Contains(player.PlayerId))
+            {
+                ProgressText.Append(GetKenzokuProggress());
+            }
             //単独キラー陣営のヴァニティはタスクを出さない
             if (!player.Is(CustomRoles.Vanity))
             {
@@ -392,8 +396,12 @@ namespace TownOfHost
             {
                 ProgressText.Append(ColorString(GetRoleColor(CustomRoles.Jackal), $"[{JackalDoll.GetSideKickCount() - JackalDoll.NowSideKickCount}]"));
             }
-
             return ProgressText.ToString();
+        }
+        public static string GetKenzokuProggress()
+        {
+            var text = Translator.GetString("Kenzoku");
+            return $"<{GetRoleColorCode(CustomRoles.Dracula)}>({text})</color>";
         }
         public static string GetProgressText(PlayerControl seer, PlayerControl seen = null, bool ShowManegementText = true)
         {

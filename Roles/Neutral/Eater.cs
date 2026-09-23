@@ -30,7 +30,7 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
             SetupOptionItem,
             "Ea",
             "#662B2C",
-            (5, 2),
+            (2, 6),
             true,
             countType: CountTypes.Eater,
             from: From.ExtremeRoles

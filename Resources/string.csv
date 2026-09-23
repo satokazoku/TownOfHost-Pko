@@ -303,7 +303,7 @@
 "Dancer","Dancer","ダンサー"
 "Mermaid","Mermaid","マーメイド"
 "Vanity","Vanity","ヴァニティ"
-"Dracula","Dracula","ドラキュラ"
+"Dracula","Dracula","?????"
 "Kenzoku","Servant","眷属"
 "DollBetrayer","Doll Betlayer","ドールベトレイヤー"
 "#NeutralName"
@@ -718,6 +718,7 @@
 "UnHappyJesterInfo","","追放されだぐない゛い゛"
 "VanityInfo","What the Gratest Power!","あなたの正義でありたい"
 "DollBetrayerInfo","Good work, guys—you're just pawns.","ご苦労様、貴方達は捨て駒だから"
+"DraculaInfo","I can't live unless I drink blood...","血を飲まなければ生きていけない..."
 "#NeutralInfo"
 
 "# HideAndSeek"
@@ -1068,6 +1069,7 @@
 "MermaidInfoLong","If you use the chat a set number of times while still alive, your appearance will change at the start of the next turn. \nThe number of chat uses carries over to the next turn. \nThere are two appearances: the “human form,” which appears when the Crewmates win, and the “Mermaid form,” which appears when the Imposter wins. \nBoth forms have the ability to kill. \nBy design, you cannot see the King and Autocrat.","生存している状態で設定回数チャットをすると次ターンに開始時に姿が変化します。\nチャット回数はターンを持ち越します。\n姿はクルーメイトが勝利した時勝利できる「人間の姿」とインポスターが勝利した時勝利する「人魚の姿」があります。\n最初は人魚の姿から始まり、どちらの姿もキル能力を持ちます。\n君臨者と独裁者を見ることはできない仕様です。"
 "VanityInfoLong","Although he believes himself to be the Sheriff, he does not accidentally shoot anyone. \nIf he has never killed a Crew member, he can earn an additional victory by joining the Crew. \nThe victory conditions for killing a Crew member vary depending on the settings.","自身をシェリフと思い込んでいるが、誤爆はしない。\nクルー陣営を一度もキルしていない場合クルー陣営と追加勝利できる。\nクルー陣営をキルした場合の勝利条件は設定によって変わる。"
 "DollBetrayerInfoLong","Sides with the Jackal team.\n Possesses the ability to kill an Jackal after completing all tasks.\nWhen the Jackal is killed, the role changes to Betrayer, gaining the ability to kill anyone.\nUpon becoming a Betrayer, the win condition changes to:\n“All harmful killing roles are dead, and the number of surviving Betrayers is equal to or greater than the number of Crewmates.”","ジャッカル陣営の味方をする。\n全てのタスクを完了させるとジャッカルをキルできる能力を持つ。\n\nジャッカルをキルすると、役職がベトレイヤーに変化し、全員を殺すことができるようになる。\nベトレイヤーになると勝利条件が\n「有害なキル役職が死亡しており、生き残っているベトレイヤーの人数がクルーと同じかそれ以上」に変化する。"
+"DraculaInfoLong","Using the Kill Button causes you to “suck blood” from the player who used it. \nIf you do not suck blood for a certain amount of time, you will die. \nA player who has had their blood sucked has a certain probability of dying. This probability increases by a fixed amount each time. Additionally, there is a certain probability that they will become a minion. \nA player who dies from having their blood sucked does not become a minion. \nUpon becoming a minion, the player loses their original victory condition, and their new victory condition becomes Dracula’s victory.\nIf Dracula dies, the minions also die.\nYou cannot use Bloodsucking on minions.\nVictory is achieved when the total number of Dracula and minions is more than half the number of survivors, and all remaining survivors have harmless roles (count = Crewmates).","キルボタンを使用することで使用したプレイヤーに対して「吸血」を行う。\n吸血を一定時間行わないと死亡してしまう。\n吸血されたプレイヤーは一定確率で死亡する。この確率は一定値ずつ上昇する。また、一定確率で眷属になる。\n吸血で死亡したプレイヤーは眷属にはならない。\n眷属になると元の勝利条件を失い、勝利条件はドラキュラの勝利になる。\nドラキュラが死亡すると眷属も死亡する。\n眷属に対して吸血は使用できない。\nドラキュラと眷属の総数が生存者の半数以上かつ、他の生存者が無害(カウント=クルーメイト)な役職になると勝利。"
 "#NeutralInfoLong"
 
 "# ImpostorDescInfos"
@@ -1154,6 +1156,8 @@
 "VanityDescKiller","The count changes to Vanity, and the victory condition changes to\n“Vanity wins if there are no other Killers remaining, and the number of Vanity members who have killed surviving Crew members is equal to or greater than the number of surviving Crew members.”","カウントがヴァニティに変化し、勝利条件が\n「他のキル陣営が残っておらず、生き残っているクルーをキルしたヴァニティの人数がクルーと同じかそれ以上」に変化する。"
 "VanityDescAdd","You earn an additional victory when your crew is defeated.","クルーが敗北した時追加勝利する。"
 "BakeCatDesc","If you are killed, you survive the attack and join the killer’s team instead.\nAfter joining a team, you gain the ability to kill.\nYou have no tasks.","キルされると、キルを防いでキルしてきた陣営に所属する。\n所属後、キルが可能になる。\nタスクはない。"
+"DraculaDesc","Using the Kill Button causes the player who used it to “drink blood” from the target. \nIf the player does not drink blood for <b>{0} seconds</b>, they will die. \nA player who has had their blood drunk has a <b>{1}%</b> chance of dying. This probability increases by <b>{2}%</b> each time. Additionally, there is a <b>{3}%</b> chance of becoming a minion. \nPlayers who die from bloodsucking do not become minions. \nUpon becoming a minion, you lose your original victory condition, and your new victory condition becomes Dracula’s victory. \nIf Dracula dies, the minions also die. \nYou cannot use the “Bloodsucking” ability on Vassals.\nDracula wins if the total number of Dracula and his Vassals is more than half the number of survivors, and all other survivors have become harmless roles (counted as Crewmates).","キルボタンを使用することで使用したプレイヤーに対して「吸血」を行う。\n吸血を<b>{0}秒</b>行わないと死亡してしまう。\n吸血されたプレイヤーは<b>{1}%</b>で死亡する。この確率は<b>{2}%</b>ずつ上昇する。また、<b>{3}%</b>で眷属になる。\n吸血で死亡したプレイヤーは眷属にはならない。\n眷属になると元の勝利条件を失い、勝利条件はドラキュラの勝利になる。\nドラキュラが死亡すると眷属も死亡する。\n眷属に対して吸血は使用できない。\nドラキュラと眷属の総数が生存者の半数以上かつ、他の生存者が無害(カウント=クルーメイト)な役職になると勝利。"
+"DraculaDescNoKenzoku","Using the Kill Button causes the player who used it to “suck blood” from the target. \nIf the player does not suck blood for <b>{0} seconds </b>, they will die. \nA player who has had blood sucked from them has a <b>{1}% </b> chance of dying. This probability increases by <b>{2}%</b> each time.\nVictory is achieved when the total number of Draculas is more than half the number of survivors, and all other survivors have become harmless roles (i.e., Crewmates).","キルボタンを使用することで使用したプレイヤーに対して「吸血」を行う。\n吸血を<b>{0}秒</b>行わないと死亡してしまう。\n吸血されたプレイヤーは<b>{1}%</b>で死亡する。この確率は<b>{2}%</b>ずつ上昇する。\nドラキュラの総数が生存者の半数以上かつ、他の生存者が無害(カウント=クルーメイト)な役職になると勝利。"
 
 "# HideAndSeek"
 "HASFoxInfoLong","(HideAndSeek):\nThey win the game with other Roles (except Troll) only if they are alive at the game end.","(かくれんぼ):\nトロールを除くいずれかの陣営が勝利したときに生き残っていれば、勝利した陣営に追加で勝利することができる。","（躲猫猫）:\n狐狸活到最后便与获胜阵营一同获胜。","(躲貓貓):\n除了其他的中立陣營以外,只要狐妖活下來即可獲勝\n他們將跟著遊戲結束的獲勝陣營一起獲勝。","(Прятки):\nЕсли какая-либо роль, кроме Тролля побеждает и выживает, то победившая роль может одержать дополнительную победу.","(Esconde-Esconde): \nEles ganham adicionalmente com qualquer classe (exceto Troll), se estiverem vivos no final.",""
@@ -2747,6 +2751,10 @@
 "VanityCanAwarenessCount","Tasks Required For Self-admission","自覚に必要なタスク数"
 "SuiciderAfterMeetingTimer","Minimum value for the post-meeting suicide timer","会議後の自殺タイマーの最低値"
 "DollBetrayerImpostorRevealTaskcount","Jackal RevialTaskCount","ジャッカルが分かるタスク数"
+"DraculaKenzokucount","Maximum Number of Servants","眷属の上限人数"
+"DraculaKenzokuChance","Probability of Becoming a Servant","眷属化する確率"
+"DraculaDieChance","Probability of Death During Bloodsucking","吸血時に死亡する確率"
+"DraculaDieChanceBonus","","死亡する確率の上昇率"
 
 "## Unit Role Setting"
 "BraidKillCooldown","Bread Task Complete Driver Killcool","ブレイドが全タスク完了時のキルクール"

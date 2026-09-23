@@ -31,7 +31,6 @@ class AddondataInfo
                 CustomRoles.Moon => "э",
                 CustomRoles.VoteTracker => "∇",
                 CustomRoles.Absorb => "Г",
-                CustomRoles.Kenzoku => "†",
                 //デバフ
                 CustomRoles.SlowStarter => "Ｓs",
                 CustomRoles.Notvoter => "Ｖ",
@@ -102,7 +101,6 @@ class AddondataInfo
                     {CustomRoles.Powerful , "#f08e39"},
                     {CustomRoles.Stack , "#b55f47"},
                     {CustomRoles.Absorb,"#434981"},
-                    {CustomRoles.Kenzoku,"#4d4398"},
                     //{CustomRoles.AntiTeleporter,"#dea785"},
                     //デバフ
                     { CustomRoles.NonReport,"#006666"},

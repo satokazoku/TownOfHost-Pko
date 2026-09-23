@@ -24,13 +24,14 @@ public sealed class Judge : RoleBase
         player
     )
     {
-        taskrequirement = OptionTaskRequirement.GetFloat();
+        taskrequirement = OptionTaskRequirement.GetInt();
         LimitAbility = OptionCount.GetInt();
         Isfall = false;
     }
     int LimitAbility;
+    int alltasks = Main.NormalOptions.NumCommonTasks + Main.NormalOptions.NumShortTasks + Main.NormalOptions.NumLongTasks;
     bool Isfall;
-    static float taskrequirement;
+    static int taskrequirement;
     public static OptionItem OptionTaskRequirement;
     private static OptionItem OptionCanKillMadMate;
     private static OptionItem OptionCanKillNeutrals;
@@ -38,7 +39,7 @@ public sealed class Judge : RoleBase
     private static OptionItem OptionCount;
     public static void SetUpCustomOption()
     {
-        OptionTaskRequirement = FloatOptionItem.Create(RoleInfo, 10, StringNames.JudgeTaskRequirement, new(0, 100, 2), 2, false);
+        OptionTaskRequirement = IntegerOptionItem.Create(RoleInfo, 10, GeneralOption.cantaskcount, new(0, 255, 1), 5, false);
         OptionCount = IntegerOptionItem.Create(RoleInfo, 11, GeneralOption.OptionCount, new(1, 15, 1), 1, false);
         OptionCanKillMadMate = BooleanOptionItem.Create(RoleInfo, 12, "MeetingSheriffCanKillMadMate", true, false);
         OptionCanKillNeutrals = BooleanOptionItem.Create(RoleInfo, 13, "MeetingSheriffCanKillNeutrals", true, false);
@@ -46,7 +47,20 @@ public sealed class Judge : RoleBase
     }
     public override void ApplyGameOptions(IGameOptions opt)
     {
-        AURoleOptions.JudgeTaskRequirementPercentage = taskrequirement;
+        if (alltasks <= 0)
+        {
+            AURoleOptions.JudgeTaskRequirementPercentage = 0f;
+            return;
+        }
+
+        if (taskrequirement > alltasks)
+        {
+            AURoleOptions.JudgeTaskRequirementPercentage = 100f;
+        }
+        else
+        {
+            AURoleOptions.JudgeTaskRequirementPercentage = (taskrequirement + 0.5f) * 100f / alltasks;
+        }
     }
     public override bool CallJudgeVote(PlayerControl voter, PlayerControl votefor, ref byte ExilePlayerid)
     {

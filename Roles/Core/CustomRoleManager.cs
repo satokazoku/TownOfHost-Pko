@@ -1431,7 +1431,7 @@ public enum CustomRoles
     Chain,
     //第三属性
     Lovers, RedLovers, YellowLovers, BlueLovers, GreenLovers, WhiteLovers, PurpleLovers,
-    MadonnaLovers, CupidLovers, OneLove, Amanojaku, Faction, Kenzoku,
+    MadonnaLovers, CupidLovers, OneLove, Amanojaku, Faction,
     //AddMadmate,
     //バフ
     Guesser,

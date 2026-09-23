@@ -228,10 +228,12 @@ namespace TownOfHost
 using System.Linq;
 
 using TownOfHost.Roles;
+using TownOfHost.Roles.AddOns.Neutral;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Ghost;
 using TownOfHost.Roles.Impostor;
 using TownOfHost.Roles.Neutral;
+using static UnityEngine.GraphicsBuffer;
 // ===== ゲーム終了条件 =====
 // 通常ゲーム用
 namespace TownOfHost
@@ -240,6 +242,13 @@ namespace TownOfHost
     {
         public override bool CheckForEndGame(out GameOverReason reason)
         {
+            foreach (var pc in PlayerCatch.AllPlayerControls)
+            {
+                if (Dracula.staticKenzokuid.Contains(pc.PlayerId))
+                {
+                    CustomWinnerHolder.CantWinPlayerIds.Add(pc.PlayerId);
+                }
+            }
             reason = GameOverReason.ImpostorsByKill;
             if (CustomWinnerHolder.WinnerTeam != CustomWinner.Default) return false;
             if (CheckGameEndByLivingPlayers(out reason)) return true;
@@ -280,6 +289,11 @@ namespace TownOfHost
 
             foreach (var pc in PlayerCatch.AllAlivePlayerControls)
             {
+                if (Roles.Neutral.Dracula.staticKenzokuid.Contains(pc.PlayerId))
+                {
+                    ++Dracula;
+                    continue;
+                }
                 if (pc.Is(CustomRoles.PavlovOwner))
                 {
                     PavlovOwnerAlive++;
@@ -509,6 +523,16 @@ namespace TownOfHost
                 reason = GameOverReason.ImpostorsByKill;
                 CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Dracula, byte.MaxValue);
                 CustomWinnerHolder.WinnerRoles.Add(CustomRoles.Dracula);
+                foreach (var pc in PlayerCatch.AllAlivePlayerControls)
+                {
+                    if (Roles.Neutral.Dracula.staticKenzokuid.Contains(pc.PlayerId))
+                    {
+                        CustomWinnerHolder.CantWinPlayerIds.Remove(pc.PlayerId);
+
+                        CustomWinnerHolder.WinnerIds.Add(pc.PlayerId);
+                        CustomWinnerHolder.NeutralWinnerIds.Add(pc.PlayerId);
+                    }
+                }
             }
             else if (Imp == 0 && Jackal == 0 && Remotekiller == 0 && GrimReaper == 0
                 && MilkyWay == 0 && MadBetrayer == 0 && StandMasterCount == 0 && EaterCount == 0

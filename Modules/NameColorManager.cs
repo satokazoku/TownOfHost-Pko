@@ -61,14 +61,15 @@ namespace TownOfHost
         {
             return seer == target
                 || target.Is(CustomRoles.GM)
-                || (seer.Is(CustomRoleTypes.Impostor) && target.Is(CustomRoleTypes.Impostor)
+                || (seer.Is(CustomRoleTypes.Impostor) && target.Is(CustomRoleTypes.Impostor))
                 //&& (!seer.Is(CustomRoles.Amnesiac) || ((PlayerControl.LocalPlayer.GetRoleClass() as Amnesiac)?.Realized ?? false))
                 || Mare.KnowTargetRoleColor(target, isMeeting)
                 || QuickKiller.KnowTargetRoleColor(target, isMeeting)
                 || Huntman.KnowTargetRoleColor(target, isMeeting)
                 || Sniper.KnowTargetRoleColor(target, isMeeting)
                 || ((seer.Is(CountTypes.Jackal) || seer.Is(CustomRoles.Jackaldoll)) && (target.Is(CountTypes.Jackal) || target.Is(CustomRoles.Jackaldoll) || (target.Is(CustomRoles.DollBetrayer) && DollBetrayer.IsJackal() is true)))
-                || (seer.Is(CountTypes.MilkyWay) && target.Is(CountTypes.MilkyWay)));
+                || (seer.Is(CountTypes.MilkyWay) && target.Is(CountTypes.MilkyWay))
+                || (seer.Is(CustomRoles.Dracula) && target.Is(CustomRoles.Dracula));
         }
         public static bool TryGetData(PlayerControl seer, PlayerControl target, out string colorCode)
         {

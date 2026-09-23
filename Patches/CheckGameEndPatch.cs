@@ -211,7 +211,6 @@ namespace TownOfHost
                         }
                         LastNeutral.CheckAddWin(pc, reason);
                         Amanojaku.CheckWin(pc, reason);
-                        //Kenzoku.CheckWin(pc, reason, CustomWinnerHolder.WinnerTeam);
                     }
                 }
                 if (!lockWinner && CustomWinnerHolder.WinnerTeam is not CustomWinner.Draw)
