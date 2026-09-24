@@ -96,7 +96,10 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
         EatenBodies.Clear();
         Viperkilledplayers = new();
     }
-
+    public override void Add()
+    {
+        eatOrSwallowCount = 0;
+    }
     [Attributes.GameModuleInitializer]
     private static void SetupOptionItem()
     {
@@ -140,11 +143,6 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
     public bool UseOneclickButton => true;
     public bool IsPhantomRole => true;
     public bool IsresetAfterKill => false;
-
-    public override void Add()
-    {
-        eatCooldownTimer = -9f;
-    }
 
     public void OnCheckMurderAsKiller(MurderInfo info)
     {
@@ -227,11 +225,20 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
                 }
                 else if (ar_time >= OptionSwallowTime.GetFloat())
                 {
-                    Player.SetKillCooldown();
                     var target = PlayerCatch.GetPlayerById(pendingSwallow.TargetId);
+
+                    if (!target.IsAlive())
+                    {
+                        Logger.Info("ターゲットが死亡しています", "Eater");
+
+                        pendingSwallow = null;
+                    }
+                    Player.SetKillCooldown();
                     ++eatOrSwallowCount;
                     PlayerState.GetByPlayerId(target.PlayerId).DeathReason = CustomDeathReason.Swallowed;
                     target.RpcExileV3();
+                    Logger.Info($"食べた数：{eatOrSwallowCount}", "Eater");
+
                     if (eatOrSwallowCount >= OptionWinCount.GetInt())
                     {
                         Win();
@@ -277,6 +284,8 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
             RpcEatPlayer(target.PlayerId);
             Achievements.RpcCompleteAchievement(Player.PlayerId, 1, achievements[0]);
             eatOrSwallowCount++;
+            Logger.Info($"食べた数：{eatOrSwallowCount}", "Eater");
+
             if (eatOrSwallowCount >= OptionWinCount.GetInt())
             {
                 Win();

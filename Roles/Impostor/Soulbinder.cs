@@ -1,11 +1,15 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
-using UnityEngine;
+using Rewired.Utils.Classes.Data;
+using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+using UnityEngine;
 using static TownOfHost.PlayerCatch;
+using static TownOfHost.Roles.Crewmate.AllArounder;
 using static TownOfHost.Translator;
 
 namespace TownOfHost.Roles.Neutral;
@@ -22,11 +26,11 @@ public sealed class Soulbinder : RoleBase, IImpostor
             127100,
             SetupOptionItem,
             "slb",
-            OptionSort: (7, 12),
-            assignInfo: new RoleAssignInfo(CustomRoles.Soulbinder, CustomRoleTypes.Neutral)
+            OptionSort: (7, 12)//,
+            /*assignInfo: new RoleAssignInfo(CustomRoles.Soulbinder, CustomRoleTypes.Impostor)
             {
                 AssignCountRule = new(1, 1, 1)
-            }
+            }*/
         );
 
     public Soulbinder(PlayerControl player)
@@ -36,49 +40,67 @@ public sealed class Soulbinder : RoleBase, IImpostor
 
         SoulSlavePlayerId = byte.MaxValue;
         isMadeSoulSlave = false;
+
+        Arrow = "";
     }
 
     static OptionItem OptionKillCooldown;
+    public static OptionItem OptionMinKillCool;
+    public static OptionItem OptionDecreaseKillCool;
+    public static OptionItem OptionNumCommonTasks;
+    public static OptionItem OptionNumLongTasks;
+    public static OptionItem OptionNumShortTasks;
+    public static OptionItem OptionSlaveAngelCool;
+    public static OptionItem OptionArrowtime;
 
-    static float KillCooldown_;
+    public float KillCooldown_;
 
     public byte SoulSlavePlayerId;
     public bool isMadeSoulSlave;
+    string Arrow;
 
     enum OptionName
     {
-
+        WorkhorseNumCommonTasks,
+        WorkhorseNumLongTasks,
+        WorkhorseNumShortTasks,
+        HateKillerMinimumKillCool,
+        SoulbinderDecreaseKillCool,
+        SoulbinderSlaveAngelCool,
+        SoulSlaveArrowtime
     }
 
     static void SetupOptionItem()
     {
-        OptionKillCooldown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.KillCooldown,
-            new(0f, 180f, 2.5f), 35f, false).SetValueFormat(OptionFormat.Seconds);
+        OptionKillCooldown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.KillCooldown, new(0f, 180f, 2.5f), 35f, false)
+            . SetValueFormat(OptionFormat.Seconds);
+        OptionMinKillCool = FloatOptionItem.Create(RoleInfo, 11, OptionName.HateKillerMinimumKillCool, new(0f, 180f, 2.5f), 20f, false)
+            .SetValueFormat(OptionFormat.Seconds);
+        OptionDecreaseKillCool = FloatOptionItem.Create(RoleInfo, 12, OptionName.SoulbinderDecreaseKillCool, new(0.5f, 180f, 0.5f), 1f, false)
+            .SetValueFormat(OptionFormat.Seconds);
+        OptionSlaveAngelCool = FloatOptionItem.Create(RoleInfo, 13, OptionName.SoulbinderSlaveAngelCool, new(0.5f, 180f, 0.5f), 35f, false)
+            .SetValueFormat(OptionFormat.Seconds);
+        OptionArrowtime = FloatOptionItem.Create(RoleInfo, 14, OptionName.SoulSlaveArrowtime, new(0.5f, 180f, 0.5f), 7f, false)
+            .SetValueFormat(OptionFormat.Seconds);
+        OptionNumCommonTasks = IntegerOptionItem.Create(RoleInfo, 15, OptionName.WorkhorseNumCommonTasks, new(0, 99, 1), 1, false)
+            .SetValueFormat(OptionFormat.Pieces);
+        OptionNumLongTasks = IntegerOptionItem.Create(RoleInfo, 16, OptionName.WorkhorseNumLongTasks, new(0, 99, 1), 1, false)
+            .SetValueFormat(OptionFormat.Pieces);
+        OptionNumShortTasks = IntegerOptionItem.Create(RoleInfo, 17, OptionName.WorkhorseNumShortTasks, new(0, 99, 1), 1, false)
+            .SetValueFormat(OptionFormat.Pieces);
 
         SoulSlave.HideRoleOptions(CustomRoles.SoulSlave);
     }
-
-    public PlayerControl GetSoulSlave() =>
-        SoulSlavePlayerId == byte.MaxValue ? null : GetPlayerById(SoulSlavePlayerId);
-
     public float CalculateKillCooldown() => KillCooldown_;
 
     public void OnCheckMurderAsKiller(MurderInfo info)
     {
-        var (killer, target) = info.AttemptTuple;
+        var target = info.AttemptTarget;
 
         if (!isMadeSoulSlave)
         {
             CreateSoulSlave(target);
-            return;
         }
-        if (target.Is(CustomRoleTypes.Impostor))
-        {
-            info.DoKill = false;
-        }
-
-        killer.ResetKillCooldown();
-        killer.SetKillCooldown();
     }
 
     void CreateSoulSlave(PlayerControl target)
@@ -93,58 +115,94 @@ public sealed class Soulbinder : RoleBase, IImpostor
 
         _ = new LateTask(() =>
         {
-            if (target.GetRoleClass() is SoulSlave SoulSlave)
-                SoulSlave.SetOwner(Player.PlayerId);
+            if (target.GetRoleClass() is SoulSlave ss)
+            {
+                ss.SetOwner(Player.PlayerId);
+                SoulSlave.Settasks(target);
+            }
         }, 0.2f, "Soulbinder.SetSoulSlaveOwner", true);
 
         SendRpc();
         UtilsGameLog.AddGameLog("Soulbinder",
-            $"{UtilsName.GetPlayerColor(Player)} が {UtilsName.GetPlayerColor(target)} を一味にした");
+            $"{UtilsName.GetPlayerColor(Player)} が {UtilsName.GetPlayerColor(target)} をソウルスレイブにした");
         _ = new LateTask(() => UtilsNotifyRoles.NotifyRoles(), 0.2f, "Soulbinder.Notify", true);
     }
-
-    public override string GetProgressText(bool comms = false, bool GameLog = false)
+    public void CreateArrow(PlayerControl target)
     {
+        TargetArrow.Add(Player.PlayerId, target.PlayerId);
+
+        _ = new LateTask(() =>
+        {
+            Logger.Info($"{TargetArrow.GetArrows(Player, target.PlayerId)}", "Soulbinder");
+            Arrow = TargetArrow.GetArrows(Player, target.PlayerId);
+            Logger.Info($"{Arrow}", "Soulbinder");
+        }, 0.2f, "Soulbinder.RemoveArrow", true);
+        _ = new LateTask(() =>
+        {
+            TargetArrow.Remove(target.PlayerId, Player.PlayerId);
+        }, 0.5f, "Soulbinder.RemoveArrow", true);
+
+        UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
+        _ = new LateTask(() =>
+        {
+            Arrow = "";
+            UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
+        }, OptionArrowtime.GetFloat(), "Soulbinder.RemoveArrow", true);
+    }
+    public override string GetSuffix(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
+    {
+        //seenが省略の場合seer
+        seen ??= seer;
+        //seerおよびseenが自分である場合以外は関係なし
+        if (!Is(seer) || !Is(seen)) return "";
         if (!Player.IsAlive()) return "";
 
-        var SoulSlaveRole = GetSoulSlave()?.GetRoleClass() as SoulSlave;
-        int pct = SoulSlaveRole?.TaskPercent ?? 0;
-        return $"<color={RoleInfo.RoleColorCode}>(ソウルスレイプ:{pct}%)</color>";
+        return $"<color={RoleInfo.RoleColorCode}>{Arrow}</color>";
     }
-
     public override string GetMark(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
     {
         seen ??= seer;
         if (!Is(seer) || SoulSlavePlayerId == byte.MaxValue || seen.PlayerId != SoulSlavePlayerId) return "";
         return $" <color={RoleInfo.RoleColorCode}>▲</color>";
     }
+    public override string GetLowerText(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
+    {
+        seen ??= seer;
 
+        return $"<color={RoleInfo.RoleColorCode}>キルクール:{KillCooldown_}秒</color>";
+    }
+    public override void AfterMeetingTasks()
+    {
+        Arrow = "";
+    }
     void SendRpc()
     {
         using var sender = CreateSender();
         sender.Writer.Write(SoulSlavePlayerId);
         sender.Writer.Write(isMadeSoulSlave);
+        sender.Writer.Write(KillCooldown_);
     }
 
     public override void ReceiveRPC(MessageReader reader)
     {
         SoulSlavePlayerId = reader.ReadByte();
         isMadeSoulSlave = reader.ReadBoolean();
+        KillCooldown_ = reader.ReadSingle();
     }
 }
 
-public sealed class SoulSlave : RoleBase, IAdditionalWinner
+public sealed class SoulSlave : RoleBase
 {
     public static readonly SimpleRoleInfo RoleInfo =
         SimpleRoleInfo.Create(
             typeof(SoulSlave),
             player => new SoulSlave(player),
             CustomRoles.SoulSlave,
-            () => RoleTypes.Crewmate,
+            () => RoleTypes.GuardianAngel,
             CustomRoleTypes.Madmate,
             127200,
             SetupOptionItem,
-            "gng",
+            "sls",
             OptionSort: (6, 5),
             countType: CountTypes.OutOfGame
         );
@@ -153,10 +211,6 @@ public sealed class SoulSlave : RoleBase, IAdditionalWinner
         : base(RoleInfo, player, () => HasTask.True)
     {
         OwnerId = byte.MaxValue;
-        CanVent = false;
-        CanKill = false;
-        hasGrantedAddon = false;
-        hasSeenImpostors = false;
         CustomRoleManager.MarkOthers.Add(GetMarkOthers);
     }
 
@@ -167,143 +221,75 @@ public sealed class SoulSlave : RoleBase, IAdditionalWinner
         if (Options.CustomRoleSpawnChances?.TryGetValue(role, out var sp) == true) sp.SetHidden(true);
         if (Options.CustomRoleCounts?.TryGetValue(role, out var cp) == true) cp.SetHidden(true);
     }
-
-    public byte OwnerId;
-    public bool CanVent;
-    public bool CanKill;
-    bool hasGrantedAddon;
-    bool hasSeenImpostors;
-
-    public int TaskPercent
+    public override void ApplyGameOptions(IGameOptions opt)
     {
-        get
+        AURoleOptions.GuardianAngelCooldown = Soulbinder.OptionSlaveAngelCool.GetFloat();
+    }
+    public static void Settasks(PlayerControl pc)
+    {
+        var taskState = pc.GetPlayerTaskState();
+        taskState.AllTasksCount = Soulbinder.OptionNumCommonTasks.GetInt() + Soulbinder.OptionNumLongTasks.GetInt()+ Soulbinder.OptionNumShortTasks.GetInt();
+
+        if (AmongUsClient.Instance.AmHost)
         {
-            if (MyTaskState.AllTasksCount <= 0) return 0;
-            return MyTaskState.CompletedTasksCount * 100 / MyTaskState.AllTasksCount;
+            pc.Data.RpcSetTasks(Array.Empty<byte>()); 
+            pc.SyncSettings();
+            UtilsNotifyRoles.NotifyRoles();
         }
     }
-
+    public byte OwnerId;
     public override void OnDestroy() => CustomRoleManager.MarkOthers.Remove(GetMarkOthers);
 
     public void SetOwner(byte ownerId) { OwnerId = ownerId; SendRpc(); }
 
     public Soulbinder GetOwner() =>
         OwnerId == byte.MaxValue ? null : GetPlayerById(OwnerId)?.GetRoleClass() as Soulbinder;
-
-    public override void OnFixedUpdate(PlayerControl player)
-    {
-        if (!AmongUsClient.Instance.AmHost || player != Player || !Player.IsAlive()) return;
-        if (!GameStates.IsInTask || OwnerId == byte.MaxValue) return;
-
-        var owner = GetPlayerById(OwnerId);
-        if (owner == null || !owner.IsAlive() || owner.GetRoleClass() is not Soulbinder)
-        {
-            var state = PlayerState.GetByPlayerId(Player.PlayerId);
-            if (state != null) state.DeathReason = CustomDeathReason.FollowingSuicide;
-            Player.SetRealKiller(owner ?? Player);
-            Player.RpcMurderPlayerV2(Player);
-        }
-    }
-
+    public static (bool, int, int, int) TaskData =>
+    (false, Soulbinder.OptionNumCommonTasks.GetInt(), Soulbinder.OptionNumLongTasks.GetInt(), Soulbinder.OptionNumShortTasks.GetInt());
     public override bool OnCompleteTask(uint taskid)
     {
         if (!AmongUsClient.Instance.AmHost) return true;
-        int pct = TaskPercent;
 
-        SendRpc();
-        UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
+        if (GetPlayerById(OwnerId).GetRoleClass() is Soulbinder sb)
+        {
+            sb.KillCooldown_ -= Soulbinder.OptionDecreaseKillCool.GetFloat();
+            if (sb.KillCooldown_ < Soulbinder.OptionMinKillCool.GetFloat())
+            {
+                sb.KillCooldown_ = Soulbinder.OptionMinKillCool.GetFloat();
+            }
+        }
         return true;
     }
-
-    public override void AfterMeetingTasks()
+    public static void UseAbility(PlayerControl pc, PlayerControl target)
     {
-        if (!AmongUsClient.Instance.AmHost || !Player.IsAlive()) return;
+        Logger.Info("UseAbility", "Soulslave");
 
-        if (CanKill)
+        if (pc.GetRoleClass() is SoulSlave ssl)
         {
-            Player.RpcSetRoleDesync(RoleTypes.Impostor, Player.GetClientId());
-            foreach (var imp in AllAlivePlayerControls.Where(p => p.GetCustomRole().IsImpostor()))
-                imp.RpcSetRoleDesync(RoleTypes.Scientist, Player.GetClientId());
-            Player.SetKillCooldown();
+            var Owner = PlayerCatch.GetPlayerById(ssl.OwnerId);
+            if (Owner.GetRoleClass() is Soulbinder sli)
+            {
+                sli.CreateArrow(target);
+            }
         }
-        else if (CanVent)
-        {
-            Player.RpcSetRoleDesync(RoleTypes.Engineer, Player.GetClientId());
-        }
-        Player.MarkDirtySettings();
     }
-
-    public bool CheckWin(ref CustomRoles winnerRole)
-    {
-        if (OwnerId == byte.MaxValue) return false;
-        return CustomWinnerHolder.WinnerIds.Contains(OwnerId);
-    }
-
     public static string GetMarkOthers(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
     {
         seen ??= seer;
-
-        if (seer.GetRoleClass() is Soulbinder Soulbinder && Soulbinder.SoulSlavePlayerId == seen.PlayerId)
-        {
-            var g = seen.GetRoleClass() as SoulSlave;
-            if (g == null) return "";
-            string marks = "";
-            if (g.CanVent) marks += "<color=#00ffff>Ｖ</color>";
-            if (g.CanKill) marks += $"<color={RoleInfo.RoleColorCode}>Ｋ</color>";
-            if (g.hasGrantedAddon) marks += "<color=#ffff00>Ａ</color>";
-            if (g.hasSeenImpostors) marks += "<color=#ff0000>Ｉ</color>";
-            return marks != "" ? $" {marks}" : "";
-        }
-
         if (seer.GetRoleClass() is SoulSlave SoulSlave && SoulSlave.OwnerId == seen.PlayerId)
             return $" <color={RoleInfo.RoleColorCode}>★</color>";
 
         return "";
     }
 
-    public override string GetProgressText(bool comms = false, bool GameLog = false)
-    {
-        if (!Player.IsAlive()) return "";
-        int pct = TaskPercent;
-        string col = pct >= 75 ? RoleInfo.RoleColorCode
-                   : pct >= 50 ? "#ffaa00"
-                   : pct >= 25 ? "#00ffff"
-                   : "#888888";
-        return $"<color={col}>({pct}%)</color>";
-    }
-
-    public override string GetLowerText(PlayerControl seer, PlayerControl seen = null,
-        bool isForMeeting = false, bool isForHud = false)
-    {
-        seen ??= seer;
-        if (!Is(seer) || seer.PlayerId != seen.PlayerId || !Player.IsAlive() || isForMeeting) return "";
-
-        string size = isForHud ? "" : "<size=60%>";
-        string color = RoleInfo.RoleColorCode;
-        int pct = TaskPercent;
-
-        string ability = CanKill ? "<color=#cc4b33>キル</color> "
-                       : CanVent ? "<color=#00ffff>ベント</color> "
-                       : "";
-        return $"{size}<color={color}>タスク: {pct}% {ability}| 海賊に忠誠を！</color>";
-    }
-
     void SendRpc()
     {
         using var sender = CreateSender();
         sender.Writer.Write(OwnerId);
-        sender.Writer.Write(CanVent);
-        sender.Writer.Write(CanKill);
-        sender.Writer.Write(hasGrantedAddon);
-        sender.Writer.Write(hasSeenImpostors);
     }
 
     public override void ReceiveRPC(MessageReader reader)
     {
         OwnerId = reader.ReadByte();
-        CanVent = reader.ReadBoolean();
-        CanKill = reader.ReadBoolean();
-        hasGrantedAddon = reader.ReadBoolean();
-        hasSeenImpostors = reader.ReadBoolean();
     }
 }

@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using AmongUs.GameOptions;
 using HarmonyLib;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
-
-using TownOfHost.Roles.Core;
 using TownOfHost.Roles.AddOns.Crewmate;
+using TownOfHost.Roles.Core;
+using TownOfHost.Roles.Neutral;
 
 namespace TownOfHost
 {
@@ -91,6 +91,8 @@ namespace TownOfHost
             }
             if (pc.Is(CustomRoles.Workhorse))
                 (hasCommonTasks, NumCommonTasks, NumLongTasks, NumShortTasks) = Workhorse.TaskData;
+            if (pc.Is(CustomRoles.SoulSlave))
+                (hasCommonTasks, NumCommonTasks, NumLongTasks, NumShortTasks) = SoulSlave.TaskData;
 
             if (Options.CurrentGameMode == CustomGameMode.TaskBattle && TaskBattle.IsAdding)
             {

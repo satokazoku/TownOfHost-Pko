@@ -126,10 +126,10 @@ public sealed class BlackSanta : RoleBase, IKiller, IKillFlashSeeable, IDeathRea
             new(0, 100, 5), 0, false
         ).SetValueFormat(OptionFormat.Percent);
 
-        OptTimeSleeperRate = IntegerOptionItem.Create(
+        /*OptTimeSleeperRate = IntegerOptionItem.Create(
             RoleInfo, 24, OptionName.BlackSantaTimeSleeperPercentage,
             new(0, 100, 5), 0, false
-        ).SetValueFormat(OptionFormat.Percent);
+        ).SetValueFormat(OptionFormat.Percent);*/
 
         OptSmokeMakerRate = IntegerOptionItem.Create(
             RoleInfo, 25, OptionName.BlackSantaSmokeMakerPercentage,
@@ -318,7 +318,7 @@ public sealed class BlackSanta : RoleBase, IKiller, IKillFlashSeeable, IDeathRea
         CustomRoles.SelfBomber => OptSelfBomberRate?.GetInt() ?? 0,
         CustomRoles.Penguin => OptPenguinRate?.GetInt() ?? 0,
         CustomRoles.HadouHo => OptHadouHoRate?.GetInt() ?? 0,
-        CustomRoles.TimeSleeper => OptTimeSleeperRate?.GetInt() ?? 0,
+        //CustomRoles.TimeSleeper => OptTimeSleeperRate?.GetInt() ?? 0,
         CustomRoles.SmokeMaker => OptSmokeMakerRate?.GetInt() ?? 0,
         CustomRoles.Reloader => OptReloaderRate?.GetInt() ?? 0,
         CustomRoles.EvilMaker => OptEvilMakerRate?.GetInt() ?? 0,
@@ -332,7 +332,7 @@ public sealed class BlackSanta : RoleBase, IKiller, IKillFlashSeeable, IDeathRea
         CustomRoles.SelfBomber,
         CustomRoles.Penguin,
         CustomRoles.HadouHo,
-        CustomRoles.TimeSleeper,
+        //CustomRoles.TimeSleeper,
         CustomRoles.SmokeMaker,
         CustomRoles.Reloader,
         CustomRoles.EvilMaker,

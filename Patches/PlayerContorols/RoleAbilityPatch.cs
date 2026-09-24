@@ -664,6 +664,8 @@ namespace TownOfHost
     {
         public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target)
         {
+            SoulSlave.UseAbility(__instance, target);
+
             // ゴースト系能力
             if (__instance.IsGhostRole())
             {
