@@ -149,7 +149,7 @@ public sealed class Conjurer : RoleBase, IImpostor, IUsePhantomButton
             beaconObjects.Add(CreateBeaconVisual(pos, BeaconCount - 1));
 
         // ↓追加：魔法陣の位置にダミーを設置(本人にのみ表示)
-        var dummy = new BeaconDummy(pos, Player, Player.Data.DefaultOutfit.ColorId, activated: false);
+        var dummy = new BeaconDummy(pos, Player, 10, activated: false);
         beaconDummies.Add(dummy);
 
         if (Player?.AmOwner == true)
@@ -186,6 +186,7 @@ public sealed class Conjurer : RoleBase, IImpostor, IUsePhantomButton
         beaconPositions.Clear();
         ClearBeacons();
 
+        // ↓追加
         foreach (var dummy in beaconDummies)
             try { dummy?.Despawn(); } catch { }
         beaconDummies.Clear();
