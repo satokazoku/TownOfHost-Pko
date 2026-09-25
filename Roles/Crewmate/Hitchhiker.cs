@@ -1,4 +1,4 @@
-/*using UnityEngine;
+using UnityEngine;
 using AmongUs.GameOptions;
 using Hazel;
 using TownOfHost.Roles.Core;
@@ -377,8 +377,6 @@ public sealed class Hitchhiker : RoleBase
 
     public override string GetAbilityButtonText()
     {
-        if (currentCooldown > 0f) return Mathf.CeilToInt(currentCooldown).ToString();
-        if (pendingTarget != null) return Mathf.CeilToInt(petAttachTimer).ToString();
         return TargetPlayer != null ? "降車" : "乗車";
     }
 
@@ -410,4 +408,4 @@ public sealed class Hitchhiker : RoleBase
             Player.petting = false;
         }
     }
-}*/
+}

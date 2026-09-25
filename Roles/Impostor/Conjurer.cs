@@ -127,9 +127,11 @@ public sealed class Conjurer : RoleBase, IImpostor, IUsePhantomButton
                 using var sender = CreateSender();
                 sender.Writer.Write((byte)1);
             }
+        }
+        if (BeaconCount >= 3)
+        {
             _ = new LateTask(() => CustomButtonHud.BottonHud(true), 0.2f, "", true);
         }
-
         _ = new LateTask(() =>
         {
             if (!Player.IsAlive()) return;
@@ -201,6 +203,7 @@ public sealed class Conjurer : RoleBase, IImpostor, IUsePhantomButton
 
         using var sender = CreateSender();
         sender.Writer.Write((byte)3);
+        _ = new LateTask(() => CustomButtonHud.BottonHud(true), 0.2f, "", true);
     }
     public override void ReceiveRPC(MessageReader reader)
     {
@@ -275,7 +278,10 @@ public sealed class Conjurer : RoleBase, IImpostor, IUsePhantomButton
     {
         ClearBeacons();
     }
-
+    public override void AfterMeetingTasks()
+    {
+        CustomButtonHud.BottonHud(true);
+    }
     public override string GetLowerText(PlayerControl seer, PlayerControl seen = null,
         bool isForMeeting = false, bool isForHud = false)
     {

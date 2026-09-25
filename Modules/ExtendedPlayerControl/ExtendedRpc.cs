@@ -36,12 +36,12 @@ namespace TownOfHost
             var roleClass = player.GetRoleClass();
             var roleInfo = role.GetRoleInfo();
             var beforeRole = player.GetCustomRole();
-            bool resetExpressSpeed = beforeRole == CustomRoles.Express && role != CustomRoles.Express;
-            if (beforeRole == CustomRoles.UltraStar && role != CustomRoles.UltraStar)
+            bool resetExpressSpeed = false;
+            if (beforeRole == CustomRoles.UltraStar || beforeRole == CustomRoles.Hitchhiker || beforeRole == CustomRoles.Express)
             {
                 resetExpressSpeed = true;
             }
-            if (role == CustomRoles.UltraStar || role == CustomRoles.Express)
+            if (role == CustomRoles.UltraStar || role == CustomRoles.Express || role == CustomRoles.Hitchhiker)
             {
                 resetExpressSpeed = false;
             }
