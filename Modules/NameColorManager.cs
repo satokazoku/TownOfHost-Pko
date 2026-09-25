@@ -67,7 +67,7 @@ namespace TownOfHost
                 || QuickKiller.KnowTargetRoleColor(target, isMeeting)
                 || Huntman.KnowTargetRoleColor(target, isMeeting)
                 || Sniper.KnowTargetRoleColor(target, isMeeting)
-                || ((seer.Is(CountTypes.Jackal) || seer.Is(CustomRoles.Jackaldoll)) && (target.Is(CountTypes.Jackal) || target.Is(CustomRoles.Jackaldoll) || (target.Is(CustomRoles.DollBetrayer) && DollBetrayer.IsJackal(target) is true)))
+                || ((seer.Is(CountTypes.Jackal) || seer.Is(CustomRoles.Jackaldoll)) && (target.Is(CountTypes.Jackal) || target.Is(CustomRoles.Jackaldoll) || (target.Is(CustomRoles.DollBetrayer) && DollBetrayer.IsJackal() is true)))
                 || (seer.Is(CountTypes.MilkyWay) && target.Is(CountTypes.MilkyWay))
                 || (seer.Is(CustomRoles.Dracula) && target.Is(CustomRoles.Dracula));
         }

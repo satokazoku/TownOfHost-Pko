@@ -120,7 +120,7 @@ public sealed class MadBetrayer : RoleBase, IKiller, ISchrodingerCatOwner
     public override void OverrideDisplayRoleNameAsSeer(PlayerControl seen, ref bool enabled, ref Color roleColor, ref string roleText, ref bool addon)
     {
         addon = false;
-        if (((seen.Is(CustomRoles.MadBetrayer) && MadBetrayer.IsMadmate() is false) || (seen.Is(CustomRoles.DollBetrayer) && DollBetrayer.IsJackal(seen) is false)) && OptionCanSeeBetrayer.GetBool())
+        if (((seen.Is(CustomRoles.MadBetrayer) && MadBetrayer.IsMadmate() is false) || (seen.Is(CustomRoles.DollBetrayer) && DollBetrayer.IsJackal() is false)) && OptionCanSeeBetrayer.GetBool())
         {
             enabled = CanBetray || IsBetray;
             roleText = GetString("Betrayer");

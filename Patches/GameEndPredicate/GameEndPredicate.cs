@@ -105,7 +105,7 @@ public abstract class GameEndPredicate
         else if (role is CustomRoles.MadBetrayer)
         {
             winner = CustomWinner.MadBetrayer;
-            isFactionMember = player => (player.Is(CustomRoles.MadBetrayer) && Roles.Madmate.MadBetrayer.IsMadmate() is false) || (player.Is(CustomRoles.DollBetrayer) && DollBetrayer.IsJackal(player) is false);
+            isFactionMember = player => (player.Is(CustomRoles.MadBetrayer) && Roles.Madmate.MadBetrayer.IsMadmate() is false) || (player.Is(CustomRoles.DollBetrayer) && DollBetrayer.IsJackal() is false);
         }
         else if (saboteur.Is(CustomRoleTypes.Impostor) || saboteur.Is(CustomRoleTypes.Madmate))
         {

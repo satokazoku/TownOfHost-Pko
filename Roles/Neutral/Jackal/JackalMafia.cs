@@ -138,7 +138,7 @@ namespace TownOfHost.Roles.Neutral
                 return;
             }
             var targetrole = target.GetCustomRole();
-            if ((targetrole is CustomRoles.King or CustomRoles.Merlin or CustomRoles.AlienHijack or CustomRoles.Autocrat || Jackal.IsJackal(target))
+            if ((targetrole is CustomRoles.King or CustomRoles.Merlin or CustomRoles.AlienHijack or CustomRoles.Autocrat || Jackal.IsJackal(targetrole))
             || ((targetrole.IsImpostor() || targetrole is CustomRoles.Egoist) && !OptionImpostorCanSidekick.GetBool()))
             {
                 ResetCooldown = false;

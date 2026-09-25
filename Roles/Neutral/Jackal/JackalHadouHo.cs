@@ -355,7 +355,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
                 }
                 var targetrole = target.GetCustomRole();
 
-                if ((targetrole is CustomRoles.King or CustomRoles.Merlin or CustomRoles.AlienHijack or CustomRoles.Autocrat || Jackal.IsJackal(target))
+                if ((targetrole is CustomRoles.King or CustomRoles.Merlin or CustomRoles.AlienHijack or CustomRoles.Autocrat || Jackal.IsJackal(targetrole))
                     || ((targetrole.IsImpostor() || targetrole is CustomRoles.Egoist) && !OptionImpostorCanSidekick.GetBool()))
                 {
                     Utils.SendMessage("<color=#00b4eb>その役職はSKにできません。</color>", Player.PlayerId);
@@ -797,7 +797,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
     {
         CanSideKick = false;
         var targetrole = target.GetCustomRole();
-        if ((targetrole is CustomRoles.King or CustomRoles.Merlin or CustomRoles.AlienHijack or CustomRoles.Autocrat || Jackal.IsJackal(target))
+        if ((targetrole is CustomRoles.King or CustomRoles.Merlin or CustomRoles.AlienHijack or CustomRoles.Autocrat || Jackal.IsJackal(targetrole))
             || ((targetrole.IsImpostor() || targetrole is CustomRoles.Egoist) && !OptionImpostorCanSidekick.GetBool()))
         {
             Utils.SendMessage("<color=#00b4eb>その役職はSKにできません。</color>", Player.PlayerId);

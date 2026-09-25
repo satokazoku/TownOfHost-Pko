@@ -28,6 +28,7 @@ public sealed class DollBetrayer : RoleBase, IKiller, ISchrodingerCatOwner
             introSound: () => GetIntroSound(RoleTypes.Shapeshifter),
             assignInfo: new RoleAssignInfo(CustomRoles.DollBetrayer, CustomRoleTypes.Neutral)
             {
+                AssignCountRule = new(1, 1, 1),
                 // 通常配役は，ジャッカルが存在する場合のみ排出する
                 IsInitiallyAssignableCallBack = () =>
                 {
@@ -37,7 +38,8 @@ public sealed class DollBetrayer : RoleBase, IKiller, ISchrodingerCatOwner
                     || CustomRoles.JackalWolf.IsEnable()
                     || CustomRoles.JackalHadouHo.IsEnable();
                 }
-            }
+            }//,
+            //countType: CountTypes.None
         );
     public DollBetrayer(PlayerControl player)
     : base(
@@ -56,7 +58,7 @@ public sealed class DollBetrayer : RoleBase, IKiller, ISchrodingerCatOwner
         CanSeeRolename = true;
         CanBetray = false;
     }
-    public bool IsBetray;
+    public static bool IsBetray;
     bool IsImpostorReveal;
 
     static OptionItem OptionKillCoolDown; static float KillCooldown;
@@ -102,14 +104,7 @@ public sealed class DollBetrayer : RoleBase, IKiller, ISchrodingerCatOwner
         else
             opt.SetVision(false);
     }
-    public static bool IsJackal(PlayerControl pc)
-    {
-        if (pc.GetRoleClass() is DollBetrayer bet)
-        {
-            return bet.IsBetray is false;
-        }
-        return false;
-    }
+    public static bool IsJackal() => IsBetray is false;
 
     public override string GetMark(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
     {
@@ -149,13 +144,13 @@ public sealed class DollBetrayer : RoleBase, IKiller, ISchrodingerCatOwner
     public override void OverrideDisplayRoleNameAsSeer(PlayerControl seen, ref bool enabled, ref Color roleColor, ref string roleText, ref bool addon)
     {
         addon = false;
-        if (((seen.Is(CustomRoles.MadBetrayer) && MadBetrayer.IsMadmate() is false) || (seen.Is(CustomRoles.DollBetrayer) && DollBetrayer.IsJackal(seen) is false)) && OptionCanSeeBetrayer.GetBool())
+        if (((seen.Is(CustomRoles.MadBetrayer) && MadBetrayer.IsMadmate() is false) || (seen.Is(CustomRoles.DollBetrayer) && DollBetrayer.IsJackal() is false)) && OptionCanSeeBetrayer.GetBool())
         {
             enabled = CanBetray || IsBetray;
             roleText = GetString("Betrayer");
             roleColor = new Color(139f / 255f, 37f / 255f, 81f / 255f);
         }
-        if (((seen.GetRoleClass() is MadBetrayer md && md.CanBetray) || (seen.GetRoleClass() is DollBetrayer db && db.CanBetray)) && OptionCanSeeOtherMDBet.GetBool() && IsJackal(seen) is false)
+        if (((seen.GetRoleClass() is MadBetrayer md && md.CanBetray) || (seen.GetRoleClass() is DollBetrayer db && db.CanBetray)) && OptionCanSeeOtherMDBet.GetBool() && IsJackal() is false)
         {
             var role = seen.GetCustomRole();
 
@@ -213,7 +208,7 @@ public sealed class DollBetrayer : RoleBase, IKiller, ISchrodingerCatOwner
     void IKiller.OnCheckMurderAsKiller(MurderInfo info)
     {
         var (killer, target) = info.AppearanceTuple;
-        if ((target.Is(CustomRoles.MadBetrayer) && MadBetrayer.IsMadmate() is false) || (target.Is(CustomRoles.DollBetrayer) && DollBetrayer.IsJackal(target) is false))
+        if ((target.Is(CustomRoles.MadBetrayer) && MadBetrayer.IsMadmate() is false) || (target.Is(CustomRoles.DollBetrayer) && DollBetrayer.IsJackal() is false))
         {
             info.DoKill = false;
             return;
