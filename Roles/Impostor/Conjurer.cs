@@ -128,6 +128,7 @@ public sealed class Conjurer : RoleBase, IImpostor, IUsePhantomButton
                 using var sender = CreateSender();
                 sender.Writer.Write((byte)1);
             }
+            _ = new LateTask(() => CustomButtonHud.BottonHud(true), 0.2f, "", true);
         }
 
         _ = new LateTask(() =>
