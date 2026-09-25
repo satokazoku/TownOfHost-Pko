@@ -51,6 +51,18 @@ public sealed class Monochromer : RoleBase
         HasImpostorVision = BooleanOptionItem.Create(RoleInfo, 6, GeneralOption.ImpostorVision, false, false);
         OpCanseeKiller = BooleanOptionItem.Create(RoleInfo, 7, Option.MonochromerCanseeKiller, true, false);
         OpCanseeRoleColor = BooleanOptionItem.Create(RoleInfo, 8, Option.MonochromerMarkColor, false, false, OpCanseeKiller);
+        HideRoleOptions(CustomRoles.Monochromer);
+    }
+    internal static void HideRoleOptions(CustomRoles role)
+    {
+        if (Options.CustomRoleSpawnChances.TryGetValue(role, out var spawnOption))
+        {
+            spawnOption.SetHidden(true);
+        }
+    }
+    public override void Add()
+    {
+        Player.RpcSetCustomRole(CustomRoles.Crewmate);
     }
     public override bool NotifyRolesCheckOtherName => true;
     public override void ApplyGameOptions(IGameOptions opt) => opt.SetVision(HasImpostorVision.GetBool());
@@ -106,16 +118,16 @@ public sealed class Monochromer : RoleBase
         }
         UtilsNotifyRoles.NotifyRoles(SpecifySeer: Player);
     }
-    //public override void OnReportDeadBody(PlayerControl _, NetworkedPlayerInfo __)
-    //{
-        //foreach (var pc in PlayerCatch.AllPlayerControls)
-        //{
-            //var id = Camouflage.PlayerSkins[pc.PlayerId].ColorId;
-            //pc.SetColor(id);
-            //Camouflage.RpcSetSkin(pc, RevertToDefault: true, force: true);
-        //}
-    //}
-    public static bool CheckWin(GameOverReason reason)
+    /*public override void OnReportDeadBody(PlayerControl _, NetworkedPlayerInfo __)
+    {
+        foreach (var pc in PlayerCatch.AllPlayerControls)
+        {
+            var id = Camouflage.PlayerSkins[pc.PlayerId].ColorId;
+            pc.SetColor(id);
+            Camouflage.RpcSetSkin(pc, RevertToDefault: true, force: true);
+        }
+    }*/
+    /*public static bool CheckWin(GameOverReason reason)
     {
         foreach (var pc in PlayerCatch.AllAlivePlayerControls)
         {
@@ -144,5 +156,9 @@ public sealed class Monochromer : RoleBase
         return true;
     }
 
-    public override void ChengeRoleAdd() => ChangeColor();
+    public override void ChengeRoleAdd()
+    {
+        ChangeColor();
+        Player.RpcSetCustomRole(CustomRoles.Crewmate);
+    }
 }*/

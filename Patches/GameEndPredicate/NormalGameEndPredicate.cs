@@ -314,7 +314,7 @@ namespace TownOfHost
                 }
                 if (pc.GetCustomRole() is CustomRoles.DollBetrayer)
                 {
-                    if (DollBetrayer.IsJackal() is false)
+                    if (DollBetrayer.IsJackal(pc) is false)
                     {
                         MadBetrayer++;
                     }
@@ -436,9 +436,12 @@ namespace TownOfHost
                 CustomWinnerHolder.WinnerRoles.Add(CustomRoles.JackalHadouHo);
                 CustomWinnerHolder.WinnerRoles.Add(CustomRoles.Tama);
                 CustomWinnerHolder.WinnerRoles.Add(CustomRoles.JackalWolf);
-                if (DollBetrayer.IsJackal())
+                foreach (var pc in PlayerCatch.AllAlivePlayerControls)
                 {
-                    CustomWinnerHolder.WinnerRoles.Add(CustomRoles.DollBetrayer);
+                    if (DollBetrayer.IsJackal(pc) && pc.Is(CustomRoles.DollBetrayer))
+                    {
+                        CustomWinnerHolder.WinnerIds.Add(pc.PlayerId);
+                    }
                 }
 
             }
@@ -480,9 +483,12 @@ namespace TownOfHost
                 {
                     CustomWinnerHolder.WinnerRoles.Add(CustomRoles.MadBetrayer);
                 }
-                if (DollBetrayer.IsJackal() is false)
+                foreach (var pc in PlayerCatch.AllAlivePlayerControls)
                 {
-                    CustomWinnerHolder.WinnerRoles.Add(CustomRoles.DollBetrayer);
+                    if (!DollBetrayer.IsJackal(pc) && pc.Is(CustomRoles.DollBetrayer))
+                    {
+                        CustomWinnerHolder.WinnerIds.Add(pc.PlayerId);
+                    }
                 }
             }
             else if (Imp == 0 && Jackal == 0 && Remotekiller == 0 && GrimReaper == 0
