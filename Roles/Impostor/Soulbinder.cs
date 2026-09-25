@@ -260,6 +260,7 @@ public sealed class SoulSlave : RoleBase
         }
         return true;
     }
+
     public static void UseAbility(PlayerControl pc, PlayerControl target)
     {
         Logger.Info("UseAbility", "Soulslave");

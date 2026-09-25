@@ -132,10 +132,20 @@ namespace TownOfHost
             }
             else
             {
-                OptionWin = IntegerOptionItem.Create(IdStart, "SoloWinOption", new(0, 50, 1), defo, tab, false)
-                .SetParent(parent ?? CustomRoleSpawnChances[role])
-                .SetParentRole(parent?.ParentRole ?? role)
-                .SetEnabled(show);
+                if (role is CustomRoles.Abuser or CustomRoles.Victim)
+                {
+                    OptionWin = IntegerOptionItem.Create(22, "VictimSoloWinOption", new(0, 50, 1), defo, tab, false)
+                    .SetParent(parent ?? CustomRoleSpawnChances[role])
+                    .SetParentRole(parent?.ParentRole ?? role)
+                    .SetEnabled(show);
+                }
+                else
+                {
+                    OptionWin = IntegerOptionItem.Create(IdStart, "SoloWinOption", new(0, 50, 1), defo, tab, false)
+                    .SetParent(parent ?? CustomRoleSpawnChances[role])
+                    .SetParentRole(parent?.ParentRole ?? role)
+                    .SetEnabled(show);
+                }
             }
             OptionWin.ReplacementDictionary = replacementDic;
 
@@ -154,7 +164,7 @@ namespace TownOfHost
         /// <param name="idStart">ID</param>
         /// <param name="tab">タブ</param>
         /// <param name="role">設定に出すロール</param>
-        /// <param name="RoleName">設定名(ユニット用)</param>
+        /// <param name="rolename">設定名(ユニット用)</param>
         public static SoloWinOption Create(SimpleRoleInfo roleInfo, int idOffset, CustomRoles rolename = CustomRoles.NotAssigned, Func<bool> show = null, int defo = 0)
         {
             return new SoloWinOption(roleInfo.ConfigId + idOffset, roleInfo.Tab, roleInfo.RoleName, rolename, show, defo: defo);

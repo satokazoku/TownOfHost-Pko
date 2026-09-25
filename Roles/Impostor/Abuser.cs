@@ -3,6 +3,7 @@ using AmongUs.GameOptions;
 using Hazel;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Crewmate;
 using TownOfHost.Roles.Neutral;
 
 namespace TownOfHost.Roles.Impostor;
@@ -70,21 +71,24 @@ public sealed class Abuser : RoleBase, IImpostor, IUsePhantomButton
 
     static void SetupOptionItem()
     {
-        VictimWinPriority = SoloWinOption.Create(RoleInfo, 10, CustomRoles.Victim, defo: 1).OptionWin;
-        AbilityUseCount = IntegerOptionItem.Create(RoleInfo, 11, OptionName.AbuserAbilityUseCount, new(0, 99, 1), 2, false)
+        AbuserKillCooldown = FloatOptionItem.Create(RoleInfo, 10, OptionName.AbuserKillCooldown, new(0f, 180f, 0.5f), 30f, false)
+            .SetValueFormat(OptionFormat.Seconds);
+        AbilityCooldown = FloatOptionItem.Create(RoleInfo, 11, OptionName.AbuserAbilityCooldown, new(0f, 180f, 0.5f), 30f, false)
+            .SetValueFormat(OptionFormat.Seconds);
+        ForcedKillDelay = FloatOptionItem.Create(RoleInfo, 12, OptionName.AbuserForcedKillDelay, new(0f, 180f, 0.5f), 5f, false)
+            .SetValueFormat(OptionFormat.Seconds);
+        AbilityUseCount = IntegerOptionItem.Create(RoleInfo, 13, OptionName.AbuserAbilityUseCount, new(0, 99, 1), 2, false)
             .SetValueFormat(OptionFormat.Votes);
-        VictimCanVentBeforeAwakening = BooleanOptionItem.Create(RoleInfo, 12, OptionName.VictimCanVentBeforeAwakening, false, false);
-        VictimKillCooldown = FloatOptionItem.Create(RoleInfo, 13, OptionName.VictimKillCooldown, new(0f, 180f, 0.5f), 30f, false)
+
+        ObjectOptionitem.Create(RoleInfo, 20, "AbuserandVictim", true, null).SetOptionName(() => "Victim Setting").SetColor(Victim.RoleInfo.RoleColor);
+
+        VictimWinPriority = SoloWinOption.Create(RoleInfo, 14, CustomRoles.Victim, defo: 1).OptionWin;
+        VictimCanVentBeforeAwakening = BooleanOptionItem.Create(RoleInfo, 15, OptionName.VictimCanVentBeforeAwakening, false, false);
+        VictimKillCooldown = FloatOptionItem.Create(RoleInfo, 16, OptionName.VictimKillCooldown, new(0f, 180f, 0.5f), 30f, false)
             .SetValueFormat(OptionFormat.Seconds);
-        VictimCanVentAfterAwakening = BooleanOptionItem.Create(RoleInfo, 14, OptionName.VictimCanVentAfterAwakening, true, false);
-        VictimCanSabotageAfterAwakening = BooleanOptionItem.Create(RoleInfo, 15, OptionName.VictimCanSabotageAfterAwakening, true, false);
-        VictimCanWinWithImpostorsBeforeAwakening = BooleanOptionItem.Create(RoleInfo, 16, OptionName.VictimCanWinWithImpostorsBeforeAwakening, true, false);
-        AbuserKillCooldown = FloatOptionItem.Create(RoleInfo, 17, OptionName.AbuserKillCooldown, new(0f, 180f, 0.5f), 30f, false)
-            .SetValueFormat(OptionFormat.Seconds);
-        AbilityCooldown = FloatOptionItem.Create(RoleInfo, 18, OptionName.AbuserAbilityCooldown, new(0f, 180f, 0.5f), 30f, false)
-            .SetValueFormat(OptionFormat.Seconds);
-        ForcedKillDelay = FloatOptionItem.Create(RoleInfo, 19, OptionName.AbuserForcedKillDelay, new(0f, 180f, 0.5f), 5f, false)
-            .SetValueFormat(OptionFormat.Seconds);
+        VictimCanVentAfterAwakening = BooleanOptionItem.Create(RoleInfo, 17, OptionName.VictimCanVentAfterAwakening, true, false);
+        VictimCanSabotageAfterAwakening = BooleanOptionItem.Create(RoleInfo, 18, OptionName.VictimCanSabotageAfterAwakening, true, false);
+        VictimCanWinWithImpostorsBeforeAwakening = BooleanOptionItem.Create(RoleInfo, 19, OptionName.VictimCanWinWithImpostorsBeforeAwakening, true, false);
     }
 
     public override void Add()

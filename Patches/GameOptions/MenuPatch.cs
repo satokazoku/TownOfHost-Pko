@@ -839,6 +839,11 @@ namespace TownOfHost
                                     {
                                         var oldinfo = Nowinfo;
                                         Nowinfo = option.CustomRole;
+                                        switch (oldinfo)
+                                        {
+                                            case CustomRoles.PavlovDog: if (Nowinfo is CustomRoles.PavlovDog) Nowinfo = CustomRoles.PavlovOwner; break;
+                                            case CustomRoles.PavlovOwner: if (Nowinfo is CustomRoles.PavlovOwner) Nowinfo = CustomRoles.PavlovDog; break;
+                                        }
                                         if (HudManager.Instance.TaskPanel.open && oldinfo.IsCombinationRole() && Nowinfo.IsCombinationRole())
                                         {
                                             switch (oldinfo)
@@ -851,6 +856,8 @@ namespace TownOfHost
                                                 case CustomRoles.Altair: if (Nowinfo is CustomRoles.Vega) Nowinfo = CustomRoles.Vega; break;
                                                 case CustomRoles.Fool: if (Nowinfo is CustomRoles.Nue) Nowinfo = CustomRoles.Nue; break;
                                                 case CustomRoles.Nue: if (Nowinfo is CustomRoles.Nue) Nowinfo = CustomRoles.Fool; break;
+                                                case CustomRoles.Abuser: if (Nowinfo is CustomRoles.Abuser) Nowinfo = CustomRoles.Victim; break;
+                                                case CustomRoles.Victim: if (Nowinfo is CustomRoles.Victim) Nowinfo = CustomRoles.Abuser; break;
                                             }
                                             return;
                                         }

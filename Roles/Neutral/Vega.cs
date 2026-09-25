@@ -112,27 +112,34 @@ public sealed class Vega : RoleBase, IKiller, IAdditionalWinner
 
     private static void SetupOptionItems()
     {
+
+        OptionRendezvousCooldown = FloatOptionItem.Create(RoleInfo, 10, OptionName.VegaRendezvousCooldown, new(0f, 180f, 0.5f), 15, false)
+                .SetValueFormat(OptionFormat.Seconds);
+        OptionVegaCanUseVent = BooleanOptionItem.Create(RoleInfo, 11, OptionName.VegaCanUseVent, true, false);
+
+        ObjectOptionitem.Create(RoleInfo, 22, "VegaandAltair", true, null).SetOptionName(() => "Vega and Altair Setting").SetColor(RoleInfo.RoleColor);
         SoloWinOption.Create(RoleInfo, 9, defo: 0);
-        OptionKillCooldown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.KillCooldown, new(0f, 180f, 0.5f), 30f, false)
+        OptionHasImpostorVision = BooleanOptionItem.Create(RoleInfo, 23, GeneralOption.ImpostorVision, true, false);
+
+        ObjectOptionitem.Create(RoleInfo, 19, "VegaandAltair", true, null).SetOptionName(() => "Altair Setting").SetColor(Neutral.Altair.RoleInfo.RoleColor);
+
+        OptionKillCooldown = FloatOptionItem.Create(RoleInfo, 20, GeneralOption.KillCooldown, new(0f, 180f, 0.5f), 30f, false)
                 .SetValueFormat(OptionFormat.Seconds);
-        OptionRendezvousCooldown = FloatOptionItem.Create(RoleInfo, 11, OptionName.VegaRendezvousCooldown, new(0f, 180f, 0.5f), 15, false)
-                .SetValueFormat(OptionFormat.Seconds);
-        OptionHasImpostorVision = BooleanOptionItem.Create(RoleInfo, 12, GeneralOption.ImpostorVision, true, false);
-        OptionVegaCanUseVent = BooleanOptionItem.Create(RoleInfo, 13, OptionName.VegaCanUseVent, true, false);
-        OptionAltairCanUseVent = BooleanOptionItem.Create(RoleInfo, 14, OptionName.VegaAltairCanUseVent, true, false);
-        OptionBuffThreshold = IntegerOptionItem.Create(RoleInfo, 15, OptionName.VegaBuffThreshold, new(1, 99, 1), 3, false)
+        OptionAltairCanUseVent = BooleanOptionItem.Create(RoleInfo, 21, OptionName.VegaAltairCanUseVent, true, false);
+        OptionBuffThreshold = IntegerOptionItem.Create(RoleInfo, 12, OptionName.VegaBuffThreshold, new(1, 99, 1), 3, false)
                 .SetValueFormat(OptionFormat.Times);
-        OptionKillCooldownThreshold = IntegerOptionItem.Create(RoleInfo, 16, OptionName.VegaKillCooldownThreshold, new(1, 99, 1), 6, false)
+        OptionKillCooldownThreshold = IntegerOptionItem.Create(RoleInfo, 13, OptionName.VegaKillCooldownThreshold, new(1, 99, 1), 6, false)
                 .SetValueFormat(OptionFormat.Times);
-        OptionKillCooldownAmount = FloatOptionItem.Create(RoleInfo, 17, OptionName.VegaKillCooldownAmount, new(1f, 180f, 0.5f), 5f, false)
+        OptionKillCooldownAmount = FloatOptionItem.Create(RoleInfo, 14, OptionName.VegaKillCooldownAmount, new(1f, 180f, 0.5f), 5f, false)
                 .SetValueFormat(OptionFormat.Seconds);
-        OptionMinimumKillCooldown = FloatOptionItem.Create(RoleInfo, 18, OptionName.VegaMinimumKillCooldown, new(0.5f, 180f, 0.5f), 5f, false)
+        OptionMinimumKillCooldown = FloatOptionItem.Create(RoleInfo, 15, OptionName.VegaMinimumKillCooldown, new(0.5f, 180f, 0.5f), 5f, false)
                 .SetValueFormat(OptionFormat.Seconds);
-        OptionRevealKillableFactions = BooleanOptionItem.Create(RoleInfo, 19, OptionName.VegaRevealKillableFactions, false, false);
-        OptionRKFThreshold = IntegerOptionItem.Create(RoleInfo, 20, OptionName.VegaRKFThreshold, new(1, 99, 1), 8, false, OptionRevealKillableFactions)
+
+        OptionRevealKillableFactions = BooleanOptionItem.Create(RoleInfo, 16, OptionName.VegaRevealKillableFactions, false, false);
+        OptionRKFThreshold = IntegerOptionItem.Create(RoleInfo, 17, OptionName.VegaRKFThreshold, new(1, 99, 1), 8, false, OptionRevealKillableFactions)
                 .SetValueFormat(OptionFormat.Times);
-        OptionFactionBasedStarColor = BooleanOptionItem.Create(RoleInfo, 21, OptionName.VegaFactionBasedStarColor, true, false, OptionRevealKillableFactions);
-        OptionAddWin = BooleanOptionItem.Create(RoleInfo, 22, OptionName.VegaAddWin, true, false);
+        OptionFactionBasedStarColor = BooleanOptionItem.Create(RoleInfo, 18, OptionName.VegaFactionBasedStarColor, true, false, OptionRevealKillableFactions);
+        OptionAddWin = BooleanOptionItem.Create(RoleInfo, 24, OptionName.VegaAddWin, true, false);
     }
 
     public float CalculateKillCooldown() => RendezvousCooldown;
@@ -149,8 +156,8 @@ public sealed class Vega : RoleBase, IKiller, IAdditionalWinner
         if (Event.CheckRole(CustomRoles.Vega) is false)
         {
             Logger.Info($"お星様へと帰ったとさ。", "Vega");
-            Player.RpcSetCustomRole(CustomRoles.Emptiness);
-            Altair.RpcSetCustomRole(CustomRoles.Emptiness);
+            //Player.RpcSetCustomRole(CustomRoles.Emptiness);
+            //Altair.RpcSetCustomRole(CustomRoles.Emptiness);
             Options.CustomRoleSpawnChances[CustomRoles.Vega].SetValue(0, true, false);
             return;
         }
