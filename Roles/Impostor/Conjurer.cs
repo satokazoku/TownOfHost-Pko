@@ -52,7 +52,6 @@ public sealed class Conjurer : RoleBase, IImpostor, IUsePhantomButton
 
     enum OptionName
     {
-        ConjurerBeaconCooldown,
         ConjurerCanKillImpostor,
         ConjurerShowFlash,
         ConjurerCanAddLength,
@@ -64,7 +63,7 @@ public sealed class Conjurer : RoleBase, IImpostor, IUsePhantomButton
 
     static void SetupOptionItem()
     {
-        OptionBeaconCooldown = FloatOptionItem.Create(RoleInfo, 10, OptionName.ConjurerBeaconCooldown,
+        OptionBeaconCooldown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.Cooldown,
             new(1f, 60f, 1f), 15f, false).SetValueFormat(OptionFormat.Seconds);
         OptionCanAddLength = FloatOptionItem.Create(RoleInfo, 11, OptionName.ConjurerCanAddLength,
             new(1f, 40f, 1f), 10f, false).SetValueFormat(OptionFormat.Multiplier);
@@ -178,6 +177,9 @@ public sealed class Conjurer : RoleBase, IImpostor, IUsePhantomButton
             if (!PointInPolygon(pc.GetTruePosition(), poly)) continue;
 
             pc.SetRealKiller(Player);
+            var state = PlayerState.GetByPlayerId(pc.PlayerId);
+            state.DeathReason = CustomDeathReason.MagicC;
+            state.SetDead();
             pc.RpcMurderPlayerV2(pc);
             kills++;
         }
@@ -274,11 +276,6 @@ public sealed class Conjurer : RoleBase, IImpostor, IUsePhantomButton
         ClearBeacons();
     }
 
-    public override void AfterMeetingTasks()
-    {
-        if (!AmongUsClient.Instance.AmHost) return;
-    }
-
     public override string GetLowerText(PlayerControl seer, PlayerControl seen = null,
         bool isForMeeting = false, bool isForHud = false)
     {
@@ -360,7 +357,7 @@ public sealed class BeaconDummy : CustomNetObject
             hostPlayer.RpcSetColor(hostColor);
         PlayerControl.RawSetColor((byte)_colorId);
 
-        SetName("魔法陣");
+        SetName("ビーコン");
         SnapToPosition(_pos);
 
         foreach (var pc in PlayerCatch.AllPlayerControls)

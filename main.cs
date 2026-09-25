@@ -443,6 +443,10 @@ namespace TownOfHost
         Sacrifice,
         Bloodloss,
         Drowning,
+        /// <summary>
+        /// 魔術師用
+        /// </summary>
+        MagicC,
         etc = -1
     }
     //WinData

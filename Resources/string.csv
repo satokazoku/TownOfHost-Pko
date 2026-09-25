@@ -521,6 +521,7 @@
 "SirenInfo","Drawn by a beautiful singing voice...","美しい歌声に誘われて..."
 "SoulbinderInfo","Bind the soul and enslave it","魂を縛りつけ隷属させよ"
 "SoulSlaveInfo","Those Whose Souls Are Bound","魂を縛られし者"
+"ConjurerInfo","Encirclement that extinguishes all lights","灯火吹き消す包囲陣"
 "#ImpostorInfo"
 
 "# マッドメイト系役職"
@@ -886,8 +887,9 @@
 "WhitesharkInfoLong","If you stand still, the suicide timer builds up, and when the suicide timer runs out, you die. \nThe suicide timer does not advance while you are inside a vent. \nThe suicide timer is displayed during the Phantom Button's cooldown.","止まっていると自殺タイマーが溜まり、自殺タイマーがなくなると死んでしまう。\nベントに入っている間は自殺タイマーは進まない。\n自殺タイマーはファントムボタンのクールダウンで表示。"
 "HateKillerInfoLong","For each vote cast for you during a meeting, Killcool decreases by the set amount for one turn.","会議で自身に投票された票数1票につき、1ターンだけキルクールが設定値だけ減少する。"
 "SirenInfoLong","Select a target on the Shape Shift screen. \nNo transformation occurs. \nThe room where the Siren was located at the time the target was selected is designated as the room the target must reach. \nIf the target does not reach that room within a certain amount of time, they die. \nThis ability can only be used once per turn and cannot be used during a power outage.","シェイプシフト画面で対象を選ぶ。\n変身は行われない。\n対象選択時セイレーンがいた部屋を、対象の向かうべき部屋として指定する。\n一定時間以内に部屋に辿り着かなかった場合、対象は死亡する。\nこの能力は一ターンに一度しか使えず、停電中は使用できない。"
-"SoulbinderInfoLong","it","最初にキルしたプレイヤーの役職が<#ff1919>ソウルスレイブ</color>になる。"
-"SoulSlaveInfoLong","slave","<#ff1919>ソウルバインダー</color>により作成された幽霊役職\n元の勝利条件は消え、タスクが再配布される。\nタスクを一つ完了するごとに自身をキルした<#ff1919>ソウルバインダー</color>のキルクールが設定値短縮される。\n守護天使ボタンを押すと押した対象に<#ff1919>ソウルバインダー</color>視点で一定時間矢印が表示されるが、一度方向を指示した後は方向は変わらない。"
+"SoulbinderInfoLong","The player who makes the first kill becomes a <#ff1919>Soul Slave</color>.","最初にキルしたプレイヤーの役職が<#ff1919>ソウルスレイブ</color>になる。"
+"SoulSlaveInfoLong","Ghost role created by the <#ff1919>Soul Binder</color>\nThe original victory condition is removed, and tasks are redistributed.\nEach time a task is completed, the kill cooldown of the <#ff1919>Soul Binder</color> who killed the player is reduced by the set value. \nWhen you press the Guardian Angel button, an arrow appears from the <#ff1919>Soul Binder</color>’s perspective pointing at the target for a certain amount of time, but once the direction is set, it does not change.","<#ff1919>ソウルバインダー</color>により作成された幽霊役職\n元の勝利条件は消え、タスクが再配布される。\nタスクを一つ完了するごとに自身をキルした<#ff1919>ソウルバインダー</color>のキルクールが設定値短縮される。\n守護天使ボタンを押すと押した対象に<#ff1919>ソウルバインダー</color>視点で一定時間矢印が表示されるが、一度方向を指示した後は方向は変わらない。"
+"ConjurerInfoLong","Use the Phantom Button to place beacons. \nIf you press the Phantom Button after placing three beacons, it will kill all players within the triangular area formed by the three beacons. \nYou cannot perform normal kills.","ファントムボタンを使用してビーコンを設置する。\nビーコンを三つ設置した状態でファントムボタンを押すと、三つのビーコンを結んでできる三角形の範囲内にいるプレイヤーを全てキルする。\n通常キルを行うことはできない。"
 
 "#ImpostorInfoLong"
 
@@ -1989,6 +1991,9 @@
 "SoulbinderDecreaseKillCool","Decrease Killcooldown","タスクを1つ完了させるたびに減少するキルクール"
 "SoulbinderSlaveAngelCool","Guardian Angel Cooldown","守護天使クール"
 "SoulSlaveArrowtime","Arrow Display Time","矢印の表示時間"
+"ConjurerCanAddLength","Beacon Placement Range","ビーコン設置範囲"
+"ConjurerShowFlash","Show Kill Flash","キル時、全員にキルフラッシュを表示する"
+"ConjurerCanKillImpostor","Can Kill Impostor","インポスターもキルできる"
 
 "## MadMate Role Setting"
 "MadmateOption","MadMate Options","マッドメイト系役職の設定"
@@ -3373,6 +3378,7 @@
 "DeathReason.Sacrifice","Sacrifice","殉死"
 "DeathReason.Bloodloss","Bloodloss","失血死"
 "DeathReason.Drowning","Drowning","溺死"
+"DeathReason.MagicC","Black magic","魔術"
 "DeathReason.etc","Other","その他","其他","其他","Другое","Outros",""
 "Counter","Counter","返り討ち"
 "Alive","Alive","生存","存活","存活","Выжил","Vivo",""
