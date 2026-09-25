@@ -65,6 +65,7 @@ public static class CustomRoleManager
     /// <param name="RoleAbility">キル後のMurderPlayerの処理を行うか</param>
     /// <param name="Killpower">キルの強さ</param>
     /// <param name="deathReason">死因</param>
+    /// <param name="PlayKillSound">キル時キル音を鳴らすか(能力キル用)</param>
     /// <returns></returns>
     public static bool OnCheckMurder(PlayerControl attemptKiller, PlayerControl attemptTarget, PlayerControl appearanceKiller, PlayerControl appearanceTarget, bool? force = false, bool? DontRoleAbility = false, int Killpower = 1,
     CustomDeathReason deathReason = CustomDeathReason.Kill, bool PlayKillSound = false, bool IsSubKill = false)

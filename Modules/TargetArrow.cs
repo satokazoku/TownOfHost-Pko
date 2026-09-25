@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TownOfHost.Roles.Core;
 using UnityEngine;
 
 namespace TownOfHost
@@ -119,9 +120,12 @@ namespace TownOfHost
                 var target = PlayerCatch.GetPlayerById(targetId);
                 if (seerIsDead || target == null || target.transform == null || !target.IsAlive())
                 {
-                    TargetArrows.Remove(arrowInfo);
-                    update = true;
-                    continue;
+                    if (seer.GetCustomRole() is not CustomRoles.Soulbinder)
+                    {
+                        TargetArrows.Remove(arrowInfo);
+                        update = true;
+                        continue;
+                    }
                 }
                 //対象の方角ベクトルを取る
                 var dir = target.transform.position - seer.transform.position;

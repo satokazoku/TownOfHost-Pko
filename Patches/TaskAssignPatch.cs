@@ -74,7 +74,7 @@ namespace TownOfHost
             CustomRoles role = RoleNullable.Value;
 
             //デフォルトのタスク数
-            bool hasCommonTasks = true;//trueになるのは
+            bool hasCommonTasks = true;
             int NumCommonTasks = Main.NormalOptions.NumCommonTasks;
             int NumLongTasks = Main.NormalOptions.NumLongTasks;
             int NumShortTasks = Main.NormalOptions.NumShortTasks;
@@ -93,6 +93,13 @@ namespace TownOfHost
                 (hasCommonTasks, NumCommonTasks, NumLongTasks, NumShortTasks) = Workhorse.TaskData;
             if (pc.Is(CustomRoles.SoulSlave))
                 (hasCommonTasks, NumCommonTasks, NumLongTasks, NumShortTasks) = SoulSlave.TaskData;
+            if (pc.Is(CustomRoles.Gang))
+            {
+                hasCommonTasks = true;
+                NumCommonTasks = Main.NormalOptions.NumCommonTasks;
+                NumLongTasks = Main.NormalOptions.NumLongTasks;
+                NumShortTasks = Main.NormalOptions.NumShortTasks;
+            }
 
             if (Options.CurrentGameMode == CustomGameMode.TaskBattle && TaskBattle.IsAdding)
             {

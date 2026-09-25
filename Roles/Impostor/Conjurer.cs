@@ -1,18 +1,18 @@
-/*
 using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
+using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using UnityEngine;
 using static TownOfHost.PlayerCatch;
-using static TownOfHost.Utils;
 using static TownOfHost.Translator;
+using static TownOfHost.Utils;
 
 namespace TownOfHost.Roles.Impostor;
 
-public sealed class Conjurer : RoleBase, IUsePhantomButton
+public sealed class Conjurer : RoleBase, IImpostor, IUsePhantomButton
 {
     public static readonly SimpleRoleInfo RoleInfo =
         SimpleRoleInfo.Create(
@@ -24,7 +24,7 @@ public sealed class Conjurer : RoleBase, IUsePhantomButton
             560100,
             SetupOptionItem,
             "cnj",
-            OptionSort: (3, 8),
+            OptionSort: (4, 7),
             from: From.SuperNewRoles
         );
 
@@ -37,6 +37,7 @@ public sealed class Conjurer : RoleBase, IUsePhantomButton
 
         beaconPositions = new();
         beaconObjects = new();
+        beaconDummies = new();
     }
 
     static OptionItem OptionBeaconCooldown;
@@ -71,13 +72,13 @@ public sealed class Conjurer : RoleBase, IUsePhantomButton
         OptionShowFlash = BooleanOptionItem.Create(RoleInfo, 13, OptionName.ConjurerShowFlash, false, false);
     }
 
-    public float CalculateKillCooldown() => 30f;
     public bool CanUseKillButton() => false;
     public bool CanUseImpostorVentButton() => true;
     public bool CanUseSabotageButton() => true;
 
     bool IUsePhantomButton.IsPhantomRole => true;
     bool IUsePhantomButton.IsresetAfterKill => false;
+    private readonly List<BeaconDummy> beaconDummies;
 
     public override void ApplyGameOptions(IGameOptions opt)
     {
@@ -97,7 +98,6 @@ public sealed class Conjurer : RoleBase, IUsePhantomButton
         ResetCooldown = false;
 
         if (!Player.IsAlive()) return;
-
         if (BeaconCount < 3)
         {
             var pos = Player.GetTruePosition();
@@ -141,13 +141,28 @@ public sealed class Conjurer : RoleBase, IUsePhantomButton
     void ExecuteAddBeacon(Vector2 pos)
     {
         if (BeaconCount >= 3) return;
+        if (beaconPositions.Any(p => Vector2.Distance(p, pos) < 0.01f)) return;
+
+        beaconPositions.Add(pos);
+
+        if (Player.AmOwner)
+            beaconObjects.Add(CreateBeaconVisual(pos, BeaconCount - 1));
+
+        // ↓追加：魔法陣の位置にダミーを設置(本人にのみ表示)
+        var dummy = new BeaconDummy(pos, Player, Player.Data.DefaultOutfit.ColorId, activated: false);
+        beaconDummies.Add(dummy);
+
+        if (Player?.AmOwner == true)
+            UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
+
+        UtilsGameLog.AddGameLog("Conjurer",
+            $"{UtilsName.GetPlayerColor(Player)} ビーコン設置 ({BeaconCount}/3)");
 
         using var sender = CreateSender();
         sender.Writer.Write((byte)2);
         sender.Writer.Write(pos.x);
         sender.Writer.Write(pos.y);
     }
-
     void ExecuteTriangleKill()
     {
         if (BeaconCount < 3) return;
@@ -157,14 +172,23 @@ public sealed class Conjurer : RoleBase, IUsePhantomButton
 
         foreach (var pc in AllAlivePlayerControls.ToArray())
         {
-            if (pc.PlayerId == Player.PlayerId) continue;
+            if (pc.PlayerId == Player.PlayerId && !CanKillImpostor) continue;
             if (!CanKillImpostor && pc.GetCustomRole().IsImpostor()) continue;
             if (!PointInPolygon(pc.GetTruePosition(), poly)) continue;
 
             pc.SetRealKiller(Player);
-            Player.RpcMurderPlayer(pc);
+            pc.RpcMurderPlayerV2(pc);
             kills++;
         }
+        if (kills is not 0)
+            RPC.PlaySoundRPC(Player.PlayerId, Sounds.KillSound);
+
+        beaconPositions.Clear();
+        ClearBeacons();
+
+        foreach (var dummy in beaconDummies)
+            try { dummy?.Despawn(); } catch { }
+        beaconDummies.Clear();
 
         if (ShowFlash) AllPlayerKillFlash();
 
@@ -174,7 +198,6 @@ public sealed class Conjurer : RoleBase, IUsePhantomButton
         using var sender = CreateSender();
         sender.Writer.Write((byte)3);
     }
-
     public override void ReceiveRPC(MessageReader reader)
     {
         byte rpcType = reader.ReadByte();
@@ -307,4 +330,51 @@ public sealed class Conjurer : RoleBase, IUsePhantomButton
         return inside;
     }
 }
-*/
+public sealed class BeaconDummy : CustomNetObject
+{
+    readonly PlayerControl _owner;
+    readonly int _colorId;
+    readonly Vector2 _pos;
+    public bool Activated { get; private set; }
+
+    public BeaconDummy(Vector2 position, PlayerControl owner, int colorId, bool activated)
+    {
+        _owner = owner;
+        _colorId = colorId;
+        _pos = position;
+        Activated = activated;
+        CreateNetObject(position);
+    }
+
+    protected override void OnCreated()
+    {
+        if (PlayerControl == null) return;
+
+        var hostPlayer = PlayerControl.LocalPlayer;
+        byte hostColor = (byte)(hostPlayer?.Data?.DefaultOutfit.ColorId ?? 0);
+
+        PlayerControl.RpcSetColor((byte)_colorId);
+        if (hostPlayer != null)
+            hostPlayer.RpcSetColor(hostColor);
+        PlayerControl.RawSetColor((byte)_colorId);
+
+        SetName("魔法陣");
+        SnapToPosition(_pos);
+
+        foreach (var pc in PlayerCatch.AllPlayerControls)
+        {
+            if (pc.notRealPlayer) continue;
+            if (pc.PlayerId != _owner.PlayerId)
+                Hide(pc);
+        }
+
+        var capturedDummy = PlayerControl;
+        _ = new LateTask(() =>
+        {
+            if (capturedDummy != null)
+                capturedDummy.RawSetColor((byte)_colorId);
+        }, 0.15f, "Conjurer.ApplyDummyColor", true);
+    }
+
+    public override void OnMeeting() { }
+}

@@ -26,11 +26,7 @@ public sealed class Soulbinder : RoleBase, IImpostor
             127100,
             SetupOptionItem,
             "slb",
-            OptionSort: (7, 12)//,
-            /*assignInfo: new RoleAssignInfo(CustomRoles.Soulbinder, CustomRoleTypes.Impostor)
-            {
-                AssignCountRule = new(1, 1, 1)
-            }*/
+            OptionSort: (7, 12)
         );
 
     public Soulbinder(PlayerControl player)
@@ -129,12 +125,14 @@ public sealed class Soulbinder : RoleBase, IImpostor
     }
     public void CreateArrow(PlayerControl target)
     {
+        if (Arrow is not "") return;
         TargetArrow.Add(Player.PlayerId, target.PlayerId);
 
         _ = new LateTask(() =>
         {
             Logger.Info($"{TargetArrow.GetArrows(Player, target.PlayerId)}", "Soulbinder");
             Arrow = TargetArrow.GetArrows(Player, target.PlayerId);
+            UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
             Logger.Info($"{Arrow}", "Soulbinder");
         }, 0.2f, "Soulbinder.RemoveArrow", true);
         _ = new LateTask(() =>
@@ -142,7 +140,6 @@ public sealed class Soulbinder : RoleBase, IImpostor
             TargetArrow.Remove(target.PlayerId, Player.PlayerId);
         }, 0.5f, "Soulbinder.RemoveArrow", true);
 
-        UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
         _ = new LateTask(() =>
         {
             Arrow = "";

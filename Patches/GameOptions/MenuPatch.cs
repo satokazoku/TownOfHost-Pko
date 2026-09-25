@@ -843,6 +843,8 @@ namespace TownOfHost
                                         {
                                             case CustomRoles.PavlovDog: if (Nowinfo is CustomRoles.PavlovDog) Nowinfo = CustomRoles.PavlovOwner; break;
                                             case CustomRoles.PavlovOwner: if (Nowinfo is CustomRoles.PavlovOwner) Nowinfo = CustomRoles.PavlovDog; break;
+                                            case CustomRoles.Soulbinder: if (Nowinfo is CustomRoles.Soulbinder) Nowinfo = CustomRoles.SoulSlave; break;
+                                            case CustomRoles.SoulSlave: if (Nowinfo is CustomRoles.SoulSlave) Nowinfo = CustomRoles.Soulbinder; break;
                                         }
                                         if (HudManager.Instance.TaskPanel.open && oldinfo.IsCombinationRole() && Nowinfo.IsCombinationRole())
                                         {

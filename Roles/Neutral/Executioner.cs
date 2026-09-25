@@ -63,7 +63,7 @@ public sealed class Executioner : RoleBase, IAdditionalWinner
     bool IsReport;
     public static readonly CustomRoles[] ChangeRoles =
     {
-            CustomRoles.Crewmate, CustomRoles.Jester, CustomRoles.Opportunist,CustomRoles.Monochromer
+            CustomRoles.Crewmate, CustomRoles.Jester, CustomRoles.Opportunist,CustomRoles.Turncoat//CustomRoles.Monochromer
     };
 
     private static void SetupOptionItem()

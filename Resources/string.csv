@@ -886,6 +886,9 @@
 "WhitesharkInfoLong","If you stand still, the suicide timer builds up, and when the suicide timer runs out, you die. \nThe suicide timer does not advance while you are inside a vent. \nThe suicide timer is displayed during the Phantom Button's cooldown.","止まっていると自殺タイマーが溜まり、自殺タイマーがなくなると死んでしまう。\nベントに入っている間は自殺タイマーは進まない。\n自殺タイマーはファントムボタンのクールダウンで表示。"
 "HateKillerInfoLong","For each vote cast for you during a meeting, Killcool decreases by the set amount for one turn.","会議で自身に投票された票数1票につき、1ターンだけキルクールが設定値だけ減少する。"
 "SirenInfoLong","Select a target on the Shape Shift screen. \nNo transformation occurs. \nThe room where the Siren was located at the time the target was selected is designated as the room the target must reach. \nIf the target does not reach that room within a certain amount of time, they die. \nThis ability can only be used once per turn and cannot be used during a power outage.","シェイプシフト画面で対象を選ぶ。\n変身は行われない。\n対象選択時セイレーンがいた部屋を、対象の向かうべき部屋として指定する。\n一定時間以内に部屋に辿り着かなかった場合、対象は死亡する。\nこの能力は一ターンに一度しか使えず、停電中は使用できない。"
+"SoulbinderInfoLong","it","最初にキルしたプレイヤーの役職が<#ff1919>ソウルスレイブ</color>になる。"
+"SoulSlaveInfoLong","slave","<#ff1919>ソウルバインダー</color>により作成された幽霊役職\n元の勝利条件は消え、タスクが再配布される。\nタスクを一つ完了するごとに自身をキルした<#ff1919>ソウルバインダー</color>のキルクールが設定値短縮される。\n守護天使ボタンを押すと押した対象に<#ff1919>ソウルバインダー</color>視点で一定時間矢印が表示されるが、一度方向を指示した後は方向は変わらない。"
+
 "#ImpostorInfoLong"
 
 "# マッドメイト系役職"
@@ -2677,10 +2680,10 @@
 "PirateImpostorCanBeGang","Impostor Can Be Gang","インポスターが一味になれる",
 "PirateMadmateCanBeGang","Madmate Can Be Gang","マッドメイトが一味になれる",
 "PirateNeutralCanBeGang","Neutral Can Be Gang","ニュートラルが一味になれる",
-"PirateBuffAddonAssignTarget","Buff Add-On To Be Granted (Gang Task 75%)","一味のタスク75%で付与するバフ属性",
+"PirateGangBuffAddon","Buff Add-On To Be Granted (Gang Task 75%)","一味のタスク75%で付与するバフ属性",
+"PirateCanImpostorBeGang","Pirate Can Madmate Be Gang","マッドメイトを一味にできる"
 "PirateCanMadmateBeGang","Pirate Can Madmate Be Gang","マッドメイトを一味にできる"
 "PirateCanNeutralBeGang","Pirate Can Neutral Be Gang","第三陣営を一味にできる"
-"PirateBuffAddonTarget","Pirate Buff Addon Target","海賊に付与する追加属性"
 "LawyerTargetKnows","Lawyer target knows","依頼人は弁護されている事がわかる","律师的客户知道自己有律师",
 "LawyerKnowTargetRole","Lawyer know target role","弁護士は依頼人の役職が分かる","律师知道客户职业",
 "LawyerPursuerGuardNum","Pursuer guard count","追跡者のキルガード回数","起诉人自保次数",
@@ -3427,6 +3430,8 @@
 "Fortuner_AbilityButton","Give","付与"
 "SirenAbility","Invite","誘う"
 "SirenAbility2","Until drowning","溺死まで"
+"ConjurerBeaconButton","Installation","設置"
+"ConjurerStartButton","Compression","圧縮"
 
 "## クライアント設定"
 "Close","Close","閉じる","关闭","","Закрыть","Fechar",""

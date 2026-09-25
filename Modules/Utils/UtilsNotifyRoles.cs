@@ -366,8 +366,8 @@ namespace TownOfHost
                                 TargetDeathReason = $"<size=75%>({GetVitalText(target.PlayerId, seer.PlayerId.CanDeathReasonKillerColor() == true ? true : null)})</size>";
 
                             if (((IsActive(SystemTypes.Comms) && Options.CommsCamouflage.GetBool())
-                            || (role is CustomRoles.Monochromer && seerisAlive)
-                            //|| Camouflager.NowUse
+                            //|| (role is CustomRoles.Monochromer && seerisAlive)
+                            || Camouflager.NowUse
                             || (SuddenDeathMode.SuddenCannotSeeName && !TemporaryName))
                             && (!((targetrole as Jumper)?.Jumping == true)))
                             {

@@ -154,7 +154,7 @@ namespace TownOfHost.Roles.Neutral
                     }
                 }
             }
-            if (!targeted || KillWaitPlayer == null)
+            if (!targeted || KillWaitPlayer == null || !Player.IsAlive())
             {
                 targeted = false;
                 return;
@@ -190,9 +190,8 @@ namespace TownOfHost.Roles.Neutral
                 }
                 else
                 {
-                    if (CustomRoleManager.OnCheckMurder(Player, target, target, target, true, false, 2, CustomDeathReason.Kill))
+                    if (CustomRoleManager.OnCheckMurder(Player, target, target, target, true, false, 2, CustomDeathReason.Kill, PlayKillSound: true))
                     {
-                        RPC.PlaySoundRPC(Player.PlayerId, Sounds.KillSound);
                         target.SetRealKiller(Player);
                         UtilsNotifyRoles.NotifyRoles(SpecifySeer: Player);
                     }

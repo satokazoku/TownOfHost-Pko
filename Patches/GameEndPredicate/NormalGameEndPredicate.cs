@@ -286,6 +286,7 @@ namespace TownOfHost
             int PavlovOwnerRemaining = 0;
             int Dracula = 0;
             int Vanity = 0;
+            int PirateCount = 0;
 
             foreach (var pc in PlayerCatch.AllAlivePlayerControls)
             {
@@ -355,6 +356,7 @@ namespace TownOfHost
                         break;
                     case CountTypes.Eater: EaterCount++; break;
                     case CountTypes.Dracula: Dracula++; break;
+                    case CountTypes.Pirate: Crew++; FoxAndCrew++; PirateCount++; break;
                 }
             }
 
@@ -551,6 +553,13 @@ namespace TownOfHost
                     }
                 }
                 return true;
+            }
+            else if (Imp == 0 && PirateCount is not 0 && FoxAndCrew - 1 <= PirateCount)
+            {
+                reason = GameOverReason.ImpostorsByKill;
+                CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Pirate, byte.MaxValue);
+                CustomWinnerHolder.WinnerRoles.Add(CustomRoles.Pirate);
+                CustomWinnerHolder.WinnerRoles.Add(CustomRoles.Gang);
             }
             else if (Jackal == 0 && Remotekiller == 0 && MadBetrayer == 0
                 && MilkyWay == 0 && Pavlov == 0 && StandMasterCount == 0 && Imp == 0

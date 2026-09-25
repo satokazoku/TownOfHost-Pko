@@ -394,5 +394,6 @@ namespace TownOfHost
         Huntman,
         Dracula,
         Vanity,
+        Pirate
     }
 }

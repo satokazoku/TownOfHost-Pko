@@ -7,6 +7,7 @@ using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using static TownOfHost.PlayerCatch;
 using static TownOfHost.Translator;
+using System;
 
 namespace TownOfHost.Roles.Neutral;
 
@@ -179,6 +180,7 @@ public sealed class Pirate : RoleBase, IKiller
         if (target.Is(CustomRoleTypes.Impostor))
         {
             info.DoKill = false;
+            killer.RpcProtectedMurderPlayer(target);
         }
 
         killer.ResetKillCooldown();
@@ -298,7 +300,7 @@ public sealed class Gang : RoleBase, IAdditionalWinner
         );
 
     public Gang(PlayerControl player)
-        : base(RoleInfo, player, () => HasTask.True)
+        : base(RoleInfo, player, () => HasTask.ForRecompute)
     {
         OwnerId = byte.MaxValue;
         CanVent = false;
@@ -337,22 +339,18 @@ public sealed class Gang : RoleBase, IAdditionalWinner
 
     public Pirate GetOwner() =>
         OwnerId == byte.MaxValue ? null : GetPlayerById(OwnerId)?.GetRoleClass() as Pirate;
-
-    public override void OnFixedUpdate(PlayerControl player)
+    public static void Settasks(PlayerControl pc)
     {
-        if (!AmongUsClient.Instance.AmHost || player != Player || !Player.IsAlive()) return;
-        if (!GameStates.IsInTask || OwnerId == byte.MaxValue) return;
+        var taskState = pc.GetPlayerTaskState();
+        taskState.AllTasksCount = Main.NormalOptions.NumCommonTasks + Main.NormalOptions.NumLongTasks + Main.NormalOptions.NumShortTasks;
 
-        var owner = GetPlayerById(OwnerId);
-        if (owner == null || !owner.IsAlive() || owner.GetRoleClass() is not Pirate)
+        if (AmongUsClient.Instance.AmHost)
         {
-            var state = PlayerState.GetByPlayerId(Player.PlayerId);
-            if (state != null) state.DeathReason = CustomDeathReason.FollowingSuicide;
-            Player.SetRealKiller(owner ?? Player);
-            Player.RpcMurderPlayerV2(Player);
+            pc.Data.RpcSetTasks(Array.Empty<byte>());
+            pc.SyncSettings();
+            UtilsNotifyRoles.NotifyRoles();
         }
     }
-
     public override bool OnCompleteTask(uint taskid)
     {
         if (!AmongUsClient.Instance.AmHost) return true;
