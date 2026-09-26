@@ -70,6 +70,8 @@ public sealed class SelfBomber : RoleBase, IImpostor, IUsePhantomButton
             CustomRoleManager.OnCheckMurder(Player, target, target, target, true, false, 2, CustomDeathReason.Bombed);
         }
 
+        PlaySound();
+
         MyState.DeathReason = CustomDeathReason.Suicide;
         Player.SetRealKiller(Player);
         Player.RpcMurderPlayer(Player);
@@ -101,5 +103,10 @@ public sealed class SelfBomber : RoleBase, IImpostor, IUsePhantomButton
     {
         text = "Limiter_Kill";
         return true;
+    }
+    private void PlaySound()
+    {
+        if (!Player.AmOwner) return;
+        CustomSound.Play(CustomSound.Bomb);
     }
 }

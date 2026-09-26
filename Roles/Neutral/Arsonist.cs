@@ -84,7 +84,7 @@ public sealed class Arsonist : RoleBase, IKiller, IUsePhantomButton
         OptionDistance = FloatOptionItem.Create(RoleInfo, 12, OptionName.ArsonistRange, new(1.25f, 5f, 0.25f), 1.75f, false)
         .SetValueFormat(OptionFormat.Multiplier);
         OverrideKilldistance.Create(RoleInfo, 13);
-        Optionfire = BooleanOptionItem.Create(RoleInfo, 14, OptionName.ArsonistFireOnclick, false, false);
+        Optionfire = BooleanOptionItem.Create(RoleInfo, 14, OptionName.ArsonistFireOnclick, true, false);
     }
     public override void Add()
     {
@@ -104,6 +104,8 @@ public sealed class Arsonist : RoleBase, IKiller, IUsePhantomButton
     public bool CanUseImpostorVentButton() => IsDouseDone(Player) || OptionCanUseVent.GetBool();
     public float CalculateKillCooldown() => DouseCooldown;
     public bool CanUseSabotageButton() => false;
+    bool IUsePhantomButton.IsPhantomRole => IsDouseDone(Player);
+    public override bool CanUseAbilityButton() => IsDouseDone(Player);
     public override string GetProgressText(bool comms = false, bool gamelog = false)
     {
         var doused = GetDousedPlayerCount();

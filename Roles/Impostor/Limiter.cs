@@ -117,6 +117,8 @@ namespace TownOfHost.Roles.Impostor
                     if (distance > blastrange) continue;
                     if (target.PlayerId == Player.PlayerId)
                     {
+                        PlaySound();
+
                         PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = CustomDeathReason.Bombed;
                         Player.RpcMurderPlayer(Player);
                         continue;
@@ -243,6 +245,11 @@ namespace TownOfHost.Roles.Impostor
             if (Player.IsWinner(CustomWinner.MadonnaLovers) && Lovers.MaMadonnaLoversPlayers.Any(lov => lov.PlayerId == Player.PlayerId))
                 if (Player.IsWinner(CustomWinner.CupidLovers) && Lovers.CuCupidLoversPlayers.Any(lov => lov.PlayerId == Player.PlayerId))
                     Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[3]);
+        }
+        private void PlaySound()
+        {
+            if (!Player.AmOwner) return;
+            CustomSound.Play(CustomSound.Bomb);
         }
         public static Dictionary<int, Achievement> achievements = new();
         [Attributes.PluginModuleInitializer]

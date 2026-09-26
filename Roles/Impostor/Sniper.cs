@@ -438,7 +438,7 @@ public sealed class Sniper : RoleBase, IImpostor, IUsePhantomButton
     }
     private void PlayKamaeSound()
     {
-        if (!Player.AmOwner) return;
+        if (Player.GetCustomRole() is not CustomRoles.Sniper) return;
         CustomSound.Play(CustomSound.SniperKamae);
     }
     public override void OnFixedUpdate(PlayerControl player)

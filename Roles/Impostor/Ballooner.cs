@@ -164,6 +164,10 @@ public sealed class Ballooner : RoleBase, IImpostor, IUsePhantomButton
                 CustomRoleManager.OnCheckMurder(Player, target, target, target, true, false, 2, CustomDeathReason.Bombed);
             }
         }
+        if (count is not 0)
+        {
+            PlaySound();
+        }
         if (3 <= count) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[2]);
         if (OptionSuicide.GetBool() is false)
         {
@@ -180,7 +184,11 @@ public sealed class Ballooner : RoleBase, IImpostor, IUsePhantomButton
         NowBoomDis = Mathf.Round(NowBoomDis * 100) / 100;
         UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
     }
-
+    private void PlaySound()
+    {
+        if (!Player.AmOwner) return;
+        CustomSound.Play(CustomSound.Bomb);
+    }
     public override string GetAbilityButtonText() => GetString("BalloonerAbility");
     public override bool OverrideAbilityButton(out string text)
     {

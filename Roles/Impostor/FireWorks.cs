@@ -120,6 +120,7 @@ public sealed class FireWorks : RoleBase, IImpostor, IUsePhantomButton
                 break;
             case FireWorksState.ReadyFire:
                 Logger.Info("花火を爆破", "FireWorks");
+                PlaySound();
                 if (AmongUsClient.Instance.AmHost)
                 {
                     //爆破処理はホストのみ
@@ -206,6 +207,11 @@ public sealed class FireWorks : RoleBase, IImpostor, IUsePhantomButton
             return GetString("FireWorksBomberExplosionButtonText");
         else
             return GetString("FireWorksInstallAtionButtonText");
+    }
+    private void PlaySound()
+    {
+        if (!Player.AmOwner) return;
+        CustomSound.Play(CustomSound.Firework);
     }
     public override bool OverrideAbilityButton(out string text)
     {

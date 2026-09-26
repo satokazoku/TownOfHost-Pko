@@ -10,6 +10,8 @@ public static class CustomSound
 
     public static AudioClip SniperKamae => Get(ref kamae, "TownOfHost.Resources.Sounds.Sniper_Kamae.wav");
     public static AudioClip SniperShot => Get(ref shot, "TownOfHost.Resources.Sounds.Sniper_Shot.wav");
+    public static AudioClip Bomb => Get(ref shot, "TownOfHost.Resources.Sounds.SelfBomber_Bomb.wav");
+    public static AudioClip Firework => Get(ref shot, "TownOfHost.Resources.Sounds.FireWorks_Fire.wav");
 
     private static AudioClip Get(ref AudioClip cache, string resourceName)
     {
