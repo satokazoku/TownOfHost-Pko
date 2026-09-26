@@ -576,7 +576,6 @@ namespace TownOfHost
             CoEnterVentPatch.VentPlayers.Remove(__instance.myPlayer.PlayerId);
 
             var player = __instance.myPlayer;
-            Whiteshark.OnExitVent(__instance);
 
             if (CoEnterVentPatch.OldOnEnterVent.TryGetValue(player.PlayerId, out var canuse))
             {

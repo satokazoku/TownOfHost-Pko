@@ -1769,6 +1769,7 @@ public static class RoleGuideButtonPatch
     {
         // H キーで開閉
         if (Input.GetKeyDown(KeyCode.H) && !IsTextInputActive()) TogglePanel();
+        if (Input.GetKeyDown(KeyCode.Escape) && isPanelOpen) ClosePanel();
 
         if (!isPanelOpen) return;
 

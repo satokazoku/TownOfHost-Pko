@@ -83,8 +83,6 @@ public sealed class EvilStandMaster : RoleBase, IImpostor, IUsePhantomButton
         ReduceOwnKillCD = OptionReduceOwnKillCD.GetBool();
         OwnKillCDReduce = OptionOwnKillCDReduce.GetFloat();
     }
-
-    public float CalculateKillCooldown() => 30f;
     public bool CanUseKillButton() => Player.IsAlive();
     public bool CanUseSabotageButton() => true;
     public bool CanUseImpostorVentButton() => true;

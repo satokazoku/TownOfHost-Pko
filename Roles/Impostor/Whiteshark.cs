@@ -35,8 +35,6 @@ public sealed class Whiteshark : RoleBase, IImpostor, IUsePhantomButton
         lastPosition = Vector2.zero;
         positionInitialized = false;
         spawnTimer = 0f;
-        IsVented = false;
-
     }
 
     static OptionItem OptionKillCooldown;
@@ -49,7 +47,6 @@ public sealed class Whiteshark : RoleBase, IImpostor, IUsePhantomButton
     Vector2 lastPosition;
     bool positionInitialized;
     float spawnTimer;
-    static bool IsVented;
     float Last;
     float Cool;
     static float KillCooldown => OptionKillCooldown?.GetFloat() ?? 17.5f;
@@ -141,7 +138,7 @@ public sealed class Whiteshark : RoleBase, IImpostor, IUsePhantomButton
                 isStopped = true;
             }
             //ベント内だったら止まってる秒数増やさないので、クールだけ反映する
-            if (IsVented)
+            if (player.inVent)
             {
                 Cool = StopTime - stopTimer;
 
@@ -199,23 +196,6 @@ public sealed class Whiteshark : RoleBase, IImpostor, IUsePhantomButton
         isStopped = false;
         positionInitialized = false;
         spawnTimer = 0f;
-        IsVented = false;
-    }
-    public override bool OnEnterVent(PlayerPhysics physics, int ventId)
-    {
-        if (!CanVent)
-        {
-            return false;
-        }
-        else
-        {
-            IsVented = true;
-            return true;
-        }
-    }
-    public static void OnExitVent(PlayerPhysics physics)
-    {
-        IsVented = false;
     }
     public override bool OverrideAbilityButton(out string text)
     {

@@ -74,10 +74,7 @@ public sealed class SmokeMaker : RoleBase, IImpostor, IUsePhantomButton
         OptionMaxDummies = IntegerOptionItem.Create(RoleInfo, 14, OptionName.SmokeMakerMaxDummies,
             new(1, 20, 1), 5, false).SetValueFormat(OptionFormat.Pieces);
         OptionSwapControls = BooleanOptionItem.Create(RoleInfo, 15, OptionName.SmokeMakerSwapControls, false, false);
-    }
-
-    public float CalculateKillCooldown() => 30f;
-    public bool CanUseSabotageButton() => true;
+    }    public bool CanUseSabotageButton() => true;
     public bool CanUseImpostorVentButton() => true;
 
     bool IUsePhantomButton.IsPhantomRole => true;
