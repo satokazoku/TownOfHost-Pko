@@ -524,6 +524,7 @@ namespace TownOfHost
         Vanity = CustomRoles.Vanity,
         HASTroll = CustomRoles.HASTroll,
         TaskPlayerB = CustomRoles.TaskPlayerB,
+        Moira = CustomRoles.Moira,
         SuddenDeathRed = 1000, SuddenDeathBlue = 1001, SuddenDeathYellow = 1002, SuddenDeathGreen = 1003, SuddenDeathPurple = 1004
     }
     /*public enum CustomRoles : byte

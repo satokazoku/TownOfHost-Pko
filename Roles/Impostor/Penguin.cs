@@ -129,7 +129,7 @@ class Penguin : RoleBase, IImpostor
             if (target != AbductVictim)
             {
                 //拉致中は拉致相手しか切れない
-                Player.RpcMurderPlayer(AbductVictim);
+                CustomRoleManager.OnCheckMurder(Player, AbductVictim, Player, AbductVictim);
                 Player.ResetKillCooldown();
                 info.DoKill = false;
             }
@@ -178,13 +178,13 @@ class Penguin : RoleBase, IImpostor
         // 時間切れ状態で会議を迎えたらはしご中でも構わずキルする
         if (AbductVictim != null && AbductTimer <= 0f)
         {
-            Player.RpcMurderPlayer(AbductVictim);
+            CustomRoleManager.OnCheckMurder(Player, AbductVictim, Player, AbductVictim);
         }
         if (MeetingKill)
         {
             if (!AmongUsClient.Instance.AmHost) return;
             if (AbductVictim == null) return;
-            Player.RpcMurderPlayer(AbductVictim);
+            CustomRoleManager.OnCheckMurder(Player, AbductVictim, Player, AbductVictim);
             RemoveVictim();
         }
     }
@@ -224,30 +224,8 @@ class Penguin : RoleBase, IImpostor
                 // ペンギン自身がはしご上にいる場合，はしごを降りてからキルする
                 if (!AbductVictim.MyPhysics.Animations.IsPlayingAnyLadderAnimation())
                 {
-                    var abductVictim = AbductVictim;
-                    _ = new LateTask(() =>
-                    {
-                        var sId = abductVictim.NetTransform.lastSequenceId + 5;
-                        abductVictim.NetTransform.SnapTo(Player.transform.position, (ushort)sId);
-                        Player.MurderPlayer(abductVictim);
+                    CustomRoleManager.OnCheckMurder(Player, AbductVictim, Player, AbductVictim);
 
-                        var sender = CustomRpcSender.Create("PenguinMurder");
-                        {
-                            sender.AutoStartRpc(abductVictim.NetTransform.NetId, (byte)RpcCalls.SnapTo);
-                            {
-                                NetHelpers.WriteVector2(Player.transform.position, sender.stream);
-                                sender.Write(abductVictim.NetTransform.lastSequenceId);
-                            }
-                            sender.EndRpc();
-                            sender.AutoStartRpc(Player.NetId, (byte)RpcCalls.MurderPlayer);
-                            {
-                                sender.WriteNetObject(abductVictim);
-                                sender.Write((int)ExtendedPlayerControl.SucceededFlags);
-                            }
-                            sender.EndRpc();
-                        }
-                        sender.SendMessage();
-                    }, 0.3f, "PenguinMurder");
                     RemoveVictim();
                     Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);
                 }
@@ -292,6 +270,7 @@ class Penguin : RoleBase, IImpostor
         {
             if (info.AttemptKiller.PlayerId == AbductVictim.PlayerId)
                 Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[2]);
+            RemoveVictim();
         }
     }
     public static bool OnEnterVentOthers(PlayerPhysics physics, int ventId)

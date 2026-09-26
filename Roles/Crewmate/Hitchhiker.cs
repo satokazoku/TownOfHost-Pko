@@ -1,4 +1,4 @@
-using UnityEngine;
+/*using UnityEngine;
 using AmongUs.GameOptions;
 using Hazel;
 using TownOfHost.Roles.Core;
@@ -408,4 +408,4 @@ public sealed class Hitchhiker : RoleBase
             Player.petting = false;
         }
     }
-}
+}*/

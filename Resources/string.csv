@@ -308,6 +308,7 @@
 "Dracula","Dracula","ドラキュラ"
 "Kenzoku","Servant","眷属"
 "DollBetrayer","Doll Betlayer","ドールベトレイヤー"
+"Moira","Moira","モイラ"
 "#NeutralName"
 
 "#コンビネーション役職"
@@ -728,6 +729,7 @@
 "VanityInfo","What the Gratest Power!","あなたの正義でありたい"
 "DollBetrayerInfo","Good work, guys—you're just pawns.","ご苦労様、貴方達は捨て駒だから"
 "DraculaInfo","I can't live unless I drink blood...","血を飲まなければ生きていけない..."
+"MoiraInfo","Fate is in my hands!","運命は私の手の中に！"
 "#NeutralInfo"
 
 "# HideAndSeek"
@@ -1083,6 +1085,7 @@
 "VanityInfoLong","Although he believes himself to be the Sheriff, he does not accidentally shoot anyone. \nIf he has never killed a Crew member, he can earn an additional victory by joining the Crew. \nThe victory conditions for killing a Crew member vary depending on the settings.","自身をシェリフと思い込んでいるが、誤爆はしない。\nクルー陣営を一度もキルしていない場合クルー陣営と追加勝利できる。\nクルー陣営をキルした場合の勝利条件は設定によって変わる。"
 "DollBetrayerInfoLong","Sides with the Jackal team.\n Possesses the ability to kill an Jackal after completing all tasks.\nWhen the Jackal is killed, the role changes to Betrayer, gaining the ability to kill anyone.\nUpon becoming a Betrayer, the win condition changes to:\n“All harmful killing roles are dead, and the number of surviving Betrayers is equal to or greater than the number of Crewmates.”","ジャッカル陣営の味方をする。\n全てのタスクを完了させるとジャッカルをキルできる能力を持つ。\n\nジャッカルをキルすると、役職がベトレイヤーに変化し、全員を殺すことができるようになる。\nベトレイヤーになると勝利条件が\n「有害なキル役職が死亡しており、生き残っているベトレイヤーの人数がクルーと同じかそれ以上」に変化する。"
 "DraculaInfoLong","Using the Kill Button causes you to “suck blood” from the player who used it. \nIf you do not suck blood for a certain amount of time, you will die. \nA player who has had their blood sucked has a certain probability of dying. This probability increases by a fixed amount each time. Additionally, there is a certain probability that they will become a minion. \nA player who dies from having their blood sucked does not become a minion. \nUpon becoming a minion, the player loses their original victory condition, and their new victory condition becomes Dracula’s victory.\nIf Dracula dies, the minions also die.\nYou cannot use Bloodsucking on minions.\nVictory is achieved when the total number of Dracula and minions is more than half the number of survivors, and all remaining survivors have harmless roles (count = Crewmates).","キルボタンを使用することで使用したプレイヤーに対して「吸血」を行う。\n吸血を一定時間行わないと死亡してしまう。\n吸血されたプレイヤーは一定確率で死亡する。この確率は一定値ずつ上昇する。また、一定確率で眷属になる。\n吸血で死亡したプレイヤーは眷属にはならない。\n眷属になると元の勝利条件を失い、勝利条件はドラキュラの勝利になる。\nドラキュラが死亡すると眷属も死亡する。\n眷属に対して吸血は使用できない。\nドラキュラと眷属の総数が生存者の半数以上かつ、他の生存者が無害(カウント=クルーメイト)な役職になると勝利。"
+"MoiraInfoLong","Moira can alter the fates of others by swapping two players' roles.\n\nDuring a meeting, self-vote to enter [Fate Change Mode].\nThen vote for your 1st target, then vote for your 2nd target.\nAt the end of the meeting, the two targets will have their roles swapped.\n\nYou have a limited number of swaps.\nOnce all swaps are used, your identity is revealed to everyone.\nIf you survive to the end after using all your swaps, you win!\n\nSwapped roles are permanent — they are NOT reverted even if Moira dies.\n\nIf [Swap Votes] is ON:\nVotes cast on your two targets will be counted for the other target instead.","モイラは2人のプレイヤーの役職を入れ替えることができる。\n\n会議中に自分自身に投票すると【運命改変モード】に入る。\n次に1人目のターゲットに投票し、さらに2人目のターゲットに投票する。\n会議終了時に、その2人の役職が入れ替わる。\n\n改変回数には上限がある。\n全ての改変を使い切ると、モイラの正体が全員に公開される。\n全改変を使い切り、試合終了後に生存していると単独勝利！ない。"
 "#NeutralInfoLong"
 
 "# ImpostorDescInfos"
@@ -2679,6 +2682,13 @@
 "OnKilled","When Killed","自身がキルされたとき"
 "AfterMeetingStart","After Meeting Starts","会議開始後"
 "OnTaskComplete","On Task Complete","タスク完了毎時"
+"MoiraMaxSwaps","Max Swaps","最大改変回数"
+"MoiraSwapVotes","Swap Vote Targets","投票先も入れ替える"
+"Mode.Moira","Fate Swap","運命改変"
+"Vote.Moira","Vote for 1st target","1人目に投票"
+"MoiraSwapAnnounce","A sudden feeling of distortion....\nNothing happens....\nNo, something is happening\nSuch a feeling remains\n\nTarget1: {0}\nTarget2: {1}","突然、体が歪む感覚が....\n何も起こらない....\nいや、何かは起きている\nそんな感覚を覚える\n\n対象1: {0}\n対象2: {1}"
+"MoiraRevealed","{0} has used all fate swaps. Their identity is now revealed!","{0} の運命改変が全て使われた。正体が明らかになった！"
+"MoiraExiledRevert","Moira has been eliminated. All fate swaps have been undone.","モイラが追放された。全ての運命改変が解除された。"
 "OgreKillSuccessRate","Percentage Reduction in the Rate of Successful Kill(*)","キル成功確率が減少する割合(×)",
 "OgreKilledGuardRate","Killed Guard Rate","キルされる時にガードする確率",
 "PirateLimitTurn","Turn Required To Create Gang","一味を作成しないといけないターン数",
