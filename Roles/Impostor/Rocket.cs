@@ -1,4 +1,3 @@
-/*
 using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
@@ -147,15 +146,15 @@ public sealed class Rocket : RoleBase, IImpostor, IUsePhantomButton
 
     void SetAppearsAsImpostorForRocket(PlayerControl target, bool asImpostor)
     {
-        if (!AmongUsClient.Instance.AmHost) return;
-        if (Player.AmOwner) return;
+        //if (!AmongUsClient.Instance.AmHost) return;
+        //if (Player.AmOwner) return;
 
-        var fakeRole = asImpostor ? RoleTypes.Impostor : target.Data.RoleType;
+        /*var fakeRole = asImpostor ? RoleTypes.Impostor : target.Data.RoleType;
         var writer = AmongUsClient.Instance.StartRpcImmediately(
             target.NetId, (byte)RpcCalls.SetRole, SendOption.Reliable, Player.OwnerId);
         writer.Write((ushort)fakeRole);
         writer.Write(true);
-        AmongUsClient.Instance.FinishRpcImmediately(writer);
+        AmongUsClient.Instance.FinishRpcImmediately(writer);*/
     }
 
     void ReleasePlayer(PlayerControl target)
@@ -324,19 +323,13 @@ public sealed class Rocket : RoleBase, IImpostor, IUsePhantomButton
         snapFrame++;
         if (snapFrame % 3 != 0) return;
 
-        var myPos = Player.GetTruePosition();
         foreach (var grabbed in GrabbedPlayers.ToArray())
         {
             if (grabbed == null || !grabbed.IsAlive()) continue;
-            if (grabbed.MyPhysics.Animations.IsPlayingAnyLadderAnimation()) continue;
-            var sId = grabbed.NetTransform.lastSequenceId + 5;
-            ushort sid = (ushort)(grabbed.NetTransform.lastSequenceId + 2U);
-            grabbed.NetTransform.SnapTo(Player.transform.position, (ushort)sId);
-            var writer = AmongUsClient.Instance.StartRpcImmediately(
-                grabbed.NetTransform.NetId, (byte)RpcCalls.SnapTo, SendOption.Reliable);
-            NetHelpers.WriteVector2(myPos, writer);
-            writer.Write(sid);
-            AmongUsClient.Instance.FinishRpcImmediately(writer);
+            Vector3 pos = Player.transform.position;
+            pos.x = pos.x - 0.75f;
+            pos.z = pos.z + 10f;
+            grabbed.RpcSnapToForced(pos);
         }
     }
 
@@ -521,4 +514,3 @@ public sealed class Rocket : RoleBase, IImpostor, IUsePhantomButton
         return true;
     }
 }
-*/
