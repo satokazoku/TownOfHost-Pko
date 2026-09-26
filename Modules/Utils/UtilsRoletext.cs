@@ -298,11 +298,11 @@ namespace TownOfHost
                 {
                     (color, text) = GetRoleNameData(missrole, Subrole, state.GhostRole, showSubRoleMarks);
                 }
-                /*if (state.MainRole is CustomRoles.Amnesiac)
+                if (state.MainRole is CustomRoles.Amnesiac)
                 {
                     if (roleClass is Amnesiac amnesiac && !amnesiac.Realized)
                         (color, text) = GetRoleNameData(Amnesiac.IsWolf ? CustomRoles.WolfBoy : CustomRoles.Sheriff, Subrole, state.GhostRole, showSubRoleMarks);
-                }*/
+                }
                 if (state.MainRole is CustomRoles.Vanity)
                 {
                     if (roleClass is Vanity vanity && !vanity.Realized)
@@ -329,14 +329,14 @@ namespace TownOfHost
         {
             if (role.IsMadmate() && MadmateOrange) return ModColors.MadMateOrenge;
             if (!Main.roleColors.TryGetValue(role, out var hexColor)) hexColor = role.GetRoleInfo()?.RoleColorCode ?? "#cccccc";
-            //if (role is CustomRoles.Amnesiac && Amnesiac.IsWolf) hexColor = CustomRoles.WolfBoy.GetRoleInfo()?.RoleColorCode ?? "#727171";
+            if (role is CustomRoles.Amnesiac && Amnesiac.IsWolf) hexColor = CustomRoles.WolfBoy.GetRoleInfo()?.RoleColorCode ?? "#727171";
             _ = ColorUtility.TryParseHtmlString(hexColor, out Color c);
             return c;
         }
         public static string GetRoleColorCode(CustomRoles role, bool Madcolor = false)
         {
             if (!Main.roleColors.TryGetValue(role, out var hexColor)) hexColor = role.GetRoleInfo()?.RoleColorCode;
-            //if (role is CustomRoles.Amnesiac && Amnesiac.IsWolf) hexColor = CustomRoles.WolfBoy.GetRoleInfo()?.RoleColorCode ?? "#727171";
+            if (role is CustomRoles.Amnesiac && Amnesiac.IsWolf) hexColor = CustomRoles.WolfBoy.GetRoleInfo()?.RoleColorCode ?? "#727171";
             if (role.IsMadmate() && Madcolor) hexColor = "#ff7f50";
             return hexColor;
         }

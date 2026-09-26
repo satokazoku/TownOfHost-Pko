@@ -1140,11 +1140,11 @@ namespace TownOfHost
                                     ismiss = true;
                                 }
                             }
-                            /*if (role is CustomRoles.Amnesiac)
+                            if (role is CustomRoles.Amnesiac)
                             {
                                 if (roleClass is Amnesiac amnesiac && !amnesiac.Realized)
                                     role = Amnesiac.IsWolf ? CustomRoles.WolfBoy : CustomRoles.Sheriff;
-                            }*/
+                            }
                             if (role is CustomRoles.Vanity)
                             {
                                 if (roleClass is Vanity vanity && !vanity.Realized)
@@ -1189,11 +1189,11 @@ namespace TownOfHost
                                             ismiss = true;
                                             role = missrole;
                                         }
-                                        /*if (role is CustomRoles.Amnesiac)
+                                        if (role is CustomRoles.Amnesiac)
                                         {
                                             if (roleClass is Amnesiac amnesiac && !amnesiac.Realized)
                                                 role = Amnesiac.IsWolf ? CustomRoles.WolfBoy : CustomRoles.Sheriff;
-                                        }*/
+                                        }
                                         if (role is CustomRoles.Vanity)
                                         {
                                             if (roleClass is Vanity vanity && !vanity.Realized)
@@ -1254,12 +1254,13 @@ namespace TownOfHost
                                 && (local.GetCustomRole().IsImpostor() || local.GetCustomRole() is CustomRoles.Egoist)
                                 && !local.Is(CustomRoles.OneWolf))
                             {
-                                //if ((local.GetRoleClass() as Amnesiac)?.Realized == false) break;
+                                if ((local.GetRoleClass() as Amnesiac)?.Realized == false) break;
                                 Logger.Info($"{local.Data.GetLogPlayerName()} : {send}", "impostorsChat");
                                 List<PlayerControl> sendplayers = new();
                                 foreach (var imp in AllPlayerControls)
                                 {
-                                    //if ((imp.GetRoleClass() as Amnesiac)?.Realized == false && imp.IsAlive()) continue;
+                                    if ((imp.GetRoleClass() as Amnesiac)?.Realized == false && imp.IsAlive()) continue;
+                                    if ((imp.GetRoleClass() as Amnesiac)?.Realized == false && imp.IsAlive()) continue;
                                     if ((imp.GetCustomRole().IsImpostor() || imp.GetCustomRole() is CustomRoles.Egoist)
                                         && !OneWolf.playerIdList.Contains(imp.PlayerId))
                                     {
@@ -2456,11 +2457,11 @@ namespace TownOfHost
                             ismiss = true;
                             role = missrole;
                         }
-                        /*if (role is CustomRoles.Amnesiac)
+                        if (role is CustomRoles.Amnesiac)
                         {
                             if (roleclass is Amnesiac amnesiac && !amnesiac.Realized)
                                 role = Amnesiac.IsWolf ? CustomRoles.WolfBoy : CustomRoles.Sheriff;
-                        }*/
+                        }
                         if (role is CustomRoles.Vanity)
                         {
                             if (roleclass is Vanity vanity && !vanity.Realized)
@@ -2816,12 +2817,12 @@ namespace TownOfHost
                             && (role.IsImpostor() || role is CustomRoles.Egoist)
                             && !OneWolf.playerIdList.Contains(player.PlayerId))
                         {
-                            //if ((player.GetRoleClass() as Amnesiac)?.Realized == false) { canceled = true; break; }
+                            if ((player.GetRoleClass() as Amnesiac)?.Realized == false) { canceled = true; break; }
                             if (GetHideSendText(ref canceled, ref send) is false) return;
                             Logger.Info($"{player.Data.GetLogPlayerName()} : {send}", "ImpostorChat");
                             foreach (var imp in AllPlayerControls)
                             {
-                                //if ((imp.GetRoleClass() as Amnesiac)?.Realized == false && imp.IsAlive()) continue;
+                                if ((imp.GetRoleClass() as Amnesiac)?.Realized == false && imp.IsAlive()) continue;
                                 if (imp.PlayerId == player.PlayerId && !Isclient) continue;
                                 bool isTarget = (imp.GetCustomRole().IsImpostor() || imp.GetCustomRole() is CustomRoles.Egoist)
                                                 && !OneWolf.playerIdList.Contains(imp.PlayerId);

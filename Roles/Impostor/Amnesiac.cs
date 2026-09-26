@@ -1,7 +1,7 @@
 using AmongUs.GameOptions;
 using UnityEngine;
 
-/*using TownOfHost.Roles.Core;
+using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Crewmate;
 using Hazel;
@@ -40,7 +40,8 @@ public sealed class Amnesiac : RoleBase, IImpostor
         KillsRequired = OptKillsRequired.GetInt();
         CanUseVent = OptCanUseVent.GetBool();
         CanUseSabotage = OptCanUseSabotage.GetBool();
-        IsWolf = OptIsWolfBoy.GetBool();
+        //IsWolf = OptIsWolfBoy.GetBool();
+        IsWolf = true;
         ShShotLimit = IsWolf ? WolfBoy.ShotLimitOpt.GetInt() : Sheriff.ShotLimitOpt.GetInt();
         ShKillCooldown = IsWolf ? WolfBoy.KillCooldown.GetFloat() : Sheriff.KillCooldown.GetFloat();
         ShCanKillAllAlive = IsWolf ? WolfBoy.CanKillAllAlive.GetBool() : Sheriff.CanKillAllAlive.GetBool();
@@ -103,12 +104,13 @@ public sealed class Amnesiac : RoleBase, IImpostor
         OptNeedtoLastImpostor = BooleanOptionItem.Create(RoleInfo, 18, Options.AmnesiacNeedtoLastImpostor, false, false, OptRealize);
         OptCanUseVent = BooleanOptionItem.Create(RoleInfo, 16, Options.AmnesiacCanUseVent, false, false, OptRealize);
         OptCanUseSabotage = BooleanOptionItem.Create(RoleInfo, 17, Options.AmnesiacCanUseSabotage, false, false, OptRealize);
-        OptIsWolfBoy = BooleanOptionItem.Create(RoleInfo, 20, Options.AmnesiacIsWolfboy, false, false);
+        //OptIsWolfBoy = BooleanOptionItem.Create(RoleInfo, 20, Options.AmnesiacIsWolfboy, false, false);
     }
 
     public float CalculateKillCooldown() => MatchSettingstoSheriff && !Realized ? ShKillCooldown : TownOfHost.Options.DefaultKillCooldown;
     public bool CanUseImpostorVentButton() => Realized && CanUseVent;
     public bool CanUseSabotageButton() => Realized && CanUseSabotage;
+    public override CustomRoles Misidentify() => Realized ? CustomRoles.NotAssigned : CustomRoles.WolfBoy;
     public bool CanUseKillButton()
     {
         if (!Player.IsAlive()) return false;
@@ -209,4 +211,4 @@ public sealed class Amnesiac : RoleBase, IImpostor
         Realized = reader.ReadBoolean();
     }
 
-}*/
+}

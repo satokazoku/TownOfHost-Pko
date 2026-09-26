@@ -161,6 +161,14 @@ public sealed class King : RoleBase
                     addon = false;
                     return;
                 }
+                else if (seer.GetRoleClass() is Amnesiac am && !am.Realized)
+                {
+                    enabled = true;
+                    roleColor = StringHelper.CodeColor("#FFD700");
+                    roleText = GetString("King");
+                    addon = false;
+                    return;
+                }
                 else
                 {
                     enabled = false;

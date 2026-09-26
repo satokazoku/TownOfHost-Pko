@@ -42,7 +42,7 @@ namespace TownOfHost
                 {
                     if (targetRole.GetRoleInfo()?.IsCantSeeTeammates == true)
                         colorCode = Roles.Vanilla.Impostor.RoleInfo.RoleColorCode;
-                    if ((seerRole.GetRoleInfo()?.IsCantSeeTeammates == true /*&& !(roleClass as Amnesiac).Realized) */|| seer.Is(CustomRoles.OneWolf) || target.Is(CustomRoles.OneWolf)))
+                    if ((seerRole.GetRoleInfo()?.IsCantSeeTeammates == true && !(roleClass as Amnesiac).Realized) || seer.Is(CustomRoles.OneWolf) || target.Is(CustomRoles.OneWolf))
                         colorCode = "#ffffff"; //white
                 }
             }
@@ -61,8 +61,8 @@ namespace TownOfHost
         {
             return seer == target
                 || target.Is(CustomRoles.GM)
-                || (seer.Is(CustomRoleTypes.Impostor) && target.Is(CustomRoleTypes.Impostor))
-                //&& (!seer.Is(CustomRoles.Amnesiac) || ((PlayerControl.LocalPlayer.GetRoleClass() as Amnesiac)?.Realized ?? false))
+                || (seer.Is(CustomRoleTypes.Impostor) && target.Is(CustomRoleTypes.Impostor)
+                && (!seer.Is(CustomRoles.Amnesiac) || ((PlayerControl.LocalPlayer.GetRoleClass() as Amnesiac)?.Realized ?? false)))
                 || Mare.KnowTargetRoleColor(target, isMeeting)
                 || QuickKiller.KnowTargetRoleColor(target, isMeeting)
                 || Huntman.KnowTargetRoleColor(target, isMeeting)

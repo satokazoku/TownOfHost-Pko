@@ -672,11 +672,11 @@ namespace TownOfHost
                 role = missrole;
             }
 
-            /*if (role is CustomRoles.Amnesiac)
+            if (role is CustomRoles.Amnesiac)
             {
                 if (roleclas is Amnesiac amnesiac && !amnesiac.Realized)
                     role = Amnesiac.IsWolf ? CustomRoles.WolfBoy : CustomRoles.Sheriff;
-            }*/
+            }
             if (role is CustomRoles.Vanity)
             {
                 if (roleclas is Vanity vanity && !vanity.Realized)

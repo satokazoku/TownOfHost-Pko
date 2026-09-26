@@ -56,13 +56,13 @@ namespace TownOfHost
                         __instance.RoleBlurbText.color = UtilsRoleText.GetRoleColor(role);
                     }
                     //Amnesiacだった場合シェリフと表示させる
-                    /*if (role == CustomRoles.Amnesiac)
+                    if (role == CustomRoles.Amnesiac)
                     {
                         __instance.RoleText.text = Amnesiac.IsWolf ? UtilsRoleText.GetRoleName(CustomRoles.WolfBoy) : UtilsRoleText.GetRoleName(CustomRoles.Sheriff);
                         __instance.YouAreText.color = UtilsRoleText.GetRoleColor(role);
                         __instance.RoleText.color = UtilsRoleText.GetRoleColor(role);
                         __instance.RoleBlurbText.color = UtilsRoleText.GetRoleColor(role);
-                    }*/
+                    }
                 }
                 else
                     if (role.IsVanilla())
@@ -256,7 +256,7 @@ namespace TownOfHost
                     else __instance.BackgroundBar.material.color = Palette.DisabledGrey;
                     break;
             }
-            //if (role is CustomRoles.Amnesiac) role = Amnesiac.IsWolf ? CustomRoles.WolfBoy : CustomRoles.Sheriff;
+            if (role is CustomRoles.Amnesiac) role = Amnesiac.IsWolf ? CustomRoles.WolfBoy : CustomRoles.Sheriff;
             switch (role)
             {
                 case CustomRoles.Sheriff:
