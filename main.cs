@@ -165,7 +165,7 @@ namespace TownOfHost
         public static bool ShowRoleIntro;
         public static bool DontGameSet;
         public static bool CanUseAbility;
-        public static CustomRoles HostRole = CustomRoles.NotAssigned;
+        public static Dictionary<byte, CustomRoles> ChangeRoles = new();
 
         /// <summary>
         /// 基本的に速度の代入は禁止.スピードは増減で対応してください.

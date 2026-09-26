@@ -249,14 +249,15 @@ namespace TownOfHost
                         PlayerControl.LocalPlayer.RpcSetRole(RoleTypes.Crewmate, Main.SetRoleOverride && GameModeManager.IsStandardClass());
                         PlayerControl.LocalPlayer.Data.IsDead = true;
                     }
-                    if (DebugModeManager.EnableTOHPDebugMode.GetBool())
+                    foreach (var pc in Main.ChangeRoles.Keys)
                     {
-                        if (Main.HostRole != CustomRoles.NotAssigned)
+                        if (Main.ChangeRoles[pc] != CustomRoles.NotAssigned)
                         {
-                            AllPlayers.RemoveAll(x => x.PlayerId == PlayerControl.LocalPlayer.PlayerId);
-                            PlayerControl.LocalPlayer.RpcSetCustomRole(Main.HostRole, true);
-                            PlayerControl.LocalPlayer.RpcSetRole(Main.HostRole.GetRoleInfo()?.BaseRoleType.Invoke() ?? RoleTypes.Crewmate, Main.SetRoleOverride && GameModeManager.IsStandardClass());
-                            PlayerControl.LocalPlayer.Data.IsDead = true;
+                            var player = PlayerCatch.GetPlayerById(pc);
+                            AllPlayers.RemoveAll(x => x.PlayerId == player.PlayerId);
+                            player.RpcSetCustomRole(Main.ChangeRoles[pc], true);
+                            player.RpcSetRole(Main.ChangeRoles[pc].GetRoleInfo()?.BaseRoleType.Invoke() ?? RoleTypes.Crewmate, Main.SetRoleOverride && GameModeManager.IsStandardClass());
+                            //player.Data.IsDead = true;
                         }
                     }
                     if (SuddenDeathMode.NowSuddenDeathMode)

@@ -120,7 +120,7 @@ namespace TownOfHost
             => DebugModeManager.EnableDebugMode.GetBool();
 
         private static bool CanUseChangeRoleCommand(PlayerControl player)
-            => DebugModeManager.EnableTOHPDebugMode.GetBool();
+            => /*DebugModeManager.EnableTOHPDebugMode.GetBool();*/true;
 
         private static void ExecuteInGameRoleChange(PlayerControl sender, string[] args)
         {
@@ -174,7 +174,51 @@ namespace TownOfHost
             RPC.RpcSyncAllNetworkedPlayer();
             Logger.Info($"/cmd rev: {sender.GetNameWithRole().RemoveHtmlTags()} revived {target.GetNameWithRole().RemoveHtmlTags()}", "ChatCommand");
         }
+        private static void ExecuteRoleChangeCommand(PlayerControl sender, string[] args)
+        {
+            if (!CanUseChangeRoleCommand(sender))
+            {
+                Logger.Warn($"Denied /cmd cr from {sender.GetNameWithRole().RemoveHtmlTags()} (FriendCode:{sender.GetClient()?.FriendCode ?? "null"})", "ChatCommand");
+                return;
+            }
 
+            if (args.Length < 2) return;
+
+            var target = sender;
+            if (args.Length >= 3 && byte.TryParse(args[2], out var playerId))
+                target = GetPlayerById(playerId) ?? sender;
+
+            if (GetRoleByInputName(args[1], out var role, true))
+            {
+                if (GameStates.InGame)
+                {
+                    NameColorManager.RemoveAll(target.PlayerId);
+                    target.RpcSetCustomRole(role, true, true);
+                    RPC.RpcSyncAllNetworkedPlayer();
+                    var rolenameIngame = ColorString(GetRoleColor(role), GetString($"{role}"));
+                    SendMessage($"{UtilsName.GetPlayerColor(target, true)}の役職を{rolenameIngame}にするよっ!!", sender.PlayerId);
+                    Logger.Info($"/cmd cr: {sender.GetNameWithRole().RemoveHtmlTags()} changed {target.GetNameWithRole().RemoveHtmlTags()} to {role}", "ChatCommand");
+                }
+                else
+                {
+                    if (role.IsAddOn() || role.IsGhostRole() || role.IsLovers()) return;
+                    Main.ChangeRoles[target.PlayerId] = role;
+                    var rolename = ColorString(GetRoleColor(role), GetString($"{role}"));
+                    SendMessage($"{UtilsName.GetPlayerColor(target, true)}の役職を{rolename}にするよっ!!", sender.PlayerId);
+                    Logger.Info($"/cmd cr(lobby): {sender.GetNameWithRole().RemoveHtmlTags()} set {target.GetNameWithRole().RemoveHtmlTags()} fixed role to {role}", "ChatCommand");
+                }
+            }
+            else
+            {
+                if (Main.ChangeRoles[target.PlayerId] == CustomRoles.NotAssigned)
+                    SendMessage("役職変更に失敗したよ(´・ω・｀)", sender.PlayerId);
+                else
+                {
+                    Main.ChangeRoles[target.PlayerId] = CustomRoles.NotAssigned;
+                    SendMessage("役職固定をリセットしたよっ!", sender.PlayerId);
+                }
+            }
+        }
         private static bool IsHostRenameSender(PlayerControl sender)
             => AmongUsClient.Instance.AmHost && sender != null && sender.AmOwner;
 
@@ -1881,7 +1925,10 @@ namespace TownOfHost
                                 SendMessage(Main.UseingJapanese ? $"{targetname}って名前のプレイヤーがいないよっ..." : "そんな名前のプレイヤーはいません！", 0);
                         }
                         break;
-
+                    case "/cr":
+                        canceled = true;
+                        ExecuteRoleChangeCommand(PlayerControl.LocalPlayer, args);
+                        break;
                     case "/st":
                     case "/setteam":
 
@@ -1930,45 +1977,6 @@ namespace TownOfHost
                                 break;
                             }
                             SendMessage("引数の値が正しくありません。", PlayerControl.LocalPlayer.PlayerId);
-                        }
-                        break;
-
-                    case "/cr":
-                        if (CanUseChangeRoleCommand(PlayerControl.LocalPlayer))
-                        {
-                            canceled = true;
-                            subArgs = args.Length < 2 ? "" : args[1];
-                            var pc = PlayerControl.LocalPlayer;
-                            if (args.Length > 2 && int.TryParse(args[2], out var taisho))
-                            {
-                                pc = GetPlayerById(taisho);
-                                if (pc == null) pc = PlayerControl.LocalPlayer;
-                            }
-                            if (GetRoleByInputName(subArgs, out var role, true))
-                            {
-                                if (GameStates.InGame)
-                                {
-                                    NameColorManager.RemoveAll(pc.PlayerId);
-                                    pc.RpcSetCustomRole(role, true, true);
-                                    RPC.RpcSyncAllNetworkedPlayer();
-                                }
-                                else
-                                {
-                                    if (role.IsAddOn() || role.IsGhostRole() || role.IsLovers()) break;
-                                    Main.HostRole = role;
-                                    var rolename = ColorString(GetRoleColor(role), GetString($"{role}"));
-                                    SendMessage($"ホストの役職を{rolename}にするよっ!!");
-                                }
-                            }
-                            else
-                            {
-                                if (Main.HostRole == CustomRoles.NotAssigned) SendMessage("役職変更に失敗したよ(´・ω・｀)", PlayerControl.LocalPlayer.PlayerId);
-                                else
-                                {
-                                    Main.HostRole = CustomRoles.NotAssigned;
-                                    SendMessage("役職固定をリセットしたよっ!", PlayerControl.LocalPlayer.PlayerId);
-                                }
-                            }
                         }
                         break;
                     case "/fps":
@@ -2291,7 +2299,7 @@ namespace TownOfHost
                     break;
 
                 case "/cr":
-                    ExecuteInGameRoleChange(player, args);
+                    ExecuteRoleChangeCommand(player, args);
                     break;
 
                 case "/ruler":
