@@ -8,6 +8,8 @@ using TownOfHost.Modules;
 using TownOfHost.Roles;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Impostor;
+using TownOfHost.Roles.Neutral;
 
 namespace TownOfHost;
 
@@ -426,7 +428,7 @@ public sealed class Chameleon : RoleBase, IAdditionalWinner
 
 
 //よく見つけたね...(
-public sealed class MadPukupuku : RoleBase, IKillFlashSeeable, IDeathReasonSeeable
+public sealed class MadPukupuku : RoleBase, IKillFlashSeeable, IDeathReasonSeeable, IKiller
 {
     public static readonly SimpleRoleInfo RoleInfo =
         SimpleRoleInfo.Create(
@@ -438,8 +440,9 @@ public sealed class MadPukupuku : RoleBase, IKillFlashSeeable, IDeathReasonSeeab
             22900,
             SetupOptionItem,
             "mpk",
-            OptionSort: (2, 2),
-            introSound: () => GetIntroSound(RoleTypes.Impostor),
+            isDesyncImpostor: true,
+            OptionSort: (0, 1),
+            introSound: () => GetIntroSound(RoleTypes.Shapeshifter),
             from: From.TownOfHost_Pko
         );
     public MadPukupuku(PlayerControl player)
@@ -451,19 +454,34 @@ public sealed class MadPukupuku : RoleBase, IKillFlashSeeable, IDeathReasonSeeab
     {
         canSeeKillFlash = Options.MadmateCanSeeKillFlash.GetBool();
         canSeeDeathReason = Options.MadmateCanSeeDeathReason.GetBool();
+        RevCount = 0;
+        SaihaifuCount = 0;
     }
     static OptionItem OptionCanVent;
     static OptionItem OptionRevengeImpostor;
     static OptionItem OptionNotify;
-
-    private static bool canSeeKillFlash;
-    private static bool canSeeDeathReason;
+    static OptionItem OptionCanKill;
+    static OptionItem OptionKillCool;
+    static OptionItem OptionRevCount;
+    static OptionItem OptionSaihaifu;
+    static OptionItem OptionSaihaifuCount;
+    private bool canSeeKillFlash;
+    private bool canSeeDeathReason;
+    /// <summary>1回の復讐サイクルで殺害できる人数(サイクル開始時に0へ戻る)</summary>
+    int RevCount;
+    /// <summary>再配布を行った回数</summary>
+    int SaihaifuCount;
     public HashSet<byte> VotedPlayerId = new();
-    bool IsExild = false;
+    bool IsExiled = false;
+    const int RevengeKillPower = 10;
     enum Op
     {
         MadPukuPukuCanRevengeImpostor,
-        MadPukuPukuNotify
+        MadPukuPukuNotify,
+        MadPukuPukuCanKill,
+        MadPukuPukuRevengeCount,
+        MadPukuPukuSaihaifu,
+        MadPukuPukuSaihaifuCount
     }
 
     public static void SetupOptionItem()
@@ -471,18 +489,41 @@ public sealed class MadPukupuku : RoleBase, IKillFlashSeeable, IDeathReasonSeeab
         OptionCanVent = BooleanOptionItem.Create(RoleInfo, 10, GeneralOption.CanVent, false, false);
         OptionRevengeImpostor = BooleanOptionItem.Create(RoleInfo, 11, Op.MadPukuPukuCanRevengeImpostor, false, false);
         OptionNotify = BooleanOptionItem.Create(RoleInfo, 12, Op.MadPukuPukuNotify, false, false);
-        RoleAddAddons.Create(RoleInfo, 20);
+
+        OptionCanKill = BooleanOptionItem.Create(RoleInfo, 13, Op.MadPukuPukuCanKill, false, false);
+        OptionKillCool = FloatOptionItem.Create(RoleInfo, 14, GeneralOption.KillCooldown, OptionBaseCoolTime, 40f, false, OptionCanKill)
+            .SetValueFormat(OptionFormat.Seconds);
+
+        OptionRevCount = IntegerOptionItem.Create(RoleInfo, 15, Op.MadPukuPukuRevengeCount, new(1, 15, 1), 2, false)
+            .SetValueFormat(OptionFormat.Players);
+
+        OptionSaihaifu = BooleanOptionItem.Create(RoleInfo, 16, Op.MadPukuPukuSaihaifu, true, false);
+        OptionSaihaifuCount = IntegerOptionItem.Create(RoleInfo, 17, Op.MadPukuPukuSaihaifuCount, new(1, 14, 1), 1, false, OptionSaihaifu)
+            .SetValueFormat(OptionFormat.Times);
+
+        OverrideTasksData.Create(RoleInfo, 20, tasks: (false, 3, 3, 5));
+        RoleAddAddons.Create(RoleInfo, 25);
     }
     public override void ApplyGameOptions(IGameOptions opt)
     {
-        AURoleOptions.EngineerCooldown = 0f;
+        AURoleOptions.EngineerCooldown = 0.1f;
         AURoleOptions.EngineerInVentMaxTime = 0f;
     }
+    RoleTypes TaskRoleType => OptionCanVent.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate;
     public bool? CheckKillFlash(MurderInfo info) => canSeeKillFlash;
     public bool? CheckSeeDeathReason(PlayerControl seen) => canSeeDeathReason;
     public override CustomRoles TellResults(PlayerControl player) => Options.MadTellOpt();
+    public float CalculateKillCooldown() => OptionKillCool.GetFloat();
+    public bool CanUseKillButton() => OptionCanKill.GetBool() && IsTaskFinished && Player.IsAlive();
+    public bool CanUseImpostorVentButton() => OptionCanVent.GetBool();
+    public bool CanUseSabotageButton() => false;
+    public override bool CanUseAbilityButton() => !CanUseKillButton();
+    public override RoleTypes? AfterMeetingRole => OptionCanKill.GetBool() && IsTaskFinished && Player.IsAlive() ? RoleTypes.Impostor : TaskRoleType;
     public override void Add()
     {
+        RevCount = 0;
+        SaihaifuCount = 0;
+#if DEBUG
         //テスト用
         _ = new LateTask(() =>
         {
@@ -493,35 +534,115 @@ public sealed class MadPukupuku : RoleBase, IKillFlashSeeable, IDeathReasonSeeab
                 VotedPlayerId.Add(p.PlayerId);
             }
         }, 2f, "MPK_Voted_Test", true);
+#endif
     }
     public override void OnExileWrapUp(NetworkedPlayerInfo exiled, ref bool DecidedWinner)
     {
-        if (Player.PlayerId != exiled.PlayerId) return;
-        IsExild = true;
+        if (!AmongUsClient.Instance.AmHost) return;
+        if (exiled == null || Player.PlayerId != exiled.PlayerId) return;
+        IsExiled = true;
+        SendRPC();
         if (!OptionNotify.GetBool()) return;
         foreach (var p in VotedPlayerId)
         {
-            Utils.SendMessage(GetString("MadPukuPukuNotify"), p);
+            Utils.SendMessage(string.Format(GetString("MadPukuPukuNotifyText"), UtilsName.GetPlayerColor(Player, true)), p);
         }
     }
     public override bool OnCompleteTask(uint taskid)
     {
-        if (IsTaskFinished && !Player.IsAlive() && IsExild)
+        if (!AmongUsClient.Instance.AmHost) return true;
+
+        if (IsTaskFinished && !Player.IsAlive() && IsExiled)
         {
-            foreach (var p in VotedPlayerId)
-            {
-                var pc = PlayerCatch.GetPlayerById(p);
-                if ((!pc.Is(CustomRoleTypes.Impostor)) || OptionRevengeImpostor.GetBool())
-                {
-                    if (pc.PlayerId != Player.PlayerId)
-                    {
-                        PlayerState.GetByPlayerId(pc.PlayerId).DeathReason = CustomDeathReason.Poisoned;
-                        pc.RpcMurderPlayerV2(pc);
-                        VotedPlayerId.Remove(p);
-                    }
-                }
-            }
+            Revenge();
+            TryRedistributeTasks();
+        }
+
+        if (IsTaskFinished && OptionCanKill.GetBool() && Player.IsAlive())
+        {
+            Player.RpcSetRoleDesync(RoleTypes.Impostor, Player.GetClientId());
         }
         return true;
+    }
+
+    bool IsValidRevengeTarget(PlayerControl pc)
+        => pc != null && pc.IsAlive() && (!pc.Is(CustomRoleTypes.Impostor) || OptionRevengeImpostor.GetBool());
+
+    void Revenge()
+    {
+        RevCount = 0;
+        foreach (var id in VotedPlayerId.ToList())
+        {
+            var pc = PlayerCatch.GetPlayerById(id);
+            if (pc == null || !pc.IsAlive())
+            {
+                VotedPlayerId.Remove(id);
+                continue;
+            }
+            if (!IsValidRevengeTarget(pc) || RevCount >= OptionRevCount.GetInt()) continue;
+
+            if (CustomRoleManager.OnCheckMurder(Player, pc, pc, pc, true,
+                    deathReason: CustomDeathReason.Poisoned, Killpower: RevengeKillPower))
+            {
+                RevCount++;
+                VotedPlayerId.Remove(id);
+            }
+        }
+        SendRPC();
+    }
+
+    void TryRedistributeTasks()
+    {
+        if (!OptionSaihaifu.GetBool()) return;
+        if (SaihaifuCount >= OptionSaihaifuCount.GetInt()) return;
+        if (!VotedPlayerId.Any(id => IsValidRevengeTarget(PlayerCatch.GetPlayerById(id)))) return;
+
+        SaihaifuCount++;
+        SendRPC();
+
+        _ = new LateTask(() =>
+        {
+            if (Player == null) return;
+
+            Player.Data.RpcSetTasks(Array.Empty<byte>());
+
+            var taskState = Player.GetPlayerTaskState();
+            taskState.CompletedTasksCount = 0;
+            taskState.AllTasksCount = Player.Data.Tasks.Count;
+
+            Player.SyncSettings();
+            UtilsNotifyRoles.NotifyRoles();
+        }, 0.2f, "MPK_Saihaifu", true);
+    }
+
+    public void SendRPC()
+    {
+        using var sender = CreateSender();
+        sender.Writer.Write(SaihaifuCount);
+        sender.Writer.Write(RevCount);
+        sender.Writer.Write(IsExiled);
+    }
+
+    public override void ReceiveRPC(MessageReader reader)
+    {
+        SaihaifuCount = reader.ReadInt32();
+        RevCount = reader.ReadInt32();
+        IsExiled = reader.ReadBoolean();
+    }
+    public override void OverrideDisplayRoleNameAsSeen(PlayerControl seer, ref bool enabled, ref UnityEngine.Color roleColor, ref string roleText, ref bool addon)
+    {
+        seer ??= Player;
+        if (seer == Player) return;
+        if (!VotedPlayerId.Contains(seer.PlayerId) || !OptionNotify.GetBool() || !IsExiled)
+        {
+            enabled = false;
+            roleText = "";
+            addon = false;
+            return;
+        }
+        enabled = true;
+        roleColor = StringHelper.CodeColor("#FF1919");
+        roleText = GetString("MadPukuPuku");
+        addon = false;
     }
 }
