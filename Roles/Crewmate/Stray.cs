@@ -201,6 +201,10 @@ public sealed class Hero : RoleBase
                     return string.Format(GetString("HeroDesc2"));
                 }
                 return string.Format(GetString("HeroDesc1"));
+            },
+            assignInfo: new RoleAssignInfo(CustomRoles.Hero, CustomRoleTypes.Neutral)
+            {
+                IsInitiallyAssignableCallBack = () => false
             }
         );
     public Hero(PlayerControl player)
@@ -270,6 +274,10 @@ public sealed class Sinner : RoleBase
                     return string.Format(GetString("SinnerDesc"), GetString("Kill"));
                 }
                 return string.Format(GetString("SinnerDesc2"));
+            },
+            assignInfo: new RoleAssignInfo(CustomRoles.Sinner, CustomRoleTypes.Neutral)
+            {
+                IsInitiallyAssignableCallBack = () => false
             },
             countType: CountTypes.None
         );
@@ -359,6 +367,10 @@ public sealed class Mourner : RoleBase
             "Mer",
             "#5f7285",
             (5, 6),
+            assignInfo: new RoleAssignInfo(CustomRoles.Mourner, CustomRoleTypes.Neutral)
+            {
+                IsInitiallyAssignableCallBack = () => false
+            },
             countType: CountTypes.None
         );
     public Mourner(PlayerControl player)
