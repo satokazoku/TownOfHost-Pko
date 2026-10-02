@@ -1461,10 +1461,9 @@ namespace TownOfHost
 
             OptionGameChatSetting = BooleanOptionItem.Create(1_300_350, "GameChatSetting", false, TabGroup.MainSettings, true)
                       .SetHeader(true)
-                      .SetColorcode("#00c1ff")
-                      .SetOptionName(() => "タスクターン中のチャットを表示");
+                      .SetColorcode("#00c1ff");
 
-            OptionGameChatNormalChat = BooleanOptionItem.Create(1_300_360, "GameChatNormalChat", false, TabGroup.MainSettings, true)
+            /*OptionGameChatNormalChat = BooleanOptionItem.Create(1_300_360, "GameChatNormalChat", false, TabGroup.MainSettings, true)
                 .SetParent(OptionGameChatSetting)
                       .SetColorcode("#00c1ff")
                       .SetOptionName(() => "通常チャットを有効にする(未完成)");
@@ -1493,7 +1492,7 @@ namespace TownOfHost
             OptionGameChatHideNearChatRange = IntegerOptionItem.Create(1_300_410, "GameChatHideNearChatRange", new(1, 100, 1), 10, TabGroup.MainSettings, true)
                 .SetParent(OptionGameChatHideNearChat)
                 .SetColorcode("#00c1ff")
-                .SetOptionName(() => "近チャの範囲");
+                .SetOptionName(() => "近チャの範囲");*/
 
 
             ApplyDenyNameList = BooleanOptionItem.Create(1_000_100, "ApplyDenyNameList", true, TabGroup.MainSettings, true)
