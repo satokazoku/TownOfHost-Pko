@@ -293,6 +293,7 @@ namespace TownOfHost
                 if (Roles.Neutral.Dracula.staticKenzokuid.Contains(pc.PlayerId))
                 {
                     ++Dracula;
+                    continue;
                 }
                 if (pc.Is(CustomRoles.PavlovOwner))
                 {
