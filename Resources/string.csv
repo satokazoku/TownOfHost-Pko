@@ -2824,7 +2824,7 @@
 "DraculaKenzokucount","Maximum Number of Servants","眷属の上限人数"
 "DraculaKenzokuChance","Probability of Becoming a Servant","眷属化する確率"
 "DraculaDieChance","Probability of Death During Bloodsucking","吸血時に死亡する確率"
-"DraculaDieChanceBonus","","死亡する確率の上昇率"
+"DraculaDieChanceBonus","increase in the probability of death","死亡する確率の上昇値"
 
 "## Unit Role Setting"
 "BraidKillCooldown","Bread Task Complete Driver Killcool","ブレイドが全タスク完了時のキルクール"
