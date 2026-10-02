@@ -41,6 +41,10 @@ public sealed class ClientOptionItem : ClientActionItem
         item.OnClickAction = () =>
         {
             config.Value = !config.Value;
+            if (name is "ChangeIntro")
+            {
+                Translator.LoadLangs();
+            }
             item.UpdateToggle();
             additionalOnClickAction?.Invoke();
         };

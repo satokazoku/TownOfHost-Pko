@@ -27,7 +27,6 @@ static class Event
     public static bool Birthday12 = DateTime.Now.Month == 10 && DateTime.Now.Day is 19 or 20 or 21 or 22 or 23 or 24 or 25 or 26;
     public static bool IsEventDay => IsChristmas || White || IsInitialRelease || IsHalloween || GoldenWeek || April || Birthday12;
     public static bool Special = false;
-    public static bool Intro = false;
     public static bool NowRoleEvent => false;
     public static List<string> OptionLoad = new();
     public static bool IsE(this CustomRoles role) => role is CustomRoles.SpeedStar or CustomRoles.Chameleon or CustomRoles.Fortuner;

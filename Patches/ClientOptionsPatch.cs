@@ -10,6 +10,7 @@ namespace TownOfHost
     public static class OptionsMenuBehaviourStartPatch
     {
         private static ClientActionItem JapaneseRoleName;
+        private static ClientActionItem ChangeIntro;
         private static ClientActionItem UnloadMod;
         private static ClientActionItem DumpLog;
         private static ClientActionItem OpenLogFolder;
@@ -48,6 +49,10 @@ namespace TownOfHost
             if (JapaneseRoleName == null || JapaneseRoleName.ToggleButton == null)
             {
                 JapaneseRoleName = ClientOptionItem.Create("JapaneseRoleName", Main.JapaneseRoleName, __instance);
+            }
+            if (ChangeIntro == null || ChangeIntro.ToggleButton == null)
+            {
+                ChangeIntro = ClientOptionItem.Create("ChangeIntro", Main.ChangeIntro, __instance);
             }
             if (DumpLog == null || DumpLog.ToggleButton == null)
             {

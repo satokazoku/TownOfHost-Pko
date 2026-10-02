@@ -18,7 +18,7 @@ public class VanillaRoleDescription : RoleDescription
     public string BlurbKey { get; }
     private readonly RoleTypes vanillaRoleType;
     public const string BlurbSuffix = "InfoSp";
-    public override string Blurb => Event.Intro &&
+    public override string Blurb => Main.ChangeIntro.Value &&
         vanillaRoleType is not RoleTypes.Engineer &&
         vanillaRoleType is not RoleTypes.Detective &&
         vanillaRoleType is not RoleTypes.Judge

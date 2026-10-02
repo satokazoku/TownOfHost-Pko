@@ -268,7 +268,7 @@ namespace TownOfHost
                         _ => res
                     };
                 }*/
-                if (Event.Intro)
+                if (Main.ChangeIntro.Value)
                 {
                     res = str switch
                     {

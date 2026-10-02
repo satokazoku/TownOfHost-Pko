@@ -105,6 +105,7 @@ namespace TownOfHost
         public static ConfigEntry<bool> DebugTours { get; private set; }
         public static ConfigEntry<bool> ShowDistance { get; private set; }
         public static ConfigEntry<bool> FpsLimitRemoval { get; private set; }
+        public static ConfigEntry<bool> ChangeIntro { get; private set; }
         public static Dictionary<byte, PlayerVersion> playerVersion = new();
         //Preset Name Options
         public static ConfigEntry<string> Preset1 { get; private set; }
@@ -251,6 +252,7 @@ namespace TownOfHost
             HideName = Config.Bind("Client Options", "Hide Game Code Name", "Town Of Host-Pko");
             HideColor = Config.Bind("Client Options", "Hide Game Code Color", $"{ModColor}");
             JapaneseRoleName = Config.Bind("Client Options", "Japanese Role Name", true);
+            ChangeIntro = Config.Bind("ChaIntro", "Change Role Intro", true);
             ShowResults = Config.Bind("Result", "Show Results", true);
             Hiderecommendedsettings = Config.Bind("Client Options", "Hide recommended settings", false);
             UseWebHook = Config.Bind("Client Options", "UseWebHook", false);

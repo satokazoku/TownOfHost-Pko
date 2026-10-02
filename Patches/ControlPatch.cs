@@ -74,10 +74,6 @@ namespace TownOfHost
                     }
                 }
             }
-            if (GetKeysDown(KeyCode.P, KeyCode.K) && GameStates.IsNotJoined)
-            {
-                Event.Intro = true;
-            }
             //ログファイルのダンプ
             if (GetKeysDown(KeyCode.F1, KeyCode.LeftControl))
             {
