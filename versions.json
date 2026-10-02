@@ -46,5 +46,13 @@
   "5.36.22.98": {
     "Unavailable": false,
     "NotAvailableOnline": false
+  },
+  "5.37.23.99": {
+    "Unavailable": true,
+    "NotAvailableOnline": true
+  },
+  "5.37.24.99": {
+    "Unavailable": false,
+    "NotAvailableOnline": false
   }
 }

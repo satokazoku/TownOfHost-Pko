@@ -61,13 +61,13 @@ namespace TownOfHost
 
         public const string PluginGuid = "com.satokazoku.TownOfHost-Pko";
 
-        public const string BepInExPluginVersion = "5.38.24.57";
-        public const string PluginVersion = "5.38.24.57";//ほんとはx.y.z表記にしたかったけどx.y.z.km.ks表記だと警告だされる
-        public const string PluginShowVersion = "5.38.24.57";
-        public const string ModVersion = ".24.57";//リリースver用バージョン変更dc9b79
+        public const string BepInExPluginVersion = "5.37.24.99";
+        public const string PluginVersion = "5.37.24.99";//ほんとはx.y.z表記にしたかったけどx.y.z.km.ks表記だと警告だされる
+        public const string PluginShowVersion = "5.37.24.99";
+        public const string ModVersion = ".24.99";//リリースver用バージョン変更
 
         /// 配布するデバッグ版なのであればtrue。リリース時にはfalseにすること。
-        public static bool DebugVersion = true;
+        public static bool DebugVersion = false;
 
         // サポートされている最低のAmongUsバージョン(Readmeも変える)
         public static readonly string LowestSupportedVersion = "2026.9.29";
