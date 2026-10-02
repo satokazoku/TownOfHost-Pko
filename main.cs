@@ -85,7 +85,6 @@ namespace TownOfHost
         //Client Options
         public static ConfigEntry<string> HideName { get; private set; }
         public static ConfigEntry<string> HideColor { get; private set; }
-        public static ConfigEntry<bool> JapaneseRoleName { get; private set; }
         public static ConfigEntry<float> MessageWait { get; private set; }
         public static ConfigEntry<bool> ShowResults { get; private set; }
         public static ConfigEntry<bool> Hiderecommendedsettings { get; private set; }
@@ -251,7 +250,6 @@ namespace TownOfHost
             //Client Options
             HideName = Config.Bind("Client Options", "Hide Game Code Name", "Town Of Host-Pko");
             HideColor = Config.Bind("Client Options", "Hide Game Code Color", $"{ModColor}");
-            JapaneseRoleName = Config.Bind("Client Options", "Japanese Role Name", true);
             ChangeIntro = Config.Bind("ChaIntro", "Change Role Intro", true);
             ShowResults = Config.Bind("Result", "Show Results", true);
             Hiderecommendedsettings = Config.Bind("Client Options", "Hide recommended settings", false);

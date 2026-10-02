@@ -358,8 +358,6 @@ namespace TownOfHost
         {
             var CurrentLanguage = TranslationController.Instance.currentLanguage.languageID;
             var lang = CurrentLanguage;
-            if (CurrentLanguage == SupportedLangs.Japanese && !Main.JapaneseRoleName.Value)
-                lang = SupportedLangs.English;
 
             return GetString(str, lang);
         }

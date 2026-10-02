@@ -9,7 +9,6 @@ namespace TownOfHost
     [HarmonyPatch(typeof(OptionsMenuBehaviour), nameof(OptionsMenuBehaviour.Start))]
     public static class OptionsMenuBehaviourStartPatch
     {
-        private static ClientActionItem JapaneseRoleName;
         private static ClientActionItem ChangeIntro;
         private static ClientActionItem UnloadMod;
         private static ClientActionItem DumpLog;
@@ -46,10 +45,6 @@ namespace TownOfHost
                 return;
             }
 
-            if (JapaneseRoleName == null || JapaneseRoleName.ToggleButton == null)
-            {
-                JapaneseRoleName = ClientOptionItem.Create("JapaneseRoleName", Main.JapaneseRoleName, __instance);
-            }
             if (ChangeIntro == null || ChangeIntro.ToggleButton == null)
             {
                 ChangeIntro = ClientOptionItem.Create("ChangeIntro", Main.ChangeIntro, __instance);
