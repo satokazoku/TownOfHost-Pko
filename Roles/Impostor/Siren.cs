@@ -1,15 +1,8 @@
-using System.Collections.Generic;
-using System.Linq;
 using AmongUs.GameOptions;
-using HarmonyLib;
 using Hazel;
-using MS.Internal.Xml.XPath;
-using TownOfHost.Patches.ISystemType;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using UnityEngine;
-using static TownOfHost.Roles.Crewmate.AllArounder;
-using static UnityEngine.GraphicsBuffer;
 
 namespace TownOfHost.Roles.Impostor;
 
@@ -67,7 +60,7 @@ public sealed class Siren : RoleBase, IImpostor
     static float MyDeadline;    // 受信時刻 + 制限時間 (Time.time 基準)
 
     public override bool CanUseAbilityButton()
-    => Player.Data.Role.Role != RoleTypes.Impostor; // 能力使用後(デスシンクでImpostor化中)は非表示・使用不可
+    => UseCount < OptionUseCount.GetInt();
 
     enum OptionName
     {
@@ -91,7 +84,6 @@ public sealed class Siren : RoleBase, IImpostor
         AURoleOptions.ShapeshifterDuration = 1f;
     }
     public float CalculateKillCooldown() => OptionKillCool.GetFloat();
-
     public override void OnFixedUpdate(PlayerControl player)
     {
         // 非ホストのターゲット本人: 自分のクライアントで秒が変わったときだけ再描画
@@ -119,10 +111,14 @@ public sealed class Siren : RoleBase, IImpostor
         if (timer <= 0f)
         {
             var target = Target;
-            CustomRoleManager.OnCheckMurder(target, target, target, target, true, true, 10, deathReason: CustomDeathReason.Drowning);
-            if (AmongUsClient.Instance.AmHost)
-                Player.RpcSetRoleDesync(RoleTypes.Impostor, Player.GetClientId());
+            //自分ぶっ殺すバグあったから...
+            if (target.PlayerId != Player.PlayerId)
+            {
+                CustomRoleManager.OnCheckMurder(player, target, target, target, true, true, 10, deathReason: CustomDeathReason.Drowning);
+            }
+         
             Player.KillFlash();
+            //ターゲットはどっちにしろクリア
             ClearTarget();
             return;
         }
@@ -148,27 +144,21 @@ public sealed class Siren : RoleBase, IImpostor
     }
     public override void OnStartMeeting()
     {
+        ClearTarget(false);
+
         Target = null;
         Timer = null;
         UsedOnThisDay = false;
         SendRPC();
         HudManager.Instance.AbilityButton.ToggleVisible(true);
-        if (AmongUsClient.Instance.AmHost && UseCount < OptionUseCount.GetInt())
-        {
-            foreach (var pc in PlayerCatch.AllPlayerControls)
-            {
-                Player.RpcSetRoleDesync(RoleTypes.Shapeshifter, pc.GetClientId());
-            }
-        }
     }
     public override bool CheckShapeshift(PlayerControl target, ref bool animate)
     {
-        if (Utils.IsActive(SystemTypes.Electrical) || UsedOnThisDay || OptionUseCount.GetInt() - UseCount <= 0) return false;
+        animate = false;
+        if (Utils.IsActive(SystemTypes.Electrical) || UsedOnThisDay || OptionUseCount.GetInt() - UseCount <= 0 || target.PlayerId == Player.PlayerId) return false;
 
         Room = Player.GetPlainShipRoom().RoomId;
-        //部屋じゃないなら
-        if (Room == SystemTypes.Jungle || Room == SystemTypes.Hallway || Player.GetPlainShipRoom() is null) return false;
-
+        if (Player.GetPlainShipRoom() is null || target.GetPlainShipRoom()?.RoomId == Room) return false;
         ++UseCount;
         UsedOnThisDay = true;
         Target = target;
@@ -184,7 +174,7 @@ public sealed class Siren : RoleBase, IImpostor
     }
     public override string GetProgressText(bool comms = false, bool GameLog = false)
     {
-        if (UsedOnThisDay || OptionUseCount.GetInt() - UseCount <= 0) return "";
+        if (OptionUseCount.GetInt() <= UseCount) return "";
         return $"<#ff1919>({OptionUseCount.GetInt() - UseCount})</color>";
     }
     //public override string GetLowerText(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
@@ -238,6 +228,7 @@ public sealed class Siren : RoleBase, IImpostor
         using var sender = CreateSender();
         sender.Writer.Write(UsedOnThisDay);
         sender.Writer.Write(UseCount);
+        sender.Writer.Write(Target?.PlayerId ?? byte.MaxValue);
     }
     void SendTargetRpc(byte targetId, bool active)
     {
@@ -264,5 +255,7 @@ public sealed class Siren : RoleBase, IImpostor
     {
         UsedOnThisDay = reader.ReadBoolean();
         UseCount = reader.ReadInt32();
+        var id = reader.ReadByte();
+        Target = id == byte.MaxValue ? null : PlayerCatch.GetPlayerById(id);
     }
 }
