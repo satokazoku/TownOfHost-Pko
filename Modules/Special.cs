@@ -117,7 +117,8 @@ static class Event
         //{CustomRoles.Amateras,() => Tanabata},
         //{CustomRoles.SpeedStar , () => Special},
         //{CustomRoles.Chameleon , () => Special},
-        //{CustomRoles.Cakeshop , () => NowRoleEvent},
+
+        {CustomRoles.Cakeshop , () => Birthday12},
 
         {CustomRoles.MadPukupuku,() => Birthday12}
     };
