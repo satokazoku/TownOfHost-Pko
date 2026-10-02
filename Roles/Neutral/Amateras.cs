@@ -25,7 +25,7 @@ public sealed class Amateras : RoleBase, ISelfVoter, IAdditionalWinner
             CustomRoleTypes.Neutral,
             56000,
             SetupOptionItem,
-            "Am",
+            "Amt",
             "#ffd34d",
             (5, 6),
             true,

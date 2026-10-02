@@ -21,7 +21,7 @@ public sealed class FortuneTeller : RoleBase, ISelfVoter
             CustomRoleTypes.Crewmate,
             31600,
             SetupOptionItem,
-            "fo",
+            "fot",
             "#6b3ec3",
             (3, 0),
             introSound: () => GetIntroSound(RoleTypes.Scientist),

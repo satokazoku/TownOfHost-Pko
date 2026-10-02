@@ -112,7 +112,7 @@ public sealed class SatsumatoImoC : RoleBase
             CustomRoleTypes.Crewmate,
             34900,
             SetupOptionItem,
-            "si",
+            "sicm",
             "#990044",
             (8, 1),
             assignInfo: new RoleAssignInfo(CustomRoles.SatsumatoImoC, CustomRoleTypes.Crewmate)
@@ -162,7 +162,7 @@ public sealed class SatsumatoImoM : RoleBase
             CustomRoleTypes.Madmate,
             70660,
             SetupOptionItem,
-            "si",
+            "sim",
             "#990044",
             (8, 2),
             assignInfo: new RoleAssignInfo(CustomRoles.SatsumatoImoM, CustomRoleTypes.Madmate)

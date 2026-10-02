@@ -22,7 +22,7 @@ public sealed class Freeter : RoleBase, IKiller, IAdditionalWinner
             CustomRoleTypes.Neutral,
             51600,
             SetupOptionItem,
-            "tt",
+            "frt",
             "#32cd32",
             (8, 2),
             from: From.SuperNewRoles,

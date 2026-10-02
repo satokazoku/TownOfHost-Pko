@@ -24,7 +24,7 @@ public sealed class Santa : RoleBase, IKiller
             CustomRoleTypes.Crewmate,
             34600,
             SetupOptionItem,
-            "st",
+            "stn",
             "#f29c9f",
             (6, 0),
             from: From.SuperNewRoles,

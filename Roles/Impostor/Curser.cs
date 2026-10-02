@@ -17,7 +17,7 @@ public sealed class Curser : RoleBase, IImpostor
             CustomRoleTypes.Impostor,
             3200,
             SetupCustomOption,
-            "cs",
+            "cus",
             OptionSort: (7, 2),
             from: From.TownOfHost_K
         );

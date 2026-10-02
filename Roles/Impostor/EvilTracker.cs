@@ -22,7 +22,7 @@ public sealed class EvilTracker : RoleBase, IImpostor, IKillFlashSeeable, ISidek
             CustomRoleTypes.Impostor,
             4600,
             SetupOptionItem,
-            "et",
+            "etk",
             OptionSort: (2, 1),
             canMakeMadmate: () => OptionCanCreateSideKick.GetBool(),
             from: From.TOR_GM_Haoming_Edition

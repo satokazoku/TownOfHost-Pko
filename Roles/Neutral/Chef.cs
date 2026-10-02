@@ -19,7 +19,7 @@ public sealed class Chef : RoleBase, IKiller, IAdditionalWinner
             CustomRoleTypes.Neutral,
             50700,
             SetUpOptionItem,
-            "ch",
+            "chf",
             "#c79b2c",
             (3, 1),
             true,

@@ -647,7 +647,7 @@ public sealed class Shikigami : RoleBase, IUsePhantomButton, IKillFlashSeeable
             CustomRoleTypes.Neutral,
             54300,
             SetupOptionItem,
-            "sk",
+            "skg",
             "#9b59b6",
             (6, 1),
             from: From.SuperNewRoles,

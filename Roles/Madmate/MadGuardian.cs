@@ -17,7 +17,7 @@ public sealed class MadGuardian : RoleBase, IKillFlashSeeable, IDeathReasonSeeab
             CustomRoleTypes.Madmate,
             20400,
             SetupOptionItem,
-            "mg",
+            "mgd",
             OptionSort: (2, 0),
             introSound: () => GetIntroSound(RoleTypes.Impostor),
             from: From.TownOfHost

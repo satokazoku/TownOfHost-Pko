@@ -260,7 +260,7 @@ public sealed class Sinner : RoleBase
             CustomRoleTypes.Crewmate,
             39400,
             SetupOptionItem,
-            "sir",
+            "sin",
             "#4d0505",
             (5, 6),
             Desc: () =>
@@ -364,7 +364,7 @@ public sealed class Mourner : RoleBase
             CustomRoleTypes.Crewmate,
             39500,
             SetupOptionItem,
-            "Mer",
+            "Mou",
             "#5f7285",
             (5, 6),
             assignInfo: new RoleAssignInfo(CustomRoles.Mourner, CustomRoleTypes.Neutral)

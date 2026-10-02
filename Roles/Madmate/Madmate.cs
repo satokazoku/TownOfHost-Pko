@@ -16,7 +16,7 @@ public sealed class Madmate : RoleBase, IKillFlashSeeable, IDeathReasonSeeable
             CustomRoleTypes.Madmate,
             20700,
             SetupOptionItem,
-            "mm",
+            "mam",
             OptionSort: (1, 0),
             introSound: () => GetIntroSound(RoleTypes.Impostor),
                 assignInfo: new RoleAssignInfo(CustomRoles.Madmate, CustomRoleTypes.Madmate)

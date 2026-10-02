@@ -23,7 +23,7 @@ public sealed class Missioneer : RoleBase, IKiller, ISelfVoter, IAdditionalWinne
             CustomRoleTypes.Neutral,
             53000,
             SetupOptionItem,
-            "Ms",
+            "Msn",
             "#b1ae8f",
             (5, 6),
             true,

@@ -1089,7 +1089,7 @@ public sealed class Tama : RoleBase, IKiller
             CustomRoleTypes.Neutral,
             554900,
             SetupOptionItem,
-            "tm",
+            "bul",
             "#00b4eb",
             (1, 6),
             from: From.SuperNewRoles,

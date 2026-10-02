@@ -27,7 +27,7 @@ namespace TownOfHost.Roles.Neutral
                     CustomRoleTypes.Neutral,
                     56400,
                     SetupOptionItem,
-                    "hun",
+                    "hut",
                     "#cd853f",
                     (2, 4),
                     true,

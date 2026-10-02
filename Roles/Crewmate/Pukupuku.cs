@@ -17,7 +17,7 @@ namespace TownOfHost.Roles.Crewmate
                 CustomRoleTypes.Crewmate,
                 34200,
                 SetupOptionItem,
-                "Pukupuku",
+                "pkp",
                 "#55ccff",
                 (7, 0),
                 from: From.TownOfHost_Pko

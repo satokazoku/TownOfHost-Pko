@@ -250,7 +250,7 @@ public sealed class TheSecondLittlePig : RoleBase, IAdditionalWinner
             CustomRoleTypes.Neutral,
             570600,
             null,
-            "sp",
+            "slp",
             "#ff637b",
             (7, 5),
             true,

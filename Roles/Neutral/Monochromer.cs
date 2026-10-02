@@ -15,7 +15,7 @@ public sealed class Monochromer : RoleBase
             CustomRoleTypes.Neutral,
             15100,
             SetupOptionItem,
-            "Mc",
+            "Mnc",
             "#808080",
             (6, 1),
             assignInfo: new RoleAssignInfo(CustomRoles.Monochromer, CustomRoleTypes.Neutral)

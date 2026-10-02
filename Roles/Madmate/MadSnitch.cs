@@ -18,7 +18,7 @@ public sealed class MadSnitch : RoleBase, IKillFlashSeeable, IDeathReasonSeeable
             CustomRoleTypes.Madmate,
             20900,
             SetupOptionItem,
-            "msn",
+            "msh",
             OptionSort: (1, 1),
             introSound: () => GetIntroSound(RoleTypes.Impostor),
             from: From.TownOfHost

@@ -20,7 +20,7 @@ namespace TownOfHost.Roles.Crewmate
                 CustomRoleTypes.Crewmate,
                 33500,
                 SetupOptionItem,
-                "NL",
+                "NeL",
                 "#4a5c59",
                 (1, 2),
                 true,

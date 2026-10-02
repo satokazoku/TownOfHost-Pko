@@ -21,7 +21,7 @@ namespace TownOfHost.Roles.Neutral
                 CustomRoleTypes.Neutral,
                 52400,
                 SetupOptionItem,
-                "jm",
+                "jmf",
                 "#00b4eb",
                 (1, 2),
                 true,

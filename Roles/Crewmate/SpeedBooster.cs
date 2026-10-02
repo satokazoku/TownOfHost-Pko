@@ -17,7 +17,7 @@ public sealed class SpeedBooster : RoleBase
             CustomRoleTypes.Crewmate,
             35500,
             SetupOptionItem,
-            "sb",
+            "sbs",
             "#00ffff",
             (7, 1),
             from: From.TownOfHost

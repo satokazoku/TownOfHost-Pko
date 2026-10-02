@@ -21,7 +21,7 @@ public sealed class Medium : RoleBase
             CustomRoleTypes.Crewmate,
             32600,
             SetupOptionItem,
-            "sp",
+            "md",
             "#66a6ff",
             (3, 5),
             introSound: () => GetIntroSound(RoleTypes.Scientist)

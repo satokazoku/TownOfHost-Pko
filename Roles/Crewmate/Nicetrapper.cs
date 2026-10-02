@@ -22,7 +22,7 @@ public sealed class NiceTrapper : RoleBase
             CustomRoleTypes.Crewmate,
             100300,
             SetupOptionItem,
-            "nt",
+            "ntr",
             "#66ddaa",
             (1, 8),
             from: From.NebulaontheShip

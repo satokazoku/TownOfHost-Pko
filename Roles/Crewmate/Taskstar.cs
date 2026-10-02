@@ -16,7 +16,7 @@ public sealed class TaskStar : RoleBase
             CustomRoleTypes.Crewmate,
             35900,
             SetupOptionItem,
-            "ts",
+            "tst",
             "#FFD700",
             (4, 1),
             from: From.TownOfHost_K

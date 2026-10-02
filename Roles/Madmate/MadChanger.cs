@@ -16,7 +16,7 @@ public sealed class MadChanger : RoleBase, IKiller, IKillFlashSeeable, IDeathRea
             CustomRoleTypes.Madmate,
             20300,
             SetupOptionItem,
-            "Mc",
+            "Mch",
             OptionSort: (2, 3),
             isDesyncImpostor: true,
             introSound: () => GetIntroSound(RoleTypes.Crewmate),

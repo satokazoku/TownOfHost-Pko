@@ -500,7 +500,7 @@ public sealed class Stand : RoleBase, ILNKiller
             CustomRoleTypes.Neutral,
             54500,
             SetupOptionItem,
-            "st",
+            "std",
             "#8B4513",
             (6, 4),
             countType: CountTypes.StandMaster,

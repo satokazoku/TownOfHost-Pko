@@ -23,7 +23,7 @@ public sealed class EvilGuesser : RoleBase, IImpostor, ISelfVoter
             CustomRoleTypes.Impostor,
             4000,
             SetupOptionItem,
-            "eg",
+            "egr",
             "#ff1919",
             (2, 1),
             Desc: () => string.Format

@@ -17,7 +17,7 @@ public sealed class Braid : RoleBase, IKillFlashSeeable, IDeathReasonSeeable
             CustomRoleTypes.Madmate,
             76300,
             null,
-            "br",
+            "brd",
             OptionSort: (0, 1),
             tab: TabGroup.Combinations,
             introSound: () => GetIntroSound(RoleTypes.Impostor),

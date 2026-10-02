@@ -22,7 +22,7 @@ public sealed class ShrineMaiden : RoleBase, ISelfVoter
             CustomRoleTypes.Crewmate,
             35201,
             SetupOptionItem,
-            "SM",
+            "ShM",
             "#b7282e",
             (3, 4),
             introSound: () => GetIntroSound(RoleTypes.Scientist),

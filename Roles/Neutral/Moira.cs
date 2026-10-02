@@ -22,7 +22,7 @@ public sealed class Moira : RoleBase, ISelfVoter
             CustomRoleTypes.Neutral,
             53100,
             SetupOptionItem,
-            "mo",
+            "mor",
             "#c084fc",
             (6, 3),
             true,

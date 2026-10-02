@@ -20,7 +20,7 @@ public sealed class Madonna : RoleBase, ISelfVoter
             CustomRoleTypes.Neutral,
             52800,
             SetupOptionItem,
-            "Ma",
+            "Mad",
             "#f09199",
             (5, 0),
             introSound: () => GetIntroSound(RoleTypes.Scientist),

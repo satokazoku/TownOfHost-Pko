@@ -20,7 +20,7 @@ public sealed class Arsonist : RoleBase, IKiller, IUsePhantomButton
             CustomRoleTypes.Neutral,
             50100,
             SetupOptionItem,
-            "ar",
+            "ars",
             "#ff6633",
             (3, 0),
             true,

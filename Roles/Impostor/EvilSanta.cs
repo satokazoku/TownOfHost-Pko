@@ -22,7 +22,7 @@ public sealed class EvilSanta : RoleBase, IImpostor, IUsePhantomButton
             CustomRoleTypes.Impostor,
             86100,
             SetupOptionItem,
-            "es",
+            "est",
             OptionSort: (6, 6)
         );
 

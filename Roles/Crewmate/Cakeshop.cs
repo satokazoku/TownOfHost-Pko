@@ -22,7 +22,7 @@ public sealed class Cakeshop : RoleBase, INekomata
             CustomRoleTypes.Crewmate,
             30800,
             null,
-            "cs",
+            "cks",
             "#aacbff",
             (0, 15),
             introSound: () => GetIntroSound(RoleTypes.Crewmate),

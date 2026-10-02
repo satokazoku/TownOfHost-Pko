@@ -272,7 +272,7 @@ public sealed class Chameleon : RoleBase, IAdditionalWinner
             CustomRoleTypes.Neutral,
             50500,
             SetUpOptionItem,
-            "Ch",
+            "Cha",
             "#357a39",
             OptionSort: (0, 50),
             from: From.Speyrp

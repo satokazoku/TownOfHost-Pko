@@ -19,7 +19,7 @@ public sealed class Merlin : RoleBase, IRoomTasker
             CustomRoleTypes.Crewmate,
             76800,
             null,
-            "mer",
+            "men",
             "#8cc2ff",
             (2, 1),
             tab: TabGroup.Combinations,

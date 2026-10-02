@@ -28,7 +28,7 @@ public sealed class Stealth : RoleBase, IImpostor, IUsePhantomButton
         CustomRoleTypes.Impostor,
         7300,
         SetupOptionItems,
-        "st",
+        "sth",
         OptionSort: (6, 6),
         introSound: () => GetIntroSound(RoleTypes.Phantom),
         from: From.TownOfHost);

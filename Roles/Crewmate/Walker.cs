@@ -17,7 +17,7 @@ public sealed class Walker : RoleBase, IRoomTasker
             CustomRoleTypes.Crewmate,
             36800,
             SetupOptionItem,
-            "wa",
+            "wak",
             "#057a2c",
             (8, 2),
             from: From.TownOfHost_K
