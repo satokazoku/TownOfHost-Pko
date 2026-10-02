@@ -48,6 +48,7 @@ class AddondataInfo
                 CustomRoles.Securer => "Su",
                 CustomRoles.Sealer => "Se",
                 CustomRoles.SilverBuzzer => "Sb",
+                CustomRoles.Border => "Ｂ",
                 CustomRoles.Triplets => "三",
                 _ => ""
             };
@@ -117,6 +118,7 @@ class AddondataInfo
                     {CustomRoles.Sunglasses , "#2e103d"},
                     {CustomRoles.Jumbo, "#ffcc00" },
                     {CustomRoles.Stamina, "#88ccff" },
+                    {CustomRoles.Border, "#8b0000" },
 
                     //第三属性
                     { CustomRoles.Amanojaku,"#005243"},

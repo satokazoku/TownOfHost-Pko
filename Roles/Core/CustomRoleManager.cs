@@ -846,6 +846,7 @@ CustomDeathReason deathReason = CustomDeathReason.Kill)
                 case CustomRoles.Securer: Securer.Add(pc.PlayerId); break;
                 case CustomRoles.Sealer: Sealer.Add(pc.PlayerId); break;
                 case CustomRoles.SilverBuzzer: SilverBuzzer.Add(pc.PlayerId); break;
+                case CustomRoles.Border: Border.Add(pc.PlayerId); break;
 
                 case CustomRoles.Amanojaku: Amanojaku.Add(pc.PlayerId); break;
                 case CustomRoles.OneWolf: OneWolf.Add(pc.PlayerId); break;
@@ -1505,6 +1506,7 @@ public enum CustomRoles
     Sealer,
     Triplets,
     SilverBuzzer,
+    Border,
 }
 public enum CustomRoleTypes
 {

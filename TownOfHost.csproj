@@ -8,7 +8,7 @@
 		<langVersion>preview</langVersion>
 		<AssemblyName>TownOfHost-Pko</AssemblyName>
 		<NoWarn>MSB3246</NoWarn>
-		<AmongUs>C:\Program Files (x86)\Steam\steamapps\common\Among Us</AmongUs>
+		<AmongUs>C:\Program Files (x86)\Steam\steamapps\common\Among Us tohp</AmongUs>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -32,6 +32,10 @@
 	<ItemGroup>
 	  <Folder Include="ChatServer\" />
 	  <Folder Include="Roles\Neutral\Jackal\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="Roles\AddOns\Assin\BorderAssignData.cs" />
 	</ItemGroup>
 
 	<ItemGroup>

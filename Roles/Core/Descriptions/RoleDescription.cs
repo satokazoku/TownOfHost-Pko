@@ -15,8 +15,7 @@ public abstract class RoleDescription
     /// <summary>イントロなどで表示される短い文</summary>
     public abstract string Blurb { get; }
     /// <summary>
-    /// ヘルプコマンドで使用される長い説明文<br/>
-    /// AmongUs2023.7.12時点で，Impostor, Crewmateに関してはバニラ側でロング説明文が未実装のため「タスクを行う」と表示される
+    /// ヘルプコマンドで使用される長い説明文
     /// </summary>
     public abstract string Description { get; }
     public string FullFormatHelp

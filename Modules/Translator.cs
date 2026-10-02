@@ -260,12 +260,79 @@ namespace TownOfHost
                         _ => res
                     };
                 }
-                if (Event.Tanabata)
+                /*if (Event.Tanabata)
                 {
                     res = str switch
                     {
                         "LoversBreakerInfo" => "二つの星が重なる時、終焉の火花が咲く。",
                         "ModSettingInfo2" => "今年は織姫と彦星../nあともう一人やってきてるみたいだよ!",
+                        _ => res
+                    };
+                }*/
+                if (Event.Intro)
+                {
+                    res = str switch
+                    {
+                        "JesterInfo" => "最高の道化を目指して",
+                        //"JesterInfo" => "お、俺がやったんだ!!",
+
+                        "MayorInfo" => "歯向かう者に粛清を",
+                        //"MayorInfo" => この票で人外を吊るそう",
+                        //"MayorInfo" => "この村を平和に導こう",
+
+                        "TrapperInfo" => "これが置き土産だ…!",
+                        //"TrapperInfo" => "空気を吸いに静かなる罠",
+
+                        "MadSnitchInfo" => "ご主人を把握して援助しよう",
+                        //"MadSnitchInfo" => "クルーのふりして主人を見抜く",
+
+                        "TimeManagerInfo" => "議論時間それで足りてる？",
+                        //"TimeManagerInfo" => "タスクの貯金を会議で開放",
+
+                        "MafiaInfo" => "来たるその時まで牙を隠せ",
+                        //"MafiaInfo" => "能あるインポは牙を隠す…",
+                        //"MafiaInfo" => "能ある主人は牙を隠す",
+
+                        "SheriffInfo" => "疑わしき者を罰せよ",
+                        //"SheriffInfo" => "人外から捨て身で守り抜け！",
+                        //"SheriffInfo" => "正義の名の元に。",
+
+                        "WitchInfo" => "この呪い  君達には解けるかな？",
+                        //"WitchInfo" => "雑踏からやられたその呪い",
+
+                        "ArsonistInfo" => "さぁ、火遊びの時間だ",
+                        //"ArsonistInfo" => "この船内を火の海にしよう",
+
+                        "SabotageMasterInfo" => "機械修理は得意なんだ",
+                        //"SabotageMasterInfo" => "船内を救う神の一手",
+
+                        "VampireInfo" => "いいの？吸っちゃっていいの？",
+                        //"VampireInfo" => "最期の一噛み",
+                        //"VampireInfo" => "お前はもう死んでいる...",
+
+                        "MadGuardianInfo" => "その盾を主人に見せ、援護しよう",
+                        //"MadGuardianInfo" => "おっと…守りたい主人がいるんだ",
+
+                        "PenguinInfo" => "その翼が掴むものは",
+                        //"PenguinInfo" => "ぺちぺち！ずるずる！",
+
+                        "MadmateInfo" => "影からインポスターを助けよう",
+
+                        "ShapeMasterInfo" => "十人十色で狂わせろ！",
+
+                        "SniperInfo" => "その凶弾は全てを貫く",
+
+                        "OpportunistInfo" => "正義は俺が決めるんだ",
+
+                        "EvilTrackerInfo" => "いくら逃げても無駄だよ",
+
+                        "BaitInfo" => "最期に、メガホンを手に…",
+
+                        "MadBaitInfo" => "この死体は見覚えないぞ？",
+
+                        "PuppeteerInfo" => "君は僕の操り人形",
+
+                        "WarlockInfo" => "どこからその呪いを…？",
                         _ => res
                     };
                 }

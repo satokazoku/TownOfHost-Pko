@@ -351,6 +351,8 @@ namespace TownOfHost
             Main.AllPlayerKillCooldown[player.PlayerId] = (player.GetRoleClass() as IKiller)?.CalculateKillCooldown() ?? Options.DefaultKillCooldown; //キルクールをデフォルトキルクールに変更
             if (player.Is(CustomRoles.Serial))
                 Main.AllPlayerKillCooldown[player.PlayerId] = Serial.KillCooldown.GetFloat();
+            if (player.Is(CustomRoles.Border))
+                Main.AllPlayerKillCooldown[player.PlayerId] = Border.KillCooldown.GetFloat();
             if (player.PlayerId == LastImpostor.currentId)
                 LastImpostor.SetKillCooldown(player);
             if (player.PlayerId == LastNeutral.currentId)

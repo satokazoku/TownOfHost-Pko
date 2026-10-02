@@ -111,6 +111,7 @@ namespace TownOfHost
                 CustomRoles.Sunglasses or
                 CustomRoles.Securer or
                 CustomRoles.Sealer or
+                CustomRoles.Border or
                 CustomRoles.SilverBuzzer
                 ;
         }
@@ -157,6 +158,7 @@ namespace TownOfHost
                 CustomRoles.Sunglasses or
                 CustomRoles.Securer or
                 CustomRoles.Sealer or
+                CustomRoles.Border or
                 CustomRoles.SilverBuzzer
                 ;
         }

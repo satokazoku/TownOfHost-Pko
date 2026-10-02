@@ -70,6 +70,7 @@ class GhostRoleCore
         Sunglasses.Init();
         Powerful.Init();
         Absorb.Init();
+        Border.Init();
     }
     public static void SetupCustomOptionAddonAndIsGhostRole()
     {
@@ -122,6 +123,7 @@ class GhostRoleCore
         Clumsy.SetupCustomOption();
         Slacker.SetupCustomOption();
         Stamina.SetupCustomOption();
+        Border.SetupCustomOption();
         Jumbo.SetupCustomOption();
         //ゆーれーやくしょく
         ObjectOptionitem.Create(1_000_118, "Madmate", true, null, TabGroup.GhostRoles)

@@ -24,6 +24,13 @@
 "InfluencerMessageCooldown","Message Cooldown","メッセージクールダウン"
 "InfluencerInfo","Send messages after death.","死亡後にメッセージを送信できる。"
 
+"ShapeshifterInfoSp","Huh? Is he one of us, too…?","あれ？あいつも俺…？"
+"ViperInfoSp","Poison the target, melt the evidence","毒牙にかけて証拠は溶かす"
+"NoisemakerInfoSp","Let my final voice reach the crew","最期の一声クルーに届け"
+"TrackerInfoSp",""I’m always watching over you, wherever you are","いつも見てるよあなたの居場所"
+"ScientistInfoSp","Observe the quiet pulse and determine it.","静かな脈拍、見て突き止めり"
+"InfluencerInfoSp","Committed to the Camera","カメラにかけたメッセンジャー"
+
 "# 特殊インポスター役職"
 "BountyHunter","Bounty Hunter","バウンティハンター","赏金猎人","賞金獵人","Охотник за головами","Caçador de Recompensas","Caçador de Recompensas"
 "Mare","Mare","メアー","梦魇","獵夢者","Ночной","Mare","Mare"
@@ -426,6 +433,7 @@
 "Securer","Securer","セキュアラー"
 "SilverBuzzer","Silver Buzzer","シルバーブザー"
 "Sealer","Sealer","シーラー"
+"Border","Border","ボーダー"
 
 "# その他"
 "Team","Team","陣営"
@@ -455,8 +463,6 @@
 "WarlockInfo","Cast your curses","敵を呪い殺そう","给你的敌人下咒","借刀殺人","Прокляните всех Членов Экипажа","Lance sua maldição","Lance sua maldição"
 "WitchInfo","Cast your spells","敵に魔術をかけよう","诅咒你的敌人","施展你的魔法來讓你的敵人死亡","Заклинайте Членов Экипажа","Lance o seu feitiço","Lance o seu feitiço"
 "MafiaInfo","Support the Impostors and kill","インポスターの援助をしよう","帮助其他内鬼杀掉所有人","幫助偽裝者們殺死所有人","Помогите Предателям убить всех","Ajude os impostores e mate","Ajude os impostores e mate"
-"BeforeMafiaInfo","You can't kill yet","今はキルをすることができない","潜伏以等候时机","潛伏以等待時機","Вы еще не можете убивать","Você ainda não pode matar","Você ainda não pode matar"
-"AfterMafiaInfo","It's time to kill","サボを活用して皆殺しにしよう","杀光所有人","殺光所有人吧","Время убивать","Está na hora de matar","Está na hora de matar"
 "PuppeteerInfo","Force the Crewmate to kill","敵を操って皆殺しにしよう","操纵敌人，杀光船员","操控對象並殺光所有人","Заставьте Члена Экипажа убить","Force os tripulantes a matar","Force os tripulantes a matar"
 "TimeThiefInfo","Kill to steal meeting time","敵を殺し、会議時間を奪おう","不仅夺走他们的性命，还有他们的时间","殺光你的敵人並將會議時間縮短","Убивайте игроков чтобы сократить время встречи","Mate para roubar tempo de reunião","Mate para roubar tempo de reunião"
 "SniperInfo","Snipe","狙い撃つぜ","瞄准敌人，射击！","讓你的敵人在你的狙擊下死亡","Стреляйте в Членов Экипажа на расстоянии","Hora de atirar","Hora de atirar"
@@ -535,7 +541,6 @@
 
 "# マッドメイト系役職"
 "MadmateInfo","Help the Impostors","インポスターの援助をしよう","帮助内鬼","幫助偽裝者","Помогите Предателям","Ajude os Impostores","Ajude os Impostores"
-"BeforeMadmateInfo","Finish your tasks","タスクを済ませろ","完成你的任务","完成你的任務","Завершите свои задания","Termine as suas tarefas","Termine as suas tarefas"
 "MadGuardianInfo","Finish your tasks and help the Impostors","タスクを済ませ、インポスターの援助をしよう","完成任务后来帮助内鬼","完成你的任務並幫助偽裝者","Завершите свои задания, чтобы помочь Предателям","Termine as suas tarefas e ajude os Impostores","Termine as suas tarefas e ajude os Impostores"
 "MadSnitchInfo","Finish your tasks and help the Impostors","タスクを済ませ、インポスターの援助をしよう","完成任务后来帮助内鬼","完成你的任務並幫助偽裝者","Завершите свои задания, чтобы помочь Предателям","Termine as suas tarefas e ajude os Impostores","Termine as suas tarefas e ajude os Impostores"
 "SKMadmateInfo","You are now on Team Impostors","サイドキックにされた","你是内鬼的好帮手","你現在屬於偽裝者們了，盡你所能幫助他們","Теперь вы в команде Предателя","Você agora está no Time Impostor","Você agora está no Time Impostor"
@@ -630,7 +635,7 @@
 "NiceTeleporterInfo","","テレポートしてインポスターを暴こう"
 "NiceLinkerInfo","","移動を楽に"
 "ApprenticeInfo","","親方みたいな立派なクルーメイトになります！！"
-"MilkmanInfo","","～搾りたて新鮮をあなたに～"
+"MilkmanInfo","","搾りたて新鮮をあなたに"
 "PoliceInfo","","悪は滅びる…"
 "NiceWorkaholicInfo","Task!!! Task!!! Task!!!","クルーのために働かなければならない"
 "JailerInfo","Imprison the impostor","容疑者を拘束し、その手で正義を執行せよ。"
@@ -817,6 +822,7 @@
 "SealerInfo","Vent access sealed","固くてあけれない！！！"
 "SilverBuzzerInfo","Stay alert!","警戒せよ！"
 "SilverBuzzerInfoLong","If any player has Silver Buzzer, a warning is announced at the first meeting. If enabled, newly granted Silver Buzzer also triggers a warning at the next meeting.","シルバーブザーが付与されたプレイヤーが存在すると、初日の会議で通知される。\n初日以外にも、設定が有効なら新しくシルバーブザーが付与された時に次の会議で通知される。"
+"BorderInfo","Kill a certain number of Crew","目標人数を目指して殺せ"
 
 "## 役職説明ロング"
 
@@ -1262,6 +1268,7 @@
 "SunglassesInfoLong","Vision is slightly reduced","視界が一定倍率低下する。"
 "SecurerInfoLong","Add-ons:\nOnly granted to Impostors or Jackal-side roles that can use sabotage.\nCannot use sabotage.","(属性):\nインポスター、またはサボタージュを使用できる設定がONのジャッカル系にのみ付与される。\nサボタージュを使用できない。"
 "SealerInfoLong","Add-ons:\nCannot use vents.","(属性):\nベントが使えなくなる。\nベントが使える役職にしか付与されない。"
+"BorderInfoLong","You cannot win unless you personally secure more kills than the specified number. \nThis attribute is not granted to Border Killers or Count Killers.","設定人数以上自身でキルをしないと、勝利できない。\nこの属性はボーダーキラーとカウントキラーには付与されない。"
 
 "# ニュートラル属性"
 "LoversInfoLong","Lovers is an additional Neutrals role assigned to 2 random players on top of their defined roles.\nIf you and your lover both survive til the end, you both will win.\nIf one of you dies, the other will also die. If crewmates get a task victory, you both will lose.","全プレイヤーの中からランダムで2人に他の役職と重複して配役されるニュートラル。\nラバーズが2人とも生き残っている状態で試合終了すれば勝利。\nまた、生存者がラバーズの2人のみの場合、追加勝利設定でも単独勝利となる。\nラバーズの片方が死んだときにもう片方も死ぬ。クルーのタスクが完了すると敗北。\n追加勝利ではないラバーズが複数組生き残っている場合、設定された勝利優先順位に応じる。","恋人为两名玩家的组合。\n恋人存活到游戏结束则恋人独自获胜。\n船员阵营的恋人玩家没有任务。\n从恋人阵营玩家可以看到两名恋人玩家昵称旁有心形标志。\n恋人一同赴死。\n恋人中的一方在会议中被放逐时，另一方将死亡并变为不可以被报告的尸体。","(中立),\n遊戲開始系統會隨機抽取兩人當戀人,該職業可以和其他職業屬於同一個玩家身上\n戀人將獲勝在遊戲結束時如果兩個戀人都活著.\n但是當一個戀人死去,另一個戀人也會跟著死去\n如果船員完成所有任務,戀人即宣告失敗。","(Нейтралы):\nДополнительно с какой-либо ролью Любовники назначаются 2 случайным игрокам. \nЕсли оба Любовника останутся живы, то они выиграют. \nКогда умрёт хотя бы один Любовник, то моментально умрёт и второй. Они проиграют когда Члены Экипажа выполнят все задания.","(Neutros): \nOs Amantes, é um papel dado a 2 jogadores aleatórios, somado a sua classe já definida. \nSe você e seu amante sobreviverem até o final, vocês ganharão. \nCaso um dos dois morra, o outro também morre. Se os Tripulantes ganharem por tarefas, os dois perdem.",""

@@ -836,6 +836,7 @@ namespace TownOfHost
                 CustomRoles.News => AddonInfo(role, "Ｎ"),
                 CustomRoles.Sunglasses => AddonInfo(role, "Ｓ", From.TheOtherRoles),
                 CustomRoles.SilverBuzzer => AddonInfo(role, "Sb"),
+                CustomRoles.Border => AddonInfo(role, "Ｂ"),
                 //第三属性
                 CustomRoles.Amanojaku => AddonInfo(role),
                 CustomRoles.Lovers or CustomRoles.RedLovers or CustomRoles.BlueLovers or CustomRoles.YellowLovers or CustomRoles.GreenLovers
@@ -985,9 +986,11 @@ namespace TownOfHost
                 case From.TownOfHost_Y: Fromtext += $"<#dddd00>TownOfHost_Y</color>"; break;
                 case From.TownOfHost_K: Fromtext += $"<#00bfff>TownOfHost_K</color>"; break;
                 case From.TownOfHost_for_E: Fromtext += $"<#18e744>TownOfHost for E</color>"; break;
-                case From.Speyrp: Fromtext = $"<#7fffbf>From:Yoran★</color>"; break;
+                //case From.Speyrp: Fromtext = $"<#7fffbf>From:Yoran★</color>"; break;
+                case From.Speyrp: Fromtext += $"<#00bfff>TownOfHost_K</color>"; break;
                 case From.TownOfHost_Enhanced: Fromtext += $"<#ffc0cb>TownOfHost Enhanced</color>"; break;
-                case From.TownOfHost_Pko: Fromtext += $"<#FF9631>TownOfHost Pko</color>"; break;
+                //case From.TownOfHost_Pko: Fromtext += $"<#FF9631>TownOfHost Pko</color>"; break;
+                case From.TownOfHost_Pko: Fromtext = ""; break;
                 case From.RevolutionaryHostRoles: Fromtext += $"<#3cb371>RevolutionaryHostRoles</color>"; break;
                 case From.Love_Couple_Mod: Fromtext += "<#ff6be4>Love Couple Mod</color>"; break;
             }

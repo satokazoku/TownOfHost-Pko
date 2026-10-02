@@ -20,10 +20,10 @@ public sealed class CountKiller : RoleBase, ILNKiller, ISchrodingerCatOwner, IAd
             "#FF1493",
             (2, 0),
             true,
-            assignInfo: new RoleAssignInfo(CustomRoles.CountKiller, CustomRoleTypes.Neutral)
+            /*assignInfo: new RoleAssignInfo(CustomRoles.CountKiller, CustomRoleTypes.Neutral)
             {
                 AssignCountRule = new(1, 1, 1)
-            },
+            },*/
             Desc: () =>
             {
                 return string.Format(GetString("CountKillerDesc"), OptionVictoryCount.GetInt(), OptionAddWin.GetBool() ? GetString("AddWin") : GetString("SoloWin"));

@@ -285,6 +285,10 @@ namespace TownOfHost
                     Twins.CheckAddWin();
                     Triplets.CheckAddWin();
                     Faction.CheckWin();
+                    foreach (var player in PlayerCatch.AllPlayerControls)
+                    {
+                        Border.CheckWin(player.PlayerId);
+                    }
                 }
                 if (lockDrawWinner)
                 {

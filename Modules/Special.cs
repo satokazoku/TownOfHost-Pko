@@ -26,6 +26,7 @@ static class Event
     public static bool Birthday12 = true;
     public static bool IsEventDay => IsChristmas || White || IsInitialRelease || IsHalloween || GoldenWeek || April || Birthday12;
     public static bool Special = false;
+    public static bool Intro = false;
     public static bool NowRoleEvent => false;
     public static List<string> OptionLoad = new();
     public static bool IsE(this CustomRoles role) => role is CustomRoles.SpeedStar or CustomRoles.Chameleon or CustomRoles.Fortuner;
