@@ -60,8 +60,9 @@ public sealed class Amnesiac : RoleBase, IImpostor
     static OptionItem OptCanUseVent;
     static OptionItem OptCanUseSabotage;
     static OptionItem OptNeedtoLastImpostor;
+#pragma warning disable CS0169
     static OptionItem OptIsWolfBoy;
-
+#pragma warning restore CS0169
     public static bool CantKillImpostor;
     public static bool MatchSettingstoSheriff;
     public static bool CanRealize;
