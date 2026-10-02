@@ -112,11 +112,12 @@ static class Event
 
     public static Dictionary<CustomRoles, Func<bool>> EventRoles = new()
     {
-        //{CustomRoles.Altair,() => Tanabata},
-        //{CustomRoles.Vega,() => Tanabata},
-        //{CustomRoles.Amateras,() => Tanabata},
-        //{CustomRoles.SpeedStar , () => Special},
-        //{CustomRoles.Chameleon , () => Special},
+        {CustomRoles.Altair,() => Tanabata},
+        {CustomRoles.Vega,() => Tanabata},
+        {CustomRoles.Amateras,() => Tanabata},
+        {CustomRoles.SpeedStar , () => Special},
+        {CustomRoles.Chameleon , () => Special},
+
         {CustomRoles.Cakeshop , () => Birthday12},
 
         {CustomRoles.MadPukupuku,() => Birthday12}
