@@ -205,7 +205,7 @@ public sealed class Siren : RoleBase, IImpostor
     {
         var roomName = DestroyableSingleton<TranslationController>.Instance.GetString(room);
         var text = string.Format(GetString("SirenTargetInfo"), roomName, Mathf.CeilToInt(left));
-        return $"<size=50%><color=#ff1919>{text}</color></size>";
+        return $"<size=100%><color=#ff1919>{text}</color></size>";
     }
 
     public override string GetAbilityButtonText() => Timer == null ? GetString("SirenAbility") : GetString("SirenAbility2");
