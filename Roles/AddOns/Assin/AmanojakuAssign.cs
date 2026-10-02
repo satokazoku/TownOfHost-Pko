@@ -35,7 +35,9 @@ namespace TownOfHost.Roles.AddOns.Common
             CustomRoles.TaskPlayerB,
             CustomRoles.Fox,
             CustomRoles.King,
-            CustomRoles.Autocrat
+            CustomRoles.Autocrat,
+            CustomRoles.Emptiness,
+            CustomRoles.SpiritGuide
         };
         static readonly IEnumerable<CustomRoles> ValidRoles = CustomRolesHelper.AllRoles.Where(role => !InvalidRoles.Contains(role));
 

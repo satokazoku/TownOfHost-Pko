@@ -1569,7 +1569,7 @@ namespace TownOfHost
                     case CustomRoles.Noisemaker: id = 350; break;
                     case CustomRoles.Detective: id = 23100; break;
                     case CustomRoles.Judge: id = 25100; break;
-                    case CustomRoles.Influencer: id = 25150; break;
+                    case CustomRoles.SpiritGuide: id = 25150; break;
                 }
             }
             assignCountRule ??= new(1, 15, 1);

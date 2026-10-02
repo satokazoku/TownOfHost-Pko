@@ -864,6 +864,7 @@ CustomDeathReason deathReason = CustomDeathReason.Kill)
                 case CustomRoles.DemonicCrusher: DemonicCrusher.Add(pc.PlayerId); break;
                 case CustomRoles.DemonicSupporter: DemonicSupporter.Add(pc.PlayerId); break;
                 case CustomRoles.AsistingAngel: AsistingAngel.Add(pc.PlayerId); break;
+                case CustomRoles.SpiritGuide: SpiritGuide.Add(pc.PlayerId); break;
             }
         }
     }
@@ -1495,7 +1496,7 @@ public enum CustomRoles
     GhostNoiseSender,
     GhostReseter,
     GuardianAngel,
-    Influencer,
+    SpiritGuide,
     GhostRumour,
     //Pko
     GhostFloodlight,

@@ -647,7 +647,7 @@ namespace TownOfHost
                     desc += $"<size=70%>{inforoleinfo?.Desc()}";
                 }
                 else
-                    if (inforole.IsVanilla() && inforole is not CustomRoles.GuardianAngel)
+                    if (inforole.IsVanilla() && inforole is not CustomRoles.GuardianAngel and not CustomRoles.SpiritGuide)
                     {
                         text += $"<size=100%>{inforoleinfo.Description.Blurb}" + "\n\n</size>";
                         desc += $"<size=70%>{inforoleinfo.Description.Description}";
@@ -683,8 +683,7 @@ namespace TownOfHost
                     role = CustomRoles.Sheriff;
             }
             // 役職説明表示
-            if (!role.IsVanilla() || player.IsGhostRole() ||
-                TownOfHost.Roles.Vanilla.Influencer.IsDisplayedAsInfluencer(player))
+            if (!role.IsVanilla() || player.IsGhostRole())
             {
                 var RoleWithInfo = $"{UtilsRoleText.GetTrueRoleName(player.PlayerId)}:\r\n";
                 RoleWithInfo += player.GetRoleDesc();

@@ -55,7 +55,7 @@ namespace TownOfHost
         {
             if (roleType == RoleTypes.SpiritGuide && __instance != null &&
                 PlayerState.GetByPlayerId(__instance.PlayerId) is { } state)
-                state.WasInfluencer = true;
+                state.WasSpiritGuide = true;
             var target = __instance;
             var targetName = __instance.GetNameWithRole().RemoveHtmlTags();
             canOverrideRole = true;
@@ -79,13 +79,13 @@ namespace TownOfHost
         public static void Postfix(PlayerControl __instance) => __instance.Data.Role.NameColor = Palette.White;
     }
     [HarmonyPatch(typeof(RoleManager), nameof(RoleManager.SetRole), new[] { typeof(PlayerControl), typeof(RoleTypes) })]
-    class RememberInfluencerRolePatch
+    class RememberSpiritGuideRolePatch
     {
         public static void Postfix([HarmonyArgument(0)] PlayerControl player, [HarmonyArgument(1)] RoleTypes roleType)
         {
             if (roleType == RoleTypes.SpiritGuide && player != null &&
                 PlayerState.GetByPlayerId(player.PlayerId) is { } state)
-                state.WasInfluencer = true;
+                state.WasSpiritGuide = true;
         }
     }
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.Die))]

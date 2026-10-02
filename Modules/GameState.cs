@@ -12,7 +12,7 @@ namespace TownOfHost
     {
         byte PlayerId;
         public CustomRoles MainRole;
-        public bool WasInfluencer { get; set; }
+        public bool WasSpiritGuide { get; set; }
         public List<CustomRoles> SubRoles;
         public CustomRoles GhostRole;
         public CountTypes CountType { get; private set; }
@@ -96,6 +96,7 @@ namespace TownOfHost
                     RoleTypes.Shapeshifter => CustomRoles.Shapeshifter,
                     RoleTypes.Phantom => CustomRoles.Phantom,
                     RoleTypes.Viper => CustomRoles.Viper,
+                    RoleTypes.SpiritGuide => CustomRoles.SpiritGuide,
                     RoleTypes.Judge => CustomRoles.Judge,
                     _ => CustomRoles.Crewmate,
                 };

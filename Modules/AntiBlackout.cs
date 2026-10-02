@@ -304,7 +304,7 @@ namespace TownOfHost
                     }
                     if (!isalive && pc.IsGhostRole())
                     {
-                        setrole = RoleTypes.GuardianAngel;
+                        setrole = pc.Is(CustomRoles.SpiritGuide) ? RoleTypes.SpiritGuide : RoleTypes.GuardianAngel;
                     }
                     if (!isalive && pc.PlayerId == Player.PlayerId &&
                         (WasSpiritGuide(pc.PlayerId) || pc.Data?.Role?.Role == RoleTypes.SpiritGuide))
@@ -346,9 +346,9 @@ namespace TownOfHost
                     //Player.RpcExileV3();
                     if (Player.PlayerId == PlayerControl.LocalPlayer.PlayerId && Player.IsGhostRole())
                     {
-                        Player.RpcSetRole(RoleTypes.GuardianAngel, true);
+                        Player.RpcSetRole(Player.Is(CustomRoles.SpiritGuide) ? RoleTypes.SpiritGuide : RoleTypes.GuardianAngel, true);
                         Player.RpcResetAbilityCooldown();
-                        Player.GetPlayerState().NowRoleType = RoleTypes.GuardianAngel;
+                        Player.GetPlayerState().NowRoleType = Player.Is(CustomRoles.SpiritGuide) ? RoleTypes.SpiritGuide : RoleTypes.GuardianAngel;
                     }
                 }
             }, Main.LagTime, "Re-SetRole", true);

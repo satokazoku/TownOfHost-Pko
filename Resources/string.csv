@@ -20,16 +20,14 @@
 "Phantom","Phantom","ファントム"
 "Viper","Viper","バイパー"
 "Judge","Judge","ジャッジ"
-"Influencer","Influencer","インフルエンサー"
-"InfluencerMessageCooldown","Message Cooldown","メッセージクールダウン"
-"InfluencerInfo","Send messages after death.","死亡後にメッセージを送信できる。"
+"SpiritGuide","Influencer","インフルエンサー"
 
 "ShapeshifterInfoSp","Huh? Is he one of us, too…?","あれ？あいつも俺…？"
 "ViperInfoSp","Poison the target, melt the evidence","毒牙にかけて証拠は溶かす"
 "NoisemakerInfoSp","Let my final voice reach the crew","最期の一声クルーに届け"
 "TrackerInfoSp",""I’m always watching over you, wherever you are","いつも見てるよあなたの居場所"
 "ScientistInfoSp","Observe the quiet pulse and determine it.","静かな脈拍、見て突き止めり"
-"InfluencerInfoSp","Committed to the Camera","カメラにかけたメッセンジャー"
+"SpiritGuideInfoSp","Committed to the Camera","カメラにかけたメッセンジャー"
 
 "# 特殊インポスター役職"
 "BountyHunter","Bounty Hunter","バウンティハンター","赏金猎人","賞金獵人","Охотник за головами","Caçador de Recompensas","Caçador de Recompensas"

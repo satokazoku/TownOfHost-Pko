@@ -170,9 +170,7 @@ namespace TownOfHost
         public static string GetAllRoleName(this PlayerControl player)
         {
             if (!player) return null;
-            var text = TownOfHost.Roles.Vanilla.Influencer.IsDisplayedAsInfluencer(player)
-                ? UtilsRoleText.GetRoleNameData(player.GetCustomRole(), null, CustomRoles.Influencer).text
-                : UtilsRoleText.GetRoleName(player.GetCustomRole());
+            var text = UtilsRoleText.GetRoleName(player.GetCustomRole());
             text += player.GetSubRoleName();
             return text;
         }
@@ -258,7 +256,7 @@ namespace TownOfHost
         {
             if (pc.PlayerId == PlayerControl.LocalPlayer.PlayerId && !Main.showkillbutton) return false;
             if (!pc.IsAlive()) return false;
-            if (pc?.Data?.Role?.Role == RoleTypes.GuardianAngel) return false;
+            if (pc?.Data?.Role?.Role is RoleTypes.GuardianAngel or RoleTypes.SpiritGuide) return false;
 
             if (pc.Is(CustomRoles.Amnesia) && !pc.Is(CustomRoleTypes.Impostor)) return false;
 
@@ -506,8 +504,6 @@ namespace TownOfHost
         }
         public static string GetRoleDesc(this PlayerControl player, bool InfoLong = false)
         {
-            if (TownOfHost.Roles.Vanilla.Influencer.IsDisplayedAsInfluencer(player))
-                return GetString("InfluencerInfo");
             var roleClass = player.GetRoleClass();
             var role = player.GetCustomRole();
             if (player.Is(CustomRoles.Amnesia))

@@ -337,7 +337,7 @@ namespace TownOfHost
             {
                 if (pc.Data?.Role?.Role == RoleTypes.SpiritGuide &&
                     PlayerState.GetByPlayerId(pc.PlayerId) is { } state)
-                    state.WasInfluencer = true;
+                    state.WasSpiritGuide = true;
                 if (winner == CustomWinner.Draw)
                 {
                     SetGhostRole(ToGhostImpostor: true);

@@ -24,7 +24,6 @@ namespace TownOfHost
             //注:この時点では役職は設定されていません。
             GameStates.Intro = true;
             Main.NormalOptions.roleOptions.SetRoleRate(RoleTypes.GuardianAngel, 0, 0);
-            TownOfHost.Roles.Vanilla.Influencer.ApplyOptions();
 
             if (Utils.IsRestriction())
             {
@@ -323,6 +322,7 @@ namespace TownOfHost
             List<PlayerControl> Noisemakers = new();
             List<PlayerControl> Detectives = new();
             List<PlayerControl> GuardianAngels = new();
+            List<PlayerControl> SpiritGuides = new();
             List<PlayerControl> Shapeshifters = new();
             List<PlayerControl> Phantoms = new();
             List<PlayerControl> Vipers = new();
@@ -368,6 +368,10 @@ namespace TownOfHost
                     case RoleTypes.GuardianAngel:
                         GuardianAngels.Add(pc);
                         role = CustomRoles.GuardianAngel;
+                        break;
+                    case RoleTypes.SpiritGuide:
+                        SpiritGuides.Add(pc);
+                        role = CustomRoles.SpiritGuide;
                         break;
                     case RoleTypes.Shapeshifter:
                         Shapeshifters.Add(pc);
@@ -477,6 +481,7 @@ namespace TownOfHost
                         RoleTypes.Detective => Detectives,
                         RoleTypes.Judge => Judges,
                         RoleTypes.GuardianAngel => GuardianAngels,
+                        RoleTypes.SpiritGuide => SpiritGuides,
                         _ => Crewmates,
                     };
                     AssignCustomRolesFromList(role, baseRoleTypes);

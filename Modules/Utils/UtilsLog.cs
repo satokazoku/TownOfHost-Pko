@@ -38,7 +38,7 @@ namespace TownOfHost
             {
                 var logger = Logger.Handler("DumpLog");
                 logger.Info("------------基本設定------------");
-                var tmp = GameOptionsManager.Instance.CurrentGameOptions.ToHudString(GameData.Instance ? GameData.Instance.PlayerCount : 10).Split("\r\n").Skip(1).SkipLast(11);
+                var tmp = GameOptionsManager.Instance.CurrentGameOptions.ToHudString(GameData.Instance ? GameData.Instance.PlayerCount : 10).Split("\r\n").Skip(1).SkipLast(12);
                 foreach (var t in tmp) logger.Info(t);
                 logger.Info("------------詳細設定------------");
                 foreach (var o in OptionItem.AllOptions.Where(o => o is not ObjectOptionitem))
@@ -105,25 +105,13 @@ namespace TownOfHost
         public static Dictionary<byte, string> LastLogPro = new();
         public static Dictionary<byte, string> LastLogSubRole = new();
         public static Dictionary<byte, string> LastLogLoveRole = new();
-        private static string GetResultRoleName(byte playerId)
-        {
-            var player = GetPlayerById(playerId);
-            var state = PlayerState.GetByPlayerId(playerId);
-            if (state?.GhostRole == CustomRoles.NotAssigned &&
-                (TownOfHost.Roles.Vanilla.Influencer.IsDisplayedAsInfluencer(player) ||
-                 (state.WasInfluencer && (state.IsDead || player?.Data?.IsDead == true))))
-                return GetRoleNameData(state.MainRole, null, CustomRoles.Influencer, false).text;
-
-            return LastLogRole.TryGetValue(playerId, out var roleLog)
-                ? roleLog : GetTrueRoleName(playerId);
-        }
         public static string GetLogtext(byte pc)
         {
             var longestNameByteCount = Main.AllPlayerNames?.Values?.Select(name => name.GetByteCount())?.OrderByDescending(byteCount => byteCount)?.FirstOrDefault() ?? 10;
 
             var name = LastLog.TryGetValue(pc, out var log) ? log : "??";
             var pro = LastLogPro.TryGetValue(pc, out var prog) ? prog : "(??)";
-            var role = GetResultRoleName(pc);
+            var role = LastLogRole.TryGetValue(pc, out var rolelog) ? rolelog : "???";
             var addon = "??";
             addon = LastLogLoveRole.TryGetValue(pc, out var m) ? m : "";
 
@@ -150,7 +138,7 @@ namespace TownOfHost
                 // "回線切断 " = 4.5em
                 pos += DestroyableSingleton<TranslationController>.Instance.currentLanguage.languageID == SupportedLangs.English ? 8.5f : 5f;
                 builder.AppendFormat("<pos={0}em>", pos);
-                var role = GetResultRoleName(id);
+                var role = GetTrueRoleName(id);
                 role = Regex.Replace(role, "<b>", "");
                 role = Regex.Replace(role, "</b>", "");
                 builder.Append(role);

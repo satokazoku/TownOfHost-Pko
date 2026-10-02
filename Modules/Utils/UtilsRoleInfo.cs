@@ -125,6 +125,7 @@ namespace TownOfHost
                 roleCommands.Add(CustomRoles.DemonicTracker, "DTr");
                 roleCommands.Add(CustomRoles.DemonicVenter, "Dve");
                 roleCommands.Add(CustomRoles.AsistingAngel, "AsA");
+                roleCommands.Add(CustomRoles.SpiritGuide, "SpG");
 
                 // HAS
                 roleCommands.Add((CustomRoles)(-6), $"== {GetString("HideAndSeek")} ==");  // 区切り用
@@ -136,8 +137,8 @@ namespace TownOfHost
 
             var msg = "";
             var rolemsg = $"{GetString("Command.h_args")}";
-            if (Main.DebugVersion is false)//デバッグバージョンなら役職一覧表示させへん。
-            {
+            //if (Main.DebugVersion is false)//デバッグバージョンなら役職一覧表示させへん。
+            //{
                 switch (role)
                 {
                     case "i":
@@ -232,7 +233,7 @@ namespace TownOfHost
                         SendMessage(rolemsg, player);
                         return;
                 }
-            }
+            //}
             foreach (var roledata in roleCommands)
             {
                 var roleName = roledata.Key.ToString();
@@ -390,7 +391,7 @@ namespace TownOfHost
             input = FixRoleNameInput(input).ToLower();
             foreach (CustomRoles role in Enum.GetValues(typeof(CustomRoles)))
             {
-                if (!includeVanilla && role.IsVanilla() && role != CustomRoles.GuardianAngel) continue;
+                if (!includeVanilla && role.IsVanilla() && role is not CustomRoles.GuardianAngel and not CustomRoles.SpiritGuide) continue;
                 if (input == GuessManager.ChangeNormal2Vanilla(role))
                 {
                     output = role;

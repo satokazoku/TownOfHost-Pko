@@ -4,6 +4,7 @@ using TownOfHost.Roles.AddOns.Impostor;
 using TownOfHost.Roles.AddOns.Neutral;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Ghost;
+using TownOfHost.Roles.Vanilla;
 
 namespace TownOfHost;
 
@@ -24,6 +25,7 @@ class GhostRoleCore
         GuardianAngel.Init();
         GhostFloodlight.Init();
         GhostSaboteur.Init();
+        SpiritGuide.Init();
 
         //アドオンもここ置かせて( ᐛ )
         LastImpostor.Init();
@@ -144,5 +146,6 @@ class GhostRoleCore
         GhostReseter.SetupCustomOption();
         GhostRumour.SetupCustomOption();
         GuardianAngel.SetupCustomOption();
+        SpiritGuide.SetupCustomOption();
     }
 }

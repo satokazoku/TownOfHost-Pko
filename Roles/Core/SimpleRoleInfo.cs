@@ -247,10 +247,9 @@ public class SimpleRoleInfo
                 OptionSort = (0, 6);
                 break;
             case RoleTypes.SpiritGuide:
-                roleName = CustomRoles.Influencer;
+                roleName = CustomRoles.SpiritGuide;
                 customRoleType = CustomRoleTypes.Crewmate;
-                configId = 25150;
-                OptionSort = (0, 7);
+                configId = -10;
                 break;
             case RoleTypes.GuardianAngel:
                 roleName = CustomRoles.GuardianAngel;
