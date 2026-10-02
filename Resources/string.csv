@@ -3492,7 +3492,6 @@
 "Close","Close","閉じる","关闭","","Закрыть","Fechar",""
 "TOH-P","<#00bfff>TOH-P</color> Options","<#00bfff>TOH-P</color>の設定","<#00bfff>TOH-P</color> 选项","","Настройки <#00bfff>TOH-P</color>","<#00bfff>TOH-P</color> Opções",""
 "TOH-POptions","TOH-P Options","<#00bfff>TOH-P</color> オプション","","","","",""
-"ForceJapanese","Force Japanese","日本語に強制","强制使用日语","強制使用日語","Принудительный Японский","Forçar Japonês",""
 "JapaneseRoleName","Japanese Role Name","日本語の役職名","用日语显示职业名","","Японские названия ролей","Nomes de Classes Japoneses",""
 "UnloadMod","Disable The Mod","Modを無効化","切换为原版","","Отключить мод","Desabilitar o Mod",""
 "UnloadWarning","<#ffff00><size=200%>Warning</size></color>\n\nTo re-enable the mod, you must restart the game. Would you like to continue anyway?","<#ffff00><size=200%>警告</size></color>\n\nModを再び有効化するにはゲームの再起動が必要です。本当に無効化しますか？","<#ffff00><size=200%>警告：</size></color>\n\n切换后需要重启游戏来恢复模组，确定要切换原版吗？","","<#ffff00><size=200%>Внимание!</size></color>\n\nДля повторного включения мода необходимо перезапустить игру. Вы все равно хотите продолжить?","<#ffff00><size=200%>Aviso</size></color>\n\nPara reativar o mod, você precisará reiniciar o jogo. Deseja continuar assim mesmo?",""

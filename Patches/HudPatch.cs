@@ -83,7 +83,7 @@ namespace TownOfHost
                 GameSettings.SetOutlineColor(Color.black);
                 GameSettings.SetOutlineThickness(0.13f);
                 GameSettings.fontSizeMin =
-                GameSettings.fontSizeMax = (TranslationController.Instance.currentLanguage.languageID == SupportedLangs.Japanese || Main.ForceJapanese.Value) ? 1.05f : 1.2f;
+                GameSettings.fontSizeMax = (TranslationController.Instance.currentLanguage.languageID == SupportedLangs.Japanese) ? 1.05f : 1.2f;
 
                 var settaskPanel = GameStates.IsLobby && !GameStates.Intro && !GameStates.IsCountDown && !GameStates.InGame && GameSettingMenu.Instance && (GameSettingMenuStartPatch.ModSettingsButton?.selected ?? false);// && GameSettingMenuStartPatch.NowRoleTab is not CustomRoles.NotAssigned;
                 GameObject.Find("Main Camera/Hud/TaskDisplay")?.gameObject?.SetActive(settaskPanel);
