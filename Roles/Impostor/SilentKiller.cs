@@ -79,7 +79,6 @@ namespace TownOfHost.Roles.Impostor
 
         const float SyncInterval = 0.15f;
         float SyncTimer;
-        float DebugTimer;
 
         Dictionary<byte, Vector2> RealPos = new();
         Dictionary<byte, float> StopTimer = new();
