@@ -1398,7 +1398,7 @@
 "SlotRole13","SlotRole 13","排他的設定 13"
 "SlotRole14","SlotRole 14","排他的設定 14"
 "SlotRole15","SlotRole 15","排他的設定 15"
-"OptionGameChatSetting","Display Chat During a Task Turn","タスクターン中のチャット表示"
+"GameChatSetting","Display Chat During a Task Turn","タスクターン中のチャット表示"
 
 "## マップ改造"
 "MapModification","Map Modifications","マップ改造","地图修改","","Модификации для карт","Modificações do Mapa",""
