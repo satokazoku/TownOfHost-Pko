@@ -42,15 +42,18 @@ public sealed class Balancer : RoleBase, ISelfVoter
         target2 = 255;
         Target1 = 255;
         Target2 = 255;
-        used = false;
+        UseCount = OptUseCount.GetInt();
         Id = 255;
         nickname = null;
+        rndVote = OptVote.GetBool();
         CustomRoleManager.MarkOthers.Add(OtherMark);
     }
 
     static OptionItem OptionMeetingTime;
     static OptionItem OptionCanUseAllAlive;
     public static OptionItem OptionCanMeetingAbility;
+    static OptionItem OptUseCount;
+    static OptionItem OptVote;
     //共有用
     public static byte target1 = 255, target2 = 255;
     public static byte Id = 255;
@@ -59,21 +62,27 @@ public sealed class Balancer : RoleBase, ISelfVoter
     static bool CanUseAllAlive; //誰かが死亡するまで、能力を使えない
     //プレイヤーによって操作できる
     byte Target1, Target2;
-    bool used;
-
+    int UseCount;
+    static bool rndVote;
     enum Option
     {
         BalancerMeetingTime,
         BalancerCanUseAllAlive,
-        BalancerCanUseMeetingAbility
+        BalancerCanUseMeetingAbility,
+        BlancerrndVote
     }
 
     private static void SetupOptionItem()
     {
         OptionMeetingTime = IntegerOptionItem.Create(RoleInfo, 10, Option.BalancerMeetingTime, new(15, 120, 1), 30, false)
             .SetValueFormat(OptionFormat.Seconds);
-        OptionCanUseAllAlive = BooleanOptionItem.Create(RoleInfo, 11, Option.BalancerCanUseAllAlive, false, false);
-        OptionCanMeetingAbility = BooleanOptionItem.Create(RoleInfo, 12, Option.BalancerCanUseMeetingAbility, false, false);
+        OptUseCount = IntegerOptionItem.Create(RoleInfo, 11, GeneralOption.OptionCount, new(1, 7, 1), 1, false)
+            .SetValueFormat(OptionFormat.Times);
+        OptVote = BooleanOptionItem.Create(RoleInfo, 12, Option.BlancerrndVote, false, false);
+
+        //以下K独自オプション
+        OptionCanUseAllAlive = BooleanOptionItem.Create(RoleInfo, 13, Option.BalancerCanUseAllAlive, false, false);
+        OptionCanMeetingAbility = BooleanOptionItem.Create(RoleInfo, 14, Option.BalancerCanUseMeetingAbility, false, false);
         MonkeyBehaviorBanOption.Create(RoleInfo);
     }
 
@@ -95,7 +104,7 @@ public sealed class Balancer : RoleBase, ISelfVoter
             nickname = null;
         }
     }
-    bool ISelfVoter.CanUseVoted() => Canuseability() && !used && Id is not 255 && (CanUseAllAlive || GameStates.AlreadyDied);
+    bool ISelfVoter.CanUseVoted() => Canuseability() && UseCount > 0 && Id is not 255 && (CanUseAllAlive || GameStates.AlreadyDied);
     public override bool CheckVoteAsVoter(byte votedForId, PlayerControl voter)
     {
         if (!Canuseability()) return true;
@@ -111,7 +120,7 @@ public sealed class Balancer : RoleBase, ISelfVoter
         }
 
         //通常会議の処理 投票した人が自分ではない or 能力使用済みならここから先は実行しない
-        if (voter.PlayerId != Player.PlayerId || used || (CanUseAllAlive && !GameStates.AlreadyDied))
+        if (voter.PlayerId != Player.PlayerId || UseCount <= 0 || (CanUseAllAlive && !GameStates.AlreadyDied))
             return true;
 
         //天秤モードかチェック
@@ -186,11 +195,12 @@ public sealed class Balancer : RoleBase, ISelfVoter
                 byte[] random_target = [Target1, Target2];
                 random_target = [.. random_target.OrderBy(x => Guid.NewGuid())];
                 Voteresult = "<color=#cff100>☆" + GetString("BalancerMeeting") + "☆</color>\n" + string.Format(GetString("BalancerMeetingInfo"), UtilsName.GetPlayerColor(PlayerCatch.GetPlayerById(random_target[0]), true), UtilsName.GetPlayerColor(PlayerCatch.GetPlayerById(random_target[1]), true));
-                used = true;
+                --UseCount;
                 target1 = Target1;
                 target2 = Target2;
 
                 using var sender = CreateSender();
+                sender.Writer.Write(UseCount);
                 sender.Writer.Write(target1);
                 sender.Writer.Write(target2);
 
@@ -245,13 +255,13 @@ public sealed class Balancer : RoleBase, ISelfVoter
             { Target2, 0 }
         };
 
-        //投票をカウント、投票してない場合はどちらかに投票させる
+        //投票をカウント、投票してない+設定有効時はどちらかに投票させる
         foreach (var voteData in Instance.AllVotes)
         {
             var voted = voteData.Value;
 
-            //死んでたらスキップ
-            if (!PlayerCatch.GetPlayerById(voted.Voter).IsAlive()) continue;
+            //死亡時・設定無効時はスキップ
+            if (!PlayerCatch.GetPlayerById(voted.Voter).IsAlive() || !rndVote) continue;
 
             //ディクテーターなどの強制的に会議を終わらせるものではないならランダム投票
             if (!voted.HasVoted && !ClearAndExile)
@@ -400,7 +410,7 @@ public sealed class Balancer : RoleBase, ISelfVoter
     public override string GetLowerText(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
     {
         seen ??= seer;
-        if (isForMeeting && Player.IsAlive() && (!GameStates.AlreadyDied || CanUseAllAlive) && seer.PlayerId == seen.PlayerId && Canuseability() && !used)
+        if (isForMeeting && Player.IsAlive() && (!GameStates.AlreadyDied || CanUseAllAlive) && seer.PlayerId == seen.PlayerId && Canuseability() && UseCount > 0)
         {
             var mes = $"<color={RoleInfo.RoleColorCode}>{GetString("SelfVoteRoleInfoMeg")}</color>";
             return isForHud ? mes : $"<size=40%>{mes}</size>";
@@ -410,7 +420,7 @@ public sealed class Balancer : RoleBase, ISelfVoter
 
     public override void ReceiveRPC(MessageReader reader)
     {
-        used = true;
+        UseCount = reader.ReadInt32();
         Id = Player.PlayerId;
         target1 = reader.ReadByte();
         target2 = reader.ReadByte();
