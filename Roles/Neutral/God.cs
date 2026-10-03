@@ -19,7 +19,7 @@ public sealed class God : RoleBase, ISystemTypeUpdateHook, IDeathReasonSeeable
             CustomRoleTypes.Neutral,
             51700,
             SetupOptionItem,
-            "god",
+            "gd",
             "#ffd700",
             (6, 4),
             false,

@@ -16,7 +16,7 @@ public sealed class MadTracker : RoleBase, IKillFlashSeeable, IDeathReasonSeeabl
             CustomRoleTypes.Madmate,
             21200,
             SetupOptionItem,
-            "mt",
+            "mtk",
             OptionSort: (2, 2),
             introSound: () => GetIntroSound(RoleTypes.Impostor),
             from: From.TownOfHost_K

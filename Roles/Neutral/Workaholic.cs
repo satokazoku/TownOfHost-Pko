@@ -18,7 +18,7 @@ public sealed class Workaholic : RoleBase
             CustomRoleTypes.Neutral,
             55400,
             SetupOptionItem,
-            "wh",
+            "whc",
             "#008b8b",
             (5, 3),
             from: From.TownOfHost_Y,

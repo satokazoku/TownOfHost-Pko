@@ -114,7 +114,8 @@ namespace TownOfHost
         public static List<string> NotString = new();
         public static string GetString(string str, SupportedLangs langId)
         {
-            var res = $"<INVALID:{str}>";
+            //<>が使えないので結構困る。
+            var res = $"INVALID:{str}";
             var ch = res;
             //if (str is "CakeshopInfoLong" or "CakeshopInfo" or "Cakeshop" && !Event.CheckRole(CustomRoles.Cakeshop)) return res;
             //if (str is "VegaInfoLong" or "VegaInfo" or "Vega" && !Event.CheckRole(CustomRoles.Vega)) return res;

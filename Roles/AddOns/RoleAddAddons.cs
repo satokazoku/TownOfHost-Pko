@@ -83,7 +83,7 @@ namespace TownOfHost
         public OptionItem GiveSecurer;
         public OptionItem GiveSealer;
         public OptionItem GiveSilverBuzzer;
-        public RoleAddAddons(int idStart, TabGroup tab, CustomRoles role, CustomRoles RoleName = CustomRoles.NotAssigned, bool NeutralKiller = false, bool MadMate = false, bool DefaaultOn = false)
+        public RoleAddAddons(int idStart, TabGroup tab, CustomRoles role, CustomRoles RoleName = CustomRoles.NotAssigned, bool NeutralKiller = false, bool MadMate = false, bool DefaaultOn = false, bool sk = false)
         {
             this.IsImpostor = role.IsImpostor();
             this.IdStart = idStart;
@@ -149,16 +149,16 @@ namespace TownOfHost
                     .SetTooltip(() => string.Format(Translator.GetString("SunglassesVisionmagnification_Info"), Main.NormalOptions.CrewLightMod, Main.NormalOptions.CrewLightMod * SunglassesVisionmagnification.GetFloat() * 0.01f, Main.NormalOptions.ImpostorLightMod, Main.NormalOptions.ImpostorLightMod * SunglassesVisionmagnification.GetFloat() * 0.01f));
             GiveSecurer = BooleanOptionItem.Create(idStart++, "GiveSecurer", false, tab, false).SetParentRole(role).SetParent(GiveAddons);
             GiveSealer = BooleanOptionItem.Create(idStart++, "GiveSealer", false, tab, false).SetParentRole(role).SetParent(GiveAddons);
-            GiveSilverBuzzer = BooleanOptionItem.Create(idStart++, "GiveSilverBuzzer", false, tab, false).SetParentRole(role).SetParent(GiveAddons);
+            GiveSilverBuzzer = BooleanOptionItem.Create(idStart++, "GiveSilverBuzzer", sk, tab, false).SetParentRole(role).SetParent(GiveAddons);
 
             role = RoleName == CustomRoles.NotAssigned ? role : RoleName;
 
             if (!AllData.ContainsKey(role)) AllData.Add(role, this);
             else Logger.Warn("重複したCustomRolesを対象とするRoleAddAddonsが作成されました", "RoleAddAddons");
         }
-        public static RoleAddAddons Create(SimpleRoleInfo roleInfo, int idOffset, CustomRoles rolename = CustomRoles.NotAssigned, bool NeutralKiller = false, bool MadMate = false, bool DefaaultOn = false)
+        public static RoleAddAddons Create(SimpleRoleInfo roleInfo, int idOffset, CustomRoles rolename = CustomRoles.NotAssigned, bool NeutralKiller = false, bool MadMate = false, bool DefaaultOn = false, bool sk = false)
         {
-            return new RoleAddAddons(roleInfo.ConfigId + idOffset, roleInfo.Tab, roleInfo.RoleName, rolename, NeutralKiller, MadMate, DefaaultOn);
+            return new RoleAddAddons(roleInfo.ConfigId + idOffset, roleInfo.Tab, roleInfo.RoleName, rolename, NeutralKiller, MadMate, DefaaultOn, sk);
         }
         public static RoleAddAddons Create(int idStart, TabGroup tab, CustomRoles role)
         {

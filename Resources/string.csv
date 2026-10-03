@@ -25,7 +25,7 @@
 "ShapeshifterInfoSp","Huh? Is he one of us, too…?","あれ？あいつも俺…？"
 "ViperInfoSp","Poison the target, melt the evidence","毒牙にかけて証拠は溶かす"
 "NoisemakerInfoSp","Let my final voice reach the crew","最期の一声クルーに届け"
-"TrackerInfoSp",""I’m always watching over you, wherever you are","いつも見てるよあなたの居場所"
+"TrackerInfoSp","I’m always watching over you, wherever you are","いつも見てるよあなたの居場所"
 "ScientistInfoSp","Observe the quiet pulse and determine it.","静かな脈拍、見て突き止めり"
 "SpiritGuideInfoSp","Committed to the Camera","カメラにかけたメッセンジャー"
 
@@ -112,6 +112,7 @@
 "Soulbinder","Soul binder","ソウルバインダー"
 "SoulSlave","Soul Slave","ソウルスレイブ"
 "Juggler","Juggler","ジャグラー"
+"SilentKiller","Silent Killer","サイレントキラー"
 "#ImpostorName"
 
 "# マッドメイト系役職"
@@ -536,6 +537,7 @@
 "SoulSlaveInfo","Those Whose Souls Are Bound","魂を縛られし者"
 "ConjurerInfo","Encirclement that extinguishes all lights","灯火吹き消す包囲陣"
 "JugglerInfo","Shuffle to shake up the board","シャッフルで盤面をかき乱せ"
+"SilentKillerInfo","I can't hear a thing...","何も聞こえない..."
 "#ImpostorInfo"
 
 "# マッドメイト系役職"
@@ -2024,6 +2026,11 @@
 "ConjurerCanAddLength","Beacon Placement Range","ビーコン設置範囲"
 "ConjurerShowFlash","Show Kill Flash","キル時、全員にキルフラッシュを表示する"
 "ConjurerCanKillImpostor","Can Kill Impostor","インポスターもキルできる"
+"SilentKillerStopTime","Seconds Until Visible","姿が見える静止秒数"
+"SilentKillerKillFlash","Kill Flash for All Players","キルした時全員にキルフラッシュが起きる"
+"SilentKillerCanSeeNakama","Recognize Moving Teammates","仲間のインポスターは動いていても認識できる"
+"SirentKillerCanReactor","Can Use Reactor Sabotage","リアクター・酸素サボを使える"
+"SirentKillerCanElec","Can Use Electrical Sabotage","停電・キノコカオスを使える"
 
 "## MadMate Role Setting"
 "MadmateOption","MadMate Options","マッドメイト系役職の設定"
