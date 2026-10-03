@@ -25,7 +25,7 @@ public sealed class Balancer : RoleBase, ISelfVoter
             30700,
             SetupOptionItem,
             "bal",
-            "#cff100",
+            "#ff8003",
             (3, 8),
             introSound: () => GetIntroSound(RoleTypes.Crewmate),
             from: From.SuperNewRoles

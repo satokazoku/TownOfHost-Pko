@@ -9,6 +9,9 @@ namespace TownOfHost
 {
     class CreateStreameMenu
     {
+        // 固定アンカー基準の位置(YはMainMenuManagerPatch.FixedButtonLocalYで3ボタン共通)
+        private static readonly Vector3 OpenMenuFixedPos = new(2.4036f, MainMenuManagerPatch.FixedButtonLocalY, -5f);
+
         public static SimpleButton OpenMenu;
         public static SimpleButton SetURL; public static TextMeshPro NowURLText; public static TextMeshPro NowURLTitle;
         public static TextBoxTMP JoinWord; public static TextMeshPro JoinWordTitle;
@@ -18,17 +21,20 @@ namespace TownOfHost
             var textbox = GameObject.Find("AccountManager/AccountTab/AccountWindow/SubWindows/EditName/NameText");
             if (SimpleButton.IsNullOrDestroyed(OpenMenu))
             {
+                // ロゴの子ではなく、固定アンカーの子として生成
                 OpenMenu = MainMenuManagerPatch.CreateButton(
                     "OpenStreamMenu",
-                    new Vector3(2.4036f, -2.6963f, 1f),
+                    OpenMenuFixedPos,
                     new(245, 46, 32, byte.MaxValue),
                     new(212, 113, 106, byte.MaxValue),
                     () =>
                     {
                         SetOpenMenu();
                         CredentialsPatch.TOHPLogo.gameObject.SetActive(false);
+                        MainMenuManagerPatch.SetFixedButtonsActive(false); // ロゴの子でなくなったので自前で隠す
                     },
-                    "Stream"
+                    "Stream",
+                    transform: MainMenuManagerPatch.FixedParent
                     );
                 {
                     JoinWord = Object.Instantiate(textbox, mainmenumanager.screenTint.transform).GetComponent<TextBoxTMP>();

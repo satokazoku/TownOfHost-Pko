@@ -67,12 +67,16 @@ namespace TownOfHost
         public const string ModVersion = ".24.99";//リリースver用バージョン変更
 
         /// 配布するデバッグ版なのであればtrue。リリース時にはfalseにすること。
-        public static bool DebugVersion = true;
+        public static readonly bool DebugVersion = true;
 
         // サポートされている最低のAmongUsバージョン(Readmeも変える)
         public static readonly string LowestSupportedVersion = "2026.9.29";
         // このバージョンのみで公開ルームを無効にする場合
         public static readonly bool IsPublicAvailableOnThisVersion = false;
+        /// <summary>
+        /// バージョンの下にGitのブランチ名・コミットハッシュを表示するかどうか。基本false。
+        /// </summary>
+        public static readonly bool showbranch = false;
         public Harmony Harmony { get; } = new Harmony(PluginGuid);
         public static Version version = Version.Parse(PluginVersion);
         public static BepInEx.Logging.ManualLogSource Logger;

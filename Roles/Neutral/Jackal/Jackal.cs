@@ -148,9 +148,9 @@ namespace TownOfHost.Roles.Neutral
             UtilsOption.MarkEveryoneDirtySettings();
         }
         /// <summary>
-        /// ジャッカルか判定する
-        /// (ジャッカルドール・弾含む)
-        /// 裏切り前のドールベトレイヤーはジャッカルとしてカウント
+        /// ジャッカルか判定する<br/>
+        /// ジャッカルドール・弾含む<br/>
+        /// 裏切り前のドールベトレイヤーはジャッカルとしてカウント<br/>
         /// </summary>
         /// <param name="role">対象の役職</param>
         /// <returns></returns>

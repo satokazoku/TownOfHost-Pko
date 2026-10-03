@@ -17,6 +17,8 @@ namespace TownOfHost
     public static class CredentialsPatch
     {
         public static SpriteRenderer TOHPLogo { get; private set; }
+        /// <summary>ロゴから独立させたボタン(統計/バージョン切り替え/STREAM)の親。ロゴを動かしても追従しない</summary>
+        public static Transform FixedButtonAnchor { get; private set; }
         private static TextMeshPro pingTrackerCredential = null;
         private static AspectPosition pingTrackerCredentialAspectPos = null;
 #if DEBUG
@@ -196,7 +198,7 @@ namespace TownOfHost
                 null
                 );
                 {
-                    MainMenuManagerPatch.Statistics_TMP.transform.localPosition = new Vector3(0.8f, 1.7f);
+                    MainMenuManagerPatch.Statistics_TMP.transform.localPosition = new Vector3(0.8f, 2f);
                 }
                 CreateStreameMenu.CreateText();
             }
@@ -208,9 +210,7 @@ namespace TownOfHost
             if (Main.DebugVersion) Debugver = $"<{Main.ModColor}>☆Debug☆</color>";
             Subver = "";
             Main.credentialsText = $"<{Main.ModColor}>{Main.ModName}</color> v{Main.PluginShowVersion}" + Debugver;
-#if DEBUG
-            if (!GameStates.InGame) Main.credentialsText += $"\n<{Main.ModColor}>{ThisAssembly.Git.Branch}({ThisAssembly.Git.Commit})</color>";
-#endif
+            if (!GameStates.InGame && Main.showbranch) Main.credentialsText += $"\n<{Main.ModColor}>{ThisAssembly.Git.Branch}({ThisAssembly.Git.Commit})</color>";
             var credentials = TMPTemplate.Create(
                 "TOHCredentialsText",
                 Main.credentialsText,
@@ -218,15 +218,13 @@ namespace TownOfHost
                 alignment: TextAlignmentOptions.Right,
                 setActive: true);
             credentials.transform.position = new Vector3(2.3419f, 2.29f, -5f);
-#if DEBUG
-            if (!GameStates.InGame) credentials.transform.position -= new Vector3(0f, 0.1218f, 0f);
-#endif
+            if (!GameStates.InGame && Main.showbranch) credentials.transform.position -= new Vector3(0f, 0.1218f, 0f);
             if (FindAGameManager._instance)
             {
                 credentials.transform.position = new Vector3(2.5f, -2.858f, 5f);
-#if DEBUG
+                if (!Main.showbranch) return credentials;
                 credentials.transform.position += new Vector3(0, 0.185f);
-#endif
+
             }
             return credentials;
         }
@@ -246,9 +244,19 @@ namespace TownOfHost
                 var logoTransform = logoObject.transform;
                 TOHPLogo = logoObject.AddComponent<SpriteRenderer>();
                 logoTransform.parent = rightpanel;
-                logoTransform.localPosition = new(0f, 0.15f, 1f);
+                logoTransform.localPosition = new(0f, 0.1f, 1f);
                 logoTransform.localScale *= 1.0f;
                 TOHPLogo.sprite = UtilsSprite.LoadSprite(Event.April || Event.Special ? "TownOfHost.Resources.TownOfHost-PKO-logo2.png" : "TownOfHost.Resources.TownOfHost-PKO-logo.png", 175f);
+
+                // ボタン固定用のアンカー。ロゴと同じ手順で作り、位置/スケール/回転を写す。
+                // ロゴとは別オブジェクトなので、以降ロゴを動かしてもボタンは動かない。
+                // ボタンを上下させたいときは MainMenuManagerPatch.FixedButtonLocalY を変える。
+                var anchor = new GameObject("TOHPFixedButtonAnchor").transform;
+                anchor.parent = rightpanel;
+                anchor.localPosition = new(0f, 0.15f, 1f); // 元のロゴ位置。ロゴ側(0.1)とは独立
+                anchor.localScale = logoTransform.localScale;
+                anchor.localRotation = logoTransform.localRotation;
+                FixedButtonAnchor = anchor;
             }
         }
         [HarmonyPatch(typeof(ModManager), nameof(ModManager.LateUpdate))]

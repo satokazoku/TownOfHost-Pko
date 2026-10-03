@@ -20,6 +20,20 @@ namespace TownOfHost
         private const float AutoCreateGameDeadline = 0.01f;
         private const float AutoCreateGamePollInterval = 0.01f;
         private const string OnlineButtonScalerPath = "MainUI/AspectScaler/RightPanel/MaskedBlackScreen/OnlineButtons/AspectSize/Scaler";
+
+        // ===== ロゴの親子関係から外して固定するボタン =====
+        // 親は「固定アンカー」(CredentialsPatch.FixedButtonAnchor)。
+        // アンカーはロゴ生成時のlocalPosition/localScale/localRotationをそのまま写した空オブジェクトで、
+        // ロゴとは別オブジェクトなので、ロゴを動かしても追従しない。
+        // 子ボタンのlocalPositionは元の値(旧ロゴ基準)のままでよい。
+        // 3つのボタン共通のY(アンカー基準)。元のコードと同じ -2.6963 。下げたい/上げたいときはここだけ変える。
+        public const float FixedButtonLocalY = -2.6963f;
+        private static readonly Vector3 StatisticsButtonFixedPos = new(0f, FixedButtonLocalY, -5f);
+        private static readonly Vector3 VersionChangeButtonFixedPos = new(-2.3f, FixedButtonLocalY, -5f);
+
+        /// <summary>ロゴから独立したボタンの親(固定アンカー)</summary>
+        public static Transform FixedParent => CredentialsPatch.FixedButtonAnchor;
+
         private static bool autoCreateGameRequested;
         private static int autoCreateGameRequestId;
         private static SimpleButton discordButton;
@@ -37,6 +51,17 @@ namespace TownOfHost
         public static GameObject betaVersionMenu;
         public static AnnouncementPopUp updatea;
 
+        /// <summary>
+        /// ロゴから独立させたボタン(統計/バージョン切り替え/STREAM)の表示/非表示をまとめて切り替える。
+        /// 以前はロゴの子だったので TOHPLogo.SetActive(false) で一緒に消えていたが、
+        /// 独立させたため固定アンカーごと切り替える。
+        /// </summary>
+        public static void SetFixedButtonsActive(bool active)
+        {
+            var anchor = CredentialsPatch.FixedButtonAnchor;
+            if (anchor != null) anchor.gameObject.SetActive(active);
+        }
+
         [HarmonyPatch(nameof(MainMenuManager.Start)), HarmonyPostfix, HarmonyPriority(Priority.Normal)]
         public static void StartPostfix(MainMenuManager __instance)
         {
@@ -45,7 +70,7 @@ namespace TownOfHost
             {
                 RoleInfoButton = CreateButton(
                     "RoleInfoButton",
-                    new(2.4f, 1, 1f),
+                    new(2.4f, 1.4f, 1f),
                     new Color32(51, 156, 126, byte.MaxValue),
                     new Color32(103, 224, 190, byte.MaxValue),
                     () =>
@@ -60,7 +85,7 @@ namespace TownOfHost
             {
                 discordButton = CreateButton(
                     "DiscordButton",
-                    new(-2.5f, -1f, 1f),
+                    new(-2.5f, -0.8f, 1f),
                     new(88, 101, 242, byte.MaxValue),
                     new(148, 161, byte.MaxValue, byte.MaxValue),
                     () => Application.OpenURL(Main.DiscordInviteUrl),
@@ -73,7 +98,7 @@ namespace TownOfHost
             {
                 gitHubButton = CreateButton(
                     "GitHubButton",
-                    new(-0.8f, -1f, 1f),//-1f
+                    new(-0.8f, -0.8f, 1f),
                     new(153, 153, 153, byte.MaxValue),
                     new(209, 209, 209, byte.MaxValue),
                     () => Application.OpenURL("https://github.com/satokazoku/TownOfHost-Pko"),
@@ -84,34 +109,37 @@ namespace TownOfHost
             if (SimpleButton.IsNullOrDestroyed(TwitterXButton))
             {
                 TwitterXButton = CreateButton(
-                    "TwitterXButton",
-                    new(0.9f, -1f, 1f),
+                    "YoutubeButton",
+                    new(0.9f, -0.8f, 1f),
                     new(0, 202, 255, byte.MaxValue),
                     new(60, 255, 255, byte.MaxValue),
                     () => Application.OpenURL("https://youtube.com/@toh-pko?si=P6vdE1t4MHoA_C6F"),
                     "Youtube");
             }
-            // TOHPBOTボタンを生成
+            // Twitterボタンを生成
             if (SimpleButton.IsNullOrDestroyed(TOHPBOTButton))
             {
                 TOHPBOTButton = CreateButton(
-                    "TOHPBOTButton",
-                    new(2.6f, -1f, 1f),
-                    new(0, 201, 87, byte.MaxValue),
-                    new(60, 201, 87, byte.MaxValue),
-                    () => Application.OpenURL("https://discord.com/"),
-                    "TOHPBOT");
+                    "TwitterXButton",
+                    new(2.6f, -0.8f, 1f),
+                    new(50, 60, 125, byte.MaxValue),
+                    new(100, 130, 150, byte.MaxValue),
+                    () => Application.OpenURL("https://x.com/tohpko2026"),
+                    "Twitter(X)");
             }
+
+            // 統計ボタン: ロゴの親(rightpanel)の子として固定位置に生成
             if (SimpleButton.IsNullOrDestroyed(StatisticsButton))
             {
                 StatisticsButton = CreateButton(
                     "StatisticsButton",
-                    new Vector3(0, -2.6963f, -5f),
+                    StatisticsButtonFixedPos,
                     new(255, 242, 104, byte.MaxValue),
                     new(255, 248, 173, byte.MaxValue),
                     () =>
                     {
                         CredentialsPatch.TOHPLogo.gameObject.SetActive(false);
+                        SetFixedButtonsActive(false); // ロゴの子でなくなったので自前で隠す
                         __instance.screenTint.enabled = true;
                         Statistics_TMP.gameObject.SetActive(true);
                         Statistics_TMP.text = $"<size=60%>{SaveStatistics.ShowText()}";
@@ -127,7 +155,8 @@ namespace TownOfHost
                         var ages = Statistics_TMP.text.Split("\n").Count();
                         St_Scroller.GetComponentInParent<Scroller>().ContentYBounds.max = ages > 16 ? (ages - 16) * 0.25f : 0;
                     },
-                    Translator.GetString("Statistics")
+                    Translator.GetString("Statistics"),
+                    transform: FixedParent
                     );
             }
 
@@ -194,16 +223,18 @@ namespace TownOfHost
                     isActive: false);
             }
             //同じバージョンの 安定ver,デバッグバージョンの切り替えの奴
+            // バージョン切り替えボタン: ロゴの親(rightpanel)の子として固定位置に生成
             if (SimpleButton.IsNullOrDestroyed(betaversionchange))
             {
                 betaversionchange = CreateButton(
                     "betaversionchange",
-                    new(-2.3f, -2.6963f, 1f),
+                    VersionChangeButtonFixedPos,
                     new(0, 255, 183, byte.MaxValue),
                     new(60, 255, 183, byte.MaxValue),
                     () =>
                     {
                         CredentialsPatch.TOHPLogo.gameObject.SetActive(false);
+                        SetFixedButtonsActive(false); // ロゴの子でなくなったので自前で隠す
                         __instance.screenTint.enabled = true;
                         if (betaVersionMenu != null)
                         {
@@ -242,7 +273,8 @@ namespace TownOfHost
                             button2.Button.OnMouseOut.AddListener((Action)ToolTip.Hide);
                         }
                     },
-                    Translator.GetString("versionchangebutton"));
+                    Translator.GetString("versionchangebutton"),
+                    transform: FixedParent);
                 betaversionchange.FontSize = 2;
             }
             CreateStreameMenu.CreateMenu(__instance);
@@ -293,13 +325,15 @@ namespace TownOfHost
             scaler.Find("Create Lobby Button")?.gameObject.SetActive(true);
         }
 
-        /// <summary>TOHロゴの子としてボタンを生成</summary>
+        /// <summary>ボタンを生成(transformを省略するとTOHロゴの子、指定するとその子になる)</summary>
         /// <param name="name">オブジェクト名</param>
+        /// <param name="localPosition">親基準のローカル座標</param>
         /// <param name="normalColor">普段のボタンの色</param>
         /// <param name="hoverColor">マウスが乗っているときのボタンの色</param>
         /// <param name="action">押したときに発火するアクション</param>
         /// <param name="label">ボタンのテキスト</param>
         /// <param name="scale">ボタンのサイズ 変更しないなら不要</param>
+        /// <param name="transform">親 ロゴから独立させたいなら FixedParent を渡す</param>
         public static SimpleButton CreateButton(
             string name,
             Vector3 localPosition,
@@ -441,6 +475,7 @@ namespace TownOfHost
             {
                 CredentialsPatch.TOHPLogo.gameObject.SetActive(false);
             }
+            SetFixedButtonsActive(false); // ロゴから独立したボタンも一緒に隠す
             if (VersionMenu != null)
                 VersionMenu.SetActive(false);
             if (betaVersionMenu != null)
@@ -473,6 +508,7 @@ namespace TownOfHost
             {
                 CredentialsPatch.TOHPLogo?.gameObject?.SetActive(true);
             }
+            SetFixedButtonsActive(true); // ロゴから独立したボタンも一緒に再表示
             if (VersionMenu != null)
                 VersionMenu.SetActive(false);
             if (betaVersionMenu != null)
