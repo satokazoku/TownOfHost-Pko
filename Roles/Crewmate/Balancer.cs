@@ -78,7 +78,7 @@ public sealed class Balancer : RoleBase, ISelfVoter
             .SetValueFormat(OptionFormat.Seconds);
         OptUseCount = IntegerOptionItem.Create(RoleInfo, 11, GeneralOption.OptionCount, new(1, 7, 1), 1, false)
             .SetValueFormat(OptionFormat.Times);
-        OptVote = BooleanOptionItem.Create(RoleInfo, 12, Option.BlancerrndVote, false, false);
+        OptVote = BooleanOptionItem.Create(RoleInfo, 12, Option.BlancerrndVote, true, false);
 
         //以下K独自オプション
         OptionCanUseAllAlive = BooleanOptionItem.Create(RoleInfo, 13, Option.BalancerCanUseAllAlive, false, false);
