@@ -114,6 +114,7 @@
 "SoulSlave","Soul Slave","ソウルスレイブ"
 "Juggler","Juggler","ジャグラー"
 "SilentKiller","Silent Killer","サイレントキラー"
+"Predator","Predator","プレデター"
 "#ImpostorName"
 
 "# マッドメイト系役職"
@@ -539,6 +540,7 @@
 "ConjurerInfo","Encirclement that extinguishes all lights","灯火吹き消す包囲陣"
 "JugglerInfo","Shuffle to shake up the board","シャッフルで盤面をかき乱せ"
 "SilentKillerInfo","I can't hear a thing...","何も聞こえない..."
+"PredatorInfo","Identify and eliminate your prey","狩るべき獲物を見極めよう"
 "#ImpostorInfo"
 
 "# マッドメイト系役職"
@@ -915,6 +917,7 @@
 "ConjurerInfoLong","Use the Phantom Button to place beacons. \nIf you press the Phantom Button after placing three beacons, it will kill all players within the triangular area formed by the three beacons. \nYou cannot perform normal kills.","ファントムボタンを使用してビーコンを設置する。\nビーコンを三つ設置した状態でファントムボタンを押すと、三つのビーコンを結んでできる三角形の範囲内にいるプレイヤーを全てキルする。\n通常キルを行うことはできない。"
 "JugglerInfoLong","When you press the Phantom Button, everyone's appearance is shuffled for a certain amount of time. \nPlayers who are currently shape-shifting will not have their appearance changed.","ファントムボタンを押すと、一定時間全員の姿がシャッフルされる。\nシェイプシフト中のプレイヤーの姿は変わらない。"
 "SilentKillerInfoLong","An Imposter that cannot see or kill players. \nIt can only see and kill players who have remained still for a certain amount of time.","プレイヤーの姿を視認・キルできないインポスター。\n一定時間止まったプレイヤーのみ視認・キルできる。"
+"PredatorInfoLong","The kill cooldown decreases or increases when you kill specific factions. Even if the cooldown has already changed, any further adjustment is always calculated based on the initial cooldown. The cooldown resets after each meeting.","特定の陣営をキルするとキルクールが減少・増加する。\nただし、一度キルクールが増減していても最初のキルクールから増加分・減少分を出す。\n会議後キルクールはリセットされる。"
 
 "#ImpostorInfoLong"
 
@@ -2033,6 +2036,10 @@
 "SilentKillerCanSeeNakama","Recognize Moving Teammates","仲間のインポスターは動いていても認識できる"
 "SirentKillerCanReactor","Can Use Reactor Sabotage","リアクター・酸素サボを使える"
 "SirentKillerCanElec","Can Use Electrical Sabotage","停電・キノコカオスを使える"
+"PredatorGensyo","Factions that Decrease Kill Cooldown","キルクールが減少する陣営"
+"PredatorZouka","Factions that Increase Kill Cooldown","キルクールが増加する陣営"
+"PredatorGensyoCool","Kill Cooldown Decrease Amount","減少するキルクール"
+"PredatorZoukaCool","Kill Cooldown Increase Amount","増加するキルクール"
 
 "## MadMate Role Setting"
 "MadmateOption","MadMate Options","マッドメイト系役職の設定"

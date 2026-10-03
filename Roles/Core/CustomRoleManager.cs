@@ -1207,6 +1207,7 @@ public enum CustomRoles
     SoulSlave,
     Juggler,
     SilentKiller,
+    Predator,
     //DEBUG only Impostor
     //Madmate
     MadGuardian,
