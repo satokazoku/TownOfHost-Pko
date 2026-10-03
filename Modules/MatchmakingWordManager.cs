@@ -115,9 +115,12 @@ public static class MatchmakingWordManager
 
     public static void HideEditor()
     {
+        //hamoありがとうー！
+
+        var wasOpen = popup != null && popup.gameObject.activeInHierarchy;
         if (popup != null)
             popup.gameObject.SetActive(false);
-
+        if (!wasOpen) return;
         TryRestoreChatUiNow();
         ScheduleChatUiRefresh(8f, 0f);
     }
@@ -562,6 +565,9 @@ public static class MatchmakingWordManager
 
     private static void TryRestoreChatUiNow()
     {
+        //hamoありがとうー！
+        if (!DestroyableSingleton<HudManager>.InstanceExists) return;
+
         var hud = DestroyableSingleton<HudManager>.Instance;
         var chat = hud?.Chat;
         if (chat == null) return;

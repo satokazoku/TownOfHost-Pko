@@ -57,6 +57,29 @@ namespace TownOfHost
                         : 1.8f;
                     // 役職ガイドボタンの左側へ上部表示を収める。
                     if (RoleGuideButtonPatch.HasGuideButton) rightOffset += 0.72f;
+                    //ここもhamoを参考にしました
+                    try
+                    {
+                        if (DestroyableSingleton<HudManager>.InstanceExists)
+                        {
+                            var hudForOffset = DestroyableSingleton<HudManager>.Instance;
+                            var uiCam = hudForOffset.UICamera != null ? hudForOffset.UICamera : Camera.main;
+                            if (uiCam != null)
+                            {
+                                float edgeX = uiCam.ViewportToWorldPoint(new Vector3(1f, 0.5f, 0f)).x;
+                                float leftmost = float.MaxValue;
+                                var helpTf = hudForOffset.transform.Find("RoleGuideButton");
+                                if (helpTf != null && helpTf.gameObject.activeInHierarchy)
+                                    leftmost = Mathf.Min(leftmost, helpTf.position.x);
+                                if (leftmost < float.MaxValue)
+                                {
+                                    // ボタン半幅(約0.32)+余白
+                                    rightOffset = Mathf.Max(rightOffset, edgeX - leftmost + 0.45f);
+                                }
+                            }
+                        }
+                    }
+                    catch (System.Exception) { }
                     pingTrackerCredentialAspectPos.DistanceFromEdge = new(rightOffset, 0, 0);
                 }
 

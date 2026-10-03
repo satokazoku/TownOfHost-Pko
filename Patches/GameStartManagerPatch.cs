@@ -364,6 +364,12 @@ namespace TownOfHost
                                 dummy.SetSkin("skin_Capt", colorid);
                                 dummy.SetPet("pet_EmptyPet");
                                 break;
+                            case 9:
+                                dummy.SetHat("hat_parasite_Cook", colorid);
+                                dummy.SetVisor("visor_pusheenKissyVisor", colorid);
+                                dummy.SetSkin("skin_parasite_Purple", colorid);
+                                dummy.SetPet("pet_parasite_Stressball");
+                                break;
                             default:
                                 dummy.SetHat("", colorid);
                                 dummy.SetVisor("", colorid);
