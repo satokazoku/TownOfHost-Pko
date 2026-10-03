@@ -95,7 +95,21 @@ namespace TownOfHost.Roles.Impostor
                 Utils.AllPlayerKillFlash();
             }
         }
+        public override bool OnSabotage(PlayerControl player, SystemTypes systemType)
+        {
+            if (player.PlayerId != Player.PlayerId) return true;
+            if (!OptCanSabotage.GetBool()) return false;
 
+            if (systemType is SystemTypes.Reactor or SystemTypes.Laboratory or SystemTypes.HeliSabotage)
+            {
+                return OptCanReactor.GetBool();
+            }
+            else if (systemType is SystemTypes.Electrical or SystemTypes.MushroomMixupSabotage)
+            {
+                return OptCanElec.GetBool();
+            }
+            return true;
+        }
         public override void OnFixedUpdate(PlayerControl player)
         {
             if (!AmongUsClient.Instance.AmHost) return;
