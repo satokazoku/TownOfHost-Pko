@@ -22,7 +22,7 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
             CustomRoles.Sheriff,
             () => RequiresTasks ? RoleTypes.Crewmate : RoleTypes.Impostor,
             CustomRoleTypes.Crewmate,
-            3351000,
+            39900,
             SetupOptionItem,
             "sh",
             "#f8cd46",

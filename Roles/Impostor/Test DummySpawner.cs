@@ -16,7 +16,7 @@ public sealed class DummySpawner : RoleBase, IImpostor, IKiller
             CustomRoles.DummySpawner,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Impostor,
-            27000,
+            9700,
             SetupOptionItem,
             "ds",
             "#ff4444",

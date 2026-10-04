@@ -13,7 +13,7 @@ public sealed class Monochromer : RoleBase
             CustomRoles.Monochromer,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Neutral,
-            15100,
+            57300,
             SetupOptionItem,
             "Mnc",
             "#808080",

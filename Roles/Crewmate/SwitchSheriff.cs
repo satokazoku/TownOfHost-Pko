@@ -22,7 +22,7 @@ public sealed class SwitchSheriff : RoleBase, IKiller, ISchrodingerCatOwner
             CustomRoles.SwitchSheriff,
             () => RoleTypes.Engineer,
             CustomRoleTypes.Crewmate,
-            8900,
+            40100,
             SetupOptionItem,
             "swsh",
             "#f8cd46",

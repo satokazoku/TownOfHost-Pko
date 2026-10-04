@@ -16,7 +16,7 @@ namespace TownOfHost.Roles.Impostor
                 CustomRoles.Predator,
                 () => RoleTypes.Impostor,
                 CustomRoleTypes.Impostor,
-                127500,
+                9000,
                 SetupOptionItem,
                 "Pdr",
                 OptionSort: (7, 14)

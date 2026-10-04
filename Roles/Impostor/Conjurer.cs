@@ -22,7 +22,7 @@ public sealed class Conjurer : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.Conjurer,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            560100,
+            8600,
             SetupOptionItem,
             "cnj",
             OptionSort: (4, 7),

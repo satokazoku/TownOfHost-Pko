@@ -21,7 +21,7 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
             CustomRoles.SheriffHadouHo,
             () => RoleTypes.Engineer,
             CustomRoleTypes.Crewmate,
-            260200,
+            40000,
             SetupOptionItem,
             "shh",
             "#f8cd46",

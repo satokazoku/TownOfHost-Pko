@@ -15,7 +15,7 @@ public sealed class Reverser : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.Reverser,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            73230,
+            9800,
             SetupOptionItem,
             "esb",
             "#ff1919",

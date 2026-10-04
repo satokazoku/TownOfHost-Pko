@@ -14,7 +14,7 @@ public sealed class Emptiness : RoleBase
             CustomRoles.Emptiness,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Neutral,
-            552800,
+            57000,
             null,
             "emp",
             "#221d26",

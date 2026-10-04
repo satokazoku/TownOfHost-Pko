@@ -19,7 +19,7 @@ namespace TownOfHost.Roles.Impostor
                 CustomRoles.SilentKiller,
                 () => RoleTypes.Impostor,
                 CustomRoleTypes.Impostor,
-                127400,
+                9200,
                 SetupOptionItem,
                 "skl",
                 OptionSort: (7, 13)

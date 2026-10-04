@@ -178,12 +178,9 @@ public sealed class PavlovOwner : RoleBase, IKiller, IAdditionalWinner, ISchrodi
             "#F4A96A",
             (6, 5),
             true,
-            tab: TabGroup.Combinations,
-            countType: CountTypes.Pavlov,
             assignInfo: new RoleAssignInfo(CustomRoles.PavlovOwner, CustomRoleTypes.Neutral)
             {
                 IsInitiallyAssignableCallBack = () => false,
-                AssignCountRule = new(0, 0, 1)
             }
         );
 

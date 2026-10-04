@@ -16,7 +16,7 @@ public sealed class HateKiller : RoleBase, IImpostor
             CustomRoles.HateKiller,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Impostor,
-            127000,
+            8800,
             SetupOptionItem,
             "htk",
             "#ff1919",

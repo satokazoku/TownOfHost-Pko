@@ -18,7 +18,7 @@ public sealed class NiceLinker : RoleBase
             CustomRoles.NiceLinker,
             () => RoleTypes.Engineer,
             CustomRoleTypes.Crewmate,
-            160400,
+            39700,
             SetupOptionItem,
             "nl",
             "#aaaaff",

@@ -20,7 +20,7 @@ public sealed class EvilStandMaster : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.EvilStandMaster,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            327000,
+            8700,
             SetupOptionItem,
             "esm",
             OptionSort: (2, 11),

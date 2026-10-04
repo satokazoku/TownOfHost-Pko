@@ -15,7 +15,7 @@ public sealed class PokerFace : RoleBase
             CustomRoles.PokerFace,
             () => OptionCanVent.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate,
             CustomRoleTypes.Neutral,
-            270600,
+            57600,
             SetupOptionItem,
             "pf",
             "#72d16b",

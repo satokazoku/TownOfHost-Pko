@@ -18,7 +18,7 @@ public sealed class Duelist : RoleBase, IAdditionalWinner
             CustomRoles.Duelist,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Neutral,
-            485300,
+            56900,
             SetupOptionItem,
             "dl",
             "#ff6347",

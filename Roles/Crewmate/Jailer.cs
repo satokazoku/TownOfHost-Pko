@@ -19,7 +19,7 @@ public sealed class Jailer : RoleBase, IUsePhantomButton, IKiller
             CustomRoles.Jailer,
             () => RoleTypes.Engineer,
             CustomRoleTypes.Crewmate,
-            260300,
+            39600,
             SetupOptionItem,
             "jlr",
             "#4488cc",

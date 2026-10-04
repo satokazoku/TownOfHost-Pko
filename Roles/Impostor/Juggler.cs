@@ -17,7 +17,7 @@ public sealed class Juggler : RoleBase, IImpostor, IUsePhantomButton
         CustomRoles.Juggler,
         () => RoleTypes.Phantom,
         CustomRoleTypes.Impostor,
-        127300,
+        8900,
         SetupOptionItem,
         "jug",
         OptionSort: (6, 0),

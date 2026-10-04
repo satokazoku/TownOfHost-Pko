@@ -20,7 +20,7 @@ public sealed class NiceTrapper : RoleBase
             CustomRoles.NiceTrapper,
             () => RoleTypes.Engineer,
             CustomRoleTypes.Crewmate,
-            100300,
+            39800,
             SetupOptionItem,
             "ntr",
             "#66ddaa",

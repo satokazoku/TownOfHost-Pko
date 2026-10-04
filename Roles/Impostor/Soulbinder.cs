@@ -23,7 +23,7 @@ public sealed class Soulbinder : RoleBase, IImpostor
             CustomRoles.Soulbinder,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Impostor,
-            127100,
+            9400,
             SetupOptionItem,
             "slb",
             OptionSort: (7, 12)

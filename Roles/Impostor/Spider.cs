@@ -20,7 +20,7 @@ public sealed class Spider : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.Spider,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            185000,
+            9500,
             SetupOptionItem,
             "sdr",
             OptionSort: (2, 12),
