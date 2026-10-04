@@ -338,7 +338,12 @@ namespace TownOfHost
             if (IsSubKill) return;
             if (SuddenDeathMode.NowSuddenDeathMode)
             {
+                var roleclass = player.GetRoleClass();
                 var killcool = SuddenDeathMode.SuddenKillcooltime.GetFloat();
+                if (roleclass is IKiller killer && killer.CalculateKillCooldown() != Options.DefaultKillCooldown)
+                {
+                    killcool = killer.CalculateKillCooldown();
+                }
                 if (player.GetPlayerState().Killcount <= 0 && 0 < killcool)
                 {
                     Main.AllPlayerKillCooldown[player.PlayerId] = killcool;

@@ -10,6 +10,7 @@ using HarmonyLib;
 using TownOfHost.Attributes;
 using TownOfHost.Modules;
 using TownOfHost.Roles.Core;
+using TownOfHost.Roles.Core.Interfaces;
 using UnityEngine;
 
 namespace TownOfHost;
@@ -320,10 +321,15 @@ class SubmergedPatch
             //最初のスポーンと判定
             var roleClass = player.GetRoleClass();
             roleClass?.OnSpawn(MeetingStates.FirstMeeting);
+            var killcool = SuddenDeathMode.SuddenKillcooltime.GetFloat();
+            if (roleClass is IKiller killer && killer.CalculateKillCooldown() != Options.DefaultKillCooldown)
+            {
+                killcool = killer.CalculateKillCooldown();
+            }
 
             if (SuddenDeathMode.SuddenKillcooltime.GetBool() && SuddenDeathMode.NowSuddenDeathMode)
             {
-                PlayerCatch.AllPlayerControls.Do(pc => pc.SetKillCooldown(SuddenDeathMode.SuddenKillcooltime.GetFloat(), delay: true));
+                PlayerCatch.AllPlayerControls.Do(pc => pc.SetKillCooldown(killcool, delay: true));
             }
             else
             {

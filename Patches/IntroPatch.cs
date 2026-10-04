@@ -7,6 +7,7 @@ using HarmonyLib;
 using TownOfHost.Modules;
 using TownOfHost.Roles.AddOns.Common;
 using TownOfHost.Roles.Core;
+using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Impostor;
 using TownOfHost.Roles.Madmate;
 using TownOfHost.Roles.Neutral;
@@ -450,7 +451,18 @@ namespace TownOfHost
                         {
                             _ = new LateTask(() =>
                             {
-                                PlayerCatch.AllPlayerControls.Do(pc => pc.SetKillCooldown(SuddenDeathMode.SuddenKillcooltime.GetFloat() - 0.7f, delay: true));
+                                var killcool = SuddenDeathMode.SuddenKillcooltime.GetFloat();
+                                foreach (var pc in PlayerCatch.AllPlayerControls)
+                                {
+                                    if (pc != null)
+                                    {
+                                        if (pc.GetRoleClass() is IKiller killer && killer.CalculateKillCooldown() != Options.DefaultKillCooldown)
+                                        {
+                                            killcool = killer.CalculateKillCooldown();
+                                        }
+                                        pc.SetKillCooldown(killcool, delay: true);
+                                    }
+                                }
                             }, 0.7f, "FixKillCooldownTask", null);
                         }
                         else if (Options.FixFirstKillCooldown.GetBool())

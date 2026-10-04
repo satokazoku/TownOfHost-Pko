@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
 using Hazel;
-using UnityEngine;
+using TownOfHost.Modules;
+using TownOfHost.Roles.AddOns.Common;
 using TownOfHost.Roles.Core;
+using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Impostor;
 using TownOfHost.Roles.Neutral;
-using TownOfHost.Roles.AddOns.Common;
-using TownOfHost.Modules;
+using UnityEngine;
 
 namespace TownOfHost
 {
@@ -216,7 +217,18 @@ namespace TownOfHost
                 roleClass?.OnSpawn(MeetingStates.FirstMeeting);
                 if (SuddenDeathMode.SuddenKillcooltime.GetBool() && Modules.SuddenDeathMode.NowSuddenDeathMode)
                 {
-                    PlayerCatch.AllPlayerControls.Do(pc => pc.SetKillCooldown(SuddenDeathMode.SuddenKillcooltime.GetFloat(), delay: true));
+                    var killcool = SuddenDeathMode.SuddenKillcooltime.GetFloat();
+                    foreach (var pc in PlayerCatch.AllPlayerControls)
+                    {
+                        if (pc != null)
+                        {
+                            if (pc.GetRoleClass() is IKiller killer && killer.CalculateKillCooldown() != Options.DefaultKillCooldown)
+                            {
+                                killcool = killer.CalculateKillCooldown();
+                            }
+                            pc.SetKillCooldown(killcool, delay: true);
+                        }
+                    }
                 }
                 else
                 {
