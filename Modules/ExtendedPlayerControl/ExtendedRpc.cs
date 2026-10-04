@@ -11,6 +11,7 @@ using TownOfHost.Roles.AddOns.Common;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Crewmate;
+using TownOfHost.Roles.Impostor;
 using TownOfHost.Roles.Madmate;
 using TownOfHost.Roles.Neutral;
 using UnityEngine;
@@ -466,6 +467,13 @@ namespace TownOfHost
         public static void RpcExileV2(this PlayerControl player)
         {
             if (player == null) return;
+            foreach (var p in PlayerCatch.AllPlayerControls)
+            {
+                if (p.GetRoleClass() is SilentKiller sk)
+                {
+                    sk.Restore(player.PlayerId);
+                }
+            }
             player.Exiled();
             MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(player.NetId, (byte)RpcCalls.Exiled, SendOption.None, -1);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
@@ -490,6 +498,13 @@ namespace TownOfHost
                 Logger.Warn("Antiblack set Cancel..", "RpcExileV3");
                 if (player.IsAlive())
                 {
+                    foreach (var p in PlayerCatch.AllPlayerControls)
+                    {
+                        if (p.GetRoleClass() is SilentKiller sk)
+                        {
+                            sk.Restore(player.PlayerId);
+                        }
+                    }
                     player.GetPlayerState().SetDead();
                     CustomRoleManager.AllActiveRoles.Do(role => role.Value.OnDead(player));
                 }
@@ -512,6 +527,13 @@ namespace TownOfHost
             player.Data.IsDead = true;
             if (player.IsAlive())
             {
+                foreach (var p in PlayerCatch.AllPlayerControls)
+                {
+                    if (p.GetRoleClass() is SilentKiller sk)
+                    {
+                        sk.Restore(player.PlayerId);
+                    }
+                }
                 player.GetPlayerState().SetDead();
                 CustomRoleManager.AllActiveRoles.Do(role => role.Value.OnDead(player));
             }

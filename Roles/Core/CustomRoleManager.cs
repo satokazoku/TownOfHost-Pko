@@ -640,7 +640,13 @@ CustomDeathReason deathReason = CustomDeathReason.Kill)
         //あっ!死ぬ前にどこにいたかだけ教えてね!
         var roomName = attemptTarget.GetShipRoomName();
         targetState.KillRoom = roomName;
-
+        foreach (var p in PlayerCatch.AllPlayerControls)
+        {
+            if (p.GetRoleClass() is SilentKiller sk)
+            {
+                sk.Restore(attemptTarget.PlayerId);
+            }
+        }
         targetState.SetDead();
         attemptTarget.SetRealKiller(attemptKiller, true);
         killerstate.Is10secKillButton = false;

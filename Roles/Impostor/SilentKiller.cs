@@ -38,6 +38,7 @@ namespace TownOfHost.Roles.Impostor
             LastSid.Clear();
             NextReveal.Clear();
             LocalVisible.Clear();
+            DeadedPlayers.Clear();
         }
 
         #region オプション
@@ -85,6 +86,7 @@ namespace TownOfHost.Roles.Impostor
         Dictionary<byte, ushort> LastSid = new();
         Dictionary<byte, float> NextReveal = new();
         Dictionary<byte, bool> LocalVisible = new();
+        List<byte> DeadedPlayers = new();
 
         #endregion
 
@@ -127,7 +129,7 @@ namespace TownOfHost.Roles.Impostor
 
             foreach (var p in PlayerCatch.AllAlivePlayerControls)
             {
-                if (p.PlayerId == player.PlayerId) continue;
+                if (p.PlayerId == player.PlayerId || !p.IsAlive()) continue;
                 if (OptCanSeeNakama.GetBool() && p.GetCustomRole().IsImpostor()) continue;
 
                 byte id = p.PlayerId;
@@ -157,8 +159,8 @@ namespace TownOfHost.Roles.Impostor
                 }
 
                 if (!doSync) continue;
-
-                if (timer >= StopTime && RealPos.TryGetValue(id, out var real))
+                
+                if ((timer >= StopTime || DeadedPlayers.Contains(id)) && RealPos.TryGetValue(id, out var real))
                 {
                     bool need;
                     if (Player.AmOwner)
@@ -228,7 +230,23 @@ namespace TownOfHost.Roles.Impostor
             LocalVisible.Clear();
             SyncTimer = 0f;
         }
+        //OnDeadだと死体動かせないから遅いので、
+        //OnDeadの前に呼ぶ。
+        public void Restore(byte id)
+        {
+            var p = PlayerCatch.GetPlayerControl(id);
+            if (Player.AmOwner)
+            {
+                p.Visible = true;       
+            }
+            if (RealPos.TryGetValue(p.PlayerId, out var real))
+                SnapTo(p, real);
+            NextReveal.Remove(id);
+            DeadedPlayers.Add(id);
 
+            //上限突破させてるからうまくいかなくても見えるはず
+            StopTimer[id] = 70f;
+        }
         public override void OnStartMeeting() => RestoreAll();
         public override void OnDestroy() => RestoreAll();
     }
