@@ -3767,6 +3767,10 @@
 "TabGroup.Addons","<#028760><b>Add-Ons</color>","<#028760><b>Add-Ons</color>","<#028760>附加效果</color>","<#028760>副職業設定</color>","Атрибуты","Atributos",""
 "TabGroup.Combinations","<#f7c114><b>Combinations</color>","<#f7c114><b>Combinations</color>"
 "TabGroup.GhostRoles","<#8989d9><b>Ghost Roles</color>","<#8989d9><b>Ghost Roles</color>"
+"Experimental","<#9a8adb><b>Experimental Roles</color>","<#9a8adb><b>試験的な役職</color>"
+"NormalRole","<#8cbf26><b>Vanira Roles</color>","<#8cbf26><b>バニラ役職</color>"
+"ModRole","<#bd987b><b>Modified Roles</color>","<#bd987b><b>MOD役職</color>"
+
 "ActiveRolesList","Active Roles List","有効な役職一覧","有效职业一览","已開啟職業列表","Список Активных Ролей","Lista de Classes Ativas",""
 "ForExample","Example Use","使用例","使用例子","使用例子","Например","Exemplo de Uso",""
 "ForceEnd","Aborted","廃村","强制结束游戏","遊戲已被強制結束","Игра Окончена","Abortado",""

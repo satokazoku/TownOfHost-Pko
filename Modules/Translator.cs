@@ -318,6 +318,9 @@ namespace TownOfHost
                         "PuppeteerInfo" => "君は僕の操り人形",
 
                         "WarlockInfo" => "どこからその呪いを…？",
+
+                        "SeerInfo" => "ん？誰か死んだ...？",
+
                         _ => res
                     };
                 }

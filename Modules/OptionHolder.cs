@@ -721,6 +721,7 @@ namespace TownOfHost
                 .SetInfo(Translator.GetString("FixSpawnPacketSizeInfo"));
 
             // Impostor
+            ObjectOptionitem.Create(1_300_125, "Nor", true, null, TabGroup.ImpostorRoles).SetOptionName(() => Translator.GetString("NormalRole")).SetColorcode("#8cbf26ff");
             CreateRoleOption(sortedRoleInfo, CustomRoleTypes.Impostor);
 
             DoubleTriggerThreshold = FloatOptionItem.Create(102500, "DoubleTriggerThreashould", new(0.3f, 1f, 0.1f), 0.5f, TabGroup.ImpostorRoles, false)
@@ -734,6 +735,7 @@ namespace TownOfHost
 
             // Madmate, Crewmate, Neutral
             CreateRoleOption(sortedRoleInfo, CustomRoleTypes.Madmate);
+            ObjectOptionitem.Create(1_300_115, "Nor", true, null, TabGroup.CrewmateRoles).SetOptionName(() => Translator.GetString("NormalRole")).SetColorcode("#8cbf26ff");
             CreateRoleOption(sortedRoleInfo, CustomRoleTypes.Crewmate);
             DefaultEngineerCooldown = FloatOptionItem.Create(102503, "DefaultEngineerCooldown", new(0, 180, 1f), 15, TabGroup.CrewmateRoles, false)
                 .SetHeader(true).SetValueFormat(OptionFormat.Seconds);
@@ -1542,6 +1544,22 @@ namespace TownOfHost
                         if (info.RoleName is CustomRoles.DummyHunterPlayer) continue;
                         SetupRoleOptions(info);
                         info.OptionCreator?.Invoke();
+                        if (roleTypes is CustomRoleTypes.Crewmate && info.RoleName is CustomRoles.Judge)
+                        {
+                            ObjectOptionitem.Create(1_300_123, "Exr", true, null, TabGroup.CrewmateRoles).SetOptionName(() => Translator.GetString("Experimental")).SetColorcode("#9a8adbff");
+                        }
+                        if (roleTypes is CustomRoleTypes.Crewmate && info.RoleName is CustomRoles.Milkman)
+                        {
+                            ObjectOptionitem.Create(1_300_126, "Mor", true, null, TabGroup.CrewmateRoles).SetOptionName(() => Translator.GetString("ModRole")).SetColorcode("#bd987bff");
+                        }
+                        if (roleTypes is CustomRoleTypes.Impostor && info.RoleName is CustomRoles.Viper)
+                        {
+                            ObjectOptionitem.Create(1_300_113, "Exr", true, null, TabGroup.ImpostorRoles).SetOptionName(() => Translator.GetString("Experimental")).SetColorcode("#9a8adbff");
+                        }
+                        if (roleTypes is CustomRoleTypes.Impostor && info.RoleName is CustomRoles.SilentKiller)
+                        {
+                            ObjectOptionitem.Create(1_300_116, "Mor", true, null, TabGroup.ImpostorRoles).SetOptionName(() => Translator.GetString("ModRole")).SetColorcode("#bd987bff");
+                        }
                     }
 
                     NowTabNum++;

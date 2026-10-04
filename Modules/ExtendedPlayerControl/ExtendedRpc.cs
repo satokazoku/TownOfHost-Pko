@@ -512,9 +512,9 @@ namespace TownOfHost
             var currentRole = player.Data.Role.Role;
             if (player.IsAlive() || !(currentRole is RoleTypes.CrewmateGhost or RoleTypes.ImpostorGhost or RoleTypes.GuardianAngel or RoleTypes.SpiritGuide))
             {//道連れ、マジシャン等で死んでいないのにIsDeadを変更する場合はモーションを入れる。
-                if (player.PlayerId == PlayerControl.LocalPlayer.PlayerId && showanim)
+                if (player.PlayerId == PlayerControl.LocalPlayer.PlayerId)
                 {
-                    if (GameStates.IsMeeting is false)
+                    if (GameStates.IsMeeting is false && showanim)
                         DestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(player.Data, player.Data);
                 }
                 else

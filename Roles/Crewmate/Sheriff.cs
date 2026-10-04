@@ -26,7 +26,7 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
             SetupOptionItem,
             "sh",
             "#f8cd46",
-            (2, 0),
+            (0, 10),
             true,
             introSound: () => GetIntroSound(RoleTypes.Crewmate),
             from: From.SheriffMod
@@ -324,7 +324,7 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
         }
         Player.RpcResetAbilityCooldown(Sync: true);
     }
-    public override RoleTypes? AfterMeetingRole => EffectiveRequiresTasks ? null : RoleTypes.Impostor;
+    public override RoleTypes? AfterMeetingRole => EffectiveRequiresTasks || !Player.IsAlive() ? RoleTypes.Crewmate : RoleTypes.Impostor;
 
     public override void AfterMeetingTasks()
     {
@@ -355,14 +355,6 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
     {
         if (!AmongUsClient.Instance.AmHost) return;
         if (GameStates.CalledMeeting || GameStates.Intro) return;
-        if (!player.IsAlive())
-        {
-            if (!diedTaskModeApplied && !Taskmode)
-            {
-                ForceTaskModeOnDeath();
-            }
-            return;
-        }
 
         if (!EffectiveRequiresTasks) return;
 
@@ -499,6 +491,15 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
     {
         text = "Sheriff_Kill";
         return true;
+    }
+    public override void OnDead(PlayerControl player)
+    {
+        if (player.PlayerId != Player.PlayerId) return;
+
+        _ = new LateTask(() => {
+            ForceTaskModeOnDeath();
+            Player.RpcExileV3(false);
+        }, 0.2f, "", true);
     }
 }
 

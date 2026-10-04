@@ -22,7 +22,7 @@ namespace TownOfHost.Roles.Crewmate
                 SetupOptionItem,
                 "NeL",
                 "#4a5c59",
-                (1, 2),
+                (0, 14),
                 true,
                 from: From.TownOfHost_K
             );
@@ -145,15 +145,11 @@ namespace TownOfHost.Roles.Crewmate
             Taskmode = !Player.IsAlive();
         }
 
-        public override RoleTypes? AfterMeetingRole => RoleTypes.Phantom;
-        public override bool CanTask() => Taskmode;
+
+        public override RoleTypes? AfterMeetingRole => Player.IsAlive() ? RoleTypes.Phantom : RoleTypes.Crewmate;
+        public override bool CanTask() => Taskmode || !Player.IsAlive();
         public override void OnFixedUpdate(PlayerControl player)
         {
-            if (!player.IsAlive())
-            {
-                if (Taskmode is false) Taskmode = true;
-                return;
-            }
             if (!AmongUsClient.Instance.AmHost) return;
             Cooltime += Time.fixedDeltaTime;
         }
@@ -179,6 +175,14 @@ namespace TownOfHost.Roles.Crewmate
                     }
                 }
             }
+        }
+        public override void OnDead(PlayerControl player)
+        {
+            if (player.PlayerId != Player.PlayerId) return;
+            Taskmode = true;
+            _ = new LateTask(() => {
+                Player.RpcExileV3(false);
+            }, 0.2f, "", true);
         }
         public override bool OverrideAbilityButton(out string text)
         {

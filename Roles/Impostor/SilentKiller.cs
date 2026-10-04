@@ -22,7 +22,7 @@ namespace TownOfHost.Roles.Impostor
                 9200,
                 SetupOptionItem,
                 "skl",
-                OptionSort: (7, 13)
+                OptionSort: (0, 11)
             );
         public SilentKiller(PlayerControl player)
         : base(

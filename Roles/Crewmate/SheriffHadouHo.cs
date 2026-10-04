@@ -25,7 +25,7 @@ public sealed class SheriffHadouHo : RoleBase, IUsePhantomButton, IKiller
             SetupOptionItem,
             "shh",
             "#f8cd46",
-            (2, 0),
+            (0, 11),
             true,
             countType: CountTypes.Crew
         );
