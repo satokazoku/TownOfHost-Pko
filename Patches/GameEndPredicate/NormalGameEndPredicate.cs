@@ -487,7 +487,7 @@ namespace TownOfHost
                     CustomWinnerHolder.WinnerRoles.Add(CustomRoles.DollBetrayer);
                 }
             }
-            else if (Imp == 0 && Jackal == 0 && Remotekiller == 0 && GrimReaper == 0
+            else if (Imp == 0 && Jackal == 0 && Remotekiller == 0
                 && MilkyWay == 0 && MadBetrayer == 0 && StandMasterCount == 0 && EaterCount == 0
                 && Huntman == 0 && Dracula == 0 && Vanity == 0 && FoxAndCrew <= Pavlov && PavlovDog.HasAliveDog())
             {
@@ -497,7 +497,7 @@ namespace TownOfHost
                 CustomWinnerHolder.WinnerRoles.Add(CustomRoles.PavlovOwner);
             }
             else if (standMasterAlive
-                && Imp == 0 && Jackal == 0 && Remotekiller == 0 && GrimReaper == 0
+                && Imp == 0 && Jackal == 0 && Remotekiller == 0
                 && MilkyWay == 0 && MadBetrayer == 0 && Pavlov == 0 && EaterCount == 0
                 && Huntman == 0 && Dracula == 0 && Vanity == 0 && FoxAndCrew <= StandMasterCount)
             {

@@ -490,7 +490,7 @@ namespace TownOfHost
 
                 if (PlayerControl.LocalPlayer.Is(CustomRoles.GM))
                 {
-                    PlayerControl.LocalPlayer.RpcExileV3();
+                    PlayerControl.LocalPlayer.RpcExileV3(false);
                     PlayerState.GetByPlayerId(PlayerControl.LocalPlayer.PlayerId).SetDead();
                 }
 

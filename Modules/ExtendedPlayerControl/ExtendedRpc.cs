@@ -478,7 +478,7 @@ namespace TownOfHost
             MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(player.NetId, (byte)RpcCalls.Exiled, SendOption.None, -1);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
         }
-        public static void RpcExileV3(this PlayerControl player)
+        public static void RpcExileV3(this PlayerControl player, bool showanim = true)
         {
             //自視点以外当たり判定が変わらないから霊界だと挙動不審になる。
             if (player == null) return;
@@ -512,7 +512,7 @@ namespace TownOfHost
             var currentRole = player.Data.Role.Role;
             if (player.IsAlive() || !(currentRole is RoleTypes.CrewmateGhost or RoleTypes.ImpostorGhost or RoleTypes.GuardianAngel or RoleTypes.SpiritGuide))
             {//道連れ、マジシャン等で死んでいないのにIsDeadを変更する場合はモーションを入れる。
-                if (player.PlayerId == PlayerControl.LocalPlayer.PlayerId && !player.Is(CustomRoles.GM))
+                if (player.PlayerId == PlayerControl.LocalPlayer.PlayerId && showanim)
                 {
                     if (GameStates.IsMeeting is false)
                         DestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(player.Data, player.Data);
