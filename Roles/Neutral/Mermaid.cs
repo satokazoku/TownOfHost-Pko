@@ -288,29 +288,26 @@ public sealed class Mermaid : RoleBase, ILNKiller, ISchrodingerCatOwner, IAdditi
             if (sourcePlayer == null || !sourcePlayer) return;
             if (!sourcePlayer.IsAlive()) return;
             if (sourcePlayer.GetRoleClass() is not Mermaid Mermaid) return;
-            foreach (var p in AllAlivePlayerControls)
+            if (sourcePlayer.GetRoleClass() is Mermaid mermaid)
             {
-                if (p.GetRoleClass() is Mermaid mermaid)
+                if (mermaid.IsKilledImpostor) //インポスターをキルしていて設定が有効な場合は何もしない
                 {
-                    if (mermaid.IsKilledImpostor) //インポスターをキルしていて設定が有効な場合は何もしない
-                    {
-                        mermaid.Currentmode = 1;
-                        return;
-                    }
-
-                    // ★ /cmd を含むメッセージはコマンドなのでリセットしない
-                    if (chatText != null && chatText.TrimStart().StartsWith("/cmd"))
-                    {
-                        return;
-                    }
-                    ++mermaid.chatcount;
-                    if (mermaid.chatcount >= OptionChangingChats.GetInt() && !mermaid.cancangemode && !mermaid.IsKilledImpostor)
-                    {
-                        mermaid.cancangemode = true;
-                        mermaid.chatcount = 0;
-                    }
-                    mermaid.Notify();
+                    mermaid.Currentmode = 1;
+                    return;
                 }
+
+                // ★ /cmd を含むメッセージはコマンドなのでリセットしない
+                if (chatText != null && chatText.TrimStart().StartsWith("/cmd"))
+                {
+                    return;
+                }
+                ++mermaid.chatcount;
+                if (mermaid.chatcount >= OptionChangingChats.GetInt() && !mermaid.cancangemode && !mermaid.IsKilledImpostor)
+                {
+                    mermaid.cancangemode = true;
+                    mermaid.chatcount = 0;
+                }
+                mermaid.Notify();
             }
         }
     }
