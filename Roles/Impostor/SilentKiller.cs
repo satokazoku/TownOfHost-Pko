@@ -200,7 +200,6 @@ namespace TownOfHost.Roles.Impostor
             writer.Write(num);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
         }
-
         static bool SidGreater(ushort a, ushort b) => a != b && (ushort)(a - b) < 32768;
 
         void SetLocalVisible(PlayerControl target, bool visible)

@@ -20,6 +20,7 @@ static class Event
     public static bool IsChristmas = DateTime.Now.Month == 12 && DateTime.Now.Day is 24 or 25;
     public static bool White = DateTime.Now.Month == 3 && DateTime.Now.Day is 14;
     public static bool IsInitialRelease = DateTime.Now.Month == 4 && DateTime.Now.Day is 19;
+    public static bool Birthday = DateTime.Now.Month == 4 && DateTime.Now.Day is 19 or 20 or 21 or 22 or 23 or 24 or 25 or 26;
     public static bool IsHalloween = (DateTime.Now.Month == 10 && DateTime.Now.Day is 31) || (DateTime.Now.Month == 11 && DateTime.Now.Day is 1 or 2 or 3 or 4 or 5 or 6 or 7);
     public static bool GoldenWeek = DateTime.Now.Month == 5 && DateTime.Now.Day is 3 or 4 or 5;
     public static bool April = DateTime.Now.Month == 4 && DateTime.Now.Day is 1 or 2 or 3 or 4 or 5 or 6 or 7 or 8;
@@ -28,6 +29,7 @@ static class Event
     public static bool IsEventDay => IsChristmas || White || IsInitialRelease || IsHalloween || GoldenWeek || April || Birthday12;
     public static bool Special = false;
     public static bool NowRoleEvent => false;
+    public static bool Mpkjyousetu => false;
     public static List<string> OptionLoad = new();
     public static bool IsE(this CustomRoles role) => role is CustomRoles.SpeedStar or CustomRoles.Chameleon or CustomRoles.Fortuner;
     public static bool IsEventRole(CustomRoles role) => EventRoles.ContainsKey(role);
@@ -119,10 +121,10 @@ static class Event
         {CustomRoles.SpeedStar , () => Special},
         {CustomRoles.Chameleon , () => Special},
         */
-        //{CustomRoles.Cakeshop , () => Birthday12},
+        {CustomRoles.Cakeshop , () => Birthday12 || Birthday},
 
-        //{CustomRoles.MadPukupuku,() => Birthday12}
-        {CustomRoles.MadPukupuku,() => false}
+        {CustomRoles.MadPukupuku,() => Birthday12 || Birthday || Mpkjyousetu}
+        //{CustomRoles.MadPukupuku,() => false}
     };
 
     public static Dictionary<(CustomRoles role, bool isApiData), bool> cachedEventFlags = new(EventRoles.Count);
@@ -468,9 +470,7 @@ public sealed class MadPukupuku : RoleBase, IKillFlashSeeable, IDeathReasonSeeab
     static OptionItem OptionSaihaifuCount;
     private bool canSeeKillFlash;
     private bool canSeeDeathReason;
-    /// <summary>1回の復讐サイクルで殺害できる人数(サイクル開始時に0へ戻る)</summary>
     int RevCount;
-    /// <summary>再配布を行った回数</summary>
     int SaihaifuCount;
     public HashSet<byte> VotedPlayerId = new();
     bool IsExiled = false;
@@ -524,18 +524,6 @@ public sealed class MadPukupuku : RoleBase, IKillFlashSeeable, IDeathReasonSeeab
     {
         RevCount = 0;
         SaihaifuCount = 0;
-#if DEBUG
-        //テスト用
-        _ = new LateTask(() =>
-        {
-            VotedPlayerId.Add(Player.PlayerId);
-
-            foreach (var p in PlayerCatch.AllAlivePlayerControls)
-            {
-                VotedPlayerId.Add(p.PlayerId);
-            }
-        }, 2f, "MPK_Voted_Test", true);
-#endif
     }
     public override void OnExileWrapUp(NetworkedPlayerInfo exiled, ref bool DecidedWinner)
     {
