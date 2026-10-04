@@ -173,7 +173,7 @@ public sealed class Juggler : RoleBase, IImpostor, IUsePhantomButton
         return true;
     }
 
-    public override string GetAbilityButtonText() => GetString("CamouflagerText");
+    public override string GetAbilityButtonText() => GetString("JugglerText");
 
     public override string GetLowerText(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false, bool isForHud = false)
     {
