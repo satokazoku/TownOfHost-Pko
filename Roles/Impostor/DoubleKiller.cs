@@ -23,7 +23,8 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
             3400,
             SetUpOptionItem,
             "dk",
-            OptionSort: (3, 15),
+            OptionSort: (0, 10),
+            //OptionSort: (3, 15),
             from: From.SuperNewRoles
         );
 
@@ -75,6 +76,7 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
     public bool CanUseImpostorVentButton() => CanVent;
 
     public bool CanSubkill;
+    bool IUsePhantomButton.SyncAbilityCooldownWithKillCooldown => false;
 
     public override bool CanClickUseVentButton => CanVent;
     public override bool OnEnterVent(PlayerPhysics physics, int ventId) => CanVent;
@@ -121,7 +123,7 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
 
     void IUsePhantomButton.OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
     {
-        AdjustKillCooldown = false;
+        AdjustKillCooldown = true;
         ResetCooldown = false;
 
         var target = Player.GetKillTarget(true);

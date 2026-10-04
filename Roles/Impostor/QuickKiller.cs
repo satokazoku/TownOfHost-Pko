@@ -93,6 +93,7 @@ public sealed class QuickKiller : RoleBase, IImpostor, IUsePhantomButton
     bool IsPhantom;
     bool IUsePhantomButton.IsPhantomRole => OptionCanKill.GetBool() && IsPhantom;
     bool IUsePhantomButton.IsresetAfterKill => true;
+    bool IUsePhantomButton.SyncAbilityCooldownWithKillCooldown => false;
     public static bool KnowTargetRoleColor(PlayerControl target, bool isMeeting)
         => OptionCanSeeNameColor.GetBool() && target.Is(CustomRoles.QuickKiller) && !isMeeting && target.GetRoleClass() is QuickKiller quick && quick.IsQuick;
 
@@ -235,7 +236,7 @@ public sealed class QuickKiller : RoleBase, IImpostor, IUsePhantomButton
     }
     public void OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
     {
-        AdjustKillCooldown = false;
+        AdjustKillCooldown = true;
         ResetCooldown = false;
 
         var target = Player.GetKillTarget(true);

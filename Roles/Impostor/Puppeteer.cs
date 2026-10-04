@@ -81,7 +81,7 @@ public sealed class Puppeteer : RoleBase, IImpostor, IUsePhantomButton
 
     public void OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
     {
-        AdjustKillCooldown = false;
+        AdjustKillCooldown = true;
         ResetCooldown = false;
         IsPuppetMode = !IsPuppetMode;
         SendRPC(byte.MaxValue, 3);   // 新しいtypeIdでモード切替を通知
