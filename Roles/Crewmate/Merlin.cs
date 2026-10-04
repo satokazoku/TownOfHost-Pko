@@ -20,7 +20,8 @@ public sealed class Merlin : RoleBase, IRoomTasker
             76800,
             null,
             "men",
-            "#8cc2ff",
+            //"#8cc2ff",
+            "#00e5fd",
             (2, 1),
             tab: TabGroup.Combinations,
             combination: CombinationRoles.AssassinandMerlin

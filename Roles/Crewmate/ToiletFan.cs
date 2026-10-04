@@ -16,7 +16,8 @@ public sealed class ToiletFan : RoleBase
             36100,
             SetupOptionItem,
             "to",
-            "#5f5573",
+            //"#5f5573",
+            "#735134",
             (9, 3),
             introSound: () => GetIntroSound(RoleTypes.Crewmate),
             assignInfo: new RoleAssignInfo(CustomRoles.ToiletFan, CustomRoleTypes.Crewmate)
