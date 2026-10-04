@@ -482,7 +482,13 @@ namespace TownOfHost
         {
             //自視点以外当たり判定が変わらないから霊界だと挙動不審になる。
             if (player == null) return;
-
+            foreach (var p in PlayerCatch.AllPlayerControls)
+            {
+                if (p.GetRoleClass() is SilentKiller sk)
+                {
+                    sk.Restore(player.PlayerId);
+                }
+            }
             if (player.GetCustomRole() is CustomRoles.Hero && Stray.OptHeroFlash.GetBool())
             {
                 Utils.AllPlayerKillFlash();
@@ -498,13 +504,6 @@ namespace TownOfHost
                 Logger.Warn("Antiblack set Cancel..", "RpcExileV3");
                 if (player.IsAlive())
                 {
-                    foreach (var p in PlayerCatch.AllPlayerControls)
-                    {
-                        if (p.GetRoleClass() is SilentKiller sk)
-                        {
-                            sk.Restore(player.PlayerId);
-                        }
-                    }
                     player.GetPlayerState().SetDead();
                     CustomRoleManager.AllActiveRoles.Do(role => role.Value.OnDead(player));
                 }
