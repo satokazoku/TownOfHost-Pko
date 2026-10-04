@@ -186,7 +186,7 @@ public sealed class Ballooner : RoleBase, IImpostor, IUsePhantomButton
     }
     private void PlaySound()
     {
-        if (!Player.AmOwner) return;
+        if (!Player.Is(CustomRoles.Ballooner)) return;
         CustomSound.Play(CustomSound.Bomb);
     }
     public override string GetAbilityButtonText() => GetString("BalloonerAbility");

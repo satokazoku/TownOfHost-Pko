@@ -210,7 +210,7 @@ public sealed class FireWorks : RoleBase, IImpostor, IUsePhantomButton
     }
     private void PlaySound()
     {
-        if (!Player.AmOwner) return;
+        if (!Player.AmOwner || !Player.Is(CustomRoles.FireWorks)) return;
         CustomSound.Play(CustomSound.Firework);
     }
     public override bool OverrideAbilityButton(out string text)

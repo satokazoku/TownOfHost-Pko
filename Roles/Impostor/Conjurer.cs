@@ -148,15 +148,13 @@ public sealed class Conjurer : RoleBase, IImpostor, IUsePhantomButton
 
         beaconPositions.Add(pos);
 
-        if (Player.AmOwner)
-            beaconObjects.Add(CreateBeaconVisual(pos, BeaconCount - 1));
+        beaconObjects.Add(CreateBeaconVisual(pos, BeaconCount - 1));
 
         // ↓追加：魔法陣の位置にダミーを設置(本人にのみ表示)
         var dummy = new BeaconDummy(pos, Player, 10, activated: false);
         beaconDummies.Add(dummy);
 
-        if (Player?.AmOwner == true)
-            UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
+        UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
 
         UtilsGameLog.AddGameLog("Conjurer",
             $"{UtilsName.GetPlayerColor(Player)} ビーコン設置 ({BeaconCount}/3)");
@@ -228,13 +226,10 @@ public sealed class Conjurer : RoleBase, IImpostor, IUsePhantomButton
             {
                 beaconPositions.Add(pos);
 
-                if (Player.AmOwner)
-                    beaconObjects.Add(CreateBeaconVisual(pos, BeaconCount - 1));
+                beaconObjects.Add(CreateBeaconVisual(pos, BeaconCount - 1));
             }
 
-            if (Player?.AmOwner == true)
-                UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
-
+            UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
             UtilsGameLog.AddGameLog("Conjurer",
                 $"{UtilsName.GetPlayerColor(Player)} ビーコン設置 ({BeaconCount}/3)");
         }
@@ -251,8 +246,7 @@ public sealed class Conjurer : RoleBase, IImpostor, IUsePhantomButton
             if (obj != null) UnityEngine.Object.Destroy(obj);
         beaconObjects.Clear();
 
-        if (Player?.AmOwner == true)
-            UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
+        UtilsNotifyRoles.NotifyRoles(OnlyMeName: true, SpecifySeer: Player);
     }
 
     private static GameObject CreateBeaconVisual(Vector2 pos, int index)

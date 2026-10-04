@@ -186,7 +186,7 @@ namespace TownOfHost
                 CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.MadBetrayer, byte.MaxValue);
                 CustomWinnerHolder.WinnerRoles.Add(CustomRoles.MadBetrayer);
             }
-            else if (Imp == 0 && Jackal == 0 && Remotekiller == 0 && GrimReaper == 0
+            else if (Imp == 0 && Jackal == 0 && Remotekiller == 0 
                 && MilkyWay == 0 && MadBetrayer == 0 && StandMasterCount == 0
                 && VillainActive == 0
                 && FoxAndCrew <= Pavlov && PavlovDog.HasAliveDog())
@@ -197,7 +197,7 @@ namespace TownOfHost
                 CustomWinnerHolder.WinnerRoles.Add(CustomRoles.PavlovOwner);
             }
             else if (standMasterAlive
-                && Imp == 0 && Jackal == 0 && Remotekiller == 0 && GrimReaper == 0
+                && Imp == 0 && Jackal == 0 && Remotekiller == 0 
                 && MilkyWay == 0 && MadBetrayer == 0 && Pavlov == 0
                 && VillainActive == 0
                 && FoxAndCrew <= StandMasterCount)
@@ -510,7 +510,7 @@ namespace TownOfHost
                     CustomWinnerHolder.NeutralWinnerIds.Add(pc.PlayerId);
                 }
             }
-            else if (Imp == 0 && Jackal == 0 && Remotekiller == 0 && GrimReaper == 0
+            else if (Imp == 0 && Jackal == 0 && Remotekiller == 0
                 && MilkyWay == 0 && MadBetrayer == 0 && StandMasterCount == 0 && EaterCount == 0
                 && Pavlov == 0 && Dracula == 0 && Vanity == 0 && FoxAndCrew <= Huntman)
             {
@@ -518,7 +518,7 @@ namespace TownOfHost
                 CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Huntman, byte.MaxValue);
                 CustomWinnerHolder.WinnerRoles.Add(CustomRoles.Huntman);
             }
-            else if (Imp == 0 && Jackal == 0 && Remotekiller == 0 && GrimReaper == 0
+            else if (Imp == 0 && Jackal == 0 && Remotekiller == 0 
                 && MilkyWay == 0 && MadBetrayer == 0 && StandMasterCount == 0 && EaterCount == 0
                 && Pavlov == 0 && Huntman == 0 && Vanity == 0 && FoxAndCrew <= Dracula)
             {
@@ -536,7 +536,7 @@ namespace TownOfHost
                     }
                 }
             }
-            else if (Imp == 0 && Jackal == 0 && Remotekiller == 0 && GrimReaper == 0
+            else if (Imp == 0 && Jackal == 0 && Remotekiller == 0 
                 && MilkyWay == 0 && MadBetrayer == 0 && StandMasterCount == 0 && EaterCount == 0
                 && Pavlov == 0 && Huntman == 0 && Dracula == 0 && FoxAndCrew <= Vanity)
             {

@@ -106,7 +106,7 @@ public sealed class SelfBomber : RoleBase, IImpostor, IUsePhantomButton
     }
     private void PlaySound()
     {
-        if (!Player.AmOwner) return;
+        if (!Player.AmOwner || !Player.Is(CustomRoles.SelfBomber)) return;
         CustomSound.Play(CustomSound.Bomb);
     }
 }

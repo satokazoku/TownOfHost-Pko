@@ -248,7 +248,7 @@ namespace TownOfHost.Roles.Impostor
         }
         private void PlaySound()
         {
-            if (!Player.AmOwner) return;
+            if (!Player.AmOwner || !Player.Is(CustomRoles.Limiter)) return;
             CustomSound.Play(CustomSound.Bomb);
         }
         public static Dictionary<int, Achievement> achievements = new();

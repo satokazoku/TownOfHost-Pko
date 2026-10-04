@@ -468,10 +468,7 @@ public sealed class Rocket : RoleBase, IImpostor, IUsePhantomButton
     }
     void PlayFireSoundRPC()
     {
-        if (Player.AmOwner)
-        {
-            CustomSound.Play(CustomSound.Firework);
-        }
+        CustomSound.Play(CustomSound.Firework);
         using var sender = CreateSender();
         sender.Writer.Write((byte)3);
     }
