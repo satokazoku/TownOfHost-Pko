@@ -20,7 +20,7 @@ public sealed class Juggler : RoleBase, IImpostor, IUsePhantomButton
         8900,
         SetupOptionItem,
         "jug",
-        OptionSort: (0, 10),
+        OptionSort: (6, 0),
         from: From.TheOtherRoles,
         assignInfo: new RoleAssignInfo(CustomRoles.Juggler, CustomRoleTypes.Impostor)
         {
