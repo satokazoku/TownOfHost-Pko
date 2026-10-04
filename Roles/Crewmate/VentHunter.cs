@@ -67,10 +67,10 @@ public sealed class VentHunter : RoleBase
 
     private static void SetupOptionItem()
     {
-        OptionCount = IntegerOptionItem.Create(RoleInfo, 10, OptionName.VentHunterCount, new(0, 99, 1), 2, false).SetZeroNotation(OptionZeroNotation.Infinity);
-        OptionCooldown = IntegerOptionItem.Create(RoleInfo, 11, OptionName.Cooldown, new(0, 120, 1), 30, false);
-        OptionDisappearTime = FloatOptionItem.Create(RoleInfo, 12, OptionName.VentHunterTime, new(0, 30, 2.5f), 10, false);
-        OptionTask = IntegerOptionItem.Create(RoleInfo, 13, OptionName.cantaskcount, new(0, 99, 1), 5, false);
+        OptionCount = IntegerOptionItem.Create(RoleInfo, 10, OptionName.VentHunterCount, new(0, 99, 1), 2, false).SetValueFormat(OptionFormat.Times).SetZeroNotation(OptionZeroNotation.Infinity);
+        OptionCooldown = IntegerOptionItem.Create(RoleInfo, 11, OptionName.Cooldown, new(0, 120, 1), 30, false).SetValueFormat(OptionFormat.Seconds);
+        OptionDisappearTime = FloatOptionItem.Create(RoleInfo, 12, OptionName.VentHunterTime, new(0, 30, 2.5f), 10, false).SetValueFormat(OptionFormat.Seconds);
+        OptionTask = IntegerOptionItem.Create(RoleInfo, 13, OptionName.cantaskcount, new(0, 99, 1), 5, false).SetValueFormat(OptionFormat.Pieces);
     }
 
     public override bool OnEnterVent(PlayerPhysics physics, int ventId)

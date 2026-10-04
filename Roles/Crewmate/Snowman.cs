@@ -53,7 +53,7 @@ public sealed class Snowman : RoleBase
     {
         OptionFirstVision = FloatOptionItem.Create(RoleInfo, 10, OptionName.SnowmanFirstVision, new(0.05f, 5, 0.05f), 1.25f, false).SetValueFormat(OptionFormat.Multiplier);
         OptionMinVision = FloatOptionItem.Create(RoleInfo, 11, OptionName.SnowmanMinVision, new(0f, 5, 0.05f), 0.15f, false).SetValueFormat(OptionFormat.Multiplier);
-        OptionMeltedSteps = FloatOptionItem.Create(RoleInfo, 12, OptionName.SnowmanMeltedSteps, new(100f, 3000f, 100f), 1800f, false);
+        OptionMeltedSteps = FloatOptionItem.Create(RoleInfo, 12, OptionName.SnowmanMeltedSteps, new(100f, 3000f, 100f), 1800f, false).SetValueFormat(OptionFormat.Steps);
         OptionElectricalIgnoreMelt = BooleanOptionItem.Create(RoleInfo, 13, OptionName.ElectricalIgnoreMelt, true, false);
 
         OverrideTasksData.Create(RoleInfo, 20);

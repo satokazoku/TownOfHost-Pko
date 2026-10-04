@@ -79,7 +79,9 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
     float nowcool;
     int LastCooltime;
     int Flug3;
+#pragma warning disable CS0414 
     bool diedTaskModeApplied;
+#pragma warning restore CS0414
 
     public static HashSet<byte> AppointedPlayerIds = new();
     private bool IsAppointedSheriff => AppointedPlayerIds.Contains(Player.PlayerId);

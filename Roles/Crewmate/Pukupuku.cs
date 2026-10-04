@@ -67,7 +67,8 @@ namespace TownOfHost.Roles.Crewmate
 
             OptionGuardCount = IntegerOptionItem.Create(
                 RoleInfo, 11, OptionName.PukupukuGuardCount,
-                new(1, 10, 1), 1, false, ModeOption);
+                new(1, 10, 1), 1, false, ModeOption).SetValueFormat(OptionFormat.Times)
+                .SetEnabled(() => ModeOption.GetValue() != 3);
 
             OptionNotifyOnGuard = BooleanOptionItem.Create(
                 RoleInfo, 12, OptionName.PukupukuNotifyOnGuard,

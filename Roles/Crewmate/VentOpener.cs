@@ -93,14 +93,14 @@ public sealed class VentOpener : RoleBase
 
     private static void SetupOptionItem()
     {
-        OptionCount = IntegerOptionItem.Create(RoleInfo, 10, OptionName.VentOpenerCount, new(0, 30, 1), 3, false).SetZeroNotation(OptionZeroNotation.Infinity);
-        OptionCooldown = IntegerOptionItem.Create(RoleInfo, 11, OptionName.Cooldown, new(0, 999, 1), 30, false);
+        OptionCount = IntegerOptionItem.Create(RoleInfo, 10, OptionName.VentOpenerCount, new(0, 30, 1), 3, false).SetValueFormat(OptionFormat.Times).SetZeroNotation(OptionZeroNotation.Infinity);
+        OptionCooldown = IntegerOptionItem.Create(RoleInfo, 11, OptionName.Cooldown, new(0, 999, 1), 30, false).SetValueFormat(OptionFormat.Seconds);
         OptinoFuhatu = BooleanOptionItem.Create(RoleInfo, 12, OptionName.VentOpenerFuhatu, false, false);
         OptionImp = BooleanOptionItem.Create(RoleInfo, 13, OptionName.VentOpenerImp, true, false);
         OptionMad = BooleanOptionItem.Create(RoleInfo, 14, OptionName.VentOpenerMad, true, false);
         OptionCrew = BooleanOptionItem.Create(RoleInfo, 15, OptionName.VentOpenerCrew, true, false);
         OptionNeutral = BooleanOptionItem.Create(RoleInfo, 16, OptionName.VentOpenerNeutral, true, false);
-        OptionCanTaskcount = IntegerOptionItem.Create(RoleInfo, 17, OptionName.cantaskcount, new(0, 99, 1), 5, false);
+        OptionCanTaskcount = IntegerOptionItem.Create(RoleInfo, 17, OptionName.cantaskcount, new(0, 99, 1), 5, false).SetValueFormat(OptionFormat.Pieces);
         OptionBlockKill = BooleanOptionItem.Create(RoleInfo, 18, OptionName.VentOpenerBlockKill, false, false);
         //OptionBlockVent = BooleanOptionItem.Create(RoleInfo, 19, OptionName.VentOpenerBlockVent, false, false);
         // OptionBlockSabotage = BooleanOptionItem.Create(RoleInfo, 20, OptionName.VentOpenerBlockSabotage, false, false);

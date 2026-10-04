@@ -477,7 +477,8 @@ namespace TownOfHost
         Pieces,
         day,
         Set,
-        Turns
+        Turns,
+        Steps
     }
     public enum OptionZeroNotation
     {

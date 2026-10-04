@@ -85,6 +85,7 @@ public sealed class Puppeteer : RoleBase, IImpostor, IUsePhantomButton
         ResetCooldown = false;
         IsPuppetMode = !IsPuppetMode;
         SendRPC(byte.MaxValue, 3);   // 新しいtypeIdでモード切替を通知
+        CustomButtonHud.BottonHud(true);
     }
 
     public override void ReceiveRPC(MessageReader reader)
@@ -243,8 +244,13 @@ public sealed class Puppeteer : RoleBase, IImpostor, IUsePhantomButton
     }
     public bool OverrideKillButton(out string text)
     {
-        text = "Puppeteer_Kill";
-        return true;
+        if (IsPuppetMode)
+        {
+            text = "Puppeteer_Kill";
+            return true;
+        }
+        text = default;
+        return false;
     }
 
     public override string GetAbilityButtonText() => GetString("Modechenge");

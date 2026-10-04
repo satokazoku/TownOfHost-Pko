@@ -38,7 +38,7 @@ public sealed class Walker : RoleBase, IRoomTasker
     public static OptionItem WalkTaskCount;
     static void SetupOptionItem()
     {
-        WalkTaskCount = IntegerOptionItem.Create(RoleInfo, 10, OptionName.WalkerWalkTaskCount, (1, 99, 1), 5, false);
+        WalkTaskCount = IntegerOptionItem.Create(RoleInfo, 10, OptionName.WalkerWalkTaskCount, (1, 99, 1), 5, false).SetValueFormat(OptionFormat.Pieces);
         OverrideTasksData.Create(RoleInfo, 15, tasks: (true, 1, 0, 0));
     }
     int? IRoomTasker.GetMaxTaskCount() => WalkTaskCount.GetInt();

@@ -58,7 +58,7 @@ public sealed class Apprentice : RoleBase
             .SetValueFormat(OptionFormat.Seconds);
         OptionRequiredTaskCount = IntegerOptionItem.Create(RoleInfo, 13, OptionName.ApprenticeRequiredTaskCount,
             new(0, 20, 1), 0, false)
-            .SetValueFormat(OptionFormat.Times);
+            .SetValueFormat(OptionFormat.Times).SetZeroNotation(OptionZeroNotation.Infinity);
         Tasks = OverrideTasksData.Create(RoleInfo, 20);
     }
 
