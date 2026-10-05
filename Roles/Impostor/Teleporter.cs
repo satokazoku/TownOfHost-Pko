@@ -266,14 +266,6 @@ public sealed class Teleporter : RoleBase, IImpostor, IUsePhantomButton
         return $"{size}<color={color}>ファントム → ランダムな人の元へ全員テレポート</color>";
     }
 
-    public override string GetProgressText(bool comms = false, bool GameLog = false)
-    {
-        if (!Player.IsAlive()) return "";
-        if (pendingTimer >= 0f)
-            return $"<color=#ff4500>({Mathf.CeilToInt(pendingTimer)}s)</color>";
-        return "";
-    }
-
     void SendRpc()
     {
         using var sender = CreateSender();

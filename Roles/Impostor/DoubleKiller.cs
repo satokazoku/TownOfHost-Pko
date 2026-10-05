@@ -23,8 +23,8 @@ public sealed class DoubleKiller : RoleBase, IImpostor, IUsePhantomButton
             3400,
             SetUpOptionItem,
             "dk",
-            OptionSort: (0, 10),
-            //OptionSort: (3, 15),
+            //OptionSort: (0, 10),
+            OptionSort: (3, 15),
             from: From.SuperNewRoles
         );
 
