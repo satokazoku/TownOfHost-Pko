@@ -282,6 +282,7 @@ namespace TownOfHost
                         var roleclass = player.GetRoleClass();
                         roleclass?.CheckWinner(reason);
                     }
+                    Dracula.staticKenzokuid.Clear();
                     Twins.CheckAddWin();
                     Triplets.CheckAddWin();
                     Faction.CheckWin();
@@ -325,6 +326,7 @@ namespace TownOfHost
         }
         public static void StartEndGame(GameOverReason reason)
         {
+            Dracula.staticKenzokuid.Clear();
             AmongUsClient.Instance.StartCoroutine(CoEndGame(AmongUsClient.Instance, reason).WrapToIl2Cpp());
         }
         private static IEnumerator CoEndGame(AmongUsClient self, GameOverReason reason)

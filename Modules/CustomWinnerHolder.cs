@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Hazel;
 using TownOfHost.Attributes;
 using TownOfHost.Roles.Core;
+using TownOfHost.Roles.Neutral;
 
 namespace TownOfHost
 {
@@ -93,6 +94,7 @@ namespace TownOfHost
             }
             WinnerTeam = winner;
             winners.Add(winner);
+            Dracula.staticKenzokuid.Clear();
         }
 
         /// <summary>
