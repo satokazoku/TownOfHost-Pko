@@ -72,15 +72,10 @@ public sealed class Teleporter : RoleBase, IImpostor, IUsePhantomButton
     bool IUsePhantomButton.IsPhantomRole => true;
     bool IUsePhantomButton.IsresetAfterKill => false;
 
-    public override void Add()
-    {
-        PetActionManager.Register(Player.PlayerId, OnPetUsed);
-    }
 
     public override void OnDestroy()
     {
         CustomRoleManager.LowerOthers.Remove(GetLowerTextOthers);
-        PetActionManager.Unregister(Player.PlayerId);
     }
 
     public override void ApplyGameOptions(IGameOptions opt)
@@ -122,12 +117,6 @@ public sealed class Teleporter : RoleBase, IImpostor, IUsePhantomButton
 
         if (!TryStartTeleport())
             ResetCooldown = false;
-    }
-
-    private void OnPetUsed()
-    {
-        if (!AmongUsClient.Instance.AmHost) return;
-        TryStartTeleport();
     }
 
     private bool TryStartTeleport()
