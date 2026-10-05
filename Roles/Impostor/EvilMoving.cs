@@ -56,9 +56,8 @@ public sealed class EvilMoving : RoleBase, IImpostor, IUsePhantomButton
 
     void IUsePhantomButton.OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
     {
-        AdjustKillCooldown = false;
-        ResetCooldown = false;
-
+        AdjustKillCooldown = true;
+        ResetCooldown = true;
         if (!Player.IsAlive()) return;
         if (cooldownLeft > 0f) return;
 

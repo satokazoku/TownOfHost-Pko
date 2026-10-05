@@ -98,7 +98,7 @@ namespace TownOfHost.Roles.Impostor
         }
         public void OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
         {
-            AdjustKillCooldown = false;
+            AdjustKillCooldown = true;
             ResetCooldown = false;
 
             if (BomberExplosion <= 0) return;

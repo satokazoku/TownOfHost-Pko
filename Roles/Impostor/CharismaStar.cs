@@ -105,15 +105,6 @@ public sealed class CharismaStar : RoleBase, IImpostor, IUsePhantomButton, IDoub
         // アビリティクールリセット
         Player.RpcResetAbilityCooldown();
 
-        // ホストの集合後のキルクールが0.1のままになってしまう為ここでもリセット
-        if (Player == PlayerControl.LocalPlayer)
-        {
-            _ = new LateTask(() =>
-            {
-                Player.SetKillCooldown(killCooldown);
-            }, 0.2f, "CharismaStar_HostSetKillCooldown");
-        }
-
         return true;
     }
 
@@ -129,15 +120,6 @@ public sealed class CharismaStar : RoleBase, IImpostor, IUsePhantomButton, IDoub
         {
             // アビリティクールリセット
             Player.RpcResetAbilityCooldown();
-
-            // ホストの集合後のキルクールが0.1のままになってしまう為ここでもリセット
-            if (Player == PlayerControl.LocalPlayer)
-            {
-                _ = new LateTask(() =>
-                {
-                    Player.SetKillCooldown(killCooldown);
-                }, 0.2f, "CharismaStar_HostSetKillCooldown");
-            }
         }
     }
 
@@ -145,7 +127,7 @@ public sealed class CharismaStar : RoleBase, IImpostor, IUsePhantomButton, IDoub
 
     public void OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
     {
-        AdjustKillCooldown = false;
+        AdjustKillCooldown = true;
         ResetCooldown = true;
 
         // リストに誰も登録されていない

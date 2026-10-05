@@ -83,7 +83,7 @@ public sealed class Samurai : RoleBase, IImpostor, IUsePhantomButton
     {
         if (CanUse)
         {
-            AdjustKillCooldown = false;
+            AdjustKillCooldown = true;
             ResetCooldown = false;
 
             if (!AmongUsClient.Instance.AmHost) return;

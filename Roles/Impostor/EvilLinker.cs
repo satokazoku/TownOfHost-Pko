@@ -76,7 +76,7 @@ public sealed class EvilLinker : RoleBase, IImpostor, IUsePhantomButton
 
     void IUsePhantomButton.OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
     {
-        AdjustKillCooldown = false;
+        AdjustKillCooldown = true;
         ResetCooldown = false;
 
         if (!Player.IsAlive()) return;

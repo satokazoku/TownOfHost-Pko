@@ -278,7 +278,7 @@ public sealed class Sniper : RoleBase, IImpostor, IUsePhantomButton
     /// </summary>
     void IUsePhantomButton.OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
     {
-        AdjustKillCooldown = false;
+        AdjustKillCooldown = true;
         ResetCooldown = OpShapeCool.GetFloat() > 1f;
 
         if (!Player.IsAlive() || BulletCount <= 0 || !OneClickMode) return;

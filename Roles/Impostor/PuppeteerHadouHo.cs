@@ -117,7 +117,7 @@ public sealed class PuppeteerHadouHo : RoleBase, IImpostor, IUsePhantomButton
 
     void IUsePhantomButton.OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
     {
-        AdjustKillCooldown = false;
+        AdjustKillCooldown = true;
         ResetCooldown = false;
         if (IsFiring || ShowBeamMark || !Player.IsAlive() || IsCharging) return;
 
@@ -381,12 +381,12 @@ public sealed class PuppeteerHadouHo : RoleBase, IImpostor, IUsePhantomButton
         if (ShowBeamMark && seer.PlayerId != Player.PlayerId) return "\n<size=100%><color=#ff0000>ビーム中</color></size>";
         return "";
     }*/
-     /*
-    public override string GetAbilityButtonText() => "発射";
-    public override bool OverrideAbilityButton(out string text)
-    {
-        text = "PuppeteerHadouHo_Ability";
-        return true;
-    }
+/*
+public override string GetAbilityButtonText() => "発射";
+public override bool OverrideAbilityButton(out string text)
+{
+   text = "PuppeteerHadouHo_Ability";
+   return true;
+}
 }
 */

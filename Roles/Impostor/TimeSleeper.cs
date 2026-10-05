@@ -388,10 +388,11 @@ public sealed class TimeSleeper : RoleBase, IImpostor, IUsePhantomButton
 
     void IUsePhantomButton.OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
     {
-        AdjustKillCooldown = false;
+        AdjustKillCooldown = true;
         ResetCooldown = false;
         if (isRecording) return;
         if (!Player.IsAlive()) return;
+        ResetCooldown = true;
 
         isRecording = true;
         recordTimer = 0f;
@@ -408,7 +409,6 @@ public sealed class TimeSleeper : RoleBase, IImpostor, IUsePhantomButton
             positionHistory[pc.PlayerId] = pc.transform.position;
         }
         AURoleOptions.PhantomCooldown = RecordDuration;
-        Player.RpcResetAbilityCooldown();
 
         UtilsNotifyRoles.NotifyRoles(OnlyMeName: true);
         SendRpc();

@@ -94,7 +94,7 @@ public sealed class EvilStandMaster : RoleBase, IImpostor, IUsePhantomButton
 
     public void OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
     {
-        AdjustKillCooldown = false;
+        AdjustKillCooldown = true;
         ResetCooldown = true;
         if (!Player.IsAlive()) return;
 
@@ -104,6 +104,8 @@ public sealed class EvilStandMaster : RoleBase, IImpostor, IUsePhantomButton
         {
             if (ReduceOwnKillCD && OwnKillCDReduce > 0f)
             {
+                AdjustKillCooldown = false;
+
                 float newCd = Mathf.Max(0.1f, Player.killTimer - OwnKillCDReduce);
                 Player.SetKillCooldown(newCd);
                 Logger.Info($"[EvilStandMaster] ワープ不可→自分のキルCD {OwnKillCDReduce}秒短縮", "EvilStandMaster");
