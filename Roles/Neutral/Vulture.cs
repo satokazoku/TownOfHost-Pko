@@ -50,7 +50,7 @@ public sealed class Vulture : RoleBase, IKillFlashSeeable, IAdditionalWinner
     {
         EatCount = 0;
         turneat = 0;
-        staticEatedPlayers.Clear();
+        staticAtePlayers.Clear();
         Viperkilledplayers = new();
 
         OptAddWinEatcount = OptionAddWinEatCount.GetInt();
@@ -76,7 +76,7 @@ public sealed class Vulture : RoleBase, IKillFlashSeeable, IAdditionalWinner
     int EatCount;//食べたかず
     Dictionary<byte, Vector2> DiePlayerPos = new();//死体の矢印
     Dictionary<byte, float> Viperkilledplayers = new();//とける予定の死体
-    static List<byte> staticEatedPlayers = new();//食べられたおにく
+    static List<byte> staticAtePlayers = new();//食べられたおにく
     int turneat;
     enum OptionName
     {
@@ -108,14 +108,14 @@ public sealed class Vulture : RoleBase, IKillFlashSeeable, IAdditionalWinner
     }
     public override bool CancelReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target, ref DontReportreson reason)
     {
-        if (reporter.PlayerId == Player.PlayerId && target != null && !staticEatedPlayers.Contains(target?.PlayerId ?? 250))
+        if (reporter.PlayerId == Player.PlayerId && target != null && !staticAtePlayers.Contains(target?.PlayerId ?? 250))
         {
             UtilsGameLog.AddGameLog("Vultrue", $"{UtilsName.GetPlayerColor(Player)}: {UtilsName.GetPlayerColor(target)}をつまみぐい！");
             Logger.Info($"{EatCount + 1}個目のお食事", "Vulture");
             reason = DontReportreson.Eat;
             EatCount++;
             turneat++;
-            staticEatedPlayers.Add(target.PlayerId);
+            staticAtePlayers.Add(target.PlayerId);
             DiePlayerPos.Where(poss => poss.Key == target.PlayerId).Do(poss => GetArrow.Remove(Player.PlayerId, poss.Value));
             RpcEatPlayer(target.PlayerId);
             Achievements.RpcCompleteAchievement(Player.PlayerId, 1, achievements[0]);
@@ -157,7 +157,7 @@ public sealed class Vulture : RoleBase, IKillFlashSeeable, IAdditionalWinner
 
             return true;
         }
-        if (reporter?.PlayerId != target?.PlayerId && target != null && staticEatedPlayers.Contains(target?.PlayerId ?? 250))
+        if (reporter?.PlayerId != target?.PlayerId && target != null && staticAtePlayers.Contains(target?.PlayerId ?? 250))
         {
             reason = DontReportreson.Eat;
             Logger.Info($"{target?.PlayerName ?? "???"}は食事済みだからキャンセル", "Vulture");
@@ -223,14 +223,14 @@ public sealed class Vulture : RoleBase, IKillFlashSeeable, IAdditionalWinner
         seen ??= seer;
         if (isForMeeting)
         {
-            if (staticEatedPlayers.Contains(seen.PlayerId)) return $"<color={RoleInfo.RoleColorCode}>×</color>";
+            if (staticAtePlayers.Contains(seen.PlayerId)) return $"<color={RoleInfo.RoleColorCode}>×</color>";
         }
         return "";
     }
     public override void AfterMeetingTasks()
     {
         Viperkilledplayers.Clear();
-        staticEatedPlayers.Clear();
+        staticAtePlayers.Clear();
     }
     public bool CheckWin(ref CustomRoles winnerRole)
     {
@@ -294,7 +294,7 @@ public sealed class Vulture : RoleBase, IKillFlashSeeable, IAdditionalWinner
             case RPC_Types.EatPlayer:
                 EatCount = reader.ReadInt32();
                 var targetId = reader.ReadByte();
-                staticEatedPlayers.Add(targetId);
+                staticAtePlayers.Add(targetId);
                 DiePlayerPos.Where(poss => poss.Key == targetId).Do(poss => GetArrow.Remove(Player.PlayerId, poss.Value));
                 break;
             case RPC_Types.AddDiePlayerPos:

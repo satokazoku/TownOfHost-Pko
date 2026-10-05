@@ -106,13 +106,15 @@ namespace TownOfHost.Roles.Impostor
             => KnowDeadRole(target) || KnowAllyRole(target);
 
         private bool CanSeeRole(CustomRoles role)
-            => !IsSetCanSeeRole || CanSeeRoles.Contains(role);
+            => !IsSetCanSeeRole || (CanSeeRoles?.Contains(role) ?? true);
 
         public override void OverrideDisplayRoleNameAsSeer(PlayerControl seen, ref bool enabled, ref Color roleColor, ref string roleText, ref bool addon)
         {
             addon = false;
             enabled |= KnowTargetRole(seen);
-            if (Player.IsAlive() && !CanSeeRole(seen.GetCustomRole()))
+
+            if (seen.PlayerId == Player.PlayerId) return;
+            if (Player.IsAlive() && !CanSeeRole(seen.GetCustomRole()) && !IsSetCanSeeRole)
             {
                 roleColor = ModColors.NeutralGray;
                 roleText = GetString("Unknown");
