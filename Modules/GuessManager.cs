@@ -1,19 +1,18 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
-using UnityEngine;
-
 using TownOfHost.Attributes;
 using TownOfHost.Modules;
 using TownOfHost.Modules.ChatManager;
-using TownOfHost.Roles.Core;
 using TownOfHost.Roles.AddOns.Common;
 using TownOfHost.Roles.AddOns.Impostor;
 using TownOfHost.Roles.AddOns.Neutral;
-using TownOfHost.Roles.Madmate;
+using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Crewmate;
-
+using TownOfHost.Roles.Impostor;
+using TownOfHost.Roles.Madmate;
+using UnityEngine;
 using static TownOfHost.Translator;
 
 namespace TownOfHost;

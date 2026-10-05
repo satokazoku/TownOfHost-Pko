@@ -138,6 +138,13 @@ namespace TownOfHost
 
             if (isSucceeded)
             {
+                foreach (var p in PlayerCatch.AllPlayerControls)
+                {
+                    if (p.GetRoleClass() is SilentKiller sk)
+                    {
+                        sk.Restore(target.PlayerId);
+                    }
+                }
                 if (target.shapeshifting)
                 {
                     //シェイプシフトアニメーション中

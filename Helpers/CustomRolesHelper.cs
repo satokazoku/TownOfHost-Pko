@@ -285,7 +285,7 @@ namespace TownOfHost
                         or CustomRoles.DemonicSupporter
                         or CustomRoles.AsistingAngel
                         or CustomRoles.SoulSlave
-                        or CustomRoles.SpiritGuide
+                        //or CustomRoles.SpiritGuide
                         ;
         }
         public static bool IsStartedRole(this CustomRoles role) => role is not

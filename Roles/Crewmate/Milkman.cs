@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
+using HarmonyLib;
 using Hazel;
+using InnerNet;
 using TownOfHost.Patches;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
@@ -306,13 +308,25 @@ public sealed class Milkman : RoleBase, IKiller
         SendRpc();
     }
 
-    public override void OnMurderPlayerAsTarget(MurderInfo info)
+    public override void CheckDead(PlayerControl player)
     {
-        if (info.IsSuicide) return;
         diedThisRound = true;
 
         if (!deliveryMode) return;
+        RoleTypes type;
 
+        if (Player.IsGhostRole())
+        {
+            type = RoleTypes.GuardianAngel;
+        }
+        else
+        {
+            type = RoleTypes.Crewmate;
+        }
+        foreach (var pc in PlayerCatch.AllAlivePlayerControls)
+        {
+            SetRoleForMilkmanClient(Player, type, pc.GetClientId());
+        }
         deliveryMode = false;
 
         SendRpc();
@@ -326,19 +340,6 @@ public sealed class Milkman : RoleBase, IKiller
     {
         if (!AmongUsClient.Instance.AmHost) return;
         if (GameStates.CalledMeeting || GameStates.Intro) return;
-        if (!player.IsAlive() && !deaded)
-        {
-            deaded = true;
-
-            SetRoleForMilkmanClient(Player, RoleTypes.Engineer, Player.GetClientId());
-
-            foreach (var pc in PlayerCatch.AllAlivePlayerControls)
-            {
-                var role = pc.GetCustomRole();
-                if (role.IsImpostor())
-                    SetRoleForMilkmanClient(pc, role.GetRoleTypes(), Player.GetClientId());
-            }
-        }
 
         if (nowcool > 0) nowcool -= Time.fixedDeltaTime;
         else nowcool = 0;
@@ -415,5 +416,16 @@ public sealed class Milkman : RoleBase, IKiller
     {
         text = "Milkman_Kill";
         return true;
+    }
+}
+
+[HarmonyPatch(typeof(RoleManager), nameof(RoleManager.AssignRoleOnDeath))]
+class MilkmanAssignRoleOnDeathPatch
+{
+    public static bool Prefix(RoleManager __instance, PlayerControl player)
+    {
+        if (player.GetRoleClass() is not Milkman) return true;
+        __instance.SetRole(player, RoleTypes.CrewmateGhost);
+        return false; // 元のImpostorGhost割り当てをスキップ
     }
 }

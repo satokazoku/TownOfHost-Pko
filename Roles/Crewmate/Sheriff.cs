@@ -1,14 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
-using Hazel;
-using UnityEngine;
 using AmongUs.GameOptions;
-
+using HarmonyLib;
+using Hazel;
+using TownOfHost.Patches;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Impostor;
 using TownOfHost.Roles.Neutral;
-using TownOfHost.Patches;
+using UnityEngine;
 using static TownOfHost.Translator;
 
 namespace TownOfHost.Roles.Crewmate;
@@ -383,14 +383,19 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
         var clientId = Player.GetClientId();
         if (clientId != -1)
         {
-            SetRoleForSheriffClient(Player, RoleTypes.Crewmate, clientId);
+            RoleTypes type;
 
+            if (Player.IsGhostRole())
+            {
+                type = RoleTypes.GuardianAngel;
+            }
+            else
+            {
+                type = RoleTypes.Crewmate;
+            }
             foreach (var pc in PlayerCatch.AllPlayerControls)
             {
-                if (pc.PlayerId == Player.PlayerId) continue;
-                var role = pc.GetCustomRole();
-                if (role.IsImpostor())
-                    SetRoleForSheriffClient(pc, role.GetRoleTypes(), clientId);
+                SetRoleForSheriffClient(Player, type, pc.GetClientId());
             }
         }
 
@@ -494,12 +499,16 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
         text = "Sheriff_Kill";
         return true;
     }
-    public override void OnDead(PlayerControl player)
+    public override void CheckDead(PlayerControl player)
     {
         if (player.PlayerId != Player.PlayerId) return;
+        if (!diedTaskModeApplied && !Taskmode)
+        {
+            Taskmode = true;
 
-        _ = new LateTask(() => {
             ForceTaskModeOnDeath();
+        }
+        _ = new LateTask(() => {
             Player.RpcExileV3(false);
         }, 0.2f, "", true);
     }
@@ -517,5 +526,16 @@ class SheriffAchievement
         achievements.Add(0, n1);
         achievements.Add(1, l2);
         achievements.Add(2, sp3);
+    }
+}
+
+[HarmonyPatch(typeof(RoleManager), nameof(RoleManager.AssignRoleOnDeath))]
+class SheriffAssignRoleOnDeathPatch
+{
+    public static bool Prefix(RoleManager __instance, PlayerControl player)
+    {
+        if (player.GetRoleClass() is not Sheriff) return true;
+        __instance.SetRole(player, RoleTypes.CrewmateGhost);
+        return false; // 元のImpostorGhost割り当てをスキップ
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using AmongUs.GameOptions;
+using HarmonyLib;
 using Hazel;
 using TownOfHost.Patches;
 using TownOfHost.Roles.Core;
@@ -423,5 +424,16 @@ public sealed class VillageChief : RoleBase, IKiller, ISelfVoter
     {
         text = "VillageChief_Kill";
         return true;
+    }
+}
+
+[HarmonyPatch(typeof(RoleManager), nameof(RoleManager.AssignRoleOnDeath))]
+class VillageChiefAssignRoleOnDeathPatch
+{
+    public static bool Prefix(RoleManager __instance, PlayerControl player)
+    {
+        if (player.GetRoleClass() is not VillageChief) return true;
+        __instance.SetRole(player, RoleTypes.CrewmateGhost);
+        return false; // 元のImpostorGhost割り当てをスキップ
     }
 }

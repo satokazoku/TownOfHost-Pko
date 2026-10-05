@@ -146,7 +146,11 @@ class PresetMenu
                         CustomRoles.Shikigami or
                         CustomRoles.Stand or
                         CustomRoles.Pursuer or
-                        CustomRoles.Gang;
+                        CustomRoles.Gang or
+                        CustomRoles.Hero or
+                        CustomRoles.Sinner or
+                        CustomRoles.Mourner or
+                        CustomRoles.SoulSlave;
                     if (isDerived && roleopt.Value.GetValue() != 0)
                         roleopt.Value.SetValue(0, false, false);
                 }

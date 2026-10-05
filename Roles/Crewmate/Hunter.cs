@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
+using HarmonyLib;
 using Hazel;
 using TownOfHost.Patches;
 using TownOfHost.Roles.Core;
@@ -275,21 +276,26 @@ public sealed class Hunter : RoleBase, IKiller, ISchrodingerCatOwner
         if (!Player.IsAlive()) return true;
         return Taskmode;
     }
+    public override void CheckDead(PlayerControl player)
+    {
+        if (player.PlayerId != Player.PlayerId) return;
+        if (!diedTaskModeApplied && !Taskmode)
+        {
+            Taskmode = true;
+
+            ForceTaskModeOnDeath();
+        }
+        _ = new LateTask(() => {
+            Player.RpcExileV3(false);
+        }, 0.2f, "", true);
+    }
 
     public override void OnFixedUpdate(PlayerControl player)
     {
         if (!AmongUsClient.Instance.AmHost) return;
         if (GameStates.CalledMeeting || GameStates.Intro) return;
-        if (!player.IsAlive())
-        {
-            if (!diedTaskModeApplied && !Taskmode)
-            {
-                ForceTaskModeOnDeath();
-            }
-            return;
-        }
 
-        if (!EffectiveRequiresTasks) return;
+        if (!EffectiveRequiresTasks || !Player.IsAlive()) return;
 
         if (nowcool > 0)
             nowcool -= Time.fixedDeltaTime;
@@ -314,14 +320,21 @@ public sealed class Hunter : RoleBase, IKiller, ISchrodingerCatOwner
         var clientId = Player.GetClientId();
         if (clientId != -1)
         {
-            SetRoleForSheriffClient(Player, RoleTypes.Crewmate, clientId);
+            RoleTypes type;
+
+            if (Player.IsGhostRole())
+            {
+                type = RoleTypes.GuardianAngel;
+            }
+            else
+            {
+                type = RoleTypes.Crewmate;
+            }
 
             foreach (var pc in PlayerCatch.AllPlayerControls)
             {
-                if (pc.PlayerId == Player.PlayerId) continue;
-                var role = pc.GetCustomRole();
-                if (role.IsImpostor())
-                    SetRoleForSheriffClient(pc, role.GetRoleTypes(), clientId);
+                clientId = pc.GetClientId();
+                SetRoleForSheriffClient(Player, type, clientId);
             }
         }
 
@@ -385,5 +398,16 @@ public sealed class Hunter : RoleBase, IKiller, ISchrodingerCatOwner
     {
         text = "Sheriff_Kill";
         return true;
+    }
+}
+
+[HarmonyPatch(typeof(RoleManager), nameof(RoleManager.AssignRoleOnDeath))]
+class HunterAssignRoleOnDeathPatch
+{
+    public static bool Prefix(RoleManager __instance, PlayerControl player)
+    {
+        if (player.GetRoleClass() is not Hunter) return true;
+        __instance.SetRole(player, RoleTypes.CrewmateGhost);
+        return false; // 元のImpostorGhost割り当てをスキップ
     }
 }

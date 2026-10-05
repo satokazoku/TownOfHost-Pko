@@ -490,6 +490,8 @@ CustomDeathReason deathReason = CustomDeathReason.Kill)
         //キル可能だった場合のみMurderPlayerに進む
         if (info.CanKill && info.DoKill)//ノイメ対応
         {
+            AllActiveRoles.Do(role => role.Value.CheckDead(attemptTarget));
+
             //特別な処理の役職は部屋チェックから除外
             if (!appearanceKiller.Is(CustomRoles.Bomber) && !appearanceKiller.Is(CustomRoles.Vampire) && !appearanceKiller.Is(CustomRoles.Samurai) && !appearanceKiller.Is(CustomRoles.SelfBomber) && !appearanceKiller.Is(CustomRoles.Limiter) && !appearanceKiller.Is(CustomRoles.HadouHo) && !appearanceKiller.Is(CustomRoles.HadouHo) && !appearanceKiller.Is(CustomRoles.JackalHadouHo) && !appearanceKiller.Is(CustomRoles.SheriffHadouHo))
             {
@@ -640,13 +642,7 @@ CustomDeathReason deathReason = CustomDeathReason.Kill)
         //あっ!死ぬ前にどこにいたかだけ教えてね!
         var roomName = attemptTarget.GetShipRoomName();
         targetState.KillRoom = roomName;
-        foreach (var p in PlayerCatch.AllPlayerControls)
-        {
-            if (p.GetRoleClass() is SilentKiller sk)
-            {
-                sk.Restore(attemptTarget.PlayerId);
-            }
-        }
+
         targetState.SetDead();
         attemptTarget.SetRealKiller(attemptKiller, true);
         killerstate.Is10secKillButton = false;

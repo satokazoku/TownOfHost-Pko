@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
-using UnityEngine;
-
+using HarmonyLib;
+using Hazel;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
-using Hazel;
+using TownOfHost.Roles.Crewmate;
+using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 namespace TownOfHost.Roles.Crewmate
 {
@@ -176,13 +178,43 @@ namespace TownOfHost.Roles.Crewmate
                 }
             }
         }
-        public override void OnDead(PlayerControl player)
+        public override void CheckDead(PlayerControl player)
         {
             if (player.PlayerId != Player.PlayerId) return;
             Taskmode = true;
+            RoleTypes type;
+
+            if (AmongUsClient.Instance.AmHost)
+            {
+                if (Player.IsGhostRole())
+                {
+                    type = RoleTypes.GuardianAngel;
+
+                }
+                else
+                {
+                    type = RoleTypes.Crewmate;
+                }
+
+                foreach (var pc in PlayerCatch.AllAlivePlayerControls)
+                {
+                    SetRoleForNiceLoggerClient(Player, type, pc.GetClientId());
+                }
+                SendRPC();
+            }
             _ = new LateTask(() => {
                 Player.RpcExileV3(false);
             }, 0.2f, "", true);
+        }
+        void SetRoleForNiceLoggerClient(PlayerControl target, RoleTypes role, int clientId)
+        {
+            if (target == null || !target.IsAlive()) return;
+
+            if (target == PlayerControl.LocalPlayer && Is(PlayerControl.LocalPlayer))
+            {
+                RoleManager.Instance.SetRole(target, role);
+            }
+            target.RpcSetRoleDesync(role, clientId);
         }
         public override bool OverrideAbilityButton(out string text)
         {
@@ -215,5 +247,15 @@ namespace TownOfHost.Roles.Crewmate
             achievements.Add(0, n1);
             achievements.Add(1, l1);
         }
+    }
+}
+[HarmonyPatch(typeof(RoleManager), nameof(RoleManager.AssignRoleOnDeath))]
+class NiceLoggerAssignRoleOnDeathPatch
+{
+    public static bool Prefix(RoleManager __instance, PlayerControl player)
+    {
+        if (player.GetRoleClass() is not NiceLogger) return true;
+        __instance.SetRole(player, RoleTypes.CrewmateGhost);
+        return false; // 元のImpostorGhost割り当てをスキップ
     }
 }

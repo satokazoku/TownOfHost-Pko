@@ -489,6 +489,8 @@ namespace TownOfHost
                     sk.Restore(player.PlayerId);
                 }
             }
+            CustomRoleManager.AllActiveRoles.Do(role => role.Value.CheckDead(player));
+
             if (player.GetCustomRole() is CustomRoles.Hero && Stray.OptHeroFlash.GetBool())
             {
                 Utils.AllPlayerKillFlash();
