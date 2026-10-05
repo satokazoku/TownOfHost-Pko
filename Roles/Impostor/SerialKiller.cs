@@ -7,14 +7,14 @@ using TownOfHost.Roles.Neutral;
 
 namespace TownOfHost.Roles.Impostor
 {
-    public sealed class SerialKiller : RoleBase, IImpostor
+    public sealed class SerialKiller : RoleBase, IImpostor, IUsePhantomButton
     {
         public static readonly SimpleRoleInfo RoleInfo =
             SimpleRoleInfo.Create(
                 typeof(SerialKiller),
                 player => new SerialKiller(player),
                 CustomRoles.SerialKiller,
-                () => RoleTypes.Shapeshifter,
+                () => RoleTypes.Phantom,
                 CustomRoleTypes.Impostor,
                 6800,
                 SetUpOptionItem,
@@ -58,8 +58,7 @@ namespace TownOfHost.Roles.Impostor
         public float CalculateKillCooldown() => KillCooldown;
         public override void ApplyGameOptions(IGameOptions opt)
         {
-            AURoleOptions.ShapeshifterCooldown = HasKilled() ? TimeLimit : 255f;
-            AURoleOptions.ShapeshifterDuration = 1f;
+            AURoleOptions.PhantomCooldown = TimeLimit;
         }
         ///<summary>
         ///シリアルキラー＋生存＋一人以上キルしている
@@ -104,6 +103,11 @@ namespace TownOfHost.Roles.Impostor
                 }
             }
         }
+        public bool UseOneclickButton => false;
+
+        public bool IsPhantomRole => HasKilled();
+        public bool IsresetAfterKill => false;
+
         public override bool CanUseAbilityButton() => HasKilled();
         public override string GetAbilityButtonText() => GetString("SerialKillerSuicideButtonText");
         public override bool OverrideAbilityButton(out string text)

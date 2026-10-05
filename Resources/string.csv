@@ -1768,6 +1768,7 @@
 "TeleportKillerMaximum","Number of times you can teleport","テレポートできる回数"
 "TeleportKillerKillCooldownReset","Also resets kill cooldown after teleporting","テレポート後、キルクールをリセットする"
 "TeleportKillerChangeDeathReason","ChangeDeathReason","テレポートキル時の死因を変更する"
+"TeleportKillerNoShape","No ShapeShift","シェイプシフトしない"
 "AntiReporterMaximum","use ability count","<#ff1919>レポートボタン</color>を壊せる回数"
 "AntiReporterResetMeeting","Reset after meeting","会議後に効果がリセットされる"
 "AntiReporterResetse","Effect time","会議を開けない時間"

@@ -63,7 +63,8 @@ public sealed class TeleportKiller : RoleBase, IImpostor
         TeleportKillerDokkaaaan,
         //LeaveSkin,
         TeleportKillerKillCooldownReset,
-        TeleportKillerChangeDeathReason
+        TeleportKillerChangeDeathReason,
+        TeleportKillerNoShape
     }
     static OptionItem OptionKillCoolDown;
     static OptionItem OptionCoolDown;
@@ -78,6 +79,8 @@ public sealed class TeleportKiller : RoleBase, IImpostor
     //static OptionItem OptionLeaveSkin;
     static OptionItem OptionTeleportKillerKillCooldownReset;
     static OptionItem OptionDeathReason;
+    static OptionItem OptNoShape; //オンの場合そもそもシェイプしない
+    static OptionItem OptShapeAnime; //シェイプアニメーションがあるか
     static float KillCooldown;
     static float Cooldown;
     static float Maximum;
@@ -104,7 +107,10 @@ public sealed class TeleportKiller : RoleBase, IImpostor
         OptionmMaximum = IntegerOptionItem.Create(RoleInfo, 12, OptionName.TeleportKillerMaximum, new(0, 999, 1), 2, false)
             .SetValueFormat(OptionFormat.Times).SetZeroNotation(OptionZeroNotation.Infinity);
         OptionDuration = FloatOptionItem.Create(RoleInfo, 13, OptionName.Duration, new(0f, 15, 1f), 5f, false)
-            .SetValueFormat(OptionFormat.Seconds).SetZeroNotation(OptionZeroNotation.Infinity);
+            .SetValueFormat(OptionFormat.Seconds).SetZeroNotation(OptionZeroNotation.Infinity).SetEnabled(() => OptNoShape.GetBool() is false);
+        OptNoShape = BooleanOptionItem.Create(RoleInfo, 22, OptionName.TeleportKillerNoShape, false, false);
+        OptShapeAnime = BooleanOptionItem.Create(RoleInfo, 23, GeneralOption.PlayShapeAnimate, false, false)
+            .SetEnabled(() => OptNoShape.GetBool() is false);
         OptionTeleportKillerFall = BooleanOptionItem.Create(RoleInfo, 14, OptionName.TeleportKillerFall, false, false);
         OptionTeleportKillerVentgaaa = BooleanOptionItem.Create(RoleInfo, 15, OptionName.TeleportKillerVentgaaa, false, false, OptionTeleportKillerFall);
         OptionTeleportKillerPlatformFall = BooleanOptionItem.Create(RoleInfo, 16, OptionName.TeleportKillerPlatformFall, false, false, OptionTeleportKillerFall);
@@ -125,6 +131,16 @@ public sealed class TeleportKiller : RoleBase, IImpostor
     public override void ReceiveRPC(MessageReader reader)
     {
         usecount = reader.ReadInt32();
+    }
+    public override bool CheckShapeshift(PlayerControl target, ref bool anime)
+    {
+        anime = OptShapeAnime.GetBool();
+        if (OptNoShape.GetBool())
+        {
+            OnShapeshift(target);
+            return false;
+        }
+        return true;
     }
     public override void OnShapeshift(PlayerControl target)
     {
