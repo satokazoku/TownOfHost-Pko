@@ -1,6 +1,7 @@
 using AmongUs.GameOptions;
-
+using TownOfHost.Patches;
 using TownOfHost.Roles.Core;
+using UnityEngine;
 
 namespace TownOfHost.Roles.Crewmate;
 
@@ -16,14 +17,12 @@ public sealed class ToiletFan : RoleBase
             36100,
             SetupOptionItem,
             "to",
-            //"#5f5573",
             "#735134",
             (9, 3),
             introSound: () => GetIntroSound(RoleTypes.Crewmate),
             assignInfo: new RoleAssignInfo(CustomRoles.ToiletFan, CustomRoleTypes.Crewmate)
             {
-                // トイレファンをエアシップ限定にするオプションがONのときのみエアシップで初期配役可能にする
-                IsInitiallyAssignableCallBack = () => (OptionOnlyAirship?.GetBool() ?? false) ? Main.NormalOptions.MapId is 4 : true
+                IsInitiallyAssignableCallBack = () => Main.NormalOptions.MapId is 4
             },
             from: From.SuperNewRoles
         );
@@ -34,37 +33,49 @@ public sealed class ToiletFan : RoleBase
     )
     {
         Cooldown = OptionCooldown.GetFloat();
-        flug = 0;
     }
     public override void ApplyGameOptions(IGameOptions opt)
     {
         AURoleOptions.EngineerCooldown = Cooldown;
         AURoleOptions.EngineerInVentMaxTime = 1;
     }
-    private static OptionItem OptionCooldown;
-    private static OptionItem OptionOnlyAirship;
-    enum OptionName
+    public override void Add()
     {
-        Cooldown,
-        OnlyAirship
+        CoolDownTimer = OptionCooldown.GetFloat();
+        PetActionManager.Register(Player.PlayerId, OnPet);
     }
+
+    public override void OnDestroy()
+    {
+        PetActionManager.Unregister(Player.PlayerId);
+    }
+    private static OptionItem OptionCooldown;
     private static float Cooldown;
-    int flug;
+    public override bool CanClickUseVentButton => false;
+    float CoolDownTimer;
     private static void SetupOptionItem()
     {
-        OptionCooldown = FloatOptionItem.Create(RoleInfo, 10, OptionName.Cooldown, new(1f, 30f, 1f), 5f, false)
+        OptionCooldown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.Cooldown, new(1f, 30f, 1f), 5f, false)
             .SetValueFormat(OptionFormat.Seconds);
-        OptionOnlyAirship = BooleanOptionItem.Create(RoleInfo, 11, OptionName.OnlyAirship, false, false);
     }
-    public override bool OnEnterVent(PlayerPhysics physics, int ventId)
+    void OnPet()
     {
-        flug = Main.NormalOptions.MapId is 4 ? 1 : 2;
-        if (flug is not 1) return false;
+        if (CoolDownTimer > 0.1f) return;
+        Open();
+        CoolDownTimer = Cooldown;
+        Player.RpcResetAbilityCooldown();
+    }
+    public static void Open()
+    {
+        if (Main.NormalOptions.MapId is not 4) return;
         ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Doors, 79);
         ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Doors, 80);
         ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Doors, 81);
         ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Doors, 82);
-        return false;
+    }
+    public override void OnFixedUpdate(PlayerControl player)
+    {
+        CoolDownTimer -= Time.fixedDeltaTime;
     }
     public override string GetAbilityButtonText() => GetString("ToiletFanAbility");
     public override bool OverrideAbilityButton(out string text)
@@ -72,26 +83,8 @@ public sealed class ToiletFan : RoleBase
         text = "ToiletFan_Ability";
         return true;
     }
-    public override void CheckWinner(GameOverReason reason)
+    public override void OnSpawn(bool initialState)
     {
-        switch (flug)
-        {
-            case 1:
-                Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);
-                break;
-            case 2:
-                Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[1]);
-                break;
-            default: break;
-        }
-    }
-    public static System.Collections.Generic.Dictionary<int, Achievement> achievements = new();
-    [Attributes.PluginModuleInitializer]
-    public static void Load()
-    {
-        var n1 = new Achievement(RoleInfo, 0, 1, 0, 0);
-        var n2 = new Achievement(RoleInfo, 1, 1, 0, 0);
-        achievements.Add(0, n1);
-        achievements.Add(1, n2);
+        CoolDownTimer = Cooldown;
     }
 }
