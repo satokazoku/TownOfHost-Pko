@@ -1579,7 +1579,7 @@ namespace TownOfHost
                     case CustomRoles.Shapeshifter: id = 30; break;
                     case CustomRoles.Phantom: id = 40; break;
                     case CustomRoles.Viper: id = 23050; break;
-                    case CustomRoles.Crewmate: id = 11; break;
+                    case CustomRoles.Crewmate: id = 15; break;
                     case CustomRoles.Engineer: id = 200; break;
                     case CustomRoles.Scientist: id = 250; break;
                     case CustomRoles.Tracker: id = 300; break;
@@ -1607,12 +1607,12 @@ namespace TownOfHost
                     .SetCustomRole(role)
                     .SetValueFormat(OptionFormat.Percent)
                     .SetHeader(true)
-                    .SetEnabled(() => role is not CustomRoles.Crewmate and not CustomRoles.Impostor)
+                    //.SetEnabled(() => role is not CustomRoles.Crewmate and not CustomRoles.Impostor)
                     .SetHidden(role == CustomRoles.NotAssigned)
                     .SetTag(tag) as IntegerOptionItem;
             var hidevalue = role.IsCombinationRole() || role.IsLovers() || (assignCountRule.MaxValue == assignCountRule.MinValue);
 
-            if (role is CustomRoles.Crewmate or CustomRoles.Impostor) return spawnOption;
+            //if (role is CustomRoles.Crewmate or CustomRoles.Impostor) return spawnOption;
 
             var countOption = IntegerOptionItem.Create(id + 1, "Maximum", assignCountRule, defo is -1 ? assignCountRule.Step : defo, tab, false, HideValue: hidevalue)
                 .SetParent(spawnOption)

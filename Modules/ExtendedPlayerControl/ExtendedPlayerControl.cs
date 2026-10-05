@@ -517,8 +517,8 @@ namespace TownOfHost
             {
                 role = missrole;
             }
-            if (role is CustomRoles.Crewmate or CustomRoles.Impostor)
-                InfoLong = false;
+            //if (role is CustomRoles.Crewmate or CustomRoles.Impostor)
+            //    InfoLong = false;
 
             var text = role.ToString();
 
