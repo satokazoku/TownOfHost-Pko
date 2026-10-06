@@ -35,7 +35,10 @@ public sealed class TaskStar : RoleBase
     {
         addon = false;
         if (IsTaskFinished)
+        {
             enabled = true;
+            roleText = GetString("TaskStar");
+        }
     }
     public override bool OnCompleteTask(uint taskid)
     {
