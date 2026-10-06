@@ -60,6 +60,7 @@ namespace TownOfHost
         public static bool KnowTargetRoleColor(PlayerControl seer, PlayerControl target, bool isMeeting)
         {
             return seer == target
+                || (target.Is(CustomRoles.Betrayer) && seer.Is(CustomRoles.Betrayer))
                 || target.Is(CustomRoles.GM)
                 || (seer.Is(CustomRoleTypes.Impostor) && target.Is(CustomRoleTypes.Impostor)
                 && (!seer.Is(CustomRoles.Amnesiac) || ((PlayerControl.LocalPlayer.GetRoleClass() as Amnesiac)?.Realized ?? false)))

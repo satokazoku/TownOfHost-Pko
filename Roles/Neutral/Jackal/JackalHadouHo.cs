@@ -25,7 +25,7 @@ public sealed class JackalHadouHo : RoleBase, ILNKiller, IUsePhantomButton, ISel
             CustomRoles.JackalHadouHo,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Neutral,
-            552300,
+            57900,
             SetUpOptionItem,
             "jhh",
             "#00b4eb",

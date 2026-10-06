@@ -70,7 +70,7 @@ namespace TownOfHost
             => player != null && (player.Is(CustomRoles.Onmyoji) || player.Is(CustomRoles.Shikigami));
         static bool IsBetrayer(PlayerControl player)
         {
-            if ((player.GetCustomRole() is CustomRoles.MadBetrayer && MadBetrayer.IsMadmate() is false) || (player.GetRoleClass() is DollBetrayer dl && dl.IsJackal() is false))
+            if (player.GetCustomRole() is CustomRoles.Betrayer || (player.GetRoleClass() is DollBetrayer dl && dl.IsJackal() is false))
             {
                return true;
             }

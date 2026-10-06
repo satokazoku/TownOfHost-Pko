@@ -23,10 +23,6 @@ public sealed class MadBetrayer : RoleBase, IKiller, ISchrodingerCatOwner
             (4, 2),
             true,
             introSound: () => GetIntroSound(RoleTypes.Shapeshifter),
-            assignInfo: new RoleAssignInfo(CustomRoles.MadBetrayer, CustomRoleTypes.Madmate)
-            {
-                AssignCountRule = new(1, 1, 1)
-            },
             from: From.TownOfHost_K
         );
     public MadBetrayer(PlayerControl player)
@@ -49,12 +45,12 @@ public sealed class MadBetrayer : RoleBase, IKiller, ISchrodingerCatOwner
     static bool IsBetray;
     bool IsImpostorReveal;
 
-    static OptionItem OptionKillCoolDown; static float KillCooldown;
+    public static OptionItem OptionKillCoolDown; public static float KillCooldown;
     static OptionItem OptionImpostorRevealTaskCount; static int ImpostorRevealTaskCount;
-    static OptionItem OptionCanVent; static bool CanVent;
-    static OptionItem OptionCanUseSabotage; static bool CanUseSabotage;
-    static OptionItem OptionHasImpostorVision; static bool HasImpostorVision;
-    static OptionItem OptionCanSeeOtherMDBet;
+    public static OptionItem OptionCanVent; public static bool CanVent;
+    public static OptionItem OptionCanUseSabotage; public static bool CanUseSabotage;
+    public static OptionItem OptionHasImpostorVision; public static bool HasImpostorVision;
+    public static OptionItem OptionCanSeeOtherMDBet;
 
     static OptionItem OptionCanSeeBetrayer;
     public bool CanBetray;
@@ -113,26 +109,15 @@ public sealed class MadBetrayer : RoleBase, IKiller, ISchrodingerCatOwner
             return $"<{RoleInfo.RoleColorCode}>{GetString("MadBetrayerLowerText")}</color>";
         return "";
     }
-    public override void OverrideTrueRoleName(ref Color roleColor, ref string roleText)
-    {
-        if (IsBetray) roleText = GetString("Betrayer");
-    }
+ 
     public override void OverrideDisplayRoleNameAsSeer(PlayerControl seen, ref bool enabled, ref Color roleColor, ref string roleText, ref bool addon)
     {
         addon = false;
-        if (((seen.Is(CustomRoles.MadBetrayer) && IsMadmate() is false) || (seen.GetRoleClass() is DollBetrayer dl) && dl.IsJackal() is false) && OptionCanSeeBetrayer.GetBool())
+        if ((seen.Is(CustomRoles.Betrayer) || (seen.GetRoleClass() is DollBetrayer dl) && dl.IsJackal() is false) && OptionCanSeeBetrayer.GetBool() && CanBetray)
         {
             enabled = CanBetray || IsBetray;
             roleText = GetString("Betrayer");
             roleColor = new Color(139f / 255f, 37f / 255f, 81f / 255f);
-        }
-        if (((seen.GetRoleClass() is MadBetrayer md && md.CanBetray) || (seen.GetRoleClass() is DollBetrayer db && db.CanBetray)) && OptionCanSeeOtherMDBet.GetBool() && IsMadmate() is false)
-        {
-            var role = seen.GetCustomRole();
-
-            enabled = CanBetray || IsBetray;
-            roleText = GetString($"{role}");
-            roleColor = UtilsRoleText.GetRoleColor(role);
         }
     }
     public override string GetProgressText(bool comms = false, bool GameLog = false) => IsBetray ? $"<{RoleInfo.RoleColorCode}>★</color>" : "";
@@ -192,7 +177,12 @@ public sealed class MadBetrayer : RoleBase, IKiller, ISchrodingerCatOwner
             _ = new LateTask(() => Player.SetKillCooldown(force: true), 0.2f, "SetImpostorKillCool", true);
         }
     }
-
+    void IKiller.OnMurderPlayerAsKiller(MurderInfo info)
+    {
+        var (kille, tar) = info.AttemptTuple;
+        if (tar.GetCustomRole().IsImpostor() is false || IsBetray) return;
+        kille.RpcSetCustomRole(CustomRoles.Betrayer);
+    }
     public void SendRPC()
     {
         using var sender = CreateSender();
@@ -205,8 +195,8 @@ public sealed class MadBetrayer : RoleBase, IKiller, ISchrodingerCatOwner
     }
     public override void CheckWinner(GameOverReason reason)
     {
-        if (IsBetray is false && Player.IsWinner(CustomWinner.Impostor)) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);
-        if (IsBetray && Player.IsWinner(CustomWinner.MadBetrayer) && !CustomWinnerHolder.winners.Contains(CustomWinner.Impostor))
+        if (Player.IsWinner(CustomWinner.Impostor)) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);
+        if (IsBetray && Player.IsWinner(CustomWinner.Betrayer) && !CustomWinnerHolder.winners.Contains(CustomWinner.Impostor))
             Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[2]);
     }
     public static System.Collections.Generic.Dictionary<int, Achievement> achievements = new();

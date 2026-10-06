@@ -17,9 +17,9 @@ public sealed class DollBetrayer : RoleBase, IKiller, ISchrodingerCatOwner
             typeof(DollBetrayer),
             player => new DollBetrayer(player),
             CustomRoles.DollBetrayer,
-            () => OptionCanVent.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate,
+            () => MadBetrayer.OptionCanVent.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate,
             CustomRoleTypes.Neutral,
-            552400,
+            57800,
             SetupOptionItem,
             "dlb",
             "#00b4eb",
@@ -37,8 +37,7 @@ public sealed class DollBetrayer : RoleBase, IKiller, ISchrodingerCatOwner
                     || CustomRoles.JackalWolf.IsEnable()
                     || CustomRoles.JackalHadouHo.IsEnable();
                 }
-            }//,
-            //countType: CountTypes.None
+            }
         );
     public DollBetrayer(PlayerControl player)
     : base(
@@ -47,10 +46,7 @@ public sealed class DollBetrayer : RoleBase, IKiller, ISchrodingerCatOwner
         () => HasTask.ForRecompute
     )
     {
-        KillCooldown = OptionKillCoolDown.GetFloat();
         ImpostorRevealTaskCount = OptionImpostorRevealTaskCount.GetInt();
-        CanVent = OptionCanVent.GetBool();
-        HasImpostorVision = OptionHasImpostorVision.GetBool();
 
         IsBetray = false;
         IsImpostorReveal = false;
@@ -60,32 +56,18 @@ public sealed class DollBetrayer : RoleBase, IKiller, ISchrodingerCatOwner
     public bool IsBetray;
     bool IsImpostorReveal;
 
-    static OptionItem OptionKillCoolDown; static float KillCooldown;
     static OptionItem OptionImpostorRevealTaskCount; static int ImpostorRevealTaskCount;
-    static OptionItem OptionCanVent; static bool CanVent;
-    static OptionItem OptionHasImpostorVision; static bool HasImpostorVision;
-    static OptionItem OptionCanSeeOtherMDBet;
-    static OptionItem OptionCanSeeBetrayer;
     bool CanSeeRolename;
     public bool CanBetray;
     enum OptionName
     {
         DollBetrayerImpostorRevealTaskcount,
-        MadBetrayerCanSeeOtherMDBetrayer,
-        MadBetrayerCanSeeOtherBetrayer,
     }
 
     static void SetupOptionItem()
     {
-        SoloWinOption.Create(RoleInfo, 9, defo: 2);
-        OptionKillCoolDown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.KillCooldown, OptionBaseCoolTime, 20f, false)
-                .SetValueFormat(OptionFormat.Seconds);
         OptionImpostorRevealTaskCount = IntegerOptionItem.Create(RoleInfo, 11, OptionName.DollBetrayerImpostorRevealTaskcount, new(0, 99, 1), 5, false)
                 .SetZeroNotation(OptionZeroNotation.Off);
-        OptionCanVent = BooleanOptionItem.Create(RoleInfo, 12, GeneralOption.CanVent, true, false);
-        OptionHasImpostorVision = BooleanOptionItem.Create(RoleInfo, 14, GeneralOption.ImpostorVision, true, false);
-        OptionCanSeeOtherMDBet = BooleanOptionItem.Create(RoleInfo, 15, OptionName.MadBetrayerCanSeeOtherMDBetrayer, true, false);
-        OptionCanSeeBetrayer = BooleanOptionItem.Create(RoleInfo, 16, OptionName.MadBetrayerCanSeeOtherBetrayer, true, false);
 
         OverrideTasksData.Create(RoleInfo, 20);
         RoleAddAddons.Create(RoleInfo, 40, NeutralKiller: true);
@@ -98,7 +80,7 @@ public sealed class DollBetrayer : RoleBase, IKiller, ISchrodingerCatOwner
         AURoleOptions.EngineerInVentMaxTime = 0f;
         if (IsBetray)
         {
-            opt.SetVision(HasImpostorVision);
+            opt.SetVision(MadBetrayer.OptionHasImpostorVision.GetBool());
         }
         else
             opt.SetVision(false);
@@ -124,7 +106,7 @@ public sealed class DollBetrayer : RoleBase, IKiller, ISchrodingerCatOwner
     }
     public override void OverrideTrueRoleName(ref Color roleColor, ref string roleText)
     {
-        if (IsBetray && !CanSeeRolename)
+        if (IsBetray)
         {
             roleText = GetString("Betrayer");
             roleColor = new Color(139f / 255f, 37f / 255f, 81f / 255f);
@@ -133,31 +115,13 @@ public sealed class DollBetrayer : RoleBase, IKiller, ISchrodingerCatOwner
     public override string GetProgressText(bool comms = false, bool GameLog = false) => IsBetray ? $"<{RoleInfo.RoleColorCode}>★</color>" : "";
 
     public override RoleTypes? AfterMeetingRole => IsTaskFinished || IsBetray ? RoleTypes.Impostor : RoleTypes.Engineer;
-    bool IKiller.CanUseImpostorVentButton() => CanVent && (CanBetray || IsBetray);
-    public override bool CanUseAbilityButton() => CanVent && !CanBetray && !IsBetray;
+    bool IKiller.CanUseImpostorVentButton() => MadBetrayer.OptionCanVent.GetBool() && (CanBetray || IsBetray);
+    public override bool CanUseAbilityButton() => MadBetrayer.OptionCanVent.GetBool() && !CanBetray && !IsBetray;
     bool IKiller.CanUseSabotageButton() => false;
-    float IKiller.CalculateKillCooldown() => KillCooldown;
+    float IKiller.CalculateKillCooldown() => MadBetrayer.OptionKillCoolDown.GetFloat();
     bool IKiller.CanUseKillButton() => IsTaskFinished || IsBetray;
-    public override bool CanClickUseVentButton => OptionCanVent.GetBool();
+    public override bool CanClickUseVentButton => MadBetrayer.OptionCanVent.GetBool();
 
-    public override void OverrideDisplayRoleNameAsSeer(PlayerControl seen, ref bool enabled, ref Color roleColor, ref string roleText, ref bool addon)
-    {
-        addon = false;
-        if (((seen.Is(CustomRoles.MadBetrayer) && MadBetrayer.IsMadmate() is false) || (seen.GetRoleClass() is DollBetrayer dl && dl.IsJackal() is false)) && OptionCanSeeBetrayer.GetBool())
-        {
-            enabled = CanBetray || IsBetray;
-            roleText = GetString("Betrayer");
-            roleColor = new Color(139f / 255f, 37f / 255f, 81f / 255f);
-        }
-        if (((seen.GetRoleClass() is MadBetrayer md && md.CanBetray) || (seen.GetRoleClass() is DollBetrayer db && db.CanBetray)) && OptionCanSeeOtherMDBet.GetBool() && IsJackal() is false)
-        {
-            var role = seen.GetCustomRole();
-
-            enabled = CanBetray || IsBetray;
-            roleText = GetString($"{role}");
-            roleColor = UtilsRoleText.GetRoleColor(role);
-        }
-    }
     public override void OverrideDisplayRoleNameAsSeen(PlayerControl seen, ref bool enabled, ref Color roleColor, ref string roleText, ref bool addon)
     {
         addon = false;
@@ -202,12 +166,13 @@ public sealed class DollBetrayer : RoleBase, IKiller, ISchrodingerCatOwner
         if (IsBetray && CanSeeRolename)
         {
             CanSeeRolename = false;
+            Player.RpcSetCustomRole(CustomRoles.Betrayer);
         }
     }
     void IKiller.OnCheckMurderAsKiller(MurderInfo info)
     {
         var (killer, target) = info.AppearanceTuple;
-        if ((target.Is(CustomRoles.MadBetrayer) && MadBetrayer.IsMadmate() is false) || (target.GetRoleClass() is DollBetrayer dl && dl.IsJackal() is false))
+        if (target.Is(CustomRoles.Betrayer) || (target.GetRoleClass() is DollBetrayer dl && dl.IsJackal() is false))
         {
             info.DoKill = false;
             return;
@@ -247,7 +212,7 @@ public sealed class DollBetrayer : RoleBase, IKiller, ISchrodingerCatOwner
     public override void CheckWinner(GameOverReason reason)
     {
         if (IsBetray is false && Player.IsWinner(CustomWinner.Jackal)) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);
-        if (IsBetray && Player.IsWinner(CustomWinner.DollBetrayer) && !CustomWinnerHolder.winners.Contains(CustomWinner.Jackal))
+        if (IsBetray && Player.IsWinner(CustomWinner.Betrayer) && !CustomWinnerHolder.winners.Contains(CustomWinner.Jackal))
             Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[2]);
     }
     public static System.Collections.Generic.Dictionary<int, Achievement> achievements = new();

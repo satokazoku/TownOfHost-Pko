@@ -44,7 +44,6 @@ public sealed class Milkman : RoleBase, IKiller
         allDeliveredIds = new();
         rottenRecipients = new();
         diedThisRound = false;
-        deaded = false;
     }
 
     static OptionItem OptionDeliveryCooldown;
@@ -80,7 +79,6 @@ public sealed class Milkman : RoleBase, IKiller
     int milkCount;
     float nowcool;
     int LastCooltime;
-    bool deaded;
 
     readonly HashSet<byte> pendingNotify;
     readonly HashSet<byte> allDeliveredIds;
@@ -106,7 +104,6 @@ public sealed class Milkman : RoleBase, IKiller
         allDeliveredIds.Clear();
         rottenRecipients.Clear();
         diedThisRound = false;
-        deaded = false;
 
         PetActionManager.Register(Player.PlayerId, OnPetUsed);
 

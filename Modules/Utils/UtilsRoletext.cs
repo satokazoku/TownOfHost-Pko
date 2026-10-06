@@ -733,6 +733,7 @@ namespace TownOfHost
                             CountTypes.Dracula => GetRoleColorAndtext(CustomRoles.Dracula),
                             CountTypes.Fox => GetRoleColorAndtext(CustomRoles.Fox),
                             CountTypes.Vanity => GetRoleColorAndtext(CustomRoles.Vanity),
+                            CountTypes.Betrayer => GetRoleColorAndtext(CustomRoles.Betrayer),
                             CountTypes.MilkyWay => Roles.Neutral.Vega.TeamText,
                             _ => "...?",
                         };

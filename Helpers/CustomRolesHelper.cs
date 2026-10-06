@@ -30,7 +30,6 @@ namespace TownOfHost
         }
         public static bool IsMadmate(this CustomRoles role)
         {
-            if (role is CustomRoles.MadBetrayer) return MadBetrayer.IsMadmate();
             var roleInfo = role.GetRoleInfo();
             if (roleInfo != null)
                 return roleInfo.CustomRoleType == CustomRoleTypes.Madmate;
@@ -39,7 +38,6 @@ namespace TownOfHost
         public static bool IsImpostorTeam(this CustomRoles role) => role.IsImpostor() || role.IsMadmate();
         public static bool IsNeutral(this CustomRoles role)
         {
-            if (role is CustomRoles.MadBetrayer) return MadBetrayer.IsMadmate() is false;
             var roleInfo = role.GetRoleInfo();
             if (roleInfo != null)
                 return roleInfo.CustomRoleType == CustomRoleTypes.Neutral || role == CustomRoles.Jackaldoll;
@@ -314,7 +312,6 @@ namespace TownOfHost
         {
             CustomRoleTypes type = CustomRoleTypes.Crewmate;
 
-            if (role is CustomRoles.MadBetrayer) return MadBetrayer.IsMadmate() ? type = CustomRoleTypes.Madmate : CustomRoleTypes.Neutral;
             var roleInfo = role.GetRoleInfo();
             if (roleInfo != null)
                 return roleInfo.CustomRoleType;
@@ -405,6 +402,7 @@ namespace TownOfHost
         Huntman,
         Dracula,
         Vanity,
-        Pirate
+        Pirate,
+        Betrayer
     }
 }

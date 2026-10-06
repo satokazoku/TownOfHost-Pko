@@ -626,13 +626,14 @@ public sealed class Onmyoji : RoleBase, IKiller, ISelfVoter
         if (target.Is(CustomRoleTypes.Impostor)) return true;
         if (target.Is(CustomRoles.StandMaster) && StandMaster.EnableKillAbility) return true;
         if (target.Is(CustomRoles.Opportunist) && Opportunist.HasKillButton) return true;
+        if (target.GetRoleClass() is DollBetrayer dbet && dbet.IsJackal() is false) return true;
         return target.GetCustomRole() is
             CustomRoles.CountKiller or CustomRoles.Strawdoll or
             CustomRoles.Jackal or CustomRoles.JackalHadouHo or CustomRoles.JackalMafia or CustomRoles.JackalAlien or
             CustomRoles.DoppelGanger or CustomRoles.GrimReaper or CustomRoles.Remotekiller or
             CustomRoles.Egoist or CustomRoles.Eater or CustomRoles.PavlovDog or
             CustomRoles.Sheriff or CustomRoles.SwitchSheriff or
-            CustomRoles.WolfBoy or CustomRoles.JackalWolf or CustomRoles.Stand or CustomRoles.Huntman or CustomRoles.Mermaid or CustomRoles.Altair;//or CustomRoles.Ogre;
+            CustomRoles.WolfBoy or CustomRoles.JackalWolf or CustomRoles.Stand or CustomRoles.Huntman or CustomRoles.Mermaid or CustomRoles.Altair or CustomRoles.Betrayer;//or CustomRoles.Ogre;
     }
 }
 

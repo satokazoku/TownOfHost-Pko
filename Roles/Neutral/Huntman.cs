@@ -31,7 +31,7 @@ namespace TownOfHost.Roles.Neutral
                     "#cd853f",
                     (2, 4),
                     true,
-                    countType: CountTypes.Huntman,
+                    countType: CountTypes.Huntman
                 );
         public Huntman(PlayerControl player)
         : base(

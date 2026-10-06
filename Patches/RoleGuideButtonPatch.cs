@@ -1523,6 +1523,7 @@ public static class RoleGuideButtonPatch
             CountTypes.Jackal => UtilsRoleText.GetRoleName(CustomRoles.Jackal),
             CountTypes.Remotekiller => UtilsRoleText.GetRoleName(CustomRoles.Remotekiller),
             CountTypes.TaskPlayer => UtilsRoleText.GetRoleName(CustomRoles.TaskPlayerB),
+            CountTypes.Betrayer => UtilsRoleText.GetRoleName(CustomRoles.Betrayer),
             CountTypes.GrimReaper => UtilsRoleText.GetRoleName(CustomRoles.GrimReaper),
             CountTypes.Huntman => UtilsRoleText.GetRoleName(CustomRoles.Huntman),
             CountTypes.Fox => UtilsRoleText.GetRoleName(CustomRoles.Fox),

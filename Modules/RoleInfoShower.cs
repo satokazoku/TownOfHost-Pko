@@ -299,6 +299,8 @@ class RoleInfoShower
                                         case CountTypes.Huntman: overrideRoleText = CustomRoles.Huntman; break;
                                         case CountTypes.Dracula: overrideRoleText = CustomRoles.Dracula; break;
                                         case CountTypes.Vanity: overrideRoleText = CustomRoles.Vanity; break;
+                                        case CountTypes.Betrayer: overrideRoleText = CustomRoles.Betrayer; break;
+
                                         default: overrideRoleText = CustomRoles.Crewmate; break;
                                     }
 

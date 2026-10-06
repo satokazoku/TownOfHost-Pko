@@ -466,7 +466,6 @@ namespace TownOfHost
         public static bool IsNeutralKiller(this PlayerControl player)
         {
             if (player.GetRoleClass() is BakeCat bakeCat) return bakeCat.Team is not ISchrodingerCatOwner.TeamType.None;
-            if (player.GetRoleClass() is MadBetrayer) return MadBetrayer.IsMadmate() is false;
 
 
             return player.GetCustomRole().IsNeutralKiller();

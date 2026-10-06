@@ -113,7 +113,7 @@ namespace TownOfHost
             string callerClassName = callerMethod.DeclaringType.FullName;
             Logger.Info($"RASACW {WinnerTeam} =>? {winner}, Call:{callerClassName}.{callerMethodName}", "CustomWinner");
 
-            if (SoloWinOption.AllData.TryGetValue(hantrole is CustomRoles.NotAssigned ? (CustomRoles)winner : hantrole, out var data))
+            if (SoloWinOption.AllData.TryGetValue(hantrole is CustomRoles.Betrayer or CustomRoles.DollBetrayer || winner is CustomWinner.Betrayer ? CustomRoles.MadBetrayer : hantrole is CustomRoles.NotAssigned ? (CustomRoles)winner : hantrole, out var data))
             {
                 //現在値より設定値が大きい
                 if (WinPriority < data.OptionWin.GetInt())

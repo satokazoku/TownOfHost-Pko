@@ -495,6 +495,7 @@ namespace TownOfHost
         MilkyWay = CustomRoles.Vega,
         MadBetrayer = CustomRoles.MadBetrayer,
         DollBetrayer = CustomRoles.DollBetrayer,
+        Betrayer = CustomRoles.Betrayer,
 
         Strawdoll = CustomRoles.Strawdoll,
         Missioneer = CustomRoles.Missioneer,

@@ -102,9 +102,9 @@ public abstract class GameEndPredicate
             winner = CustomWinner.Egoist;
             isFactionMember = player => player.Is(CustomRoles.Egoist);
         }
-        else if (role is CustomRoles.MadBetrayer)
+        else if (role is CustomRoles.MadBetrayer || role is CustomRoles.Betrayer || role is CustomRoles.DollBetrayer)
         {
-            winner = CustomWinner.MadBetrayer;
+            winner = CustomWinner.Betrayer;
             isFactionMember = player => (player.Is(CustomRoles.MadBetrayer) && Roles.Madmate.MadBetrayer.IsMadmate() is false) || (player.GetRoleClass() is DollBetrayer dl && dl.IsJackal() is false);
         }
         else if (saboteur.Is(CustomRoleTypes.Impostor) || saboteur.Is(CustomRoleTypes.Madmate))
@@ -119,6 +119,8 @@ public abstract class GameEndPredicate
         {
             winner = countType switch
             {
+                CountTypes.Betrayer => CustomWinner.Betrayer,
+
                 CountTypes.Jackal => CustomWinner.Jackal,
                 CountTypes.Remotekiller => CustomWinner.Remotekiller,
                 CountTypes.GrimReaper => CustomWinner.GrimReaper,

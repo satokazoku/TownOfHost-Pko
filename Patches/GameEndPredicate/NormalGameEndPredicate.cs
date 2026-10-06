@@ -40,11 +40,6 @@ namespace TownOfHost
 
             foreach (var pc in PlayerCatch.AllAlivePlayerControls)
             {
-                if (pc.GetCustomRole() is CustomRoles.MadBetrayer)
-                {
-                    Roles.Madmate.MadBetrayer.CheckCount(ref Crew, ref MadBetrayer);
-                    continue;
-                }
                 switch (pc.GetCountTypes())
                 {
                     case CountTypes.Fox:
@@ -183,7 +178,7 @@ namespace TownOfHost
                 && FoxAndCrew <= MadBetrayer)
             {
                 reason = GameOverReason.ImpostorsByKill;
-                CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.MadBetrayer, byte.MaxValue);
+                CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Betrayer, byte.MaxValue);
                 CustomWinnerHolder.WinnerRoles.Add(CustomRoles.MadBetrayer);
             }
             else if (Imp == 0 && Jackal == 0 && Remotekiller == 0 
@@ -301,18 +296,6 @@ namespace TownOfHost
                     if (pc.GetRoleClass() is PavlovOwner owner && owner.HasRemainingImprintCount())
                         PavlovOwnerRemaining++;
                 }
-                if (pc.GetCustomRole() is CustomRoles.MadBetrayer)
-                {
-                    if (Roles.Madmate.MadBetrayer.IsMadmate() is false)
-                    {
-                        MadBetrayer++;
-                    }
-                    else
-                    {
-                        Crew++; FoxAndCrew++;
-                    }
-                    continue;
-                }
                 if (pc.GetRoleClass() is DollBetrayer dl)
                 {
                     if (dl.IsJackal() is false)
@@ -356,6 +339,7 @@ namespace TownOfHost
                         break;
                     case CountTypes.Eater: EaterCount++; break;
                     case CountTypes.Dracula: Dracula++; break;
+                    case CountTypes.Betrayer: MadBetrayer++; break;
                     case CountTypes.Pirate: Crew++; FoxAndCrew++; PirateCount++; break;
                 }
             }
@@ -477,13 +461,10 @@ namespace TownOfHost
                 && Pavlov == 0 && StandMasterCount == 0 && EaterCount == 0 && Huntman == 0 && Dracula == 0 && Vanity == 0 && FoxAndCrew <= MadBetrayer)
             {
                 reason = GameOverReason.ImpostorsByKill;
-                CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.MadBetrayer, byte.MaxValue);
+                CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Betrayer, byte.MaxValue);
 
-                //ドールベトレイヤー追加でこれ考えないといけなくなった。
-                if (Roles.Madmate.MadBetrayer.IsMadmate() is false)
-                {
-                    CustomWinnerHolder.WinnerRoles.Add(CustomRoles.MadBetrayer);
-                }
+                CustomWinnerHolder.WinnerRoles.Add(CustomRoles.Betrayer);
+
                 foreach (var p in PlayerCatch.AllPlayerControls)
                 {
                     if (p.GetRoleClass() is DollBetrayer dl && dl.IsJackal())
