@@ -98,14 +98,13 @@ namespace TownOfHost.Roles.Neutral
                 {
                     _ = new LateTask(() =>
                     {
-                        target.SetRealKiller(user);
-                        user.RpcMurderPlayer(target, true);
+                        CustomRoleManager.OnCheckMurder(user, target, target, target, Killpower: 10);
+
                     }, 1.2f);
                 }
                 else
                 {
-                    target.SetRealKiller(user);
-                    target.RpcMurderPlayer(target, true);
+                    CustomRoleManager.OnCheckMurder(user, target, target, target, Killpower: 10);
                 }
 
                 RPC.PlaySoundRPC(user.PlayerId, Sounds.KillSound);
