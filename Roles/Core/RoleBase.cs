@@ -150,7 +150,16 @@ public abstract class RoleBase : IDisposable
     /// <param name="info">キル関係者情報</param>
     /// <returns>false:キル行為を起こさせない</returns>
     public virtual bool OnCheckMurderAsTarget(MurderInfo info) => true;
-
+    /// <summary>
+    /// ターゲットとしてのCheckMurder処理
+    /// キラーより""後""に判定(猫とかの処理用)
+    /// キル出来ない状態(無敵など)はinfo.CanKill=falseとしてtrueを返す
+    /// キル行為自体をなかったことにする場合はfalseを返す。
+    /// [ホストのみ]
+    /// </summary>
+    /// <param name="info">キル関係者情報</param>
+    /// <returns>false:キル行為を起こさせない</returns>
+    public virtual bool OnCheckMurderAsTargetAfter(MurderInfo info) => true;
     /// <summary>
     /// ターゲットとしてのMurderPlayer処理
     /// [ホストのみ]

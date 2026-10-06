@@ -431,6 +431,7 @@ public sealed class Assassin : RoleBase, IImpostor, IUsePhantomButton, IDoubleTr
     public override bool CanUseAbilityButton() => AddRole?.CanUseAbilityButton() ?? false;
     public override void ApplyGameOptions(IGameOptions opt) => AddRole?.ApplyGameOptions(opt);
     public override bool OnCheckMurderAsTarget(MurderInfo info) => AddRole?.OnCheckMurderAsTarget(info) ?? true;
+    public override bool OnCheckMurderAsTargetAfter(MurderInfo info) => AddRole?.OnCheckMurderAsTargetAfter(info) ?? true;
     public override void OnMurderPlayerAsTarget(MurderInfo info) => AddRole?.OnMurderPlayerAsTarget(info);
     public override void OnShapeshift(PlayerControl target) => AddRole?.OnShapeshift(target);
     public override bool CheckShapeshift(PlayerControl target, ref bool shouldAnimate) => AddRole?.CheckShapeshift(target, ref shouldAnimate) ?? true;

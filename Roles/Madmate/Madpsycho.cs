@@ -73,9 +73,10 @@ public sealed class MadPsycho : RoleBase
     {
         CustomDeathReason.Kill, CustomDeathReason.Counter
     };
-    public override bool OnCheckMurderAsTarget(MurderInfo info)
+    public override bool OnCheckMurderAsTargetAfter(MurderInfo info)
     {
         info.GuardPower = 1;
+        if (info.KillPower > 1) return true;
         Psycho(info.AttemptKiller, info.KillPower);
         return true;
     }

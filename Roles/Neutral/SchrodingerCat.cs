@@ -98,13 +98,12 @@ public sealed class SchrodingerCat : RoleBase, IAdditionalWinner, IDeathReasonSe
     {
         opt.SetVision(true);
     }
-    public override bool OnCheckMurderAsTarget(MurderInfo info)
+    public override bool OnCheckMurderAsTargetAfter(MurderInfo info)
     {
         var killer = info.AttemptKiller;
         var target = info.AppearanceTarget;
 
-        //自殺ならスルー
-        if (info.IsSuicide) return true;
+        if (info.IsSuicide || !info.DoKill || !info.CanKill) return true;
         if (!MagicalGirl.TryGetEffectiveRole<ISchrodingerCatOwner>(killer, out _)) return true;
 
         if (killer.Is(CustomRoles.GrimReaper) || killer.Is(CustomRoles.BakeCat))

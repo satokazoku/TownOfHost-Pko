@@ -288,7 +288,8 @@ public sealed class Pursuer : RoleBase, IAdditionalWinner
         (var killer, var target) = info.AttemptTuple;
         if (killer.GetCustomRole() == CustomRoles.Tairou) return true;
 
-        info.DoKill = false;
+        //コネクトセーバーとかの後追い無効化しちゃう...
+        info.GuardPower = 9;
         guardCount--;
 
         killer.RpcProtectedMurderPlayer(target);

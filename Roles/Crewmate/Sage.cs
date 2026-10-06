@@ -208,7 +208,7 @@ public sealed class Sage : RoleBase
             DeactivateBarrier();
     }
 
-    public override bool OnCheckMurderAsTarget(MurderInfo info)
+    public override bool OnCheckMurderAsTargetAfter(MurderInfo info)
     {
         if (!info.DoKill) return true;
 

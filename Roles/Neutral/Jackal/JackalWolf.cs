@@ -142,6 +142,10 @@ public sealed class JackalWolf : RoleBase, ILNKiller, IUsePhantomButton, IDouble
         }
         return AddRole?.OnCheckMurderAsTarget(info) ?? true;
     }
+    public override bool OnCheckMurderAsTargetAfter(MurderInfo _)
+    {
+        return AddRole?.OnCheckMurderAsTargetAfter(_) ?? true;
+    }
     public override void OnMurderPlayerAsTarget(MurderInfo info) => AddRole?.OnMurderPlayerAsTarget(info);
     public override void OnShapeshift(PlayerControl target) => AddRole?.OnShapeshift(target);
     public override bool CheckShapeshift(PlayerControl target, ref bool shouldAnimate) => AddRole?.CheckShapeshift(target, ref shouldAnimate) ?? true;

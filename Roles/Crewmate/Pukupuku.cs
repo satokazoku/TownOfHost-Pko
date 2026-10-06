@@ -111,9 +111,9 @@ namespace TownOfHost.Roles.Crewmate
             return true;
         }
 
-        public override bool OnCheckMurderAsTarget(MurderInfo info)
+        public override bool OnCheckMurderAsTargetAfter(MurderInfo info)
         {
-            if (!tasksCompleted || !completedWhileAlive) return true;
+            if (!tasksCompleted || !completedWhileAlive || !info.DoKill) return true;
 
             var killer = info.AttemptKiller;
             var target = info.AttemptTarget;

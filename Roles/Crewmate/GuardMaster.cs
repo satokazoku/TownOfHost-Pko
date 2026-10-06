@@ -90,6 +90,11 @@ public sealed class GuardMaster : RoleBase
         }
         return true;
     }
+    public override bool OnCheckMurderAsTargetAfter(MurderInfo _)
+    {
+        if (!_.DoKill) ++Guard;
+        return true;
+    }
     public override bool OnCompleteTask(uint taskid)
     {
         if (MyTaskState.HasCompletedEnoughCountOfTasks(OptAwakeningTaskcount.GetInt()))

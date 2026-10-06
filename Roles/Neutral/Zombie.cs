@@ -141,15 +141,25 @@ public sealed class Zombie : RoleBase
         var aliveZombies = AllAlivePlayerControls
             .Where(pc => pc != null && pc.Is(CustomRoles.Zombie) && pc.Data?.Disconnected != true)
             .ToArray();
-        if (aliveZombies.Length == 0) return false;
-
+        if (aliveZombies.Length == 0)
+        {
+            Logger.Info("aliveZombies.Lengthが0", "Zombie");
+            return false;
+        }
         var zombies = AllPlayerControls
             .Where(pc => pc != null && pc.Is(CustomRoles.Zombie) && pc.Data?.Disconnected != true)
             .ToArray();
-        if (zombies.Length == 0) return false;
+        if (zombies.Length == 0)
+        {
+            Logger.Info("zombies.Lengthが0", "Zombie");
+            return false;
+        }
 
         if (!CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Zombie, aliveZombies[0].PlayerId, true))
+        {
+            Logger.Info("ResetAndSetAndChWinnerが失敗", "Zombie");
             return false;
+        }
 
         CustomWinnerHolder.WinnerRoles.Add(CustomRoles.Zombie);
         foreach (var zombie in zombies)

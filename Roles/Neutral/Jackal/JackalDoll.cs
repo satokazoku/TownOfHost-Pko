@@ -279,7 +279,7 @@ public sealed class JackalDoll : RoleBase
             if (data.Owner == killer.PlayerId)
             {
                 info.CanKill = false;
-                killer.RpcProtectedMurderPlayer(target);
+                info.DoKill = false;
                 return false;
             }
         }

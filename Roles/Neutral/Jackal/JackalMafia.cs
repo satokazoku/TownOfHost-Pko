@@ -183,7 +183,6 @@ namespace TownOfHost.Roles.Neutral
             if (killer.Is(CountTypes.Jackal) && !OptionJJackalCanKillMafia.GetBool())
             {
                 info.DoKill = false;
-                killer.SetKillCooldown();
                 return false;
             }
             return true;

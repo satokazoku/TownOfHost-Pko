@@ -868,6 +868,7 @@ public sealed class MagicalGirl : RoleBase, ISelfVoter, IKiller, IUsePhantomButt
     public override bool OnEnterVent(PlayerPhysics physics, int ventId) => addRole?.OnEnterVent(physics, ventId) ?? true;
     public override bool CanVentMoving(PlayerPhysics physics, int ventId) => addRole?.CanVentMoving(physics, ventId) ?? true;
     public override bool OnCheckMurderAsTarget(MurderInfo info) => addRole?.OnCheckMurderAsTarget(info) ?? true;
+    public override bool OnCheckMurderAsTargetAfter(MurderInfo info) => addRole?.OnCheckMurderAsTargetAfter(info) ?? true;
     public override void OnMurderPlayerAsTarget(MurderInfo info) => addRole?.OnMurderPlayerAsTarget(info);
     public override void OnShapeshift(PlayerControl target) => addRole?.OnShapeshift(target);
     public override bool CheckShapeshift(PlayerControl target, ref bool shouldAnimate) => addRole?.CheckShapeshift(target, ref shouldAnimate) ?? true;

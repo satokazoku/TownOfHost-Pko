@@ -170,6 +170,7 @@ public static class CustomRoleManager
             {
                 killer.OnCheckMurderAsKiller(info);
             }
+            targetRole.OnCheckMurderAsTargetAfter(info);
 
             /* キル可能かのチェック */
             if (info.KillPower <= info.GuardPower && killer.IsKiller)
@@ -419,6 +420,13 @@ CustomDeathReason deathReason = CustomDeathReason.Kill)
             if (!DoubleTrigger.OnCheckMurderAsKiller(info) && force is false)//特殊強制キルの場合は処理しない
             {
                 killer.OnCheckMurderAsKiller(info);
+            }
+
+            if (!targetRole.OnCheckMurderAsTargetAfter(info) && Amnesia.CheckAbility(attemptTarget))
+            {
+                killer.OnCheckMurderDontKill(info);
+                CheckMurderPatch.TimeSinceLastKill[attemptKiller.PlayerId] = 0f;//タゲ側でガードされるときってキルガードだけのはずだから。
+                return false;
             }
 
             /* キル可能かのチェック */

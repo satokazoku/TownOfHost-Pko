@@ -126,12 +126,11 @@ namespace TownOfHost.Roles.Neutral
                 info.DoKill = false;
             }
         }
-        public override bool OnCheckMurderAsTarget(MurderInfo info)
+        public override bool OnCheckMurderAsTargetAfter(MurderInfo info)
         {
             var killer = info.AttemptKiller;
 
-            //自殺ならスルー
-            if (info.IsSuicide) return true;
+            if (info.IsSuicide || !info.DoKill) return true;
             if (!MagicalGirl.TryGetEffectiveRole<ISchrodingerCatOwner>(killer, out _)) return true;
 
             if (killer.Is(CustomRoles.GrimReaper) || killer.Is(CustomRoles.BakeCat))
