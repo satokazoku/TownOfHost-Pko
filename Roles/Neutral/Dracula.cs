@@ -185,7 +185,7 @@ public sealed class Dracula : RoleBase, ILNKiller, IUsePhantomButton
         {
             Kenzokuchance = 0;
             targetDieChanceBonus.Remove(target.PlayerId);
-            CustomRoleManager.OnCheckMurder(Player, target, Player, target, true, true, Killpower: 1, deathReason: CustomDeathReason.Bloodloss, PlayKillSound: true);
+            CustomRoleManager.OnCheckMurder(Player, target, Player, target, Killpower: 1, deathReason: CustomDeathReason.Bloodloss, PlayKillSound: true);
             return;
         }
 

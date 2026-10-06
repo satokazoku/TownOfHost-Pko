@@ -146,6 +146,14 @@ public sealed class CountKiller : RoleBase, ILNKiller, ISchrodingerCatOwner, IAd
         {
             Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[1]);
             CustomWinnerHolder.NeutralWinnerIds.Add(Player.PlayerId);
+            foreach (var p in PlayerCatch.AllAlivePlayerControls)
+            {
+                if (p.GetRoleClass() is CountKiller ck && ck.KillCount < ck.VictoryCount && p.PlayerId != Player.PlayerId)
+                {
+                    CustomWinnerHolder.WinnerIds.Remove(Player.PlayerId);
+                    CustomWinnerHolder.NeutralWinnerIds.Remove(Player.PlayerId);
+                }
+            }
         }
     }
     private int GetSecondStageVictoryCount() => System.Math.Max(VictoryCount + 1, SoloVictoryCount);
