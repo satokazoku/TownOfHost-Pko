@@ -181,6 +181,7 @@ public sealed class MadBetrayer : RoleBase, IKiller, ISchrodingerCatOwner
     {
         var (kille, tar) = info.AttemptTuple;
         if (tar.GetCustomRole().IsImpostor() is false || IsBetray) return;
+        Betrayer.Mbets.Add(Player.PlayerId);
         kille.RpcSetCustomRole(CustomRoles.Betrayer);
     }
     public void SendRPC()
