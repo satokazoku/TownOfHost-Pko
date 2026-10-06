@@ -32,10 +32,6 @@ namespace TownOfHost.Roles.Neutral
                     (2, 4),
                     true,
                     countType: CountTypes.Huntman,
-                     assignInfo: new RoleAssignInfo(CustomRoles.Huntman, CustomRoleTypes.Neutral)
-                    {
-                        AssignCountRule = new(1, 1, 1)
-                    }
                 );
         public Huntman(PlayerControl player)
         : base(
@@ -72,7 +68,7 @@ namespace TownOfHost.Roles.Neutral
         public static bool CanUseSabotage;
 
         bool targeted;
-        public static bool PublicRoleColor;
+        public bool PublicRoleColor;
 
         PlayerControl KillWaitPlayer;
         public static OptionItem OptionchangeColorTime;
@@ -274,9 +270,9 @@ namespace TownOfHost.Roles.Neutral
         }
         public static bool KnowTargetRoleColor(PlayerControl target, bool isMeeting)
         {
-            if (!isMeeting && target.Is(CustomRoles.Huntman))
+            if (!isMeeting && target.GetRoleClass() is Huntman h)
             {
-                if (PublicRoleColor)
+                if (h.PublicRoleColor)
                 {
                     return true;
                 }
@@ -374,7 +370,7 @@ namespace TownOfHost.Roles.Neutral
         {
             darkenTimer = reader.ReadSingle();
             targeted = reader.ReadBoolean();
-            changetimer = reader.ReadInt32();
+            changetimer = reader.ReadSingle();
             targetId = reader.ReadByte();
             targetCankill = reader.ReadBoolean();
         }
