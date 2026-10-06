@@ -21,6 +21,9 @@
 "Viper","Viper","バイパー"
 "Judge","Judge","ジャッジ"
 "SpiritGuide","Influencer","インフルエンサー"
+"#Infoは一旦仮で"
+"SpiritGuideInfo","Committed to the Camera","カメラにかけたメッセンジャー"
+"SpiritGuideInfoLong","(Ghost Role):\nCan send images to surviving crewmates. (Three images; the images selected are random.)","(幽霊役職):\n生存しているクルーメイトに画像を送ることができる。(最大三枚、選ばれる画像はランダム)"
 
 "ShapeshifterInfoSp","Huh? Is he one of us, too…?","あれ？あいつも俺…？"
 "ViperInfoSp","Poison the target, melt the evidence","毒牙にかけて証拠は溶かす"
