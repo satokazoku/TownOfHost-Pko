@@ -22,10 +22,6 @@ namespace TownOfHost.Roles.Neutral
                 true,
                 introSound: () => GetIntroSound(RoleTypes.Impostor),
                 countType: CountTypes.Remotekiller,
-                assignInfo: new RoleAssignInfo(CustomRoles.Remotekiller, CustomRoleTypes.Neutral)
-                {
-                    AssignCountRule = new(1, 1, 1)
-                },
                 from: From.TownOfHost_K
             );
         public Remotekiller(PlayerControl player)
@@ -99,7 +95,6 @@ namespace TownOfHost.Roles.Neutral
                     _ = new LateTask(() =>
                     {
                         CustomRoleManager.OnCheckMurder(user, target, target, target, Killpower: 10);
-
                     }, 1.2f);
                 }
                 else

@@ -24,10 +24,6 @@ namespace TownOfHost.Roles.Neutral
                 (2, 2),
                 true,
                 countType: CountTypes.GrimReaper,//こいつ生存カウント分ける。(生存カウント入れないため)
-                assignInfo: new RoleAssignInfo(CustomRoles.GrimReaper, CustomRoleTypes.Neutral)
-                {
-                    AssignCountRule = new(1, 1, 1)
-                },
                 from: From.TownOfHost_K
             );
         public GrimReaper(PlayerControl player)
@@ -81,7 +77,7 @@ namespace TownOfHost.Roles.Neutral
 
             if (!info.IsSuicide)
             {
-                (var kille, var taret) = info.AttemptTuple;
+                var kille = info.AttemptKiller;
                 {
                     Logger.Info($"{kille?.Data?.GetLogPlayerName()}:キル", "GrimReaper");
                     Main.AllPlayerKillCooldown[kille.PlayerId] = 200f;
