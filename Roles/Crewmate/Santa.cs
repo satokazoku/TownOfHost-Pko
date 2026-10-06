@@ -6,6 +6,7 @@ using Hazel;
 using TownOfHost.Patches;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+using TownOfHost.Roles.Neutral;
 using static TownOfHost.Translator;
 
 namespace TownOfHost.Roles.Crewmate;
@@ -305,7 +306,7 @@ public sealed class Santa : RoleBase, IKiller
         bool isLovers = target.Is(CustomRoles.Lovers) || target.Is(CustomRoles.MadonnaLovers) || target.Is(CustomRoles.OneLove);
         bool isMadmate = targetRoleType == CustomRoleTypes.Madmate;
 
-        bool isJackalDoll = target.Is(CustomRoles.Jackaldoll);
+        bool isJackalDoll = target.Is(CustomRoles.Jackaldoll) || (target.GetRoleClass() is DollBetrayer dl && dl.IsJackal());
         bool isCrew = targetRoleType == CustomRoleTypes.Crewmate;
         bool canGift = isCrew;
         if (!canGift && isLovers && (OptCanGiftLovers?.GetBool() ?? false)) canGift = true;

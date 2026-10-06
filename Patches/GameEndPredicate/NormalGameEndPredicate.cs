@@ -313,9 +313,9 @@ namespace TownOfHost
                     }
                     continue;
                 }
-                if (pc.GetCustomRole() is CustomRoles.DollBetrayer)
+                if (pc.GetRoleClass() is DollBetrayer dl)
                 {
-                    if (DollBetrayer.IsJackal() is false)
+                    if (dl.IsJackal() is false)
                     {
                         MadBetrayer++;
                     }
@@ -438,11 +438,13 @@ namespace TownOfHost
                 CustomWinnerHolder.WinnerRoles.Add(CustomRoles.JackalHadouHo);
                 CustomWinnerHolder.WinnerRoles.Add(CustomRoles.Tama);
                 CustomWinnerHolder.WinnerRoles.Add(CustomRoles.JackalWolf);
-                if (DollBetrayer.IsJackal())
+                foreach (var p in PlayerCatch.AllPlayerControls)
                 {
-                    CustomWinnerHolder.WinnerRoles.Add(CustomRoles.DollBetrayer);
+                    if (p.GetRoleClass() is DollBetrayer dl && dl.IsJackal())
+                    {
+                        CustomWinnerHolder.WinnerIds.Add(p.PlayerId);
+                    }
                 }
-
             }
             else if (Imp == 0 && Jackal == 0 && MilkyWay == 0 && MadBetrayer == 0
                 && Pavlov == 0 && StandMasterCount == 0 && EaterCount == 0 && Huntman == 0 && Dracula == 0 && Vanity == 0 && FoxAndCrew <= Remotekiller)
@@ -482,9 +484,12 @@ namespace TownOfHost
                 {
                     CustomWinnerHolder.WinnerRoles.Add(CustomRoles.MadBetrayer);
                 }
-                if (DollBetrayer.IsJackal() is false)
+                foreach (var p in PlayerCatch.AllPlayerControls)
                 {
-                    CustomWinnerHolder.WinnerRoles.Add(CustomRoles.DollBetrayer);
+                    if (p.GetRoleClass() is DollBetrayer dl && dl.IsJackal())
+                    {
+                        CustomWinnerHolder.WinnerIds.Add(p.PlayerId);
+                    }
                 }
             }
             else if (Imp == 0 && Jackal == 0 && Remotekiller == 0

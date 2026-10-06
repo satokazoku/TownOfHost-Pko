@@ -120,7 +120,7 @@ namespace TownOfHost.Roles.Neutral
                 return;
             }
             var targetrole = target.GetCustomRole();
-            if ((targetrole is CustomRoles.King or CustomRoles.Merlin or CustomRoles.AlienHijack or CustomRoles.Autocrat || IsJackal(targetrole))
+            if ((targetrole is CustomRoles.King or CustomRoles.Merlin or CustomRoles.AlienHijack or CustomRoles.Autocrat || IsJackal(target))
             || ((targetrole.IsImpostor() || targetrole is CustomRoles.Egoist) && !OptionImpostorCanSidekick.GetBool()))
             {
                 ResetCooldown = false;
@@ -152,11 +152,12 @@ namespace TownOfHost.Roles.Neutral
         /// ジャッカルドール・弾含む<br/>
         /// 裏切り前のドールベトレイヤーはジャッカルとしてカウント<br/>
         /// </summary>
-        /// <param name="role">対象の役職</param>
+        /// <param name="player">対象の役職</param>
         /// <returns></returns>
-        public static bool IsJackal(CustomRoles role)
+        public static bool IsJackal(PlayerControl player)
         {
-            if (role is CustomRoles.DollBetrayer && DollBetrayer.IsBetray is false)
+            var role = player.GetCustomRole();
+            if (player.GetRoleClass() is DollBetrayer dl && dl.IsBetray is false)
             {
                 return true;
             }
