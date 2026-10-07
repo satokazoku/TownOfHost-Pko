@@ -1425,6 +1425,7 @@ public enum CustomRoles
     Mermaid,
     Vanity,
     Moira,
+    Frust,
     //DEBUG only Neutral.
     //HideAndSeek
     HASFox,

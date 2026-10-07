@@ -89,6 +89,10 @@ public interface ISchrodingerCatOwner
         /// <summary>
         /// ヴァニティに所属する状態
         /// </summary>
-        Vanity
+        Vanity,
+        /// <summary>
+        /// フラストに所属する状態
+        /// </summary>
+        Frust,
     }
 }

@@ -329,6 +329,7 @@
 "DollBetrayer","Doll Betlayer","ドールベトレイヤー"
 "Moira","Moira","モイラ"
 "Chameleon","Chameleon","カメレオン"
+"Frust","Frust","フラスト"
 "#NeutralName"
 
 "#コンビネーション役職"
@@ -756,6 +757,7 @@
 "DraculaInfo","I can't live unless I drink blood...","血を飲まなければ生きていけない..."
 "MoiraInfo","Fate is in my hands!","運命は私の手の中に！"
 "BetrayerInfo","To suit one's own convenience","ご主人は我の手駒"
+"FrustInfo","Don't come near me.","私に近付くな"
 "#NeutralInfo"
 
 "# HideAndSeek"
@@ -1118,7 +1120,7 @@
 "DraculaInfoLong","Using the Kill Button causes you to “suck blood” from the player who used it. \nIf you do not suck blood for a certain amount of time, you will die. \nA player who has had their blood sucked has a certain probability of dying. This probability increases by a fixed amount each time. Additionally, there is a certain probability that they will become a minion. \nA player who dies from having their blood sucked does not become a minion. \nUpon becoming a minion, the player loses their original victory condition, and their new victory condition becomes Dracula’s victory.\nIf Dracula dies, the minions also die.\nYou cannot use Bloodsucking on minions.\nVictory is achieved when the total number of Dracula and minions is more than half the number of survivors, and all remaining survivors have harmless roles (count = Crewmates).","キルボタンを使用することで使用したプレイヤーに対して「吸血」を行う。\n吸血を一定時間行わないと死亡してしまう。\n吸血されたプレイヤーは一定確率で死亡する。この確率は一定値ずつ上昇する。また、一定確率で眷属になる。\n吸血で死亡したプレイヤーは眷属にはならない。\n眷属になると元の勝利条件を失い、勝利条件はドラキュラの勝利になる。\nドラキュラが死亡すると眷属も死亡する。\n眷属に対して吸血は使用できない。\nドラキュラと眷属の総数が生存者の半数以上かつ、他の生存者が無害(カウント=クルーメイト)な役職になると勝利。"
 "MoiraInfoLong","Moira can alter the fates of others by swapping two players' roles.\n\nDuring a meeting, self-vote to enter [Fate Change Mode].\nThen vote for your 1st target, then vote for your 2nd target.\nAt the end of the meeting, the two targets will have their roles swapped.\n\nYou have a limited number of swaps.\nOnce all swaps are used, your identity is revealed to everyone.\nIf you survive to the end after using all your swaps, you win!\n\nSwapped roles are permanent — they are NOT reverted even if Moira dies.\n\nIf [Swap Votes] is ON:\nVotes cast on your two targets will be counted for the other target instead.","モイラは2人のプレイヤーの役職を入れ替えることができる。\n\n会議中に自分自身に投票すると【運命改変モード】に入る。\n次に1人目のターゲットに投票し、さらに2人目のターゲットに投票する。\n会議終了時に、その2人の役職が入れ替わる。\n\n改変回数には上限がある。\n全ての改変を使い切ると、モイラの正体が全員に公開される。\n全改変を使い切り、試合終了後に生存していると単独勝利"
 "BetrayerInfoLong","The Betrayer can kill any player. \nVictory is achieved if all harmful killer roles are dead and the number of surviving Betrayers is equal to or greater than the number of Crew members.","ベトレイヤーは全てのプレイヤーを殺すことができる。\n有害なキル役職が死亡しており、生き残っているベトレイヤーの人数がクルーと同じかそれ以上だと勝利。"
-
+"FrustInfoLong","When you are killed, you reflect the kill and gain the ability to kill. \nA kill flash also goes off for everyone. \nBefore you are killed, the victory condition is “survive until the end.” \nAfter you are killed, the victory condition is “all other Killers are eliminated, and the number of Frasts with the ability to kill is equal to or greater than the number of harmless players.”","キルされるとキルを反射し、キル能力を得る。\nまた全員にキルフラッシュが鳴る。\nキルされる前は「最後まで生存する」\nキルされた後は「他のキラーが全滅かつキル能力を持ったフラストの数が無害なプレイヤー以上」が勝利条件。"
 "#NeutralInfoLong"
 
 "# ImpostorDescInfos"
@@ -2849,6 +2851,10 @@
 "DraculaKenzokuChance","Probability of Becoming a Servant","眷属化する確率"
 "DraculaDieChance","Probability of Death During Bloodsucking","吸血時に死亡する確率"
 "DraculaDieChanceBonus","increase in the probability of death","死亡する確率の上昇値"
+
+"FrustBeforeCanVent","Can Use Vent Before Kill","キル前、ベントが使える"
+"FrustAfterCanVent","Can Use Vent AFter Kill","キル後、ベントが使える"
+"FrustCanSabotage","Can Use Sabotage After Kill","キル後、サボタージュが使える"
 
 "## Unit Role Setting"
 "BraidKillCooldown","Bread Task Complete Driver Killcool","ブレイドが全タスク完了時のキルクール"

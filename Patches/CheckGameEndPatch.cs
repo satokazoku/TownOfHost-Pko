@@ -220,9 +220,14 @@ namespace TownOfHost
                     Tuna.CheckWin(ref reason);
                     Zombie.TryTakeOverCrewWin(ref reason);
 
-                    // ★ 神の勝利チェック
-                    foreach (var pc in PlayerCatch.AllAlivePlayerControls.Where(p => p.Is(CustomRoles.God)))
+                    foreach (var pc in PlayerCatch.AllAlivePlayerControls)
                     {
+                        if (pc.GetRoleClass() is Frust frust)
+                        {
+                            frust.FrustCheckWin(ref reason);
+                            continue;
+                        }
+                        if (!pc.Is(CustomRoles.God)) continue;
                         if (TownOfHost.Roles.Neutral.God.RequireTasksToWinOpt?.GetBool() == true)
                         {
                             var taskState = PlayerState.GetByPlayerId(pc.PlayerId)?.GetTaskState();
