@@ -32,6 +32,7 @@ public sealed class Opportunist : RoleBase, IAdditionalWinner, IKiller
         timer = 0;
         pos = new(0, 0);
         NeedTaskCount = OptionNeedTasks.GetBool() && !OptionHasKillButton.GetBool() ? OptionTaskCount.GetInt() : 0;
+        ChangedOppos.Clear();
     }
 
     static OptionItem OptionHasKillButton;
@@ -39,7 +40,7 @@ public sealed class Opportunist : RoleBase, IAdditionalWinner, IKiller
     static OptionItem OptionNeedTasks;
     static OptionItem OptionTaskCount;
     static int NeedTaskCount;
-    public static List<byte> ChangedOppos;
+    public static List<byte> ChangedOppos = new();
 
     enum OptionName
     {
@@ -77,6 +78,14 @@ public sealed class Opportunist : RoleBase, IAdditionalWinner, IKiller
     {
         if (Player.IsAlive())
         {
+            if (ChangedOppos == null)
+            {
+                Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);
+                if (PlayerCatch.AllAlivePlayersCount <= 4) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[1]);
+                if (timer > 100) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[2]);
+                if (timer < 10) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[3]);
+                return true;
+            }
             if (ChangedOppos.Contains(Player.PlayerId))
             {
                 Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);
