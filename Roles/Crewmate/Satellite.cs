@@ -21,7 +21,7 @@ public sealed class Satellite : RoleBase, ISelfVoter
             CustomRoles.Satellite,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            34700,
+            11300,
             SetupOptionItem,
             "Sat",
             "#00e1ff",

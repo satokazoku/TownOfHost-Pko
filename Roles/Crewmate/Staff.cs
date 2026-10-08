@@ -12,7 +12,7 @@ public sealed class Staff : RoleBase
             CustomRoles.Staff,
             () => CanUseVent.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            35600,
+            12400,
             SetupOptionItem,
             "sf",
             "#00ffff",

@@ -14,7 +14,7 @@ public sealed class Terrorist : RoleBase
             CustomRoles.Terrorist,
             () => RoleTypes.Engineer,
             CustomRoleTypes.Neutral,
-            55000,
+            15400,
             SetupOptionItem,
             "te",
             "#00ff00",

@@ -15,7 +15,7 @@ public sealed class Decrescendo : RoleBase, IImpostor
             CustomRoles.Decrescendo,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Impostor,
-            3300,
+            21000,
             SetupOptionItem,
             "De",
             OptionSort: (8, 2),

@@ -21,7 +21,7 @@ public sealed class UnFortuner : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.UnFortuner,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            7900,
+            20300,
             SetupOptionItem,
             "Uf",
             OptionSort: (6, 11),
@@ -174,7 +174,7 @@ public sealed class UnFortuner : RoleBase, IImpostor, IUsePhantomButton
         if (giveplayerid.Count > 0)
         {
             Achievements.RpcCompleteAchievement(Player.PlayerId, 1, Fortuner.achievements[0], giveplayerid.Count);
-            Achievements.RpcCompleteAchievement(Player.PlayerId, 1, Fortuner.achievements[2], giveplayerid.Count);
+            //Achievements.RpcCompleteAchievement(Player.PlayerId, 1, Fortuner.achievements[2], giveplayerid.Count);
         }
         giveplayerid.Clear();
 

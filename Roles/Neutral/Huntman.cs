@@ -129,9 +129,8 @@ namespace TownOfHost.Roles.Neutral
         }
         public override void CheckWinner(GameOverReason reason)
         {
-            if (3 <= MyState.GetKillCount()) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);
             if (Player.IsWinner(CustomWinner.Huntman) && !Player.IsLovers())
-                Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[2]);
+                Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);
         }
 
         public override void OnFixedUpdate(PlayerControl player)
@@ -245,7 +244,6 @@ namespace TownOfHost.Roles.Neutral
                 player.MarkDirtySettings();
             }
             SendRPC();
-            if (0 < playersToDarken.Count()) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);
         }
 
         void ApplySpeedEffect(PlayerControl Player, float multiplier)
@@ -380,11 +378,7 @@ namespace TownOfHost.Roles.Neutral
         public static void Load()
         {
             var n1 = new Achievement(RoleInfo, 0, 1, 0, 0);
-            var l1 = new Achievement(RoleInfo, 1, 1, 0, 1);
-            var sp1 = new Achievement(RoleInfo, 2, 1, 0, 3, true);
             achievements.Add(0, n1);
-            achievements.Add(1, l1);
-            achievements.Add(2, sp1);
         }
     }
 }

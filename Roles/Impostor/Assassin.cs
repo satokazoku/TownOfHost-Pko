@@ -21,7 +21,7 @@ public sealed class Assassin : RoleBase, IImpostor, IUsePhantomButton, IDoubleTr
             CustomRoles.Assassin,
             () => OptionHasOtherRole.GetBool() ? OptionHaveRole.GetRole().GetRoleInfo()?.BaseRoleType?.Invoke() ?? RoleTypes.Impostor : RoleTypes.Impostor,
             CustomRoleTypes.Impostor,
-            76100,
+            15800,
             SetupOptionItem,
             "as",
             OptionSort: (2, 0),

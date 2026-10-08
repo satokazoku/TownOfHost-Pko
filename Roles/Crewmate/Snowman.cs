@@ -14,7 +14,7 @@ public sealed class Snowman : RoleBase
             CustomRoles.Snowman,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            35400,
+            12000,
             SetupOptionItem,
             "snm",
             "#c4d6e3",

@@ -14,7 +14,7 @@ public sealed class Stolener : RoleBase
             CustomRoles.Stolener,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            35700,
+            10500,
             SetupOptionItem,
             "slt",
             "#605eb7",

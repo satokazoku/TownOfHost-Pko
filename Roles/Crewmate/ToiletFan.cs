@@ -14,7 +14,7 @@ public sealed class ToiletFan : RoleBase
             CustomRoles.ToiletFan,
             () => RoleTypes.Engineer,
             CustomRoleTypes.Crewmate,
-            36100,
+            12500,
             SetupOptionItem,
             "to",
             "#735134",
@@ -49,7 +49,7 @@ public sealed class ToiletFan : RoleBase
     {
         PetActionManager.Unregister(Player.PlayerId);
     }
-    private static OptionItem OptionCooldown;
+    static OptionItem OptionCooldown;
     private static float Cooldown;
     public override bool CanClickUseVentButton => false;
     float CoolDownTimer;
@@ -65,9 +65,10 @@ public sealed class ToiletFan : RoleBase
         CoolDownTimer = Cooldown;
         Player.RpcResetAbilityCooldown();
     }
-    public static void Open()
+    public void Open()
     {
         if (Main.NormalOptions.MapId is not 4) return;
+        Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);
         ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Doors, 79);
         ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Doors, 80);
         ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Doors, 81);
@@ -86,5 +87,12 @@ public sealed class ToiletFan : RoleBase
     public override void OnSpawn(bool initialState)
     {
         CoolDownTimer = Cooldown;
+    }
+    public static System.Collections.Generic.Dictionary<int, Achievement> achievements = new();
+    [Attributes.PluginModuleInitializer]
+    public static void Load()
+    {
+        var n1 = new Achievement(RoleInfo, 0, 1, 0, 0);
+        achievements.Add(0, n1);
     }
 }

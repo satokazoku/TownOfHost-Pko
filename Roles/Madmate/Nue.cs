@@ -18,7 +18,7 @@ public sealed class Nue : RoleBase, ISelfVoter, IKiller
             CustomRoles.Nue,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Madmate,
-            76900,
+            23500,
             NueSetUpOptionItem,
             "ne",
             "#be7c35",

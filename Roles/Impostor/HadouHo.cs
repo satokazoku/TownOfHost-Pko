@@ -21,7 +21,7 @@ public sealed class HadouHo : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.HadouHo,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            4900,
+            6300,
             SetUpOptionItem,
             "hh",
             OptionSort: (3, 12),

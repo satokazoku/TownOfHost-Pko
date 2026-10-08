@@ -15,7 +15,7 @@ public sealed class BorderKiller : RoleBase, IImpostor
             CustomRoles.BorderKiller,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Impostor,
-            2700,
+            7300,
             SetupOptionItem,
             "Br",
             OptionSort: (8, 1),

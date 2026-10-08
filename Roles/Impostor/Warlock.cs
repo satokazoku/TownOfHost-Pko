@@ -21,7 +21,7 @@ public sealed class Warlock : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.Warlock,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            8100,
+            5000,
             SetUpOptionItem,
             "wa",
             OptionSort: (4, 4),

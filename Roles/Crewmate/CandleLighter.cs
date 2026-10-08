@@ -13,7 +13,7 @@ public sealed class CandleLighter : RoleBase
             CustomRoles.CandleLighter,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            30900,
+            22200,
             SetupOptionItem,
             "cl",
             "#ff7f50",

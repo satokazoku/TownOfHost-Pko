@@ -26,7 +26,7 @@ public sealed class ConnectSaver : RoleBase, IImpostor, ISelfVoter
             CustomRoles.ConnectSaver,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Impostor,
-            3100,
+            4500,
             SetupOptionItem,
             "Cs",
             OptionSort: (3, 7),

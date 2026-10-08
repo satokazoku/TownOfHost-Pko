@@ -18,7 +18,7 @@ public sealed class Madonna : RoleBase, ISelfVoter
             CustomRoles.Madonna,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Neutral,
-            52800,
+            14400,
             SetupOptionItem,
             "Mad",
             "#f09199",

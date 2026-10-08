@@ -15,7 +15,7 @@ public sealed class Walker : RoleBase, IRoomTasker
             CustomRoles.Walker,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            36800,
+            12100,
             SetupOptionItem,
             "wak",
             "#057a2c",

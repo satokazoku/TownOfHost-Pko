@@ -20,7 +20,7 @@ public sealed class PonkotuTeller : RoleBase, ISelfVoter
             CustomRoles.PonkotuTeller,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            34000,
+            9300,
             SetupOptionItem,
             "po",
             "#6b3ec3",

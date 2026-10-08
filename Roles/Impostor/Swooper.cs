@@ -401,7 +401,7 @@ public sealed class Swooper : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.Swooper,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            9600,
+            19600,
             SetupOptionItem,
             "sw",
             OptionSort: (6, 14),

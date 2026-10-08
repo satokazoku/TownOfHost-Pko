@@ -20,7 +20,7 @@ public sealed class Fox : RoleBase, ISystemTypeUpdateHook, IRoomTasker
             CustomRoles.Fox,
             () => RoleTypes.Engineer,
             CustomRoleTypes.Neutral,
-            51500,
+            15000,
             SetupOptionItem,
             "fx",
             "#d288ee",

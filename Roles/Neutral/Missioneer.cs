@@ -21,7 +21,7 @@ public sealed class Missioneer : RoleBase, IKiller, ISelfVoter, IAdditionalWinne
             CustomRoles.Missioneer,
             () => RoleTypes.Engineer,
             CustomRoleTypes.Neutral,
-            53000,
+            23200,
             SetupOptionItem,
             "Msn",
             "#b1ae8f",

@@ -22,7 +22,7 @@ public sealed class Frust : RoleBase, ILNKiller, ISchrodingerCatOwner
             58100,
             SetupOptionItem,
             "Frt",
-            "#facf9f",
+            "#ff8c00",
             (2, 8),
             true
         );

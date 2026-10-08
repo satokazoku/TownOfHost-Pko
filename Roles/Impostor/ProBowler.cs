@@ -20,7 +20,7 @@ public sealed class ProBowler : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.ProBowler,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            6100,
+            4200,
             SetupOptionItem,
             "Pb",
             OptionSort: (3, 4),

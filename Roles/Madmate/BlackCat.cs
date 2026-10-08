@@ -15,7 +15,7 @@ public sealed class BlackCat : RoleBase, INekomata
             CustomRoles.BlackCat,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Madmate,
-            22500,
+            6900,
             SetupOptionItems,
             "bc",
             OptionSort: (3, 2),

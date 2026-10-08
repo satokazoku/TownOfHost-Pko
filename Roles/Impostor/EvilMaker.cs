@@ -16,7 +16,7 @@ public sealed class EvilMaker : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.EvilMaker,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            4200,
+            17300,
             SetupOptionItem,
             "Em",
             OptionSort: (2, 5),
@@ -55,7 +55,7 @@ public sealed class EvilMaker : RoleBase, IImpostor, IUsePhantomButton
 
         var target = Player.GetKillTarget(true);
         if (target == null) return;
-        if ((target.GetCustomRole() is CustomRoles.SKMadmate or CustomRoles.King or CustomRoles.Merlin or CustomRoles.AlienHijack || target.IsTeammate(Player)) && !SuddenDeathMode.NowSuddenDeathMode) return;
+        if ((target.GetCustomRole() is CustomRoles.SKMadmate or CustomRoles.King or CustomRoles.Merlin or CustomRoles.AlienHijack or CustomRoles.Autocrat || target.IsTeammate(Player)) && !SuddenDeathMode.NowSuddenDeathMode) return;
         if (target.GetRoleClass() is MadPsycho ms)
         {
             ms.Psycho(Player, 1);

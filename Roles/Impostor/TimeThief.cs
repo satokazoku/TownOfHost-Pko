@@ -14,7 +14,7 @@ namespace TownOfHost.Roles.Impostor
                 CustomRoles.TimeThief,
                 () => RoleTypes.Impostor,
                 CustomRoleTypes.Impostor,
-                7800,
+                4700,
                 SetupOptionItem,
                 "tt",
                 OptionSort: (4, 1),

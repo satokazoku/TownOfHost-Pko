@@ -15,7 +15,7 @@ namespace TownOfHost.Roles.Impostor
                 CustomRoles.Mole,
                 () => RoleTypes.Impostor,
                 CustomRoleTypes.Impostor,
-                5700,
+                3600,
                 null,
                 "ml",
                 OptionSort: (6, 1),

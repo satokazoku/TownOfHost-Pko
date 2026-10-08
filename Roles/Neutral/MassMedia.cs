@@ -21,7 +21,7 @@ public sealed class MassMedia : RoleBase, IKiller, IKillFlashSeeable
             CustomRoles.MassMedia,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Neutral,
-            52900,
+            14500,
             SetupOptionItem,
             "MsM",
             "#512513",

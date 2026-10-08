@@ -19,7 +19,7 @@ namespace TownOfHost.Roles.Impostor
                 CustomRoles.Vampire,
                 () => RoleTypes.Impostor,
                 CustomRoleTypes.Impostor,
-                8000,
+                4800,
                 SetupOptionItem,
                 "va",
                 OptionSort: (4, 2),

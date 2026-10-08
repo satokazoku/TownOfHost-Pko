@@ -16,7 +16,7 @@ public sealed class MadBetrayer : RoleBase, IKiller, ISchrodingerCatOwner
             CustomRoles.MadBetrayer,
             () => OptionCanVent.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate,
             CustomRoleTypes.Madmate,
-            20200,
+            22800,
             SetupOptionItem,
             "MBet",
             "#8b2551",
@@ -196,9 +196,7 @@ public sealed class MadBetrayer : RoleBase, IKiller, ISchrodingerCatOwner
     }
     public override void CheckWinner(GameOverReason reason)
     {
-        if (Player.IsWinner(CustomWinner.Impostor)) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);
-        if (IsBetray && Player.IsWinner(CustomWinner.Betrayer) && !CustomWinnerHolder.winners.Contains(CustomWinner.Impostor))
-            Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[2]);
+        if (Player.IsWinner(CustomWinner.Impostor)) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);            
     }
     public static System.Collections.Generic.Dictionary<int, Achievement> achievements = new();
     [Attributes.PluginModuleInitializer]

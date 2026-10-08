@@ -16,7 +16,7 @@ public sealed class Chaser : RoleBase, IImpostor, ISidekickable
             CustomRoles.Chaser,
             () => RoleTypes.Shapeshifter,
             CustomRoleTypes.Impostor,
-            3000,
+            20000,
             SetUpOptionItem,
             "ch",
             from: From.TownOfHost_Y,

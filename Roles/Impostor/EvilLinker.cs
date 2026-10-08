@@ -19,7 +19,7 @@ public sealed class EvilLinker : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.EvilLinker,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            8300,
+            20600,
             SetupOptionItem,
             "el",
             OptionSort: (2, 11),

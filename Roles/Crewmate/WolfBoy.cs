@@ -18,7 +18,7 @@ public sealed class WolfBoy : RoleBase, IKiller, ISchrodingerCatOwner
             CustomRoles.WolfBoy,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Crewmate,
-            37100,
+            9100,
             SetupOptionItem,
             "wb",
             "#727171",

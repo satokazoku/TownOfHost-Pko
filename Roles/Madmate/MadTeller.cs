@@ -18,7 +18,7 @@ public sealed class MadTeller : RoleBase, IKillFlashSeeable, IDeathReasonSeeable
             CustomRoles.MadTeller,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Madmate,
-            21100,
+            8100,
             SetupOptionItem,
             "Mt",
             OptionSort: (3, 1),

@@ -20,7 +20,7 @@ public sealed class Sniper : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.Sniper,
             () => OptionShotType.GetInt() == 0 ? RoleTypes.Phantom : RoleTypes.Shapeshifter,
             CustomRoleTypes.Impostor,
-            7100,
+            6200,
             SetupOptionItem,
             "snp",
             OptionSort: (3, 10),

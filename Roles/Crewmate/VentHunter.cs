@@ -18,7 +18,7 @@ public sealed class VentHunter : RoleBase
             CustomRoles.VentHunter,
             () => RoleTypes.Engineer,
             CustomRoleTypes.Crewmate,
-            36400,
+            12800,
             SetupOptionItem,
             "vh",
             "#83FFF2",

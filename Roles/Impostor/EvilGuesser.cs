@@ -21,7 +21,7 @@ public sealed class EvilGuesser : RoleBase, IImpostor, ISelfVoter
             CustomRoles.EvilGuesser,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Impostor,
-            4000,
+            5400,
             SetupOptionItem,
             "egr",
             "#ff1919",

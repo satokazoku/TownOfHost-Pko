@@ -16,7 +16,7 @@ public sealed class UltraStar : RoleBase, IKiller, ISchrodingerCatOwner
             CustomRoles.UltraStar,
             () => OptionCanseeKillcooltime.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            36300,
+            9900,
             SetupOptionItem,
             "us",
             "#ffff8e",

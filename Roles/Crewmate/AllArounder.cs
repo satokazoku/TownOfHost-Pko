@@ -26,7 +26,7 @@ public sealed class AllArounder : RoleBase, ISystemTypeUpdateHook, IKillFlashSee
             CustomRoles.AllArounder,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            30000,
+            8500,
             SetupOptionItem,
             "AA",
             "#599afb",

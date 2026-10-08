@@ -19,7 +19,7 @@ public sealed class Vulture : RoleBase, IKillFlashSeeable, IAdditionalWinner
             CustomRoles.Vulture,
             () => OptionCanUseVent.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate,
             CustomRoleTypes.Neutral,
-            55300,
+            14600,
             SetupOptionItem,
             "Vu",
             "#6f4204",

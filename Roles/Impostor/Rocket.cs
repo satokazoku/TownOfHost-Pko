@@ -23,7 +23,7 @@ public sealed class Rocket : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.Rocket,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            9100,
+            19000,
             SetupOptionItem,
             "rkt",
             OptionSort: (4, 14),

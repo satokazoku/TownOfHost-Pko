@@ -16,7 +16,7 @@ public sealed class MassMueder : RoleBase, IKiller, IUsePhantomButton
             CustomRoles.MassMurder,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            15000,
+            16000,
             SetupOptionItem,
             "mm",
             OptionSort: (6, 8),

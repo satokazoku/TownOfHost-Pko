@@ -16,7 +16,7 @@ public sealed class SelfBomber : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.SelfBomber,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            6700,
+            2300,
             SetupOptionItem,
             "sb",
             OptionSort: (3, 2),

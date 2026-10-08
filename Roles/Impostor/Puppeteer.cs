@@ -21,7 +21,7 @@ public sealed class Puppeteer : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.Puppeteer,
             () => CanKill.GetBool() ? RoleTypes.Phantom : RoleTypes.Impostor,
             CustomRoleTypes.Impostor,
-            6300,
+            4900,
             SetUpOption,
             "pup",
             OptionSort: (4, 3),

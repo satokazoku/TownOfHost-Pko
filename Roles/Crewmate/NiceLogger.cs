@@ -20,7 +20,7 @@ namespace TownOfHost.Roles.Crewmate
                 CustomRoles.NiceLogger,
                 () => RoleTypes.Phantom,
                 CustomRoleTypes.Crewmate,
-                33500,
+                8700,
                 SetupOptionItem,
                 "NeL",
                 "#4a5c59",

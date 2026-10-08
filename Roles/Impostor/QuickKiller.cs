@@ -18,7 +18,7 @@ public sealed class QuickKiller : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.QuickKiller,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            6400,
+            7000,
             SetupOptionItem,
             "qk",
             OptionSort: (7, 5),

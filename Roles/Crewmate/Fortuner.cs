@@ -22,7 +22,7 @@ public sealed class Fortuner : RoleBase, IKiller
             CustomRoles.Fortuner,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            31500,
+            24100,
             SetUpOptionItem,
             "fo",
             "#34f098",
@@ -218,7 +218,7 @@ public sealed class Fortuner : RoleBase, IKiller
         if (giveplayerid.Count > 0)
         {
             Achievements.RpcCompleteAchievement(Player.PlayerId, 1, achievements[0], giveplayerid.Count);
-            Achievements.RpcCompleteAchievement(Player.PlayerId, 1, achievements[2], giveplayerid.Count);
+            //Achievements.RpcCompleteAchievement(Player.PlayerId, 1, achievements[2], giveplayerid.Count);
         }
         giveplayerid.Clear();
 
@@ -272,9 +272,9 @@ public sealed class Fortuner : RoleBase, IKiller
     {
         var n1 = new Achievement(RoleInfo, 0, 3, 0, 0);
         var n2 = new Achievement(RoleInfo, 1, 1, 0, 0);
-        var l1 = new Achievement(RoleInfo, 2, 20, 0, 1);
+        //var l1 = new Achievement(RoleInfo, 2, 20, 0, 1);
         achievements.Add(0, n1);
         achievements.Add(1, n2);
-        achievements.Add(2, l1);
+        //achievements.Add(2, l1);
     }
 }

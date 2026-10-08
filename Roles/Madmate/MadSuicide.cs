@@ -17,7 +17,7 @@ public sealed class MadSuicide : RoleBase, IKiller, IUsePhantomButton, IKillFlas
             CustomRoles.MadSuicide,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Madmate,
-            21000,
+            7700,
             SetupOptionItem,
             "MSu",
             OptionSort: (2, 1),

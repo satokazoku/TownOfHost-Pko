@@ -417,20 +417,6 @@ public sealed class Cupid : RoleBase, IKiller, IAdditionalWinner
         hasDesignated = reader.ReadBoolean();
     }
 
-    private static string GetString(string key) => Translator.GetString(key);
-
-    public static Dictionary<int, Achievement> achievements = new();
-
-    [PluginModuleInitializer]
-    public static void Load()
-    {
-        var n1 = new Achievement(RoleInfo, 0, 5, 0, 0);
-        var l1 = new Achievement(RoleInfo, 1, 1, 0, 1);
-        var l2 = new Achievement(RoleInfo, 2, 1, 0, 1, true);
-        achievements.Add(0, n1);
-        achievements.Add(1, l1);
-        achievements.Add(2, l2);
-    }
     public bool OverrideKillButton(out string text)
     {
         text = "Cupid_Kill";

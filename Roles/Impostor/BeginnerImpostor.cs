@@ -19,7 +19,7 @@ public sealed class BeginnerImpostor : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.BeginnerImpostor,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            8500,
+            30000,
             SetupOptionItem,
             "bi",
             "#ff1919",

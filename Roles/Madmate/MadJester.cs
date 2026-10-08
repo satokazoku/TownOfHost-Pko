@@ -15,7 +15,7 @@ public sealed class MadJester : RoleBase, IKillFlashSeeable, IDeathReasonSeeable
             CustomRoles.MadJester,
             () => OptionCanVent.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate,
             CustomRoleTypes.Madmate,
-            20600,
+            8300,
             SetupOptionItem,
             "mje",
             OptionSort: (4, 1),

@@ -14,7 +14,7 @@ public sealed class Fool : RoleBase, IKiller, IAdditionalWinner
             CustomRoles.Fool,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Neutral,
-            76500,
+            23400,
             null,
             "fl",
             "#8b6d61",

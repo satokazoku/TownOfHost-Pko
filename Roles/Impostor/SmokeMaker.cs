@@ -19,7 +19,7 @@ public sealed class SmokeMaker : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.SmokeMaker,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            9300,
+            19300,
             SetupOptionItem,
             "sm",
             OptionSort: (6, 13),

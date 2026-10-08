@@ -1,4 +1,4 @@
-/*using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
 using HarmonyLib;
@@ -20,7 +20,7 @@ public sealed class EvilBlender : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.EvilBlender,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            3800,
+            24300,
             SetupOptionItem,
             "Eb",
             OptionSort: (2, 7),
@@ -353,4 +353,3 @@ public sealed class EvilBlender : RoleBase, IImpostor, IUsePhantomButton
         achievements.Add(2, l1);
     }
 }
-*/

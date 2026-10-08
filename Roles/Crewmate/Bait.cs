@@ -14,7 +14,7 @@ public sealed class Bait : RoleBase
             CustomRoles.Bait,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            30500,
+            10400,
             SetupOptionItem,
             "bat",
             "#00f7ff",

@@ -20,7 +20,7 @@ public sealed class Whiteshark : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.Whiteshark,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            9900,
+            19900,
             SetupOptionItem,
             "wsk",
             "#ff1919",

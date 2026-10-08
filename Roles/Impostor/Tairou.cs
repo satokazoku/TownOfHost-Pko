@@ -13,7 +13,7 @@ namespace TownOfHost.Roles.Impostor
                 CustomRoles.Tairou,
                 () => RoleTypes.Impostor,
                 CustomRoleTypes.Impostor,
-                7400,
+                6000,
                 SetupOptionItem,
                 "t",
                 OptionSort: (6, 10),

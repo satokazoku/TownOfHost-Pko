@@ -165,7 +165,7 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
         pendingSwallow = null;
         var send = string.Format(GetString("EaterMInfo"), eatOrSwallowCount);
         Utils.SendMessage(send, Player.PlayerId);
-        Achievements.RpcCompleteAchievement(Player.PlayerId, 1, achievements[0]);
+        Achievements.RpcCompleteAchievement(Player.PlayerId, 1, Vulture.achievements[0]);
         eatOrSwallowCount++;
         deadBodyPositions.Do(oniku => GetArrow.Remove(Player.PlayerId, oniku.Value));
         deadBodyPositions.Clear();
@@ -282,7 +282,7 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
             EatenBodies.Add(target.PlayerId);
             deadBodyPositions.Where(poss => poss.Key == target.PlayerId).Do(poss => GetArrow.Remove(Player.PlayerId, poss.Value));
             RpcEatPlayer(target.PlayerId);
-            Achievements.RpcCompleteAchievement(Player.PlayerId, 1, achievements[0]);
+            Achievements.RpcCompleteAchievement(Player.PlayerId, 1, Vulture.achievements[0]);
             eatOrSwallowCount++;
             Logger.Info($"食べた数：{eatOrSwallowCount}", "Eater");
 
@@ -406,13 +406,5 @@ public sealed class Eater : RoleBase, IKiller, IUsePhantomButton, IKillFlashSeea
             text = $"{str}</color>";
         }
         return text;
-    }
-
-    public static Dictionary<int, Achievement> achievements = new();
-    [Attributes.PluginModuleInitializer]
-    public static void Load()
-    {
-        var n1 = new Achievement(RoleInfo, 0, 1, 0, 0);
-        achievements.Add(0, n1);
     }
 }

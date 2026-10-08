@@ -17,7 +17,7 @@ public sealed class EvilTeller : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.EvilTeller,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            4500,
+            3700,
             SetUpOptionItem,
             "Et",
             OptionSort: (2, 6),

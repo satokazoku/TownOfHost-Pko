@@ -17,7 +17,7 @@ public sealed class Magician : RoleBase, IImpostor, IUsePhantomButton
             CustomRoles.Magician,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            5400,
+            4000,
             SetupOptionItem,
             "mc",
             OptionSort: (3, 2),

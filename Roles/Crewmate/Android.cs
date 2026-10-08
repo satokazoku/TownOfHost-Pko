@@ -14,7 +14,7 @@ public sealed class Android : RoleBase
             CustomRoles.Android,
             () => RoleTypes.Engineer,
             CustomRoleTypes.Crewmate,
-            30300,
+            12300,
             SetupOptionItem,
             "And",
             "#8a99b7",

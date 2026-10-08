@@ -21,7 +21,7 @@ namespace TownOfHost.Roles.Neutral
                 CustomRoles.BakeCat,
                 () => RoleTypes.Crewmate,
                 CustomRoleTypes.Neutral,
-                50200,
+                15700,
                 SetupOptionItem,
                 "bk",
                 "#ededc7",

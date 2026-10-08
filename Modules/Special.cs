@@ -440,7 +440,7 @@ public sealed class MadPukupuku : RoleBase, IKillFlashSeeable, IDeathReasonSeeab
             CustomRoles.MadPukupuku,
             () => OptionCanVent.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate,
             CustomRoleTypes.Madmate,
-            22900,
+            23000,
             SetupOptionItem,
             "mpk",
             isDesyncImpostor: true,

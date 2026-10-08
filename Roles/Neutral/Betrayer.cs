@@ -63,9 +63,9 @@ public sealed class Betrayer : RoleBase, ILNKiller, ISchrodingerCatOwner
     public override void CheckWinner(GameOverReason reason)
     {
         if (IsMbet() && Player.IsWinner(CustomWinner.Betrayer) && !CustomWinnerHolder.winners.Contains(CustomWinner.Impostor))
-            Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[2]);
+            Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);
         if (!IsMbet() && Player.IsWinner(CustomWinner.Betrayer) && !CustomWinnerHolder.winners.Contains(CustomWinner.Jackal))
-            Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[2]);
+            Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);
 
         Mbets.Clear();
     }
@@ -85,11 +85,7 @@ public sealed class Betrayer : RoleBase, ILNKiller, ISchrodingerCatOwner
     [Attributes.PluginModuleInitializer]
     public static void Load()
     {
-        var n1 = new Achievement(RoleInfo, 0, 1, 0, 0);
-        var l1 = new Achievement(RoleInfo, 1, 1, 0, 1);
-        var sp1 = new Achievement(RoleInfo, 2, 1, 0, 2);
-        achievements.Add(0, n1);
-        achievements.Add(1, l1);
-        achievements.Add(2, sp1);
+        var sp1 = new Achievement(RoleInfo, 0, 1, 0, 2);
+        achievements.Add(0, sp1);
     }
 }

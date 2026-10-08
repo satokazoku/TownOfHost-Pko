@@ -14,7 +14,7 @@ public sealed class GuardMaster : RoleBase
             CustomRoles.GuardMaster,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            31800,
+            10800,
             SetupOptionItem,
             "gms",
             "#8FBC8B",
@@ -68,7 +68,7 @@ public sealed class GuardMaster : RoleBase
             if (CanSeeProtect)
                 NameColorManager.Add(target.PlayerId, killer.PlayerId, RoleInfo.RoleColorCode);
         }
-        if (info.KillPower > 1)
+        if (info.KillPower <= 1)
         {
             killer.RpcProtectedMurderPlayer(target);
             if (!info.IsSubKill)
@@ -92,7 +92,7 @@ public sealed class GuardMaster : RoleBase
     }
     public override bool OnCheckMurderAsTargetAfter(MurderInfo _)
     {
-        if (!_.DoKill) ++Guard;
+        if (!_.DoKill && IsTaskFinished) ++Guard;
         return true;
     }
     public override bool OnCompleteTask(uint taskid)
