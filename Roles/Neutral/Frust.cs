@@ -7,6 +7,7 @@ using TownOfHost.Roles.Core.Interfaces;
 using TownOfHost.Roles.Madmate;
 using UnityEngine;
 using static TownOfHost.Roles.Crewmate.AllArounder;
+using static UnityEngine.UIElements.StylePropertyAnimationSystem;
 
 namespace TownOfHost.Roles.Neutral;
 
@@ -36,6 +37,7 @@ public sealed class Frust : RoleBase, ILNKiller, ISchrodingerCatOwner
         BeforeCanVent = OptionBeforeCanVent.GetBool();
         AfterCanVent = OptionAfterCanVent.GetBool();
         CanSabotage = OptionCanSabotage.GetBool();
+        CrewTaskFinishFlug = (FoxCrewTaskFin)OptionCrewTaskFinish.GetValue();
         IsKilled = false;
         IsWin = false;
         KillCount = 0;
@@ -44,6 +46,7 @@ public sealed class Frust : RoleBase, ILNKiller, ISchrodingerCatOwner
     static OptionItem OptionBeforeCanVent;
     static OptionItem OptionAfterCanVent;
     static OptionItem OptionCanSabotage;
+    static OptionItem OptionCrewTaskFinish; static FoxCrewTaskFin CrewTaskFinishFlug;
     static bool BeforeCanVent;
     static bool AfterCanVent;
     static float KillCooldown;
@@ -54,8 +57,10 @@ public sealed class Frust : RoleBase, ILNKiller, ISchrodingerCatOwner
     {
         FrustBeforeCanVent,
         FrustAfterCanVent,
-        FrustCanSabotage
+        FrustCanSabotage,
+        FoxCrewTaskFin
     }
+    enum FoxCrewTaskFin { FoxCrewTaskFin_MyWin, FoxCrewTaskFin_Lose, FoxCrewTaskFin_NoGameEnd, FoxCrewTaskFin_Addwin }
     public override void Add()
     {
         KillCount = 0;
@@ -65,6 +70,8 @@ public sealed class Frust : RoleBase, ILNKiller, ISchrodingerCatOwner
     private static void SetupOptionItem()
     {
         SoloWinOption.Create(RoleInfo, 9);
+        string[] values = EnumHelper.GetAllNames<FoxCrewTaskFin>();
+        OptionCrewTaskFinish = StringOptionItem.Create(RoleInfo, 14, Op.FoxCrewTaskFin, values, 0, false);
         OptionKillCoolDown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.KillCooldown, OptionBaseCoolTime, 30f, false)
                 .SetValueFormat(OptionFormat.Seconds);
         OptionBeforeCanVent = BooleanOptionItem.Create(RoleInfo, 11, Op.FrustBeforeCanVent, false, false);
@@ -125,6 +132,21 @@ public sealed class Frust : RoleBase, ILNKiller, ISchrodingerCatOwner
 
         if (reason is GameOverReason.CrewmatesByTask && CustomWinnerHolder.WinnerTeam is CustomWinner.Crewmate)
         {
+            switch (CrewTaskFinishFlug)
+            {
+                case FoxCrewTaskFin.FoxCrewTaskFin_MyWin:
+                    if (CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Frust, Player.PlayerId))
+                    {
+                        CustomWinnerHolder.NeutralWinnerIds.Add(Player.PlayerId);
+                        reason = GameOverReason.ImpostorsByKill;
+                        return;
+                    }
+                    break;
+                case FoxCrewTaskFin.FoxCrewTaskFin_Addwin:
+                    CustomWinnerHolder.AdditionalWinnerRoles.Add(CustomRoles.Frust);
+                    CustomWinnerHolder.WinnerIds.Add(Player.PlayerId);
+                    return;
+            }
             return;
         }
         else
@@ -147,6 +169,21 @@ public sealed class Frust : RoleBase, ILNKiller, ISchrodingerCatOwner
             }
         }
         return;
+    }
+    public static bool BlockTaskWin()
+    {
+        if (GameModeManager.IsStandardClass() is false) return false;
+        foreach (var pc in PlayerCatch.AllPlayerControls.Where(pc => pc.Is(CustomRoles.Frust)))
+        {
+            if (pc.GetRoleClass() is Frust _)
+            {
+                if (pc.IsAlive() && CrewTaskFinishFlug is FoxCrewTaskFin.FoxCrewTaskFin_NoGameEnd)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     void SendRpc()
     {
