@@ -27,10 +27,6 @@ public sealed class Fox : RoleBase, ISystemTypeUpdateHook, IRoomTasker
             (6, 0),
             false,
             countType: CountTypes.Fox,
-            assignInfo: new RoleAssignInfo(CustomRoles.Fox, CustomRoleTypes.Neutral)
-            {
-                AssignCountRule = new(1, 1, 1)
-            },
             from: From.TownOfHost_K
         );
     public Fox(PlayerControl player)
@@ -261,20 +257,20 @@ public sealed class Fox : RoleBase, ISystemTypeUpdateHook, IRoomTasker
     bool ISystemTypeUpdateHook.UpdateHudOverrideSystem(HudOverrideSystemType hudOverrideSystem, byte amount) => false;
     #endregion
     #region win
-    public static bool SFoxCheckWin(ref GameOverReason reason)
+    public static void SFoxCheckWin(ref GameOverReason reason)
     {
         foreach (var pc in PlayerCatch.AllPlayerControls.Where(pc => pc.Is(CustomRoles.Fox)))
         {
             if (pc.GetRoleClass() is Fox fox)
             {
-                if (fox.FoxCheckWin(ref reason)) return true;
+                fox.FoxCheckWin(ref reason);
             }
         }
-        return false;
+        return;
     }
-    public bool FoxCheckWin(ref GameOverReason reason)
+    public void FoxCheckWin(ref GameOverReason reason)
     {
-        if (Player.IsAlive() is false) return false;
+        if (Player.IsAlive() is false) return;
 
         if (reason is GameOverReason.CrewmatesByTask && CustomWinnerHolder.WinnerTeam is CustomWinner.Crewmate)
         {
@@ -287,13 +283,13 @@ public sealed class Fox : RoleBase, ISystemTypeUpdateHook, IRoomTasker
                         reason = GameOverReason.ImpostorsByKill;
                         Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);
                         if (isnotice is false && 5 <= UtilsGameLog.day && IsActiveNotice) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[2]);
-                        return true;
+                        return;
                     }
                     break;
                 case FoxCrewTaskFin.FoxCrewTaskFin_Addwin:
                     CustomWinnerHolder.AdditionalWinnerRoles.Add(CustomRoles.Fox);
                     CustomWinnerHolder.WinnerIds.Add(Player.PlayerId);
-                    return false;
+                    return;
             }
         }
         else
@@ -304,10 +300,10 @@ public sealed class Fox : RoleBase, ISystemTypeUpdateHook, IRoomTasker
                 reason = GameOverReason.ImpostorsByKill;
                 Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[0]);
                 if (isnotice is false && 5 <= UtilsGameLog.day && IsActiveNotice) Achievements.RpcCompleteAchievement(Player.PlayerId, 0, achievements[2]);
-                return true;
+                return;
             }
         }
-        return false;
+        return;
     }
     public static bool BlockTaskWin()
     {
