@@ -110,7 +110,7 @@ public sealed class Monochromer : RoleBase
             }
             else
             {
-                pc.RpcChColor(Player, 6, true);
+                pc.RpcChColor(Player, 15, true);
                 pc.RpcHideSkinAndPet(Player);
             }
         }
