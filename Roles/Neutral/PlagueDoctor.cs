@@ -70,7 +70,7 @@ public sealed class PlagueDoctor : RoleBase, IKiller
     private static OptionItem OptionInfectCanInfectSelf;
     private static OptionItem OptionInfectCanInfectVent;
     private static OptionItem OptionDestroyPlague;
-
+    private static OptionItem OptionCanWinIfDead;
     private static int InfectLimit;
     private static bool InfectWhenKilled;
     private static float InfectTime;
@@ -88,7 +88,8 @@ public sealed class PlagueDoctor : RoleBase, IKiller
         PlagueDoctorInfectInactiveTime,
         PlagueDoctorCanInfectSelf,
         PlagueDoctorCanInfectVent,
-        PlagueDoctorDestroyPlague
+        PlagueDoctorDestroyPlague,
+        BankerDieCanWin
     }
     private static void SetupOptionItem()
     {
@@ -103,6 +104,7 @@ public sealed class PlagueDoctor : RoleBase, IKiller
            .SetValueFormat(OptionFormat.Seconds);
         OptionInfectCanInfectSelf = BooleanOptionItem.Create(RoleInfo, 15, OptionName.PlagueDoctorCanInfectSelf, false, false);
         OptionInfectCanInfectVent = BooleanOptionItem.Create(RoleInfo, 16, OptionName.PlagueDoctorCanInfectVent, false, false);
+        OptionCanWinIfDead = BooleanOptionItem.Create(RoleInfo, 19, OptionName.BankerDieCanWin, false, false);
         OptionDestroyPlague = BooleanOptionItem.Create(RoleInfo, 18, OptionName.PlagueDoctorDestroyPlague, false, false);
         OverrideKilldistance.Create(RoleInfo, 17);
     }
@@ -212,7 +214,19 @@ public sealed class PlagueDoctor : RoleBase, IKiller
         if (!AmongUsClient.Instance.AmHost) return;
 
         if (!GameStates.IsInTask) return;
-        if (NonPlague) return;//ペスト不在だと感染しない...理由付けがむずいけど自然消滅ってこと..
+        if (NonPlague) return;//ペスト不在だと感染しない
+        bool PDAlive = false;
+        if (!OptionCanWinIfDead.GetBool())
+        {
+            foreach (var p in PlayerCatch.AllPlayerControls)
+            {
+                if (p.GetCustomRole() is CustomRoles.PlagueDoctor && p.IsAlive())
+                {
+                    PDAlive = true;
+                }
+            }
+            if (!PDAlive) return;
+        }
         if (DestroyPlague && !PlagueDoctors.Any(pla => pla?.Player?.GetCustomRole() is CustomRoles.PlagueDoctor))
         {
             NonPlague = true;
@@ -364,6 +378,11 @@ public sealed class PlagueDoctor : RoleBase, IKiller
                     CustomWinnerHolder.NeutralWinnerIds.Add(plagueDoctor.PlayerId);
                     Achievements.RpcCompleteAchievement(plagueDoctor.PlayerId, 0, achievements[0]);
                     if (10 <= i) Achievements.RpcCompleteAchievement(plagueDoctor.PlayerId, 0, achievements[1]);
+                }
+                if (!plagueDoctor.IsAlive() && !OptionCanWinIfDead.GetBool())
+                {
+                    CustomWinnerHolder.WinnerIds.Remove(plagueDoctor.PlayerId);
+                    CustomWinnerHolder.NeutralWinnerIds.Remove(plagueDoctor.PlayerId);
                 }
             }
         }

@@ -160,7 +160,8 @@ public sealed class SpeedStar : RoleBase, IImpostor, IUsePhantomButton
             7200,
             SetUpOptionItem,
             "SS",
-            OptionSort: (0, 51),
+            OptionSort: (6, 16),
+            //OptionSort: (0, 51),
             from: From.Speyrp
         );
     public SpeedStar(PlayerControl player)
@@ -278,7 +279,8 @@ public sealed class Chameleon : RoleBase, IAdditionalWinner
             SetUpOptionItem,
             "Cha",
             "#357a39",
-            OptionSort: (0, 50),
+            //OptionSort: (0, 50),
+            (8, 1),
             from: From.Speyrp
         );
     public Chameleon(PlayerControl player)

@@ -1,4 +1,4 @@
-/*using AmongUs.GameOptions;
+using AmongUs.GameOptions;
 
 using TownOfHost.Roles.Core;
 
@@ -17,11 +17,13 @@ public sealed class Monochromer : RoleBase
             SetupOptionItem,
             "Mnc",
             "#808080",
-            (6, 1),
+            //(6, 1),
+            (0, 0),
             assignInfo: new RoleAssignInfo(CustomRoles.Monochromer, CustomRoleTypes.Neutral)
             {
                 AssignCountRule = new(0, 15, 1)
-            }
+            },
+            from: From.TownOfHost_K
         );
     public Monochromer(PlayerControl player)
     : base(
@@ -98,22 +100,30 @@ public sealed class Monochromer : RoleBase
                 if (id is 0 or 1 or 2 or 6 or 8 or 9 or 12 or 15 or 16)
                 {
                     pc.RpcChColor(Player, 6, true);
+                    pc.RpcHideSkinAndPet(Player);
                 }
-                else pc.RpcChColor(Player, 7, true);
+                else
+                {
+                    pc.RpcChColor(Player, 7, true);
+                    pc.RpcHideSkinAndPet(Player);
+                }
             }
             else
-                pc.RpcChColor(Player, 15, true);
+            {
+                pc.RpcChColor(Player, 6, true);
+                pc.RpcHideSkinAndPet(Player);
+            }
         }
         UtilsNotifyRoles.NotifyRoles(SpecifySeer: Player);
     }
     //public override void OnReportDeadBody(PlayerControl _, NetworkedPlayerInfo __)
     //{
-        //foreach (var pc in PlayerCatch.AllPlayerControls)
-        //{
-            //var id = Camouflage.PlayerSkins[pc.PlayerId].ColorId;
-            //pc.SetColor(id);
-            //Camouflage.RpcSetSkin(pc, RevertToDefault: true, force: true);
-        //}
+    //foreach (var pc in PlayerCatch.AllPlayerControls)
+    //{
+    //var id = Camouflage.PlayerSkins[pc.PlayerId].ColorId;
+    //pc.SetColor(id);
+    //Camouflage.RpcSetSkin(pc, RevertToDefault: true, force: true);
+    //}
     //}
     public static bool CheckWin(GameOverReason reason)
     {
@@ -145,4 +155,4 @@ public sealed class Monochromer : RoleBase
     }
 
     public override void ChengeRoleAdd() => ChangeColor();
-}*/
+}

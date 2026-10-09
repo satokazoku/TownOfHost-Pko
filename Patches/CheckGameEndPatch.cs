@@ -132,7 +132,7 @@ namespace TownOfHost
                                 && !pc.Is(CustomRoles.Amanojaku) && !pc.Is(CustomRoles.Jackaldoll) && !pc.Is(CustomRoles.SKMadmate) && !pc.Is(CustomRoles.Tama)
                                 && MagicalGirl.CanWinAsCrewmateStaff(pc))
                                 .Do(pc => CustomWinnerHolder.WinnerIds.Add(pc.PlayerId));
-                            //if (Monochromer.CheckWin(reason)) break;
+                            if (Monochromer.CheckWin(reason)) break;
                             foreach (var pc in PlayerCatch.AllPlayerControls)
                             {
                                 if (pc.GetCustomRole() is CustomRoles.SKMadmate or CustomRoles.Jackaldoll ||

@@ -734,6 +734,7 @@ namespace TownOfHost
                 .SetValueFormat(OptionFormat.Seconds);
 
             // Madmate, Crewmate, Neutral
+            ObjectOptionitem.Create(1_300_120, "Nor", true, null, TabGroup.MadmateRoles).SetOptionName(() => Translator.GetString("ModRole")).SetColorcode("#bd987bff");
             CreateRoleOption(sortedRoleInfo, CustomRoleTypes.Madmate);
             ObjectOptionitem.Create(1_300_115, "Nor", true, null, TabGroup.CrewmateRoles).SetOptionName(() => Translator.GetString("NormalRole")).SetColorcode("#8cbf26ff");
             CreateRoleOption(sortedRoleInfo, CustomRoleTypes.Crewmate);
@@ -741,6 +742,7 @@ namespace TownOfHost
                 .SetHeader(true).SetValueFormat(OptionFormat.Seconds);
             DefaultEngineerInVentMaxTime = FloatOptionItem.Create(102504, "DefaultEngineerInVentMaxTime", new(0, 180, 1), 5, TabGroup.CrewmateRoles, false)
                 .SetValueFormat(OptionFormat.Seconds).SetZeroNotation(OptionZeroNotation.Infinity);
+            ObjectOptionitem.Create(1_300_121, "Exr", true, null, TabGroup.NeutralRoles).SetOptionName(() => Translator.GetString("Experimental")).SetColorcode("#9a8adbff");
 
             CreateRoleOption(sortedRoleInfo, CustomRoleTypes.Neutral);
 
@@ -1559,6 +1561,10 @@ namespace TownOfHost
                         if (roleTypes is CustomRoleTypes.Impostor && info.RoleName is CustomRoles.SilentKiller)
                         {
                             ObjectOptionitem.Create(1_300_116, "Mor", true, null, TabGroup.ImpostorRoles).SetOptionName(() => Translator.GetString("ModRole")).SetColorcode("#bd987bff");
+                        }
+                        if (roleTypes is CustomRoleTypes.Neutral && info.RoleName is CustomRoles.Monochromer)
+                        {
+                            ObjectOptionitem.Create(1_300_117, "Mor", true, null, TabGroup.NeutralRoles).SetOptionName(() => Translator.GetString("ModRole")).SetColorcode("#bd987bff");
                         }
                     }
 
