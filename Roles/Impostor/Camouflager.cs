@@ -1,4 +1,4 @@
-/*using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
@@ -20,14 +20,15 @@ public sealed class Camouflager : RoleBase, IImpostor, IUsePhantomButton
         127300,
         SetupOptionItem,
         "Mo",
-        OptionSort: (6, 0),
+        OptionSort: (0, 10),
+        //OptionSort: (6, 0),
         from: From.TheOtherRoles
     );
 
     private static OptionItem OptionKillCoolDown;
     private static OptionItem OptionCooldown;
     private static OptionItem OptionAblitytime;
-
+    private static OptionItem OptionKoufuka;
     public static bool NowUse { get; set; }
 
     private float _limit;
@@ -35,7 +36,8 @@ public sealed class Camouflager : RoleBase, IImpostor, IUsePhantomButton
 
     private enum OptionName
     {
-        GhostNoiseSenderTime // 効果時間って翻訳一緒なので・・・
+        CamoKoufuka,
+        GhostNoiseSenderTime 
     }
 
     public Camouflager(PlayerControl player) : base(RoleInfo, player)
@@ -53,6 +55,7 @@ public sealed class Camouflager : RoleBase, IImpostor, IUsePhantomButton
             .SetValueFormat(OptionFormat.Seconds);
         OptionAblitytime = FloatOptionItem.Create(RoleInfo, 12, OptionName.GhostNoiseSenderTime, new(0f, 100f, 0.5f), 10f, false)
             .SetValueFormat(OptionFormat.Seconds);
+        OptionKoufuka = BooleanOptionItem.Create(RoleInfo, 13, OptionName.CamoKoufuka, true, false);
     }
 
     public override void ApplyGameOptions(IGameOptions opt)
@@ -66,6 +69,77 @@ public sealed class Camouflager : RoleBase, IImpostor, IUsePhantomButton
 
         _limit -= Time.fixedDeltaTime;
         if (_limit <= 0)
+        {
+            SetCamouflage(false);
+        }
+    }
+
+    public override void OnReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
+    {
+        NowUse = false;
+        _limit = -50;
+        _ventPlayers.Clear();
+    }
+
+    public override bool NotifyRolesCheckOtherName => true;
+
+    public void OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
+    {
+        AdjustKillCooldown = true;
+        ResetCooldown = true;
+        if (NowUse) return;
+        SetCamouflage(true);
+    }
+    void SetCamouflage(bool active)
+    {
+        if (active)
+        {
+            var dummy = PlayerCatch.AllAlivePlayerControls.FirstOrDefault(pc => pc != null) ?? PlayerCatch.GetPlayerById(0);
+
+            foreach (var p in PlayerCatch.AllAlivePlayerControls)
+            {
+                dummy.RpcChColor(p, 15, true);
+                dummy.RpcHideSkinAndPet(p);
+            }
+
+            // かもふら
+            foreach (var pl in PlayerCatch.AllAlivePlayerControls)
+            {
+                if (pl == dummy) continue;
+                pl.RpcShapeshift(dummy, false);
+                var sender = CustomRpcSender.Create("CamouflagerShape");
+                sender.AutoStartRpc(pl.NetId, RpcCalls.Shapeshift)
+                    .Write(dummy)
+                    .Write(false)
+                    .EndRpc();
+                sender.EndMessage();
+                sender.SendMessage();
+                //設定は様子見つつ消すか考える。
+                if (!OptionKoufuka.GetBool()) continue;
+                //シェイプ相手の見た目になるので戻し処理。こっちのがRPC少なくて済むはず
+                foreach (var p in PlayerCatch.AllPlayerControls)
+                {
+                    if (p.IsAlive()) continue;
+                    pl.RpcShapeshift(pl, false);
+                    var senderat = CustomRpcSender.Create("CamouflagerShape");
+                    senderat.AutoStartRpc(pl.NetId, RpcCalls.Shapeshift, p.GetClientId())
+                        .Write(pl)
+                        .Write(false)
+                        .EndRpc();
+                    senderat.EndMessage();
+                    senderat.SendMessage();
+                }
+            }
+
+            _limit = OptionAblitytime.GetFloat();
+            NowUse = true;
+
+            _ = new LateTask(() =>
+            {
+                UtilsNotifyRoles.NotifyRoles(ForceLoop: true);
+            }, 0.2f, "", true);
+        }
+        else
         {
             _limit = -100;
             NowUse = false;
@@ -103,46 +177,6 @@ public sealed class Camouflager : RoleBase, IImpostor, IUsePhantomButton
             }, 0.4f, "", true);
         }
     }
-
-    public override void OnReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
-    {
-        NowUse = false;
-        _limit = -50;
-        _ventPlayers.Clear();
-    }
-
-    public override bool NotifyRolesCheckOtherName => true;
-
-    public void OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
-    {
-        AdjustKillCooldown = true;
-        ResetCooldown = true;
-        if (NowUse) return;
-
-        var dummy = PlayerCatch.AllPlayerControls.FirstOrDefault(pc => pc != null) ?? PlayerCatch.GetPlayerById(0);
-
-        // かもふら
-        foreach (var pl in PlayerCatch.AllPlayerControls)
-        {
-            pl.RpcShapeshift(dummy, false);
-            var sender = CustomRpcSender.Create("CamouflagerShape");
-            sender.AutoStartRpc(pl.NetId, RpcCalls.Shapeshift)
-                .Write(dummy)
-                .Write(false)
-                .EndRpc();
-            sender.EndMessage();
-            sender.SendMessage();
-        }
-
-        _limit = OptionAblitytime.GetFloat();
-        NowUse = true;
-
-        _ = new LateTask(() =>
-        {
-            UtilsNotifyRoles.NotifyRoles(ForceLoop: true);
-        }, 0.2f, "", true);
-    }
-
     public float CalculateKillCooldown() => OptionKillCoolDown.GetFloat();
 
     public override bool OverrideAbilityButton(out string text)
@@ -164,4 +198,3 @@ public sealed class Camouflager : RoleBase, IImpostor, IUsePhantomButton
 
     bool IUsePhantomButton.IsresetAfterKill => false;
 }
-*/

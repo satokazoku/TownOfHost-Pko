@@ -2056,6 +2056,7 @@
 "PredatorZouka","Factions that Increase Kill Cooldown","キルクールが増加する陣営"
 "PredatorGensyoCool","Kill Cooldown Decrease Amount","減少するキルクール"
 "PredatorZoukaCool","Kill Cooldown Increase Amount","増加するキルクール"
+"CamoKoufuka","","[試験的設定]幽霊視点の見た目を修正する"
 
 "## MadMate Role Setting"
 "MadmateOption","MadMate Options","マッドメイト系役職の設定"

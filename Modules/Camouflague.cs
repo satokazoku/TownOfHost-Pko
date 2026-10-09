@@ -128,7 +128,7 @@ namespace TownOfHost
                 .Write(newOutfit.ColorId)
                 .EndRpc();
 
-            /*
+            
             target.SetHat(newOutfit.HatId, newOutfit.ColorId);
             sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetHatStr)
                 .Write(newOutfit.HatId)
@@ -146,7 +146,7 @@ namespace TownOfHost
                 .Write(newOutfit.VisorId)
                 .Write(target.GetNextRpcSequenceId(RpcCalls.SetVisorStr))
                 .EndRpc();
-                */
+                
 
             sender.SendMessage();
             if (ventplayr.Contains(target.PlayerId)) ventplayr.Remove(target.PlayerId);
