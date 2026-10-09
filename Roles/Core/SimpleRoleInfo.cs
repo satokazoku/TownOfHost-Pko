@@ -280,7 +280,7 @@ public class SimpleRoleInfo
                 roleName = CustomRoles.Viper;
                 customRoleType = CustomRoleTypes.Impostor;
                 countType = CountTypes.Impostor;
-                configId = 23050;
+                configId = 230500;
                 OptionSort = (0, 2);
                 break;
             default:

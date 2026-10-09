@@ -1578,7 +1578,7 @@ namespace TownOfHost
                     case CustomRoles.Impostor: id = 10; break;
                     case CustomRoles.Shapeshifter: id = 30; break;
                     case CustomRoles.Phantom: id = 40; break;
-                    case CustomRoles.Viper: id = 23050; break;
+                    case CustomRoles.Viper: id = 230500; break;
                     case CustomRoles.Crewmate: id = 15; break;
                     case CustomRoles.Engineer: id = 200; break;
                     case CustomRoles.Scientist: id = 250; break;

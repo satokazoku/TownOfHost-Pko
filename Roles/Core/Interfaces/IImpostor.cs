@@ -5,7 +5,7 @@ namespace TownOfHost.Roles.Core.Interfaces;
 
 /// <summary>
 /// インポスターのインタフェイス<br/>
-/// <see cref="IKiller"/>を継承
+/// <see cref="IKiller"/>、<see cref="ISchrodingerCatOwner"/>を継承
 /// </summary>
 public interface IImpostor : IKiller, ISchrodingerCatOwner
 {

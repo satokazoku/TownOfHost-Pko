@@ -1,13 +1,8 @@
-using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
-using TownOfHost.Roles.Madmate;
-using UnityEngine;
-using static TownOfHost.Roles.Crewmate.AllArounder;
-using static UnityEngine.UIElements.StylePropertyAnimationSystem;
 
 namespace TownOfHost.Roles.Neutral;
 

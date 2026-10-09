@@ -9,7 +9,7 @@ namespace TownOfHost.Roles.Ghost
     public class GuardianAngel
     {
         static GhostRoleAssingData Data;
-        private static readonly int Id = 21500;
+        private static readonly int Id = 21550;
         public static List<byte> playerIdList = new();
         public static OptionItem CoolDown;
         public static OptionItem GuardTime;

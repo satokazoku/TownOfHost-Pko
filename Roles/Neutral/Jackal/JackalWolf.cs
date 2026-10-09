@@ -63,8 +63,8 @@ public sealed class JackalWolf : RoleBase, ILNKiller, IUsePhantomButton, IDouble
         foreach (var data in CustomRoleManager.AllRolesInfo)
         {
             if (data.Key.IsImpostor() is false && data.Key is not CustomRoles.NotAssigned) continue;
-            if (data.Key is CustomRoles.AlienHijack or CustomRoles.EvilSatellite or CustomRoles.ConnectSaver
-            or CustomRoles.Limiter or CustomRoles.Assassin or CustomRoles.Amnesiac or CustomRoles.Driver)
+            if (data.Key is CustomRoles.AlienHijack /*or CustomRoles.EvilSatellite or CustomRoles.ConnectSaver*/
+            or CustomRoles.Limiter or CustomRoles.Assassin or CustomRoles.Amnesiac or CustomRoles.Driver or CustomRoles.Soulbinder or CustomRoles.Abuser)
             {
                 InvalidRoles.Add(data.Key);
                 continue;

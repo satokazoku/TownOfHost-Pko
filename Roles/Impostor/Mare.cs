@@ -7,14 +7,14 @@ using UnityEngine;
 
 namespace TownOfHost.Roles.Impostor;
 
-public sealed class Mare : RoleBase, IImpostor
+public sealed class Mare : RoleBase, IImpostor, IUsePhantomButton
 {
     public static readonly SimpleRoleInfo RoleInfo =
         SimpleRoleInfo.Create(
             typeof(Mare),
             player => new Mare(player),
             CustomRoles.Mare,
-            () => RoleTypes.Impostor,
+            () => OptionOneClick.GetBool() ? RoleTypes.Phantom : RoleTypes.Impostor,
             CustomRoleTypes.Impostor,
             5200,
             SetupCustomOption,
@@ -25,8 +25,19 @@ public sealed class Mare : RoleBase, IImpostor
                 IsInitiallyAssignableCallBack = () => ShipStatus.Instance.Systems.TryGetValue(SystemTypes.Electrical, out var systemType) && systemType.TryCast<SwitchSystem>(out _),  // 停電が存在する
             },
             from: From.TownOfHost,
-            Desc: () => string.Format(GetString("MareDesc"), OptionKillCooldownInLightsOut.GetFloat(), OptionSpeedInLightsOut.GetFloat(), OptionCanSeeNameColor.GetBool() ? GetString("MareDescNameColor") : ""
-            , OptionAllCanKill.GetBool() ? GetString("MareDescCanKill") : GetString("MareDescNonKill"))
+            Desc: () =>
+            {
+                if (!OptionOneClick.GetBool())
+                {
+                    return string.Format(GetString("MareDesc"), OptionKillCooldownInLightsOut.GetFloat(), OptionSpeedInLightsOut.GetFloat(), OptionCanSeeNameColor.GetBool() ? GetString("MareDescNameColor") : ""
+            , OptionAllCanKill.GetBool() ? GetString("MareDescCanKill") : GetString("MareDescNonKill"));
+                }
+                else
+                {
+                    return string.Format(GetString("MareDescOc"), OptionKillCooldownInLightsOut.GetFloat(), OptionSpeedInLightsOut.GetFloat(), OptionCanSeeNameColor.GetBool() ? GetString("MareDescNameColor") : ""
+, OptionAllCanKill.GetBool() ? GetString("MareDescCanKill") : GetString("MareDescNonKill"));
+                }
+            }
         );
     public Mare(PlayerControl player)
     : base(
@@ -39,6 +50,13 @@ public sealed class Mare : RoleBase, IImpostor
         CanSeeNameColor = OptionCanSeeNameColor.GetBool();
         AllCanKill = OptionAllCanKill.GetBool();
         NomalKillCooldown = NowKillCoolDown = OptionKillCooldown.GetFloat();
+        NoDelay = OptionNoDelay.GetBool();
+        CoolDown = OptionCoolDown.GetFloat();
+        DeactiveCoolDown = OptionDeactiveCoolDown.GetFloat();
+        Duration = OptionDuration.GetFloat();
+        OnlyOneClick = OptionOneClick.GetBool();
+        Durationtimer = Duration;
+        Used = false;
 
         IsActivateKill = false;
         IsAccelerated = false;
@@ -53,30 +71,54 @@ public sealed class Mare : RoleBase, IImpostor
     private static OptionItem OptionAllCanKill; static bool AllCanKill;
     private static OptionItem OptionKillCooldown; static float NomalKillCooldown;
     private static OptionItem OptionDarkKilldis;
+    private static OptionItem OptionNoDelay; static bool NoDelay;
+    private static OptionItem OptionOneClick;
+    private static OptionItem OptionCoolDown; static float CoolDown;
+    private static OptionItem OptionDeactiveCoolDown; static float DeactiveCoolDown;
+    private static OptionItem OptionDuration; static float Duration;
+    private static OptionItem OptionOnlyOneClick; static bool OnlyOneClick;
     enum OptionName
     {
         MareAddSpeedInLightsOut,
         MareKillCooldownInLightsOut,
         MareCanSeeNameColor,
         MareAllCanKill,
-        MareDarkKilldistance
+        MareDarkKilldistance,
+        MareNoDelay,
+        MareOneClick,
+        MareDeactiveCoolDown,
+        ReverserDuration,
+        MareOnlyOneclick
     }
     private float KillCooldownInLightsOut;
     private float SpeedInLightsOut;
     private static bool IsActivateKill;
     private bool IsAccelerated;  //加速済みかフラグ
     float NowKillCoolDown;
-
+    bool Used;
+    float Durationtimer;
+    public bool IsPhantomRole => OptionOneClick.GetBool();
+    public bool IsresetAfterKill => false;
     public static void SetupCustomOption()
     {
-        OptionSpeedInLightsOut = FloatOptionItem.Create(RoleInfo, 10, OptionName.MareAddSpeedInLightsOut, new(0.0f, 5.0f, 0.2f), 0.0f, false);
-        OptionKillCooldownInLightsOut = FloatOptionItem.Create(RoleInfo, 11, OptionName.MareKillCooldownInLightsOut, new(0f, 180f, 0.5f), 15f, false)
+        OptionSpeedInLightsOut = FloatOptionItem.Create(RoleInfo, 10, OptionName.MareAddSpeedInLightsOut, new(0.0f, 5.0f, 0.2f), 1.4f, false);
+        OptionKillCooldownInLightsOut = FloatOptionItem.Create(RoleInfo, 11, OptionName.MareKillCooldownInLightsOut, new(0f, 180f, 0.5f), 5f, false)
             .SetValueFormat(OptionFormat.Seconds);
-        OptionCanSeeNameColor = BooleanOptionItem.Create(RoleInfo, 12, OptionName.MareCanSeeNameColor, false, false);
-        OptionAllCanKill = BooleanOptionItem.Create(RoleInfo, 13, OptionName.MareAllCanKill, false, false);
+        OptionCanSeeNameColor = BooleanOptionItem.Create(RoleInfo, 12, OptionName.MareCanSeeNameColor, true, false);
+        OptionAllCanKill = BooleanOptionItem.Create(RoleInfo, 13, OptionName.MareAllCanKill, true, false);
         OptionKillCooldown = FloatOptionItem.Create(RoleInfo, 14, GeneralOption.KillCooldown, new(0f, 180f, 0.5f), 40f, false, OptionAllCanKill)
             .SetValueFormat(OptionFormat.Seconds);
         OptionDarkKilldis = StringOptionItem.Create(RoleInfo, 15, OptionName.MareDarkKilldistance, EnumHelper.GetAllNames<OverrideKilldistance.KillDistance>(), 0, false);
+        OptionNoDelay = BooleanOptionItem.Create(RoleInfo, 16, OptionName.MareNoDelay, true, false);
+
+        OptionOneClick = BooleanOptionItem.Create(RoleInfo, 17, OptionName.MareOneClick, true, false);
+        OptionCoolDown = FloatOptionItem.Create(RoleInfo, 18, GeneralOption.Cooldown, OptionBaseCoolTime, 30f, false, OptionOneClick)
+            .SetValueFormat(OptionFormat.Seconds);
+        OptionDeactiveCoolDown = FloatOptionItem.Create(RoleInfo, 19, OptionName.MareDeactiveCoolDown, OptionBaseCoolTime, 10f, false, OptionOneClick)
+            .SetValueFormat(OptionFormat.Seconds);
+        OptionDuration = FloatOptionItem.Create(RoleInfo, 20, OptionName.ReverserDuration, OptionBaseCoolTime, 0f, false, OptionOneClick)
+            .SetValueFormat(OptionFormat.Seconds).SetZeroNotation(OptionZeroNotation.Infinity);
+        OptionOnlyOneClick = BooleanOptionItem.Create(RoleInfo, 21, OptionName.MareOnlyOneclick, true, false, OptionOneClick);
     }
     public bool CanUseKillButton() => IsActivateKill || AllCanKill;
     public float CalculateKillCooldown() => IsActivateKill ? KillCooldownInLightsOut : NomalKillCooldown;
@@ -100,16 +142,30 @@ public sealed class Mare : RoleBase, IImpostor
         {
             AURoleOptions.KillDistance = Main.NormalOptions.KillDistance;
         }
+        AURoleOptions.PhantomCooldown = Used ? DeactiveCoolDown : CoolDown;
     }
-    private void ActivateKill(bool activate)
+    private void ActivateKill(bool activate, bool OneClick = false)
     {
         IsActivateKill = activate;
+        if (OneClick)
+        {
+            Used = activate;
+            Durationtimer = Duration;
+        }
         if (AmongUsClient.Instance.AmHost)
         {
             SendRPC();
-            _ = new LateTask(() => Player.SetKillCooldown(IsActivateKill ? -1 : (1 < NowKillCoolDown ? NowKillCoolDown : 0.5f), delay: true), 1f, "MareKillCool");
+            _ = new LateTask(() => Player.SetKillCooldown(IsActivateKill ? -1 : (1 < NowKillCoolDown ? NowKillCoolDown : 0.5f), delay: true), 0.2f, "MareKillCool");
             UtilsNotifyRoles.NotifyRoles();
         }
+    }
+    public void OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
+    {
+        AdjustKillCooldown = false;
+        ResetCooldown = true;
+        if (Utils.IsActive(SystemTypes.Electrical) && IsActivateKill && !OnlyOneClick) return;
+        ActivateKill(!Used, true);
+        AURoleOptions.PhantomCooldown = Used ? DeactiveCoolDown : CoolDown;
     }
     public void SendRPC()
     {
@@ -126,7 +182,7 @@ public sealed class Mare : RoleBase, IImpostor
         {
             if (IsActivateKill)
             {
-                if (!Utils.IsActive(SystemTypes.Electrical))
+                if (!Utils.IsActive(SystemTypes.Electrical) && !Used)
                 {
                     //停電解除されたらキルモード解除
                     ActivateKill(false);
@@ -136,13 +192,26 @@ public sealed class Mare : RoleBase, IImpostor
             {
                 NowKillCoolDown -= Time.fixedDeltaTime;
             }
+            if (!OptionOneClick.GetBool()) return;
+            if (!Utils.IsActive(SystemTypes.Electrical) && Used && Duration != 0f)
+            {
+                Durationtimer -= Time.fixedDeltaTime;
+            }
+            else if (OnlyOneClick && Used && Duration != 0f)
+            {
+                Durationtimer -= Time.fixedDeltaTime;
+            }
+            if (Durationtimer <= 0f && Duration != 0f)
+            {
+                ActivateKill(false, true);
+            }
         }
     }
     public override bool OnSabotage(PlayerControl player, SystemTypes systemType)
     {
-        if (AddOns.Common.Amnesia.CheckAbilityreturn(Player)) return true;
+        if (AddOns.Common.Amnesia.CheckAbilityreturn(Player) || OnlyOneClick) return true;
 
-        if (systemType == SystemTypes.Electrical)
+        if (systemType == SystemTypes.Electrical && !NoDelay)
         {
             flugl1 = false;
             _ = new LateTask(() =>
@@ -154,10 +223,20 @@ public sealed class Mare : RoleBase, IImpostor
                 }
             }, CanSeeNameColor ? 0.5f : 4.0f, "Mare Activate Kill");
         }
+        else if (systemType == SystemTypes.Electrical)
+        {
+            flugl1 = false;
+            ActivateKill(true);
+        }
         return true;
     }
     public static bool KnowTargetRoleColor(PlayerControl target, bool isMeeting)
-        => CanSeeNameColor && !isMeeting && IsActivateKill && target.Is(CustomRoles.Mare);
+    {
+        if (!CanSeeNameColor || isMeeting || target.GetRoleClass() is not Mare mare) return false;
+
+        var Use = IsActivateKill || mare.Used;
+        return Use;
+    }
 
     void IKiller.OnMurderPlayerAsKiller(MurderInfo info)
     {
