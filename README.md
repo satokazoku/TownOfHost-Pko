@@ -110,7 +110,7 @@ Modが使えなくなるよ!<br>
 　機能やコメント取得一部処理の参考にさせて頂きました！<br>
 
 [Town Of Host_hamo](https://github.com/rar006/TownOfHost-hamo)<br>
-　バグ修正の際に参考にさせていただきました！<br>
+　設定に関するバグの修正とモノクラーの対応の際に参考にさせていただきました！<br>
 
 [Town Of Host_Enhanced](https://github.com/EnhancedNetwork/TownofHost-Enhanced)<br>
 　Swooperを移植させて頂きました！<br>
