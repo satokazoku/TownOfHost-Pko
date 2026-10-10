@@ -138,7 +138,10 @@ Modが使えなくなるよ!<br>
 　イビルトラッカー、シュレディンガーの猫等を参考/移植させていただきました<br>
 
 [Nebula On The Ship](https://github.com/Dolly1016/Nebula/)<br>
-　ナイストラッパー、イビルトラッパー、ドクター、スナイパー、ダンサーを参考/移植させていただきました<br>
+　ナイストラッパー、ドクター、スナイパーを参考/移植させていただきました<br>
+
+[Town Of Impostors](https://github.com/Town-of-Impostors/TownOfImpostors)<br>
+　スナイパーのアイデア元・初出MODです<br>
 
 [au.libhalt.net](https://au.libhalt.net/)<br>
 　マッドジェスターの参考/移植させていただきました<br>
