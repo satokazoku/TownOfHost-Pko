@@ -22,7 +22,7 @@ namespace TownOfHost.Patches
 
         public static Sprite GetRoleIcon(CustomRoles role)
         {
-            if (role.IsVanilla()) return RoleManager.Instance.GetRole(role.GetRoleTypes()).RoleIconSolid;
+            if (role.IsVanilla() && role is not CustomRoles.Impostor && role is not CustomRoles.Crewmate) return RoleManager.Instance.GetRole(role.GetRoleTypes()).RoleIconSolid;
             return UtilsSprite.LoadSprite($"TownOfHost.Resources.TOHP.Label.{role}.png", 30);
         }
         public static string GetRoleText(CustomRoles role) => role.GetCombinationName(false).RemoveColorTags();
