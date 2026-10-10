@@ -14,13 +14,13 @@ namespace TownOfHost
     public class SaveStatistics
     {
         public static bool IsOldVersion = false;//過去バージョンで起動されているかの確認。データが壊れる可能性があるので統計しない。
-        private static readonly string PATH = new($"{Application.persistentDataPath}/TownOfHost_K/Statistics.txt");
+        private static readonly string PATH = new($"{Application.persistentDataPath}/TownOfHost_Pko/Statistics.txt");
         public static void SetLogFolder()
         {
             try
             {
-                if (!Directory.Exists($"{Application.persistentDataPath}/TownOfHost_K"))
-                    Directory.CreateDirectory($"{Application.persistentDataPath}/TownOfHost_K");
+                if (!Directory.Exists($"{Application.persistentDataPath}/TownOfHost_Pko"))
+                    Directory.CreateDirectory($"{Application.persistentDataPath}/TownOfHost_Pko");
             }
             catch { }
         }
@@ -30,9 +30,9 @@ namespace TownOfHost
             try
             {
                 SetLogFolder();
-                if (File.Exists($"{Application.persistentDataPath}/TownOfHost_K/Statistics.txt"))
+                if (File.Exists($"{Application.persistentDataPath}/TownOfHost_Pko/Statistics.txt"))
                 {
-                    File.Move($"{Application.persistentDataPath}/TownOfHost_K/Statistics.txt", PATH);
+                    File.Move($"{Application.persistentDataPath}/TownOfHost_Pko/Statistics.txt", PATH);
                 }
                 if (IsOldVersion) return;
 
@@ -128,9 +128,9 @@ namespace TownOfHost
             try
             {
                 SetLogFolder();
-                if (File.Exists($"{Application.persistentDataPath}/TownOfHost_K/Statistics.txt"))
+                if (File.Exists($"{Application.persistentDataPath}/TownOfHost_Pko/Statistics.txt"))
                 {
-                    File.Move($"{Application.persistentDataPath}/TownOfHost_K/Statistics.txt", PATH);
+                    File.Move($"{Application.persistentDataPath}/TownOfHost_Pko/Statistics.txt", PATH);
                 }
                 else
                 {
@@ -369,6 +369,7 @@ namespace TownOfHost
 
         public static string CheckAdd(bool InLoby)
         {
+            return "";
             if (SaveStatistics.IsOldVersion) return GetString("StatisticsError.Oldversion");
             if (CustomWinnerHolder.WinnerTeam == CustomWinner.Default && !InLoby) return GetString("StatisticsError.forceend");
 #if DEBUG
