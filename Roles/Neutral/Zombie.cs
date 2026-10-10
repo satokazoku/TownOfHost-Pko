@@ -121,7 +121,7 @@ public sealed class Zombie : RoleBase
         foreach (var pc in AllAlivePlayerControls)
         {
             if (pc == null || pc.Data?.Disconnected == true) continue;
-            if (pc.GetRoleClass() is not IKiller killer || !killer.IsKiller) continue;
+            if (pc.GetRoleClass() is not IKiller killer || !killer.IsKiller || pc.GetCountTypes() is CountTypes.Crew) continue;
 
             var roleType = pc.GetCustomRole().GetCustomRoleTypes();
             if (roleType is CustomRoleTypes.Impostor or CustomRoleTypes.Madmate or CustomRoleTypes.Neutral)

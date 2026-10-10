@@ -174,20 +174,14 @@ namespace TownOfHost.Roles.Neutral
             if (sqrDistance <= checkRadius * checkRadius)
             {
                 if (!AmongUsClient.Instance.AmHost) return; 
-                Player.RpcSnapToForced(target.transform.position);
                 if (!targetCankill)
                 {
-                    if (CustomRoleManager.OnCheckMurder(Player, Player, Player, Player, true, false, 2, CustomDeathReason.Suicide))
-                    {                    
-                        Player.SetRealKiller(Player);
-                        UtilsNotifyRoles.NotifyRoles(SpecifySeer: Player);
-                    }
+                    Player.RpcMurderPlayerV2(Player);
                 }
                 else
                 {
-                    if (CustomRoleManager.OnCheckMurder(Player, target, target, target, true, false, 2, CustomDeathReason.Kill, PlayKillSound: true))
+                    if (CustomRoleManager.OnCheckMurder(Player, target, Player, target, false, false, 2, CustomDeathReason.Kill, PlayKillSound: true))
                     {
-                        target.SetRealKiller(Player);
                         UtilsNotifyRoles.NotifyRoles(SpecifySeer: Player);
                     }
                 }

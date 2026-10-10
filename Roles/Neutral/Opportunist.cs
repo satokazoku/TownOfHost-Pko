@@ -66,7 +66,7 @@ public sealed class Opportunist : RoleBase, IAdditionalWinner, IKiller
 
     float timer;
     Vector2 pos;
-
+    bool IKiller.IsKiller => HasKillButton;
     public float CalculateKillCooldown() => OptionKillCooldown.GetFloat();
     public bool CanUseKillButton() => Player.IsAlive() && OptionHasKillButton.GetBool();
     public bool CanUseImpostorVentButton() => false;

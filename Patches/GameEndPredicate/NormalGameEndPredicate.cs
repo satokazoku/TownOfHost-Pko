@@ -584,6 +584,7 @@ namespace TownOfHost
                 && MilkyWay == 0 && Pavlov == 0 && StandMasterCount == 0 && Imp == 0
                 && Huntman == 0 && EaterCount == 0 && Dracula == 0 && Vanity == 0 && FrustCount == 0) //クルー勝利
             {
+                if (Zombie.TryTakeOverCrewWin(ref reason)) return true;
                 reason = GameOverReason.CrewmatesByVote;
                 CustomWinnerHolder.ResetAndSetAndChWinner(CustomWinner.Crewmate, byte.MaxValue);
             }

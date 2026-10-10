@@ -89,7 +89,7 @@ public sealed class Monochromer : RoleBase
     {
         if (AddOns.Common.Amnesia.CheckAbilityreturn(Player)) return;
         if (!Player.IsAlive()) return;
-        foreach (var pc in PlayerCatch.AllPlayerControls)
+        foreach (var pc in PlayerCatch.AllAlivePlayerControls)
         {
             if (pc == Player) continue;
             if (pc == null) continue;

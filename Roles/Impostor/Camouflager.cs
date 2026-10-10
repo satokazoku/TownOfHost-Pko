@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
 using HarmonyLib;
-using UnityEngine;
+using Hazel;
 using TownOfHost.Roles.Core;
 using TownOfHost.Roles.Core.Interfaces;
+using UnityEngine;
+using static Il2CppSystem.Threading.SemaphoreSlim;
 
 namespace TownOfHost.Roles.Impostor;
 
@@ -33,6 +35,7 @@ public sealed class Camouflager : RoleBase, IImpostor, IUsePhantomButton
 
     private float _limit;
     private readonly List<byte> _ventPlayers = new();
+    byte id;
 
     private enum OptionName
     {
@@ -86,7 +89,7 @@ public sealed class Camouflager : RoleBase, IImpostor, IUsePhantomButton
     public void OnClick(ref bool AdjustKillCooldown, ref bool? ResetCooldown)
     {
         AdjustKillCooldown = true;
-        ResetCooldown = true;
+        ResetCooldown = false;
         if (NowUse) return;
         SetCamouflage(true);
     }
@@ -94,8 +97,10 @@ public sealed class Camouflager : RoleBase, IImpostor, IUsePhantomButton
     {
         if (active)
         {
-            var dummy = PlayerCatch.AllAlivePlayerControls.FirstOrDefault(pc => pc != null) ?? PlayerCatch.GetPlayerById(0);
-
+            if (NowUse) return;
+            var dummy = PlayerCatch.AllAlivePlayerControls.FirstOrDefault(pc => pc != null) ?? PlayerCatch.GetPlayerById(1);
+            id = dummy.PlayerId;
+            SendRPC();
             foreach (var p in PlayerCatch.AllAlivePlayerControls)
             {
                 dummy.RpcChColor(p, 15, true);
@@ -143,7 +148,7 @@ public sealed class Camouflager : RoleBase, IImpostor, IUsePhantomButton
         {
             _limit = -100;
             NowUse = false;
-            PlayerCatch.AllPlayerControls.Do(pc => Camouflage.RpcSetSkin(pc, force: null));
+            Camouflage.RpcSetSkin(PlayerCatch.GetPlayerById(id), force: null);
             foreach (var pl in PlayerCatch.AllPlayerControls)
             {
                 pl.RpcShapeshift(pl, false);
@@ -173,8 +178,8 @@ public sealed class Camouflager : RoleBase, IImpostor, IUsePhantomButton
                 }
 
                 UtilsNotifyRoles.NotifyRoles(ForceLoop: true);
-                Player.RpcResetAbilityCooldown(log: false, Sync: true);
             }, 0.4f, "", true);
+            Player.RpcResetAbilityCooldown(log: false, Sync: true);
         }
     }
     public float CalculateKillCooldown() => OptionKillCoolDown.GetFloat();
@@ -197,4 +202,14 @@ public sealed class Camouflager : RoleBase, IImpostor, IUsePhantomButton
     }
 
     bool IUsePhantomButton.IsresetAfterKill => false;
+    private void SendRPC()
+    {
+        using var sender = CreateSender();
+        sender.Writer.Write(id);
+    }
+
+    public override void ReceiveRPC(MessageReader reader)
+    {
+        id = reader.ReadByte();
+    }
 }
