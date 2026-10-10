@@ -21,7 +21,7 @@ public class AchievementSaver
         try
         {
             SetLogFolder();
-            if (File.Exists($"{Application.persistentDataPath}/TownOfHost_Pko/Achievement.txt"))
+            if (File.Exists($"{Application.persistentDataPath}/TownOfHost_K/Achievement.txt"))
             {
                 File.Move($"{Application.persistentDataPath}/TownOfHost_Pko/Achievement.txt", PATH);
             }
@@ -47,7 +47,7 @@ public class AchievementSaver
             SetLogFolder();
             if (File.Exists($"{Application.persistentDataPath}/TownOfHost_K/Achievement.txt"))
             {
-                File.Move($"{Application.persistentDataPath}/TownOfHost_K/Achievement.txt", PATH);
+                File.Move($"{Application.persistentDataPath}/TownOfHost_Pko/Achievement.txt", PATH);
             }
             else
             {

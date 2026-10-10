@@ -369,7 +369,6 @@ namespace TownOfHost
 
         public static string CheckAdd(bool InLoby)
         {
-            return "";
             if (SaveStatistics.IsOldVersion) return GetString("StatisticsError.Oldversion");
             if (CustomWinnerHolder.WinnerTeam == CustomWinner.Default && !InLoby) return GetString("StatisticsError.forceend");
 #if DEBUG
