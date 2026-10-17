@@ -31,7 +31,13 @@ public enum From
     Speyrp,
     RevolutionaryHostRoles,
     Love_Couple_Mod,
+<<<<<<< Updated upstream
     UchuAddon
+=======
+
+    TownOfHost_Temp,
+    TownOfHost_hamo
+>>>>>>> Stashed changes
 }
 public class SimpleRoleInfo
 {

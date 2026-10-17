@@ -460,6 +460,15 @@ namespace TownOfHost
         Impostor = CustomRoles.Impostor,
         Crewmate = CustomRoles.Crewmate,
         Jester = CustomRoles.Jester,
+<<<<<<< Updated upstream
+=======
+
+        FakeJester = CustomRoles.FakeJester,
+        Daoshi = CustomRoles.Daoshi,
+        Debtor = CustomRoles.Debtor,
+        AntiHero = CustomRoles.AntiHero,
+
+>>>>>>> Stashed changes
         HappyJester = CustomRoles.HappyJester,
         LoversBreaker = CustomRoles.LoversBreaker,
         Frust = CustomRoles.Frust,

@@ -996,7 +996,14 @@ namespace TownOfHost
                 case From.TownOfHost_Pko: Fromtext = ""; break;
                 case From.RevolutionaryHostRoles: Fromtext += $"<#3cb371>RevolutionaryHostRoles</color>"; break;
                 case From.Love_Couple_Mod: Fromtext += "<#ff6be4>Love Couple Mod</color>"; break;
+<<<<<<< Updated upstream
                 case From.UchuAddon: Fromtext += "<#0065f4>Uchu Addon</color>"; break;
+=======
+
+                case From.TownOfHost_hamo: Fromtext = ""; break;
+
+                case From.TownOfHost_Temp: Fromtext += "<#00bfff>TownOfHost</color><#FFFB64>-Temp</color>"; break;
+>>>>>>> Stashed changes
             }
             var camo = GetString("Camouflager");
             var lig = GetString("Lighter");

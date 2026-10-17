@@ -1459,8 +1459,20 @@ public enum CustomRoles
     Ruler,
     Abuser,
     Victim,
+<<<<<<< Updated upstream
     // Sub-role after 500
     NotAssigned = 500,
+=======
+    // Migrated from TOH-Tm; explicit values preserve existing hamo role IDs.
+    StepBomber = 360,
+    Locksmith = 361,
+    Coroner = 362,
+    Debtor = 363,
+    Influencer = 287,
+    // Sub-role after 1000←今後の拡張のため広げます。
+    //NotAssigned = 500,
+    NotAssigned = 1000,
+>>>>>>> Stashed changes
     LastImpostor,
     LastNeutral,
     Workhorse,

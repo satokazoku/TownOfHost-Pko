@@ -1212,7 +1212,13 @@ namespace TownOfHost
         public static bool IsRestriction()
         {
             //デバッグならカスタム・ローカル問わずバニラと同処理。
+<<<<<<< Updated upstream
             if (DebugModeManager.AmDebugger && DebugModeManager.EnableTOHPDebugMode.GetBool()) return true;
+=======
+
+            if (DebugModeManager.AmDebugger && (DebugModeManager.EnableTOHhmDebugMode?.GetBool() ?? false)) return true;
+
+>>>>>>> Stashed changes
             //カスタムサーバー か ローカルゲームならfalseを返す
             if (Main.IsCs() || GameStates.IsLocalGame) return false;
 
